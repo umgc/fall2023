@@ -1,6 +1,6 @@
 # Contributing to CogniOpen Software Application
 
-Thank you for your interest in contributing to [PROJECT NAME]. This document lays out guidelines for contributing, whether you're from Team A, Team B, or an external contributor.
+Thank you for your interest in contributing to CogniOpen Software Application. This document lays out guidelines for contributing, whether you're from Team A, Team B, or an external contributor.
 
 ## Code of Conduct
 
