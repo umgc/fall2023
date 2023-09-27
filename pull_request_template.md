@@ -7,7 +7,7 @@ Before submitting your pull request, please ensure that you've completed the fol
 - [ ] I have made sure all tests pass, and added new tests for new features or bug fixes.
 - [ ] I have added necessary documentation (if appropriate).
 - [ ] I have verified that my changes do not introduce any breaking changes.
-- [ ] I have tested my changes on multiple environments/browsers to ensure compatibility.
+- [ ] I have tested my changes.
 - [ ] I have considered security implications and taken necessary measures.
 - [ ] I have added a brief description of my change below.
 
