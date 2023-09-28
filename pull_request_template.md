@@ -16,7 +16,6 @@ Before submitting your pull request, please ensure that you've completed the fol
 - Briefly describe what changes you've made.
 - Why did you make these changes?
 - Link to related issues or previous PRs.
-- make a new change
 
 ## Screenshots (if applicable)
 
