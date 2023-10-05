@@ -371,27 +371,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-class HelpCenterScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Help Center Screen'),
-      ),
-      // Implement the Help Center screen UI here
-    );
-  }
-}
-
-class CustomScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Customizable Application Screen'),
-      ),
-      // Implement the Customizable Application screen UI here
-    );
-  }
-}
