@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:chat_gpt_flutter/chat_gpt_flutter.dart';
 
-// This is a AssitantScreen class.
+// This is a AssistantScreen class.
 // Page modification may be needed to link it with chatGPT.
 
-class AssitantScreen extends StatefulWidget {
+class AssistantScreen extends StatefulWidget {
   @override
   _AssitantScreenState createState() => _AssitantScreenState();
 }
 
-class _AssitantScreenState extends State<AssitantScreen> {
+class _AssitantScreenState extends State<AssistantScreen> {
   TextEditingController _messageController = TextEditingController();
   List<ChatMessage> _chatMessages = [];
 
