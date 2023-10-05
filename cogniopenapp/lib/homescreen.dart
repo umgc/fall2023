@@ -1,4 +1,6 @@
+import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:cogniopen/chatbotscreen.dart';
 import 'package:chat_gpt_flutter/chat_gpt_flutter.dart';
 
@@ -411,7 +413,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   List<ChatMessage> _chatMessages = [];
 
   // Function to handle user messages
-  void _handleUserMessage(String messageText) {
+  Future<void> _handleUserMessage(String messageText) async {
     // Create a user message
     ChatMessage userMessage = ChatMessage(
       messageText: messageText,
@@ -424,7 +426,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
     });
 
     // Send the user message to the AI assistant (ChatGPT) and get a response
-    String aiResponse = getChatGPTResponse(messageText);
+    String aiResponse = await getChatGPTResponse(messageText);
 
     // Create an AI message
     ChatMessage aiMessage = ChatMessage(
@@ -442,12 +444,26 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   }
 
   // Function to simulate ChatGPT's response (Replace with actual API call)
-  String getChatGPTResponse(String userMessage) {
+  Future<String> getChatGPTResponse(String userMessage) async {
     // Here, you can replace this with your code to communicate with ChatGPT
     // and get the AI assistant's response.
     // For a real implementation, you would make an API call to ChatGPT.
     // For simplicity, we'll just echo the user's message as the response.
-    return 'AI Assistant: $userMessage (Echo)';
+    //String? api_key = dotenv.env['OPEN_AI_API_KEY'];
+    OpenAIChatCompletionModel chatCompletion =
+        await OpenAI.instance.chat.create(
+      model: "gpt-3.5-turbo",
+      messages: [
+        OpenAIChatCompletionChoiceMessageModel(
+          content: userMessage,
+          role: OpenAIChatMessageRole.user,
+        ),
+      ],
+    );
+
+    final response = chatCompletion.choices[0].message.content;
+
+    return 'AI Assistant: $response';
   }
 
   @override
