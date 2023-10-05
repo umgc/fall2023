@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'homescreen.dart';
+import 'ui/homescreen.dart';
 
 
 void main() {
