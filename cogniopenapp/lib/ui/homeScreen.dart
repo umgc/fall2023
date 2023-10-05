@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 //import 'package:cogniopen/chatbotscreen.dart';
-import 'package:chat_gpt_flutter/chat_gpt_flutter.dart';
-import 'ui/galleryScreen.dart';
+
+import 'assistantScreen.dart';
+import 'audioScreen.dart';
+import 'customizableScreen.dart';
+import 'galleryScreen.dart';
+import 'helpScreen.dart';
+import 'profileScreen.dart';
+import 'recentScreen.dart';
+import 'searchScreen.dart';
+import 'videoScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -364,18 +372,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class ProfileScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile Screen'),
-      ),
-      // Implement the Profile screen UI here
-    );
-  }
-}
-
 class HelpCenterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -529,18 +525,6 @@ class ChatMessage extends StatelessWidget {
   }
 }
 
-class VideoScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Video Recording'),
-      ),
-      // Implement the Video Recording screen UI here
-    );
-  }
-}
-
 class AudioScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -561,18 +545,6 @@ class SearchScreen extends StatelessWidget {
         title: const Text('Search'),
       ),
       // Implement the Search screen UI here
-    );
-  }
-}
-
-class RecentScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recent Requests'),
-      ),
-      // Implement the Recent Questions/Requests screen UI here
     );
   }
 }

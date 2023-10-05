@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../homescreen.dart';
+import 'homescreen.dart';
 import '../src/media.dart';
 
 // Images taken from: https://www.yttags.com/blog/image-url-for-testing/
