@@ -21,6 +21,14 @@ class Media {
   Media.overloaded(this.title, this.description, this.tags, this.timeStamp,
       this.storageSize, this.isFavorited);
 
+  Media.copy(Media other)
+      : title = other.title,
+        description = other.description,
+        tags = other.tags != null ? List.from(other.tags!) : null,
+        timeStamp = other.timeStamp,
+        storageSize = other.storageSize,
+        isFavorited = other.isFavorited;
+
   addTag(String tag) {
     tags?.add(tag);
   }
@@ -37,6 +45,12 @@ class Video extends Media {
 
   // Constructor using initializing formals: https://dart.dev/tools/linter-rules/prefer_initializing_formals
   Video(this.duration, this.autoDelete, this.identifiedItems);
+}
+
+class Photo extends Media {
+  Image associatedImage;
+
+  Photo(this.associatedImage, Media media) : super.copy(media);
 }
 
 // Removed the photo class, and changed the int time spotted to date time (can just go off of recent dates)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:cogniopen/chatbotscreen.dart';
 import 'package:chat_gpt_flutter/chat_gpt_flutter.dart';
+import 'ui/galleryScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -524,18 +525,6 @@ class ChatMessage extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class GalleryScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Gallery'),
-      ),
-      // Implement the Gallery screen UI here
     );
   }
 }
