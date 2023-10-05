@@ -97,6 +97,28 @@ class NotificationMenu extends MenuItem {
 
 class GalleryMenu extends MenuItem {
   List<Media> galleryMedia;
+  List<SignificantObject> significantObjects;
 
-  GalleryMenu(this.galleryMedia, Icon icon) : super("GalleryMenu", icon);
+  GalleryMenu(this.galleryMedia, this.significantObjects, Icon icon)
+      : super("GalleryMenu", icon);
+
+  addSignificantObject(SignificantObject object) {
+    significantObjects.add(object);
+  }
+
+  removeSignificantObject(String identifier) {
+    significantObjects.removeWhere((item) => item.identifier == identifier);
+  }
 }
+
+/*
+class LocationMenu extends MenuItem ()
+{
+}
+*/
+
+/*
+class CalendarMenu extends MenuItem ()
+{
+}
+*/
