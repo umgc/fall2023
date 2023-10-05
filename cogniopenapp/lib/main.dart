@@ -1,10 +1,18 @@
+import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cogniopenapp/ui/homeScreen.dart';
 
 void main() async {
+  await loadAPIKey();
   await dotenv.load(fileName: ".env");
   runApp(MyApp());
+}
+
+Future<void> loadAPIKey() async {
+  await dotenv.load(fileName: ".env");
+  OpenAI.apiKey = dotenv.env[
+      'OPEN_AI_API_KEY']!; //TODO: add setup step to add API key if it isn't fount in .env
 }
 
 class MyApp extends StatelessWidget {

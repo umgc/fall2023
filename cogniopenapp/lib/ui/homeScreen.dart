@@ -60,21 +60,26 @@ class HomeScreen extends StatelessWidget {
               title: const Text('Profile'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ProfileScreen()));
               },
             ),
             ListTile(
               title: const Text('Help Center'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HelpCenterScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HelpCenterScreen()));
               },
             ),
             ListTile(
               title: const Text('Customizable Application'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CustomScreen()));
               },
             ),
             ListTile(
@@ -90,7 +95,8 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         children: [
           const Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
+            padding: EdgeInsets.fromLTRB(
+                16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
             child: Text(
               'Welcome!', // This is the header text
               style: TextStyle(
@@ -103,12 +109,14 @@ class HomeScreen extends StatelessWidget {
           ),
           const Padding(
             // New subheading section starts here
-            padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
+            padding: EdgeInsets.fromLTRB(
+                16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
             child: Text(
               'Helping you remember the important thing\n Choose a feature from here to get started!', // This is the subheading text
               style: TextStyle(
                 fontSize: 16.0, // Adjust font size as needed
-                color: Colors.white70, // Slightly transparent white for subheading
+                color:
+                    Colors.white70, // Slightly transparent white for subheading
               ),
               textAlign: TextAlign.center,
             ),
@@ -123,13 +131,18 @@ class HomeScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to Chat bot/Virtual Assistant screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AssistantScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AssistantScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
+                    backgroundColor:
+                        const Color(0XFFC6FF00), // Button text color
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Square border
                     ),
                   ),
                   child: Column(
@@ -141,7 +154,8 @@ class HomeScreen extends StatelessWidget {
                         height: 75.0, // as per your requirement
                       ),
                       const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
+                        height:
+                            8.0, // Add some spacing between the image and text
                       ),
                       const Text('Virtual Assistant'),
                     ],
@@ -151,13 +165,18 @@ class HomeScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to Gallery screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => GalleryScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => GalleryScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
+                    backgroundColor:
+                        const Color(0XFFC6FF00), // Button text color
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Square border
                     ),
                   ),
                   child: Column(
@@ -169,7 +188,8 @@ class HomeScreen extends StatelessWidget {
                         height: 75.0, // as per your requirement
                       ),
                       const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
+                        height:
+                            8.0, // Add some spacing between the image and text
                       ),
                       const Text('Gallery'),
                     ],
@@ -179,13 +199,16 @@ class HomeScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to Video Screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => VideoScreen()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => VideoScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
+                    backgroundColor:
+                        const Color(0XFFC6FF00), // Button text color
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Square border
                     ),
                   ),
                   child: Column(
@@ -197,7 +220,8 @@ class HomeScreen extends StatelessWidget {
                         height: 75.0, // as per your requirement
                       ),
                       const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
+                        height:
+                            8.0, // Add some spacing between the image and text
                       ),
                       const Text('Video Recording'),
                     ],
@@ -207,13 +231,16 @@ class HomeScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to Audio Recording screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AudioScreen()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AudioScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
+                    backgroundColor:
+                        const Color(0XFFC6FF00), // Button text color
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Square border
                     ),
                   ),
                   child: Column(
@@ -225,7 +252,8 @@ class HomeScreen extends StatelessWidget {
                         height: 75.0, // as per your requirement
                       ),
                       const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
+                        height:
+                            8.0, // Add some spacing between the image and text
                       ),
                       const Text('Audio Recording'),
                     ],
@@ -235,13 +263,18 @@ class HomeScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to Search screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SearchScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
+                    backgroundColor:
+                        const Color(0XFFC6FF00), // Button text color
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Square border
                     ),
                   ),
                   child: Column(
@@ -253,7 +286,8 @@ class HomeScreen extends StatelessWidget {
                         height: 75.0, // as per your requirement
                       ),
                       const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
+                        height:
+                            8.0, // Add some spacing between the image and text
                       ),
                       const Text('Search'),
                     ],
@@ -263,13 +297,18 @@ class HomeScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to Recent Questions/Requests screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => RecentScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RecentScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
+                    backgroundColor:
+                        const Color(0XFFC6FF00), // Button text color
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Square border
                     ),
                   ),
                   child: Column(
@@ -281,7 +320,8 @@ class HomeScreen extends StatelessWidget {
                         height: 75.0, // as per your requirement
                       ),
                       const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
+                        height:
+                            8.0, // Add some spacing between the image and text
                       ),
                       const Text('Recent Requests'),
                     ],
@@ -321,13 +361,16 @@ class HomeScreen extends StatelessWidget {
             // Stay on the Home Interface Screen
           } else if (index == 1) {
             // Navigate to Search screen
-            Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SearchScreen()));
           } else if (index == 2) {
             // Navigate to Gallery screen
-            Navigator.push(context, MaterialPageRoute(builder: (context) => GalleryScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => GalleryScreen()));
           } else if (index == 3) {
             // Navigate to Chatbot screen
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AssistantScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AssistantScreen()));
           }
         },
       ),
