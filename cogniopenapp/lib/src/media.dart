@@ -9,14 +9,16 @@ class Media {
   DateTime? timeStamp;
   int storageSize;
   bool isFavorited;
+  late Icon iconType;
 
-  Media(
-      {this.title = "",
-      this.description = "",
-      this.tags,
-      this.timeStamp,
-      this.storageSize = 0,
-      this.isFavorited = false});
+  Media({
+    this.title = "",
+    this.description = "",
+    this.tags,
+    this.timeStamp,
+    this.storageSize = 0,
+    this.isFavorited = false,
+  });
 
   Media.overloaded(this.title, this.description, this.tags, this.timeStamp,
       this.storageSize, this.isFavorited);
@@ -44,13 +46,20 @@ class Video extends Media {
   late List<IdentifiedItem> identifiedItems;
 
   // Constructor using initializing formals: https://dart.dev/tools/linter-rules/prefer_initializing_formals
-  Video(this.duration, this.autoDelete, this.identifiedItems);
+  Video(this.duration, this.autoDelete, this.identifiedItems, Media media)
+      : super.copy(media);
 }
 
 class Photo extends Media {
   Image associatedImage;
 
-  Photo(this.associatedImage, Media media) : super.copy(media);
+  Photo(this.associatedImage, Media media) : super.copy(media) {
+    this.iconType = Icon(
+      Icons.photo,
+      color: Colors.grey,
+      size: 40,
+    );
+  }
 }
 
 // Removed the photo class, and changed the int time spotted to date time (can just go off of recent dates)

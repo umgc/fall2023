@@ -30,8 +30,9 @@ List<Photo> createTestPhotoList() {
         isFavorited: true,
       ),
     ),
-  Photo(
-      Image.network('https://www.kasandbox.org/programming-images/avatars/purple-pi.png'),
+    Photo(
+      Image.network(
+          'https://www.kasandbox.org/programming-images/avatars/purple-pi.png'),
       Media(
         title: 'Purple Pi',
         description: 'Avatar of Purple Pi',
@@ -44,7 +45,8 @@ List<Photo> createTestPhotoList() {
     // Add more test objects for other URLs as needed
     // Photo for 'https://www.kasandbox.org/programming-images/avatars/purple-pi-teal.png'
     Photo(
-      Image.network('https://www.kasandbox.org/programming-images/avatars/purple-pi-teal.png'),
+      Image.network(
+          'https://www.kasandbox.org/programming-images/avatars/purple-pi-teal.png'),
       Media(
         title: 'Purple Pi (Teal)',
         description: 'Teal version of Purple Pi avatar',
@@ -56,7 +58,8 @@ List<Photo> createTestPhotoList() {
     ),
     // Photo for 'https://www.kasandbox.org/programming-images/avatars/purple-pi-pink.png'
     Photo(
-      Image.network('https://www.kasandbox.org/programming-images/avatars/purple-pi-pink.png'),
+      Image.network(
+          'https://www.kasandbox.org/programming-images/avatars/purple-pi-pink.png'),
       Media(
         title: 'Purple Pi (Pink)',
         description: 'Pink version of Purple Pi avatar',
@@ -144,15 +147,29 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     width: 2.0,
                   ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Image(image: photo.associatedImage.image),
-                    SizedBox(height: 8),
-                    Text(
-                      photo.title,
-                      style: TextStyle(fontSize: 16),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Center(
+                            child: Image(image: photo.associatedImage.image),
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          photo.title,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: photo.iconType,
                     ),
                   ],
                 ),
