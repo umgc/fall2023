@@ -2,7 +2,7 @@ import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'homescreen.dart';
+import 'ui/homescreen.dart';
 
 void main() async {
   await loadAPIKey();
