@@ -4,6 +4,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import '../src/video_processor.dart';
 
 class VideoScreen extends StatelessWidget {
+  const VideoScreen({super.key});
   @override
   Widget build(BuildContext context) {
     //call video processor object, and start the rekognition service
