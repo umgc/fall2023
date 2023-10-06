@@ -8,9 +8,9 @@ class VideoProcessor {
   //(default is 50; the higher the more confident - and thus better and fewer results)
   double confidence;
   Rekognition? service;
-  String jobId = "";
+  String jobId;
 
-  VideoProcessor(this.confidence);
+  VideoProcessor(this.confidence, this.jobId);
 
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
@@ -41,8 +41,7 @@ class VideoProcessor {
 
   void pollForCompletedRequest() {
     //TODO: default value until we get tied into the Notifications
-    String jobId =
-        "c6066a5db28405887230197d6b668fb7523097cf057c5efaccfdd7c3af7432fe";
+    jobId = "c6066a5db28405887230197d6b668fb7523097cf057c5efaccfdd7c3af7432fe";
 
     //poll for completed job
     //NotificationChannel
@@ -50,7 +49,6 @@ class VideoProcessor {
     //When the label detection operation finishes,
     //Amazon Rekognition publishes a completion status to the
     //Amazon Simple Notification Service topic registered in the initial call to StartlabelDetection
-    this.jobId = jobId;
   }
 
   Future<GetLabelDetectionResponse> grabResults(jobId) {

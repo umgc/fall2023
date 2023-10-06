@@ -7,7 +7,7 @@ class VideoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //call video processor object, and start the rekognition service
-    VideoProcessor vp = VideoProcessor(80);
+    VideoProcessor vp = VideoProcessor(80, "");
     vp.startService();
 
     return Scaffold(
@@ -33,9 +33,7 @@ class VideoScreen extends StatelessWidget {
             child: const Icon(Icons.search),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              print(vp.jobId);
-              vp.pollForCompletedRequest;
-              print(vp.jobId);
+              vp.pollForCompletedRequest();
             },
             label: 'Grab Job',
             labelStyle: const TextStyle(
