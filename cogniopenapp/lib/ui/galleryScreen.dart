@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'homescreen.dart';
 import '../src/media.dart';
+import '../src/video.dart';
+import '../src/photo.dart';
+import '../src/conversation.dart';
 
 // Images taken from: https://www.yttags.com/blog/image-url-for-testing/
 List<Media> createTestMediaList() {
