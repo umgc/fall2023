@@ -39,6 +39,7 @@ dependencies:
 
   aws_rekognition_api: ^2.0.0
   flutter_dotenv: ^5.1.0
+  flutter_speed_dial: ^7.0.0
 
 dev_dependencies:
   flutter_test:
