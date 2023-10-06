@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'package:flutter/material.dart';
+
 class Settings {
   late bool locationEnabled = false;
 }
