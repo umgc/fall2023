@@ -54,7 +54,7 @@ class Photo extends Media {
   Image associatedImage;
 
   Photo(this.associatedImage, Media media) : super.copy(media) {
-    this.iconType = Icon(
+    iconType = Icon(
       Icons.photo,
       color: Colors.grey,
       size: 40,
