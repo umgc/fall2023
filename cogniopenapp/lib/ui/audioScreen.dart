@@ -2,12 +2,22 @@ import 'package:flutter/material.dart';
 
 class AudioScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Audio Recording'),
+        backgroundColor: const Color(0x440000),
+        elevation: 0,
       ),
-      // Implement the Audio Recording screen UI here
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: null /* add child content here */,
+      ),
     );
   }
 }

@@ -10,6 +10,8 @@ import 'profileScreen.dart';
 import 'recentScreen.dart';
 import 'searchScreen.dart';
 import 'videoScreen.dart';
+import 'settingsScreen.dart';
+import 'tourScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -360,7 +362,7 @@ class HomeScreen extends StatelessWidget {
           } else if (index == 2) {
             // Navigate to Gallery screen
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => GalleryScreen()));
+                MaterialPageRoute(builder: (context) => TourScreen()));
           } else if (index == 3) {
             // Navigate to Chatbot screen
             Navigator.push(context,
