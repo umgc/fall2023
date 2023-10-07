@@ -208,7 +208,7 @@ List<Media> createTestMediaList() {
           'https://cdn.fstoppers.com/styles/article_med/s3/media/2020/05/18/exploration_is_key_to_making_unique_landscape_photos_01.jpg'),
       Media(
         title: 'Test Video',
-        description: 'This is a test video',
+        description: 'This is a placeholder for a video',
         tags: ['video', 'test'],
         timeStamp: DateTime.now(),
         storageSize: 4096,
