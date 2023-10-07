@@ -69,16 +69,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     }
   }
 
-  // Function to filter photos based on the search text
-  List<Media> get filteredPhotos {
-    if (_searchText.isEmpty) {
-      return testMedia;
-    } else {
-      return testMedia
-          .where((media) =>
-              media.title.toLowerCase().contains(_searchText.toLowerCase()))
-          .toList();
-    }
+  // Function to toggle the sorting order
+  void _toggleSortOrder() {
+    setState(() {
+      _isSortAscending = !_isSortAscending;
+      _sortMediaItems();
+    });
   }
 
   // Function to toggle the visibility of photos
@@ -100,58 +96,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
     setState(() {
       _showConversations = !_showConversations;
     });
-  }
-
-  // Function to get favorited photos
-  List<Media> getFavoritedMedia() {
-    return testMedia.where((media) => media.isFavorited).toList();
-  }
-
-  // Display names for sorting criteria
-  final Map<SortingCriteria, String> sortingCriteriaNames = {
-    SortingCriteria.storageSize: 'Sort by Storage Size',
-    SortingCriteria.timeStamp: 'Sort by Time Stamp',
-    SortingCriteria.title: 'Sort by Title',
-    SortingCriteria.type: 'Sort by Type',
-  };
-
-  // Function to toggle the sorting order
-  void _toggleSortOrder() {
-    setState(() {
-      _isSortAscending = !_isSortAscending;
-      _sortMediaItems();
-    });
-  }
-
-  // Function to sort media items based on selected criteria and order
-  void _sortMediaItems() {
-    if (_selectedSortingCriteria == null) {
-      return;
-    }
-    switch (_selectedSortingCriteria) {
-      case null:
-        break;
-      case SortingCriteria.storageSize:
-        testMedia.sort((a, b) => _isSortAscending
-            ? a.storageSize.compareTo(b.storageSize)
-            : b.storageSize.compareTo(a.storageSize));
-        break;
-      case SortingCriteria.timeStamp:
-        testMedia.sort((a, b) => _isSortAscending
-            ? a.timeStamp!.compareTo(b.timeStamp!)
-            : b.timeStamp!.compareTo(a.timeStamp!));
-        break;
-      case SortingCriteria.title:
-        testMedia.sort((a, b) => _isSortAscending
-            ? a.title.compareTo(b.title)
-            : b.title.compareTo(a.title));
-        break;
-      case SortingCriteria.type:
-        testMedia.sort((a, b) => _isSortAscending
-            ? a.runtimeType.toString().compareTo(b.runtimeType.toString())
-            : b.runtimeType.toString().compareTo(a.runtimeType.toString()));
-        break;
-    }
   }
 
   // Toggles
@@ -196,6 +140,62 @@ class _GalleryScreenState extends State<GalleryScreen> {
       }
     });
   }
+
+  // Function to sort media items based on selected criteria and order
+  void _sortMediaItems() {
+    if (_selectedSortingCriteria == null) {
+      return;
+    }
+    switch (_selectedSortingCriteria) {
+      case null:
+        break;
+      case SortingCriteria.storageSize:
+        testMedia.sort((a, b) => _isSortAscending
+            ? a.storageSize.compareTo(b.storageSize)
+            : b.storageSize.compareTo(a.storageSize));
+        break;
+      case SortingCriteria.timeStamp:
+        testMedia.sort((a, b) => _isSortAscending
+            ? a.timeStamp!.compareTo(b.timeStamp!)
+            : b.timeStamp!.compareTo(a.timeStamp!));
+        break;
+      case SortingCriteria.title:
+        testMedia.sort((a, b) => _isSortAscending
+            ? a.title.compareTo(b.title)
+            : b.title.compareTo(a.title));
+        break;
+      case SortingCriteria.type:
+        testMedia.sort((a, b) => _isSortAscending
+            ? a.runtimeType.toString().compareTo(b.runtimeType.toString())
+            : b.runtimeType.toString().compareTo(a.runtimeType.toString()));
+        break;
+    }
+  }
+
+  // Function to filter photos based on the search text
+  List<Media> get filteredPhotos {
+    if (_searchText.isEmpty) {
+      return testMedia;
+    } else {
+      return testMedia
+          .where((media) =>
+              media.title.toLowerCase().contains(_searchText.toLowerCase()))
+          .toList();
+    }
+  }
+
+  // Function to get favorited photos
+  List<Media> getFavoritedMedia() {
+    return testMedia.where((media) => media.isFavorited).toList();
+  }
+
+  // Display names for sorting criteria
+  final Map<SortingCriteria, String> sortingCriteriaNames = {
+    SortingCriteria.storageSize: 'Sort by Storage Size',
+    SortingCriteria.timeStamp: 'Sort by Time Stamp',
+    SortingCriteria.title: 'Sort by Title',
+    SortingCriteria.type: 'Sort by Type',
+  };
 
   void displayFullObjectView(BuildContext context, Media media) {
     Navigator.of(context).push(
@@ -247,6 +247,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+  //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| BUILD METHODS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+  //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+  //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   @override
   Widget build(BuildContext context) {
     _updateLayoutValues();
@@ -280,10 +284,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
       actions: [
         Row(
           children: [
+            // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
               icon: Icon(Icons.search),
               onPressed: _toggleSearchBarVisibility,
             ),
+            // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
               color: _showFavoritedOnly ? Colors.yellow : Colors.grey,
               icon: _showFavoritedOnly
@@ -314,6 +320,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             ),
           ],
         ),
+        // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| POP UP MENU BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         PopupMenuButton<SortingCriteria>(
           itemBuilder: (BuildContext context) {
             return _buildSortingCriteriaMenuItems();
@@ -407,6 +414,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget _buildVideoImage(Video media) {
     return Image(
       image: media.thumbnail.image,
+      // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
       width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
       height: 100.0 + (2.0 - _crossAxisCount) * 25.0,
     );
