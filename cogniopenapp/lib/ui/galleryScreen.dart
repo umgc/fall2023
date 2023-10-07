@@ -271,7 +271,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Gallery',
+            '', // Gallery view title
             style: TextStyle(fontSize: 20),
           ),
           SizedBox(height: 4),
