@@ -50,7 +50,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   SortingCriteria? _selectedSortingCriteria;
   bool _isSortAscending = true;
 
-  // Function to update layout values based on grid size
+  // Function to update font and icon size based on grid size
   void _updateLayoutValues() {
     if (_crossAxisCount <= 1.0) {
       _crossAxisCount = 1.0;
@@ -103,7 +103,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   // Function to get favorited photos
-  List<Media> getFavoritedPhotos() {
+  List<Media> getFavoritedMedia() {
     return testMedia.where((media) => media.isFavorited).toList();
   }
 
@@ -268,11 +268,15 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 crossAxisCount: _crossAxisCount.toInt(),
               ),
               itemCount: _showFavoritedOnly
-                  ? getFavoritedPhotos().length
+                  ? getFavoritedMedia().length
                   : filteredPhotos.length,
               itemBuilder: (BuildContext context, int index) {
                 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FILTERS MEDIA BASED ON SELECTED OPTIONS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
                 List<Media> displayedMedia = filteredPhotos.where((media) {
+                  if (_showFavoritedOnly && !media.isFavorited) {
+                    return false; // Hide photos if _showPhotos is false
+                  }
+
                   if (media is Photo && !_showPhotos) {
                     return false; // Hide photos if _showPhotos is false
                   }
