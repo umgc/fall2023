@@ -29,7 +29,7 @@ jobs:
         channel: "stable"
     - name: "Install Flutter dependencies"
       run: flutter pub get
-      working-dir: ./cogniopen
+      working-directory: ./cogniopen
     - name: "Run Unit Tests"
       run: flutter test
-      working-dir: ./cogniopen
+      working-directory: ./cogniopen
