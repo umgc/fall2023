@@ -9,6 +9,9 @@ class TourScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0x440000),
         elevation: 0,
+        leading: const BackButton(
+            color: Colors.black54
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(

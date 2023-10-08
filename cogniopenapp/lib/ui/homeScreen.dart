@@ -19,11 +19,14 @@ import 'myTimelineScreen.dart';
 import 'recordMenuScreen.dart';
 import 'significantObjectsScreen.dart';
 
+
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         extendBodyBehindAppBar: true,
+        extendBody: true,
         appBar: AppBar(
         backgroundColor: const Color(0x440000),
       elevation: 0,
@@ -64,28 +67,6 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          0, 0.0, 45, 25.0), // Adjust padding as needed
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Dream Team Technology Solutions', // This is the header text
-                          style: TextStyle(
-                            fontSize: 10.0, // Adjust font size as needed
-                            color: Colors.black54,
-                          ),
-                          textAlign: TextAlign.right,
-                        ),
-                      )
-                  ),
-                ],
-              ), // New subheading section ends here
                  Expanded(
                    child: GridView.count(
                      crossAxisCount: 3, // Two columns
@@ -209,6 +190,8 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+
+                /*     ON THE BACKLOG
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to Audio Recording screen
@@ -247,7 +230,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
+                ),*/
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to Search screen
@@ -280,7 +263,7 @@ class HomeScreen extends StatelessWidget {
                         8.0, // Add some spacing between the image and text
                       ),
                       const Text(
-                        'Ask Question', // This is the subheading text
+                        'Virtual Assistant', // This is the subheading text
                         style: TextStyle(
                           fontSize: 13.0, // Adjust font size as needed
                         ),
@@ -420,7 +403,49 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-          )
-    );
+          ),
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 0.0,
+
+             items: const [
+              BottomNavigationBarItem(
+              backgroundColor: Color(0x00ffffff),
+
+              icon: Icon(Icons.home),
+              label: 'Home',
+              ),
+              BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: 'Search',
+              ),
+              BottomNavigationBarItem(
+              icon: Icon(Icons.photo),
+              label: 'Gallery',
+              ),
+              BottomNavigationBarItem(
+              icon: Icon(Icons.chat),
+              label: 'Chatbot',
+                ),
+              ],
+              onTap: (int index) {
+              // Handle navigation bar item taps
+              if (index == 0) {
+              // Stay on the Home Interface Screen
+              } else if (index == 1) {
+              // Navigate to Search screen
+              Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SearchScreen()));
+              } else if (index == 2) {
+              // Navigate to Gallery screen
+              Navigator.push(context,
+              MaterialPageRoute(builder: (context) => GalleryScreen()));
+              } else if (index == 3) {
+              // Navigate to Chatbot screen
+              Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AssistantScreen()));
+                }
+              },
+            ),
+        );
   }
 }
