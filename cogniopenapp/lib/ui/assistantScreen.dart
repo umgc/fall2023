@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:dart_openai/dart_openai.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
-// import 'package:chat_gpt_flutter/chat_gpt_flutter.dart'; //prefer dart_openai
 
 // This is a AssistantScreen class.
-// Page modification may be needed to link it with chatGPT.
 
 class AssistantScreen extends StatefulWidget {
   @override
@@ -14,7 +15,8 @@ class _AssitantScreenState extends State<AssistantScreen> {
   TextEditingController _messageController = TextEditingController();
   List<ChatMessage> _chatMessages = [];
 
-  // Function to handle user messages
+  // Add user messages to chat list then query ChatGPT API and add its
+  // response to chat list
   Future<void> _handleUserMessage(String messageText) async {
     // Create a user message
     ChatMessage userMessage = ChatMessage(
@@ -45,72 +47,117 @@ class _AssitantScreenState extends State<AssistantScreen> {
     _messageController.clear();
   }
 
-  // Function to simulate ChatGPT's response (Replace with actual API call)
+  // Send user Message to ChatGPT 3.5 Turbo and return response
   Future<String> getChatGPTResponse(String userMessage) async {
-    // Here, you can replace this with your code to communicate with ChatGPT
-    // and get the AI assistant's response.
-    // For a real implementation, you would make an API call to ChatGPT.
-    // For simplicity, we'll just echo the user's message as the response.
-    OpenAIChatCompletionModel chatCompletion =
-        await OpenAI.instance.chat.create(
-      model: "gpt-3.5-turbo",
-      messages: [
-        OpenAIChatCompletionChoiceMessageModel(
-          content: userMessage,
-          role: OpenAIChatMessageRole.user,
-        ),
-      ],
-    );
+    try {
+      OpenAIChatCompletionModel chatCompletion =
+          await OpenAI.instance.chat.create(
+        model: "gpt-3.5-turbo",
+        messages: [
+          OpenAIChatCompletionChoiceMessageModel(
+            content: userMessage,
+            role: OpenAIChatMessageRole.user,
+          ),
+        ],
+      );
 
-    final response = chatCompletion.choices[0].message.content;
+      final response = chatCompletion.choices[0].message.content;
 
-    return 'AI Assistant: $response';
+      return 'AI Assistant: $response';
+    } on RequestFailedException catch (e) {
+      _showAlert("API Request Error", e.message);
+      return "";
+    } on Exception catch (e) {
+      _showAlert("Unknown Error", e.toString());
+      return "";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Virtual Assistant'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              itemCount: _chatMessages.length,
-              itemBuilder: (context, index) {
-                return _chatMessages[index];
-              },
+    return FutureBuilder(
+        future: loadAPIKey(), //Lock text input if API key is not found
+        initialData: false,
+        builder: (BuildContext context, AsyncSnapshot<bool> isLoad) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Virtual Assistant'),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+            body: Column(
               children: <Widget>[
                 Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type your message...',
-                    ),
-                    maxLines: null,
+                  child: ListView.builder(
+                    itemCount: _chatMessages.length,
+                    itemBuilder: (context, index) {
+                      return _chatMessages[index];
+                    },
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {
-                    String messageText = _messageController.text.trim();
-                    if (messageText.isNotEmpty) {
-                      _handleUserMessage(messageText);
-                    }
-                  },
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextField(
+                          enabled: isLoad.data, //Disable input without API key
+                          controller: _messageController,
+                          decoration: const InputDecoration(
+                            hintText: 'Type your message...',
+                          ),
+                          maxLines: null,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.send),
+                        onPressed: () {
+                          String messageText = _messageController.text.trim();
+                          if (messageText.isNotEmpty) {
+                            _handleUserMessage(messageText);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
+  }
+
+  Future<bool> loadAPIKey() async {
+    // Load function will throw an error if cogniopenapp/.env is missing or empty
+    // make sure this file holds your api key in the format "OPEN_AI_API_KEY=<key>"
+    // Also, make sure not to share your API key or push it to Git
+    await dotenv.load(fileName: ".env");
+    String apiKeyEnv = dotenv.get('OPEN_AI_API_KEY', fallback: "");
+    if (apiKeyEnv.isEmpty) {
+      _showAlert("API Key Error",
+          "OpenAI API Key must be set to use the Virtual Assistant.");
+      return false;
+    } else {
+      //TODO: API key sould be stored in the database, not env file
+      OpenAI.apiKey = apiKeyEnv;
+      return true;
+    }
+  }
+
+// Display alert when API key is empty
+  FutureOr _showAlert(String title, String message) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(title),
+              content: Text(message),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ));
   }
 }
 
