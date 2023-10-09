@@ -257,7 +257,16 @@ class _CameraHomeState extends State<VideoScreen>
             child: Row(
               children: <Widget>[
                 _cameraTogglesRowWidget(),
-                _thumbnailWidget(),
+                //_thumbnailWidget(),
+
+                GestureDetector(
+                  onTap: () async {
+                    if (imageFile != null || videoFile != null) {
+                      openOptionsBottomSheet(context);  // Open the options bottom sheet
+                    }
+                  },
+                  child: _thumbnailWidget(),
+                ),
               ],
             ),
           ),
@@ -355,6 +364,49 @@ class _CameraHomeState extends State<VideoScreen>
           ],
         ),
       ),
+    );
+  }
+
+  void openOptionsBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.visibility),
+                title: const Text('Review'),
+                onTap: () {
+                  // Implement logic to open a viewer for the picture or video.
+                  // Example: Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewScreen()));
+                  
+                  Navigator.pop(context); // Close the BottomSheet.
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.save),
+                title: const Text('Save'),
+                onTap: () {
+                  // Implement logic to save the picture or video.
+                  // Example: saveMediaToStorage();
+                  Navigator.pop(context); // Close the BottomSheet.
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.refresh),
+                title: const Text('Retake'),
+                onTap: () {
+                  // Implement logic to retake the picture or video.
+                  // Example: retakeMedia();
+                  Navigator.pop(context); // Close the BottomSheet.
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -1153,14 +1205,3 @@ class CameraApp extends StatelessWidget {
 }
 
 List<CameraDescription> _cameras = <CameraDescription>[];
-
-Future<void> main() async {
-  // Fetch the available cameras before initializing the app.
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    _cameras = await availableCameras();
-  } on CameraException catch (e) {
-    _logError(e.code, e.description);
-  }
-  runApp(const CameraApp());
-}
