@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'homescreen.dart';
+import 'homeScreen.dart';
 import '../src/media.dart';
 
 // Images taken from: https://www.yttags.com/blog/image-url-for-testing/
 List<Photo> createTestPhotoList() {
   return [
     Photo(
-      Image.network(
-          'https://www.kasandbox.org/programming-images/avatars/spunky-sam.png'),
+      Image.network('https://www.kasandbox.org/programming-images/avatars/spunky-sam.png'),
       Media(
         title: 'Spunky Sam',
         description: 'Avatar of Spunky Sam',
@@ -19,8 +18,7 @@ List<Photo> createTestPhotoList() {
       ),
     ),
     Photo(
-      Image.network(
-          'https://www.kasandbox.org/programming-images/avatars/spunky-sam-green.png'),
+      Image.network('https://www.kasandbox.org/programming-images/avatars/spunky-sam-green.png'),
       Media(
         title: 'Spunky Sam (Green)',
         description: 'Green version of Spunky Sam avatar',
@@ -30,7 +28,7 @@ List<Photo> createTestPhotoList() {
         isFavorited: true,
       ),
     ),
-  Photo(
+    Photo(
       Image.network('https://www.kasandbox.org/programming-images/avatars/purple-pi.png'),
       Media(
         title: 'Purple Pi',
@@ -119,12 +117,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           children: [
                             Image(image: photo.associatedImage.image),
                             SizedBox(height: 16),
-                            Text('Title: ${photo.title}',
-                                style: TextStyle(fontSize: 18)),
+                            Text('Title: ${photo.title}', style: TextStyle(fontSize: 18)),
                             Text('Description: ${photo.description}'),
                             Text('Tags: ${photo.tags?.join(", ")}'),
-                            Text(
-                                'Time Stamp: ${photo.timeStamp?.toString() ?? "N/A"}'),
+                            Text('Time Stamp: ${photo.timeStamp?.toString() ?? "N/A"}'),
                             Text('Storage Size: ${photo.storageSize}'),
                             Text('Is Favorited: ${photo.isFavorited}'),
                           ],
