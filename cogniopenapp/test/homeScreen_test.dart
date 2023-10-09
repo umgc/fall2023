@@ -5,44 +5,33 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:cogniopenapp/ui/galleryScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:cogniopenapp/main.dart';
 
 void main() {
-  testWidgets(
-      'Tests that the title and subtitle of the application displays after starting.',
-      (WidgetTester tester) async {
+  testWidgets('Tests that the application home page loads correctly.', (WidgetTester tester) async {
     // Build our app and trigger a frrame.
     await tester.pumpWidget(MyApp());
     await tester.pumpAndSettle();
+    await tester.pump();
 
     // Verify that our counter starts at 0.
     expect(find.text('CogniOpen', skipOffstage: false), findsOneWidget);
-    debugPrint("-------");
-    final galleryButtonFinder2 =
-        find.byKey(const Key("GalleryButtonKey"), skipOffstage: false);
+    expect(find.byKey(const Key("GalleryButtonKey"), skipOffstage: false), findsOneWidget);
+    expect(find.byKey(const Key("VirtualAssistantButtonKey"), skipOffstage: false), findsOneWidget);
+    expect(find.byKey(const Key("AudioRecordingButtonKey"), skipOffstage: false), findsOneWidget);
+    //expect(find.byKey(const Key("SearchButtonKey"), skipOffstage: false), findsOneWidget);
+//    expect(find.byKey(const Key("RecentRequestsButtonKey"), skipOffstage: false), findsOneWidget);
+
+/*    debugPrint("*******");
+    debugPrint(galleryButtonFinder.toString());
     debugPrint("*******");
-    debugPrint(galleryButtonFinder2.toString());
-    debugPrint("*******");
-    await tester.tap(galleryButtonFinder2);
+    await tester.tap(galleryButtonFinder);
     final iconButtonFinder = find.byType(IconButton, skipOffstage: false);
     debugPrint(iconButtonFinder.toString());
     debugPrint("________");
-
-    //final elevatedButtonFinder =
-    //  find.byType(ElevatedButton, skipOffstage: false);
-    // debugPrint(elevatedButtonFinder.toString());
-    //final galleryScreenFinder = find.byType(GalleryScreen, skipOffstage: false);
-    // expect(galleryScreenFinder, findsOneWidget);
+*/
     debugPrint("*******");
-    // debugPrint(galleryScreenFinder.toString());
-    debugPrint("*******");
-
-/*    expect(
-        find.text(
-            'Helping you remember the important thing\n Choose a feature from here to get started!'),
-        findsOneWidget);*/
   });
 }
