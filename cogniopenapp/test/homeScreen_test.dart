@@ -18,6 +18,7 @@ void main() {
 
     // Verify that our counter starts at 0.
     expect(find.text('CogniOpen', skipOffstage: false), findsOneWidget);
+<<<<<<< Updated upstream
     expect(find.byKey(const Key("GalleryButtonKey"), skipOffstage: false), findsOneWidget);
     expect(find.byKey(const Key("VirtualAssistantButtonKey"), skipOffstage: false), findsOneWidget);
     expect(find.byKey(const Key("AudioRecordingButtonKey"), skipOffstage: false), findsOneWidget);
@@ -28,5 +29,16 @@ void main() {
     //
     //expect(find.byKey(const Key("SearchButtonKey"), skipOffstage: false), findsOneWidget);
     //expect(find.byKey(const Key("RecentRequestsButtonKey"), skipOffstage: false), findsOneWidget);
+=======
+    expect(find.widgetWithText(ElevatedButton, "Virtual Assistant", skipOffstage: false), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, "Gallery", skipOffstage: false), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, "Video Recording", skipOffstage: false), findsOneWidget);
+    final audioRecordingButtonFinder = find.widgetWithText(ElevatedButton, "Audio Recording", skipOffstage: false);
+    expect(audioRecordingButtonFinder, findsOneWidget);
+    await tester.ensureVisible(audioRecordingButtonFinder);
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(ElevatedButton, "Search", skipOffstage: false), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, "Recent Requests", skipOffstage: false), findsOneWidget);
+>>>>>>> Stashed changes
   });
 }
