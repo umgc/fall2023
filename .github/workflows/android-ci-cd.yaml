@@ -23,6 +23,9 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11.x
+    - name: Create .env file
+      run: touch .env
+      working-directory: ./cogniopenapp
     - name: "Setup Flutter"
       uses: subosito/flutter-action@v2
       with:

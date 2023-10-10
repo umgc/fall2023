@@ -12,8 +12,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute:
-          '/biometric_auth', // Set the initial route to biometric authentication
+//    This is stubbed code, it will be un-commented when the biometric auth is enabled
+//      initialRoute:
+//          '/biometric_auth', // Set the initial route to biometric authentication
       home: HomeScreen(),
       // routes: {
       //   //'/biometric_auth': (context) => BiometricAuthScreen(),
