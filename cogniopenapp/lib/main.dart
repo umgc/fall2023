@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'ui/homescreen.dart';
-
+import 'package:cogniopenapp/ui/homeScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,5 +15,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-

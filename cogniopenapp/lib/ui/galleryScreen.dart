@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'homescreen.dart';
+import 'homeScreen.dart';
 import '../src/media.dart';
 import '../src/video.dart';
 import '../src/photo.dart';
