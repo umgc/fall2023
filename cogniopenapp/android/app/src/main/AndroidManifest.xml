@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ <!-- Permission to record audio -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Permission to read and write to external storage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:label="cogniopenapp"
         android:name="${applicationName}"
