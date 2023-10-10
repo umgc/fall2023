@@ -47,6 +47,7 @@ class _AudioScreenState extends State<AudioScreen> {
   @override
   void initState() {
     super.initState();
+
     /// Initializing recorder and player instances.
     _recorder = FlutterSoundRecorder();
     _player = FlutterSoundPlayer();
@@ -70,7 +71,8 @@ class _AudioScreenState extends State<AudioScreen> {
       Permission.microphone,
       Permission.storage,
     ].request();
-    return statuses[Permission.microphone]!.isGranted && statuses[Permission.storage]!.isGranted;
+    return statuses[Permission.microphone]!.isGranted &&
+        statuses[Permission.storage]!.isGranted;
   }
 
   @override
@@ -107,6 +109,7 @@ class _AudioScreenState extends State<AudioScreen> {
       }
     });
   }
+
   /// Stops the audio recording process.
   ///
   /// This function ends the recording session using the FlutterSoundRecorder instance,
@@ -120,8 +123,6 @@ class _AudioScreenState extends State<AudioScreen> {
     _timer?.cancel();
   }
 
-
-
   /// Function to handle starting the playback of the recorded audio.
   Future<void> _startPlayback() async {
     await _player!.startPlayer(
@@ -130,8 +131,7 @@ class _AudioScreenState extends State<AudioScreen> {
           setState(() {
             _isPlaying = false;
           });
-        }
-    );
+        });
     setState(() {
       _isPlaying = true;
     });
@@ -177,7 +177,7 @@ class _AudioScreenState extends State<AudioScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/icons/assistant.png', height: 150),
+                  Image.asset('assets/icons/chatbot.png', height: 150),
                   const SizedBox(height: 20),
                   if (_isRecording)
                     IconButton(
@@ -186,13 +186,14 @@ class _AudioScreenState extends State<AudioScreen> {
                         await _stopRecording();
                       },
                     )
-
                   else if (_pathToSaveRecording != null)
                     Column(
                       children: [
                         ElevatedButton(
-                          onPressed: _isPlaying ? _stopPlayback : _startPlayback,
-                          child: Text(_isPlaying ? 'Stop Preview' : 'Play Preview'),
+                          onPressed:
+                              _isPlaying ? _stopPlayback : _startPlayback,
+                          child: Text(
+                              _isPlaying ? 'Stop Preview' : 'Play Preview'),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -201,7 +202,8 @@ class _AudioScreenState extends State<AudioScreen> {
                               onPressed: () {
                                 /// Notify user that the recording has been saved
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Recording saved!')),
+                                  const SnackBar(
+                                      content: Text('Recording saved!')),
                                 );
                               },
                               child: const Text('Save'),
@@ -258,13 +260,17 @@ class _AudioScreenState extends State<AudioScreen> {
         ],
         onTap: (int index) {
           if (index == 0) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomeScreen()));
           } else if (index == 1) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SearchScreen()));
           } else if (index == 2) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => GalleryScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => GalleryScreen()));
           } else if (index == 3) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AssistantScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AssistantScreen()));
           }
         },
       ),
