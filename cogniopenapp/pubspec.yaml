@@ -38,7 +38,7 @@ dependencies:
   aws_rekognition_api: ^2.0.0
   flutter_dotenv: ^5.1.0
   flutter_speed_dial: ^7.0.0
-  chat_gpt_flutter: ^1.0.15
+  chat_gpt_flutter: ^1.0.13
   audioplayers: ^5.2.0
   local_auth: ^2.1.7
   flutter_sound: ^9.2.13
