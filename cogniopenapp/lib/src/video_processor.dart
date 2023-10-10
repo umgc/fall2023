@@ -57,6 +57,8 @@ class VideoProcessor {
         service!.getLabelDetection(jobId: jobId);
 
     //print the processed video results
+    //helpful in debugging, as needed.
+    /*
     labelsResponse.then((value) {
       Iterator<LabelDetection> iter = value.labels!.iterator;
       while (iter.moveNext()) {
@@ -83,6 +85,7 @@ class VideoProcessor {
         */
       }
     });
+    */
     return labelsResponse;
   }
 }

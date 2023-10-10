@@ -5,8 +5,9 @@ The CogniOpen (FKA 'RemindMe!') application for the UMGC Capstone - SWEN 670 fal
 ## Getting Started
 
 1. Run `flutter pub get` to install dependencies
-2. Select the "Pixel 3" emulator as the environment, then use the command `flutter run` to run the application in the local environment.
-
+2. Run `flutter emulators --launch <emulator_id>` to start the emulator device. For example, `flutter emulators --launch Pixel_5_API_34`
+ - Use `flutter emulators` to get a list of emulator ids.
+3. Run `flutter run` to run the application in the emulated environment.
 
 # Using the .env file
 
