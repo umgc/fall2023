@@ -21,4 +21,9 @@ class ResponseBoundingBox {
       required this.top,
       required this.width,
       required this.height});
+
+  @override
+  String toString() {
+    return 'ResponseBoundingBox{left: $left, top: $top, width: $width, height: $height}';
+  }
 }

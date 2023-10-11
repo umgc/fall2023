@@ -15,8 +15,7 @@ class VideoProcessor {
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
     service = Rekognition(
-        //TODO?: put region var in environment file?
-        region: 'us-east-2',
+        region: dotenv.get('region'),
         credentials: AwsClientCredentials(
             accessKey: dotenv.get('accessKey'),
             secretKey: dotenv.get('secretKey')));
@@ -27,7 +26,7 @@ class VideoProcessor {
     //TODO: allow parameters for bucket and video name
     Video video = Video(
         s3Object: S3Object(
-            bucket: "cogniopen-videos",
+            bucket: dotenv.get('videoS3Bucket'),
             name:
                 "Sea waves & beach drone video _ Free HD Video - no copyright.mp4"));
 
