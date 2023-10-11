@@ -18,6 +18,7 @@ import 'conversationHistoryScreen.dart';
 import 'myTimelineScreen.dart';
 import 'recordMenuScreen.dart';
 import 'significantObjectsScreen.dart';
+import 'licenseScreen.dart';
 
 
 
@@ -30,6 +31,7 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(
         backgroundColor: const Color(0x440000),
       elevation: 0,
+          automaticallyImplyLeading: false,
         ),
           body: Container(
               decoration: const BoxDecoration(
@@ -69,6 +71,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                  Expanded(
                    child: GridView.count(
+                     physics: NeverScrollableScrollPhysics(),
                      crossAxisCount: 3, // Two columns
                      crossAxisSpacing: 8.0, // Spacing between columns
                       mainAxisSpacing: 15.0, // Spacing between rows
