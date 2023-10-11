@@ -30,7 +30,7 @@ class _AssitantScreenState extends State<AssistantScreen> {
     });
 
     // Send the user message to the AI assistant (ChatGPT) and get a response
-    String aiResponse = getChatGPTResponse(messageText);
+    String aiResponse = await getChatGPTResponse(messageText);
 
     // Create an AI message
     ChatMessage aiMessage = ChatMessage(
