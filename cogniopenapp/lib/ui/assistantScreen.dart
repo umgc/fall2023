@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chat_gpt_flutter/chat_gpt_flutter.dart';
 
-// This is a AssistantScreen class.
+// This is an AssistantScreen class.
 // Page modification may be needed to link it with chatGPT.
 
 class AssistantScreen extends StatefulWidget {
