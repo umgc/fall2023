@@ -4,7 +4,6 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/build" />
-<<<<<<< HEAD
       <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/example/.pub" />
@@ -30,12 +29,5 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK" level="project" />
     <orderEntry type="library" name="Dart Packages" level="project" />
-=======
-      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/.dart_tool" />
-    </content>
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
->>>>>>> development
   </component>
 </module>

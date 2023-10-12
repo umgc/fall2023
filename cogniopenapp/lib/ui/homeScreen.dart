@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:cogniopen/chatbotscreen.dart';
+//import 'package:cogniopen/virtualAssistantScreen.dart';
 import 'package:local_auth/local_auth.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
@@ -131,7 +131,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to Chat bot/Virtual Assistant screen
+                    // Navigate to Virtual Assistant screen
                     Navigator.push(context, MaterialPageRoute(builder: (context) => AssistantScreen()));
                   },
                   style: ElevatedButton.styleFrom(
@@ -145,7 +145,7 @@ class HomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/icons/chatbot.png',
+                        'assets/icons/virtual_assistant.png',
                         width: 75.0, // You can adjust the width and height
                         height: 75.0, // as per your requirement
                       ),
@@ -321,7 +321,7 @@ class HomeScreen extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Chatbot',
+            label: 'Virtual Assistant',
           ),
         ],
         onTap: (int index) {
@@ -335,7 +335,7 @@ class HomeScreen extends StatelessWidget {
             // Navigate to Gallery screen
             Navigator.push(context, MaterialPageRoute(builder: (context) => GalleryScreen()));
           } else if (index == 3) {
-            // Navigate to Chatbot screen
+            // Navigate to Virtual Assistant screen
             Navigator.push(context, MaterialPageRoute(builder: (context) => AssistantScreen()));
           }
         },
