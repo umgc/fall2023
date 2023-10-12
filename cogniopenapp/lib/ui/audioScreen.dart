@@ -8,7 +8,6 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'dart:io';
-
 /// Path provider helps in getting system directory paths to store the recorded audio.
 import 'package:path_provider/path_provider.dart';
 
@@ -59,6 +58,7 @@ class _AudioScreenState extends State<AudioScreen> {
   /// This function initializes the recorder by checking necessary permissions.
   Future<void> _initializeRecorder() async {
     bool permissionsGranted = await _requestPermissions();
+    
     if (!permissionsGranted) {
       return;
     }
@@ -70,9 +70,11 @@ class _AudioScreenState extends State<AudioScreen> {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.microphone,
       Permission.storage,
+      
     ].request();
     return statuses[Permission.microphone]!.isGranted &&
         statuses[Permission.storage]!.isGranted;
+        
   }
 
   @override
@@ -92,10 +94,12 @@ class _AudioScreenState extends State<AudioScreen> {
     }
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
     _pathToSaveRecording = '${appDocDirectory.path}/myRecording.aac';
+    debugPrint('$appDocDirectory');
 
     await _recorder!.startRecorder(toFile: _pathToSaveRecording);
     setState(() {
       _isRecording = true;
+      debugPrint('pathToSaveRecording: $_pathToSaveRecording');
     });
 
     /// Timer to periodically update the duration of the audio recording in the UI.
@@ -110,27 +114,44 @@ class _AudioScreenState extends State<AudioScreen> {
     });
   }
 
+  //Future<String> get _localPath async {
+  //    final directory = await getApplicationDocumentsDirectory();
+
+  //    return directory.path;
+  //  }
+  //Future<File> get _localFile async {
+  //  final path = await _localPath;
+  //  return File('$path/myRecording.aac');
+  //}
+
   /// Stops the audio recording process.
   ///
   /// This function ends the recording session using the FlutterSoundRecorder instance,
   /// updates the UI state to indicate that recording has stopped, and cancels any ongoing
   /// timers related to the recording (like the one tracking recording duration).
   Future<void> _stopRecording() async {
-    await _recorder!.stopRecorder();
+    final path = await _recorder!.stopRecorder();
     setState(() {
       _isRecording = false;
     });
     _timer?.cancel();
+    final audioFile = File(path!);
+    print('Recorded audio: $audioFile');
   }
 
   /// Function to handle starting the playback of the recorded audio.
   Future<void> _startPlayback() async {
+    debugPrint('$_pathToSaveRecording');
+    _player!.openPlayer();
     await _player!.startPlayer(
-        fromURI: _pathToSaveRecording,
+        fromURI: ('$_pathToSaveRecording'),
         whenFinished: () {
           setState(() {
             _isPlaying = false;
+
+
           });
+          _player!.closePlayer();
         });
     setState(() {
       _isPlaying = true;
@@ -143,7 +164,16 @@ class _AudioScreenState extends State<AudioScreen> {
     setState(() {
       _isPlaying = false;
     });
+    _player!.closePlayer();
   }
+
+
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {

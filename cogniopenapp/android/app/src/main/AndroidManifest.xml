@@ -4,7 +4,9 @@
     <!-- Permission to read and write to external storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <application
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <application 
+        android:requestLegacyExternalStorage="true"
         android:label="cogniopenapp"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
