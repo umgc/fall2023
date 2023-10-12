@@ -13,7 +13,13 @@ void main() {
     expect(find.text('CogniOpen', skipOffstage: false), findsOneWidget);
 
     // Check all the buttons are visible
-    expect(find.widgetWithText(ElevatedButton, "Record", skipOffstage: false), findsOneWidget);
+    final recordButtonFinder = find.widgetWithText(ElevatedButton, "Record", skipOffstage: false);
+    expect(recordButtonFinder, findsOneWidget);
+
+    // It breaks the build unless button is forcibly put in view
+    await tester.ensureVisible(recordButtonFinder);
+    await tester.pumpAndSettle();
+
     expect(find.widgetWithText(ElevatedButton, "Conversation History", skipOffstage: false), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, "Significant Objects", skipOffstage: false), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, "Virtual Assistant", skipOffstage: false), findsOneWidget);
