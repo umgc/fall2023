@@ -286,6 +286,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
           children: [
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
+              key: const Key('searchIcon'),
               icon: Icon(Icons.search),
               onPressed: _toggleSearchBarVisibility,
             ),
