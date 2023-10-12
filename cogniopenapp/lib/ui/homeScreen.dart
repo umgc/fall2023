@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'package:cogniopen/chatbotscreen.dart';
-
+import 'package:local_auth/local_auth.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
 import 'customizableScreen.dart';
@@ -10,6 +10,8 @@ import 'profileScreen.dart';
 import 'recentScreen.dart';
 import 'searchScreen.dart';
 import 'videoScreen.dart';
+import 'registrationScreen.dart';
+import 'loginScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -87,6 +89,13 @@ class HomeScreen extends StatelessWidget {
               onTap: () {
                 // Handle logout logic (e.g., clear user session and navigate to login screen)
                 Navigator.popUntil(context, ModalRoute.withName('/'));
+              },
+            ),
+            ListTile(
+              title: const Text('Login'),
+              onTap: () {
+                Navigator.pop(context);  // Close the drawer
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
               },
             ),
           ],
