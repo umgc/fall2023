@@ -46,6 +46,7 @@ void initializeData() {
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
 }
+
 void createDirectoryIfNotExists(String directoryPath) {
   Directory directory = Directory(directoryPath);
 

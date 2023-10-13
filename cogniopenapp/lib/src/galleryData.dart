@@ -55,11 +55,11 @@ class GalleryData {
           Photo photo = Photo(
             Image.file(file),
             Media(
-              title: 'A very ugly man',
-              description: 'He is not cool',
-              tags: ['avatar', 'purple', 'pink'],
+              title: '<placeholder title>',
+              description: '<placeholder title>',
+              tags: ['<placeholder tag>', 'purple', 'pink'],
               timeStamp: DateTime.now(),
-              storageSize: 768,
+              storageSize: file.lengthSync(),
               isFavorited: false,
             ),
           );

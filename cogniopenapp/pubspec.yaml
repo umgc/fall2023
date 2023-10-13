@@ -59,7 +59,7 @@ dependencies:
   aws_kinesis_api: ^2.0.0
   aws_sns_api: ^2.0.0
   aws_s3_api: ^2.0.0
-  video_player: ^2.7.2
+
   path: ^1.8.3
 
 dev_dependencies:
