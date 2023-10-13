@@ -11,7 +11,7 @@ class Video extends Media {
   Video(this.duration, this.autoDelete, this.identifiedItems, this.thumbnail,
       Media media)
       : super.copy(media) {
-    iconType = Icon(
+    iconType = const Icon(
       Icons.video_camera_back,
       color: Colors.grey,
     );

@@ -1,3 +1,4 @@
+import 'package:cogniopenapp/ui/testVideoScreen.dart';
 import 'package:flutter/material.dart';
 //import 'package:cogniopen/chatbotscreen.dart';
 
@@ -69,10 +70,8 @@ class HomeScreen extends StatelessWidget {
               title: const Text('Help Center'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HelpCenterScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => TestVideoScreen()));
               },
             ),
             ListTile(
