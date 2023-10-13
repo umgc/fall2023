@@ -94,12 +94,12 @@ class TestScreenState extends State<TestScreen> {
             onTap: () {
               //List<int> list = 'example data changed'.codeUnits;
               //Uint8List bytes = Uint8List.fromList(list);
-
+              String title = "1MinuteSampleVideo.mp4";
               Future<ByteData> file =
-                  rootBundle.load('assets/test_images/eyeglass-green.jpg');
+                  rootBundle.load('assets/test_images/$title');
               file.then((value) {
                 Uint8List bytes = value.buffer.asUint8List();
-                s3.addVideo(bytes);
+                s3.addVideo(title, bytes);
               });
 
               //print(Directory.current.path);

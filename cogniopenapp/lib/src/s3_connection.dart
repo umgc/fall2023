@@ -36,10 +36,10 @@ class S3Bucket {
     });
   }
 
-  void addVideo(Uint8List content) {
+  void addVideo(String title, Uint8List content) {
     Future<PutObjectOutput> putting = connection!.putObject(
       bucket: dotenv.get('videoS3Bucket'),
-      key: "test.txt",
+      key: title,
       body: content,
     );
 
