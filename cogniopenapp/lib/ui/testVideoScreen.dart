@@ -94,8 +94,7 @@ class TestVideoScreenState extends State<TestVideoScreen> {
         SpeedDialChild(
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
-            onTap: () async {
-              await vp.pollForCompletedRequest();
+            onTap: () {
               Future<GetLabelDetectionResponse> responses =
                   vp.grabResults(vp.jobId);
               responses.then((value) {
