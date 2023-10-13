@@ -1,15 +1,10 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-import 'package:path/path.dart' as p;
-
 class TestScreen extends StatefulWidget {
-  //TestScreen({super.key});
+  const TestScreen({super.key});
 
   Widget build(BuildContext context) {
     return Scaffold(

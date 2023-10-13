@@ -21,6 +21,7 @@ class S3Bucket {
     await dotenv.load(fileName: ".env"); //load .env file variables
 
     connection = S3(
+        //this region is hard-coded because the 'us-east-2' region would not run/load.
         region: 'us-east-1',
         credentials: AwsClientCredentials(
             accessKey: dotenv.get('accessKey'),
@@ -30,7 +31,7 @@ class S3Bucket {
   void createBucket() {
     Future<CreateBucketOutput> creating =
         connection!.createBucket(bucket: dotenv.get('videoS3Bucket'));
-
+    //TODO:debug/testing statements
     creating.then((value) {
       print("Bucket is created");
     });
@@ -42,7 +43,7 @@ class S3Bucket {
       key: title,
       body: content,
     );
-
+    //TODO:debug/testing statements
     putting.then((value) {
       print("content added to bucket.");
     });
