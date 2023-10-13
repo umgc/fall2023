@@ -30,6 +30,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  # A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
+  camera: ^0.10.5+5
+  
+  # A Flutter plugin for iOS, Android and Web for playing back video on a Widget surface.
+  video_player: ^2.7.2
+
+  # A Flutter plugin for finding commonly used locations on the filesystem. Supports Android, iOS, Linux, macOS and Windows. Not all methods are supported on all platforms.
+  #path_provider: ^2.1.1
 
 
   # The following adds the Cupertino Icons font to your application.
