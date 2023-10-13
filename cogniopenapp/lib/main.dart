@@ -52,7 +52,7 @@ void createDirectoryIfNotExists(String directoryPath) {
   if (!directory.existsSync()) {
     directory.createSync(recursive: true);
     print('Directory created: $directoryPath');
-  } else {
+  } /* else {
     print('Directory already exists: $directoryPath');
-  }
+  } */
 }

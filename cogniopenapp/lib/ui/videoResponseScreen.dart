@@ -43,10 +43,17 @@ List<VideoResponse> createTestResponseList() {
 
 List<VideoResponse> createResponseList(GetLabelDetectionResponse response) {
   List<VideoResponse> responseList = [];
+  List<String?> recognizedItems = [];
 
   Iterator<LabelDetection> iter = response.labels!.iterator;
   while (iter.moveNext()) {
     for (Instance inst in iter.current.label!.instances!) {
+      String? name = iter.current.label!.name;
+      if (recognizedItems.contains(name)) {
+        continue;
+      } else {
+        recognizedItems.add(name);
+      }
       VideoResponse newResponse = VideoResponse.overloaded(
         iter.current.label!.name ?? "default value",
         iter.current.label!.confidence ?? 80,

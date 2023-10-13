@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 import '../src/media.dart';
 import '../src/video.dart';
 import '../src/photo.dart';
 import '../src/conversation.dart';
 import '../main.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 class GalleryData {
@@ -14,7 +15,7 @@ class GalleryData {
   static Directory? videoDirectory;
 
   GalleryData._internal() {
-    print("internal created");
+    print("Internal gallery data created");
     getAllPhotos();
     getAllVideos();
   }
@@ -38,27 +39,24 @@ class GalleryData {
   }
 
   void getAllPhotos() async {
-    print("----------------- GRABBING ALL PHOTOS -----------------");
     List<Media> allPhotos = [];
     final rootDirectory = await getApplicationDocumentsDirectory();
     Directory photos = Directory('${rootDirectory.path}/photos');
     photoDirectory = photos;
-    printDirectoriesAndContents(photos);
+    //printDirectoriesAndContents(photos);
 
     if (photos.existsSync()) {
       List<FileSystemEntity> files = photos.listSync();
 
       for (var file in files) {
         if (file is File) {
-          print("FILE");
-          print(file.path);
           Photo photo = Photo(
             Image.file(file),
             Media(
               title: '<placeholder title>',
               description: '<placeholder title>',
               tags: ['<placeholder tag>', 'purple', 'pink'],
-              timeStamp: DateTime.now(),
+              timeStamp: DateTime.parse(getFileTimestamp(file.path)),
               storageSize: file.lengthSync(),
               isFavorited: false,
             ),
@@ -67,38 +65,53 @@ class GalleryData {
         }
       }
     }
-    print("----------------- ALL PHOTOS GRABBED -----------------");
   }
 
   void getAllVideos() async {
-    print("----------------- GRABBING ALL VIDEOS -----------------");
     List<Media> allPhotos = [];
     final rootDirectory = await getApplicationDocumentsDirectory();
     Directory videos = Directory('${rootDirectory.path}/videos');
     videoDirectory = videos;
-    printDirectoriesAndContents(videos);
+    //printDirectoriesAndContents(videos);
 
     //TO DO POPULATE WITH THE VIDEO STUFF
-    print("----------------- ALL VIDEOS GRABBED -----------------");
   }
-}
 
-void printDirectoriesAndContents(Directory directory, {int depth = 0}) {
-  final prefix = '  ' * depth;
-  print('$prefix${directory.path}/'); // Print the current directory
+  void printDirectoriesAndContents(Directory directory, {int depth = 0}) {
+    final prefix = '  ' * depth;
+    print('$prefix${directory.path}/'); // Print the current directory
 
-  try {
-    final entities = directory.listSync(); // List the directory's contents
+    try {
+      final entities = directory.listSync(); // List the directory's contents
 
-    for (final entity in entities) {
-      if (entity is File) {
-        print('$prefix  - ${entity.uri.pathSegments.last}'); // Print file
-      } else if (entity is Directory) {
-        printDirectoriesAndContents(entity,
-            depth: depth + 1); // Recursively print subdirectory
+      for (final entity in entities) {
+        if (entity is File) {
+          print('$prefix  - ${entity.uri.pathSegments.last}'); // Print file
+        } else if (entity is Directory) {
+          printDirectoriesAndContents(entity,
+              depth: depth + 1); // Recursively print subdirectory
+        }
       }
+    } catch (e) {
+      print('$prefix  Error: $e');
     }
-  } catch (e) {
-    print('$prefix  Error: $e');
+  }
+
+  String getFileTimestamp(String filePath) {
+    // Get the file name from the full file path
+    String fileName = path.basename(filePath);
+
+    // Find the last dot (.) in the file name to separate the extension
+    int dotIndex = fileName.lastIndexOf('.');
+
+    String newName = fileName.replaceFirst("_", " ");
+
+    if (dotIndex != -1) {
+      // Return the file name without the extension
+      return newName.substring(0, dotIndex);
+    } else {
+      // If there's no dot in the file name, return the entire name
+      return newName;
+    }
   }
 }
