@@ -4,16 +4,20 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:cogniopenapp/src/s3_connection.dart';
 import 'dart:io';
 
 import 'src/galleryData.dart';
-
-import 'package:cogniopenapp/src/s3_connection.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
   initializeData();
   runApp(MyApp());
+  final rootDirectory =
+      await getApplicationDocumentsDirectory(); // Use the current working directory
+  String path = rootDirectory.path;
+  createDirectoryIfNotExists('${rootDirectory.path}/photos');
+  createDirectoryIfNotExists('${rootDirectory.path}/videos');
 }
 
 class MyApp extends StatelessWidget {
@@ -41,4 +45,15 @@ void initializeData() {
   //initialize backend services
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
+}
+
+void createDirectoryIfNotExists(String directoryPath) {
+  Directory directory = Directory(directoryPath);
+
+  if (!directory.existsSync()) {
+    directory.createSync(recursive: true);
+    print('Directory created: $directoryPath');
+  } else {
+    print('Directory already exists: $directoryPath');
+  }
 }
