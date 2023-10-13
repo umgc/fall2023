@@ -42,16 +42,16 @@ void _logError(String code, String? message) {
 
 // Fetch the available cameras before initializing the app.
 Future<void> _initializeCamera() async {
-    _cameras = await availableCameras();
+  _cameras = await availableCameras();
 
-    try {
+  try {
     WidgetsFlutterBinding.ensureInitialized();
     _cameras = await availableCameras();
   } on CameraException catch (e) {
     _logError(e.code, e.description);
   }
   runApp(const CameraApp());
-  }
+}
 
 class _CameraHomeState extends State<VideoScreen>
     with WidgetsBindingObserver, TickerProviderStateMixin {
@@ -183,7 +183,8 @@ class _CameraHomeState extends State<VideoScreen>
                 GestureDetector(
                   onTap: () async {
                     if (imageFile != null || videoFile != null) {
-                      openOptionsBottomSheet(context);  // Open the options bottom sheet
+                      openOptionsBottomSheet(
+                          context); // Open the options bottom sheet
                     }
                   },
                   child: _thumbnailWidget(),
@@ -302,7 +303,7 @@ class _CameraHomeState extends State<VideoScreen>
                 onTap: () {
                   // Implement logic to open a viewer for the picture or video.
                   // Example: Navigator.push(context, MaterialPageRoute(builder: (context) => ReviewScreen()));
-                  
+
                   Navigator.pop(context); // Close the BottomSheet.
                 },
               ),
@@ -771,10 +772,9 @@ class _CameraHomeState extends State<VideoScreen>
         if (file != null) {
           showInSnackBar('Picture saved to ${file.path}');
 
-
           // Save the captured image locally
           isVideo = false;
-        saveMediaLocally(file); // Call the saveMediaLocally function
+          saveMediaLocally(file); // Call the saveMediaLocally function
         }
       }
     });
@@ -837,7 +837,7 @@ class _CameraHomeState extends State<VideoScreen>
   }
 
   //Uncomment to add Flash and Exposure feature
- /* void onSetFlashModeButtonPressed(FlashMode mode) {
+  /* void onSetFlashModeButtonPressed(FlashMode mode) {
     setFlashMode(mode).then((_) {
       if (mounted) {
         setState(() {});
@@ -882,10 +882,9 @@ class _CameraHomeState extends State<VideoScreen>
         videoFile = file;
         _startVideoPlayer();
 
-
         // Save the recorded video locally
         isVideo = true;
-      saveMediaLocally(file); // Call the saveMediaLocally function
+        saveMediaLocally(file); // Call the saveMediaLocally function
       }
     });
   }
@@ -1108,31 +1107,33 @@ class _CameraHomeState extends State<VideoScreen>
   bool isVideo = false; // By default, assume it's a photo
 
   Future<void> saveMediaLocally(XFile mediaFile) async {
-  // Get the local directory
-  final Directory directory = await getApplicationDocumentsDirectory();
+    // Get the local directory
+    final Directory directory = await getApplicationDocumentsDirectory();
 
-  // Define a file name for the saved media, you can use a timestamp or any unique name
-  final String fileExtension = isVideo ? 'mp4' : 'jpg'; // Determine the file extension based on media type
-  final String timestamp = DateTime.now().toString();
-  final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
-  final String fileName = '$sanitizedTimestamp.$fileExtension'; // Use the determined file extension
+    // Define a file name for the saved media, you can use a timestamp or any unique name
+    final String fileExtension = isVideo
+        ? 'mp4'
+        : 'jpg'; // Determine the file extension based on media type
+    final String timestamp = DateTime.now().toString();
+    final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
+    final String fileName =
+        '$sanitizedTimestamp.$fileExtension'; // Use the determined file extension
 
+    // Create a new file by copying the media file to the local directory
+    final File localFile = isVideo
+        ? File('${directory.path}/videos/$fileName')
+        : File('${directory.path}/photos/$fileName');
 
-  // Create a new file by copying the media file to the local directory
-  final File localFile = File('${directory.path}/$fileName');
+    // Copy the media to the local directory
+    await localFile.writeAsBytes(await mediaFile.readAsBytes());
 
-  // Copy the media to the local directory
-  await localFile.writeAsBytes(await mediaFile.readAsBytes());
-
-  // Check if the media file has been successfully saved
-  if (localFile.existsSync()) {
-    
-    print('Media saved locally: ${localFile.path}');
-    
-  } else {
-    print('Failed to save media locally.');
+    // Check if the media file has been successfully saved
+    if (localFile.existsSync()) {
+      print('Media saved locally: ${localFile.path}');
+    } else {
+      print('Failed to save media locally.');
+    }
   }
-}
 
   void _showCameraException(CameraException e) {
     _logError(e.code, e.description);
@@ -1140,9 +1141,7 @@ class _CameraHomeState extends State<VideoScreen>
   }
 }
 
-
 class CameraApp extends StatelessWidget {
-  
   const CameraApp({super.key});
 
   @override
