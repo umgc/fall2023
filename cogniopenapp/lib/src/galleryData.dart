@@ -13,11 +13,14 @@ class GalleryData {
   static final GalleryData _instance = GalleryData._internal();
   static Directory? photoDirectory;
   static Directory? videoDirectory;
+  static String mostRecentVideoPath = "";
+  static String mostRecentVideoName = "";
 
   GalleryData._internal() {
     print("Internal gallery data created");
     getAllPhotos();
     getAllVideos();
+    _setMostRecentVideo();
   }
 
   factory GalleryData() {
@@ -67,6 +70,20 @@ class GalleryData {
     }
   }
 
+  static void _setMostRecentVideo() async {
+    final rootDirectory = await getApplicationDocumentsDirectory();
+    Directory videos = Directory('${rootDirectory.path}/videos');
+    //printDirectoriesAndContents(photos);
+
+    if (videos.existsSync()) {
+      List<FileSystemEntity> files = videos.listSync();
+      print("Most recently recorded video:");
+      print(files.last.path);
+      mostRecentVideoName = getFileNameForAWS(files.last.path);
+      mostRecentVideoPath = files.last.path;
+    }
+  }
+
   void getAllVideos() async {
     List<Media> allPhotos = [];
     final rootDirectory = await getApplicationDocumentsDirectory();
@@ -97,7 +114,7 @@ class GalleryData {
     }
   }
 
-  String getFileTimestamp(String filePath) {
+  static String getFileTimestamp(String filePath) {
     // Get the file name from the full file path
     String fileName = path.basename(filePath);
 
@@ -113,5 +130,14 @@ class GalleryData {
       // If there's no dot in the file name, return the entire name
       return newName;
     }
+  }
+
+  static getFileNameForAWS(String filePath) {
+    // Get the file name from the full file path
+    String fileName = path.basename(filePath);
+
+    String partOne = fileName.replaceAll(":", "_");
+
+    return partOne.replaceFirst(".", "_");
   }
 }

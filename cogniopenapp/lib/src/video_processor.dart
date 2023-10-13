@@ -1,8 +1,14 @@
 // ignore_for_file: avoid_print, unused_element
 
+import 'dart:typed_data';
+
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:aws_sns_api/sns-2010-03-31.dart';
+import 'dart:io';
+
+import 'galleryData.dart';
+import 's3_connection.dart';
 
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
@@ -158,5 +164,18 @@ class VideoProcessor {
     });
 */
     return labelsResponse;
+  }
+
+  void uploadVideoToS3() {
+    S3Bucket s3 = S3Bucket();
+    // Set the name for the file to be added to the bucket based on the file name
+    String title = GalleryData.mostRecentVideoName;
+    print("TITLE");
+    print(title);
+    Uint8List bytes = File(GalleryData.mostRecentVideoPath).readAsBytesSync();
+    Future<String> uploadedVideo = s3.addVideo(title, bytes);
+    uploadedVideo.then((value) async {
+      await sendRequestToProcessVideo(value);
+    });
   }
 }

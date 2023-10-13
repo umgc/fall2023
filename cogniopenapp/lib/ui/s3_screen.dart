@@ -4,6 +4,8 @@ import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import '../src/galleryData.dart';
+import 'dart:io';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -90,17 +92,7 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              String title = "cogni_recorded_test.mp4";
-              Future<ByteData> file =
-                  rootBundle.load('assets/test_images/$title');
-              file.then((value) async {
-                Uint8List bytes = value.buffer.asUint8List();
-                Future<String> uploadedVideo = s3.addVideo(title, bytes);
-                uploadedVideo.then((value) async {
-                  StartLabelDetectionResponse job =
-                      await vp.sendRequestToProcessVideo(value);
-                });
-              });
+              vp.uploadVideoToS3();
             },
             label: 'Add video',
             labelStyle: const TextStyle(
