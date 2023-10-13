@@ -1,4 +1,5 @@
 import 'package:cogniopenapp/src/s3_connection.dart';
+import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -20,6 +21,7 @@ class TestScreen extends StatefulWidget {
 
 class TestScreenState extends State<TestScreen> {
   S3Bucket s3 = S3Bucket();
+  VideoProcessor vp = VideoProcessor();
 
   @override
   Widget build(BuildContext context) {
@@ -87,23 +89,17 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              //List<int> list = 'example data changed'.codeUnits;
-              //Uint8List bytes = Uint8List.fromList(list);
               String title = "1MinuteSampleVideo.mp4";
               Future<ByteData> file =
                   rootBundle.load('assets/test_images/$title');
-              file.then((value) {
+              file.then((value) async {
                 Uint8List bytes = value.buffer.asUint8List();
-                s3.addVideo(title, bytes);
+                Future<String> uploadedVideo = s3.addVideo(title, bytes);
+                uploadedVideo.then((value) async {
+                  print(await vp.sendRequestToProcessVideo(value));
+                });
               });
-
-              //print(Directory.current.path);
-              //print(p.dirname(path));
-              //File file = File("/1MinuteSampleVideo.mp4");
-              //var data = file.readAsBytesSync();
-              //VideoPlayerController controller = VideoPlayerController.file(
-              //    "/assets/test_images/1 Minute Sample Video.mp4" as File);
-              //controller.dataSourceType;
+              print("Loading user content...");
             },
             label: 'Add video',
             labelStyle: const TextStyle(
