@@ -1,90 +1,3 @@
-/*import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-
-class VideoScreen extends StatefulWidget {
-  @override
-  _VideoScreenState createState() => _VideoScreenState();
-}
-
-class _VideoScreenState extends State<VideoScreen> {
-  late CameraController _controller;
-  late List<CameraDescription> cameras;
-
-  @override
-  void initState() {
-    super.initState();
-    // Initialize the camera controller
-    availableCameras().then((cameraList) {
-      setState(() {
-        cameras = cameraList;
-        if (cameras.isNotEmpty) {
-          _controller = CameraController(cameras[0], ResolutionPreset.high);
-          _controller.initialize().then((_) {
-            if (!mounted) {
-              return;
-            }
-            setState(() {});
-          });
-        }
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_controller == null || !_controller.value.isInitialized) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    final size = MediaQuery.of(context).size;
-    final double cameraAspectRatio = _controller.value.aspectRatio;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Video Recording'),
-      ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Container(
-              width: size.width,
-              height: size.width / cameraAspectRatio,
-              child: AspectRatio(
-                aspectRatio: cameraAspectRatio,
-                child: CameraPreview(_controller),
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                // Implement your video recording logic here
-              },
-              child: Image.asset(
-                'assets/icons/redDot_Record.png',
-                width: 50,
-                height: 50,
-              ),
-            ),
-
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/
-
-
-
-
-
 import 'dart:async';
 import 'dart:io';
 
@@ -93,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// Camera home widget.
 class VideoScreen extends StatefulWidget {
@@ -147,15 +61,18 @@ class _CameraHomeState extends State<VideoScreen>
   VideoPlayerController? videoController;
   VoidCallback? videoPlayerListener;
   bool enableAudio = true;
-  double _minAvailableExposureOffset = 0.0;
+
+  //Uncomment to add Flash and Exposure feature
+  /*double _minAvailableExposureOffset = 0.0;
   double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
+  
   late AnimationController _flashModeControlRowAnimationController;
   late Animation<double> _flashModeControlRowAnimation;
   late AnimationController _exposureModeControlRowAnimationController;
   late Animation<double> _exposureModeControlRowAnimation;
   late AnimationController _focusModeControlRowAnimationController;
-  late Animation<double> _focusModeControlRowAnimation;
+  late Animation<double> _focusModeControlRowAnimation;*/
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
@@ -170,7 +87,8 @@ class _CameraHomeState extends State<VideoScreen>
     _initializeCamera();
     WidgetsBinding.instance.addObserver(this);
 
-    _flashModeControlRowAnimationController = AnimationController(
+    //Uncomment to add Flash and Exposure feature
+    /*_flashModeControlRowAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
@@ -193,14 +111,15 @@ class _CameraHomeState extends State<VideoScreen>
     _focusModeControlRowAnimation = CurvedAnimation(
       parent: _focusModeControlRowAnimationController,
       curve: Curves.easeInCubic,
-    );
+    );*/
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _flashModeControlRowAnimationController.dispose();
-    _exposureModeControlRowAnimationController.dispose();
+    //Uncomment to add Flash and Exposure feature
+    /*_flashModeControlRowAnimationController.dispose();
+    _exposureModeControlRowAnimationController.dispose();*/
     super.dispose();
   }
 
@@ -251,7 +170,9 @@ class _CameraHomeState extends State<VideoScreen>
             ),
           ),
           _captureControlRowWidget(),
-          _modeControlRowWidget(),
+
+          // Uncomment to add Flash and Exposure feature
+          //_modeControlRowWidget(),
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: Row(
@@ -281,7 +202,7 @@ class _CameraHomeState extends State<VideoScreen>
 
     if (cameraController == null || !cameraController.value.isInitialized) {
       return const Text(
-        'Tap a camera',
+        'Tap a camera icon below',
         style: TextStyle(
           color: Colors.white,
           fontSize: 24.0,
@@ -410,8 +331,9 @@ class _CameraHomeState extends State<VideoScreen>
     );
   }
 
+  //Uncomment to add Flash and Exposure feature
   /// Display a bar with buttons to change the flash and exposure modes
-  Widget _modeControlRowWidget() {
+  /*Widget _modeControlRowWidget() {
     return Column(
       children: <Widget>[
         Row(
@@ -647,7 +569,7 @@ class _CameraHomeState extends State<VideoScreen>
         ),
       ),
     );
-  }
+  }*/
 
   /// Display the control bar with buttons to take pictures and record videos.
   Widget _captureControlRowWidget() {
@@ -801,8 +723,9 @@ class _CameraHomeState extends State<VideoScreen>
     try {
       await cameraController.initialize();
       await Future.wait(<Future<Object?>>[
+        //Uncomment to add Flash and Exposure feature
         // The exposure mode is currently not supported on the web.
-        ...!kIsWeb
+        /*...!kIsWeb
             ? <Future<Object?>>[
                 cameraController.getMinExposureOffset().then(
                     (double value) => _minAvailableExposureOffset = value),
@@ -810,7 +733,7 @@ class _CameraHomeState extends State<VideoScreen>
                     .getMaxExposureOffset()
                     .then((double value) => _maxAvailableExposureOffset = value)
               ]
-            : <Future<Object?>>[],
+            : <Future<Object?>>[],*/
         cameraController
             .getMaxZoomLevel()
             .then((double value) => _maxAvailableZoom = value),
@@ -863,12 +786,18 @@ class _CameraHomeState extends State<VideoScreen>
         });
         if (file != null) {
           showInSnackBar('Picture saved to ${file.path}');
+
+
+          // Save the captured image locally
+          isVideo = false;
+        saveMediaLocally(file); // Call the saveMediaLocally function
         }
       }
     });
   }
 
-  void onFlashModeButtonPressed() {
+  //Uncomment to add Flash and Exposure feature
+  /*void onFlashModeButtonPressed() {
     if (_flashModeControlRowAnimationController.value == 1) {
       _flashModeControlRowAnimationController.reverse();
     } else {
@@ -896,7 +825,7 @@ class _CameraHomeState extends State<VideoScreen>
       _flashModeControlRowAnimationController.reverse();
       _exposureModeControlRowAnimationController.reverse();
     }
-  }
+  }*/
 
   void onAudioModeButtonPressed() {
     enableAudio = !enableAudio;
@@ -923,7 +852,8 @@ class _CameraHomeState extends State<VideoScreen>
     }
   }
 
-  void onSetFlashModeButtonPressed(FlashMode mode) {
+  //Uncomment to add Flash and Exposure feature
+ /* void onSetFlashModeButtonPressed(FlashMode mode) {
     setFlashMode(mode).then((_) {
       if (mounted) {
         setState(() {});
@@ -948,7 +878,7 @@ class _CameraHomeState extends State<VideoScreen>
       }
       showInSnackBar('Focus mode set to ${mode.toString().split('.').last}');
     });
-  }
+  }*/
 
   void onVideoRecordButtonPressed() {
     startVideoRecording().then((_) {
@@ -967,6 +897,11 @@ class _CameraHomeState extends State<VideoScreen>
         showInSnackBar('Video recorded to ${file.path}');
         videoFile = file;
         _startVideoPlayer();
+
+
+        // Save the recorded video locally
+        isVideo = true;
+      saveMediaLocally(file); // Call the saveMediaLocally function
       }
     });
   }
@@ -1074,7 +1009,8 @@ class _CameraHomeState extends State<VideoScreen>
     }
   }
 
-  Future<void> setFlashMode(FlashMode mode) async {
+  //Uncomment to add Flash and Exposure feature
+  /*Future<void> setFlashMode(FlashMode mode) async {
     if (controller == null) {
       return;
     }
@@ -1127,7 +1063,7 @@ class _CameraHomeState extends State<VideoScreen>
       _showCameraException(e);
       rethrow;
     }
-  }
+  }*/
 
   Future<void> _startVideoPlayer() async {
     if (videoFile == null) {
@@ -1184,6 +1120,36 @@ class _CameraHomeState extends State<VideoScreen>
       return null;
     }
   }
+
+  bool isVideo = false; // By default, assume it's a photo
+
+  Future<void> saveMediaLocally(XFile mediaFile) async {
+  // Get the local directory
+  final Directory directory = await getApplicationDocumentsDirectory();
+
+  // Define a file name for the saved media, you can use a timestamp or any unique name
+  final String fileExtension = isVideo ? 'mp4' : 'jpg'; // Determine the file extension based on media type
+  final String timestamp = DateTime.now().toString();
+  final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
+  final String fileName = '$sanitizedTimestamp.$fileExtension'; // Use the determined file extension
+
+
+  // Create a new file by copying the media file to the local directory
+  final File localFile = File('${directory.path}/$fileName');
+
+  // Copy the media to the local directory
+  await localFile.writeAsBytes(await mediaFile.readAsBytes());
+
+  // Check if the media file has been successfully saved
+  if (localFile.existsSync()) {
+    // You can perform additional actions here, such as displaying a confirmation message
+    // or updating a list of saved media in your app.
+    print('Media saved locally: ${localFile.path}');
+  } else {
+    // Handle the case where the media was not saved
+    print('Failed to save media locally.');
+  }
+}
 
   void _showCameraException(CameraException e) {
     _logError(e.code, e.description);
