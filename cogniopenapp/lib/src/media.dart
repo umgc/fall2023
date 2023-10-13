@@ -117,6 +117,26 @@ class Media {
   }
 }
 
+List<Media> createRealMediaList() {
+  return [
+    Photo(
+      Image.network(
+          'https://www.kasandbox.org/programming-images/avatars/spunky-sam.png'),
+      Media(
+        title: 'PLACEHOLDER',
+        description: 'PLACEHOLDER',
+        tags: ['avatar', 'spunky'],
+        timeStamp: DateTime.now(),
+        storageSize: 1024,
+        isFavorited: false,
+      ),
+    ),
+  ];
+}
+
+// |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+// |||||||||||||||||||||||||||||||||||||||||||||||||||||||FOR TESTING ONLY||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+// |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // Images taken from: https://www.yttags.com/blog/image-url-for-testing/
 List<Media> createTestMediaList() {
   return [
