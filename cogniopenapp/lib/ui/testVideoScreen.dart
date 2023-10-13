@@ -1,37 +1,39 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
-import 'package:cogniopenapp/src/s3_connection.dart';
-import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-class TestScreen extends StatefulWidget {
-  const TestScreen({super.key});
+import '../src/video_processor.dart';
+import 'videoResponseScreen.dart';
+
+class TestVideoScreen extends StatefulWidget {
+  TestVideoScreen({super.key});
 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('S3 Buckets'),
+        title: const Text('Video Recording'),
       ),
     );
   }
 
   @override
-  TestScreenState createState() => TestScreenState();
+  TestVideoScreenState createState() => TestVideoScreenState();
 }
 
-class TestScreenState extends State<TestScreen> {
-  S3Bucket s3 = S3Bucket();
+class TestVideoScreenState extends State<TestVideoScreen> {
+  String text = 'Open bottom-left menu, and select "Grab Job".';
+
+  //call video processor object, and start the rekognition service
   VideoProcessor vp = VideoProcessor();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('S3 Buckets'),
+        title: const Text('Video Recording'),
       ),
-      body: const Column(children: [
-        Padding(
+      body: Column(children: [
+        const Padding(
           padding: EdgeInsets.fromLTRB(
               16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
           child: Text(
@@ -46,11 +48,11 @@ class TestScreenState extends State<TestScreen> {
         ),
         Padding(
           // New subheading section starts here
-          padding: EdgeInsets.fromLTRB(
+          padding: const EdgeInsets.fromLTRB(
               16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
           child: Text(
-            "Click the buttons to do the thing.", // This is the subheading text
-            style: TextStyle(
+            text, // This is the subheading text
+            style: const TextStyle(
               fontSize: 16.0, // Adjust font size as needed
               //color:
               //Colors.white70, // Slightly transparent white for subheading
@@ -59,12 +61,11 @@ class TestScreenState extends State<TestScreen> {
           ),
         ), // New subheading section ends here
       ]),
-      floatingActionButton: _getFAB(s3),
+      floatingActionButton: _getFAB(vp),
     );
   }
 
-  Widget _getFAB(S3Bucket s3) {
-    //s3.startService();
+  Widget _getFAB(VideoProcessor vp) {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
       animatedIconTheme: const IconThemeData(size: 22),
@@ -77,9 +78,13 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.search),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              s3.createBucket();
+              vp.pollForCompletedRequest();
+              setState(() {
+                text =
+                    "Job ID: ${vp.jobId}\n\n Open bottom-left menu, and select \"Show Results\".";
+              });
             },
-            label: 'Create bucket',
+            label: 'Grab Job',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
@@ -90,23 +95,16 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              String title = "1MinuteSampleVideo.mp4";
-              Future<ByteData> file =
-                  rootBundle.load('assets/test_images/$title');
-              file.then((value) async {
-                Uint8List bytes = value.buffer.asUint8List();
-                Future<String> uploadedVideo = s3.addVideo(title, bytes);
-                uploadedVideo.then((value) async {
-                  StartLabelDetectionResponse job =
-                      await vp.sendRequestToProcessVideo(value);
-                  //StartLabelDetectionResponse job =
-                  //    await vp.sendRequestToProcessVideoOld();
-                  print(job.jobId);
-                });
+              Future<GetLabelDetectionResponse> responses =
+                  vp.grabResults(vp.jobId);
+              responses.then((value) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => VideoResponseScreen(value)));
               });
-              print("Loading user content...");
             },
-            label: 'Add video',
+            label: 'Show Results',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
