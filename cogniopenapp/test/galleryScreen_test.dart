@@ -64,4 +64,35 @@ void main() {
     //search Text Field on screen when search icon is clicked
     expect(find.byType(TextField), findsNothing);
   });
+
+  testWidgets(
+      'when favorite icon is clicked, then favorited items should appear/disappear ',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: GalleryScreen(), //Gallery Scren
+    ));
+
+    //7 items in grid when Gallery loads
+    final gridFinder = find.byType(GridView);
+    expect(gridFinder, findsOneWidget);
+    final gridInitial = tester.widget<GridView>(gridFinder);
+    expect(gridInitial.childrenDelegate.estimatedChildCount, 7);
+
+    //push favorites icon - toggle on favorites
+    final favoriteIcon = find.byKey(const Key('favoriteIcon'));
+    await tester.tap(favoriteIcon);
+    await tester.pumpAndSettle();
+
+    //only 3 items left on screen
+    final gridAfter = tester.widget<GridView>(gridFinder);
+    expect(gridAfter.childrenDelegate.estimatedChildCount, 3);
+
+    //push favorites icon - toggle off favorites
+    await tester.tap(favoriteIcon);
+    await tester.pumpAndSettle();
+
+    //7 items left on screen again
+    final gridFinal = tester.widget<GridView>(gridFinder);
+    expect(gridFinal.childrenDelegate.estimatedChildCount, 7);
+  });
 }
