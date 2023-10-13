@@ -300,6 +300,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowFavorited,
             ),
             IconButton(
+              key: const Key('filterPhotoIcon'),
               icon: _showPhotos
                   ? const Icon(Icons.photo)
                   : const Icon(Icons.photo_outlined),
@@ -307,6 +308,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowPhotos,
             ),
             IconButton(
+              key: const Key('filterVideoIcon'),
               color: _showVideos ? Colors.white : Colors.grey,
               icon: _showVideos
                   ? const Icon(Icons.videocam)
@@ -314,6 +316,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowVideos,
             ),
             IconButton(
+              key: const Key('filterConversationIcon'),
               color: _showConversations ? Colors.white : Colors.grey,
               icon: _showConversations
                   ? const Icon(Icons.chat)
