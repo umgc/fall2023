@@ -48,6 +48,9 @@ dependencies:
   audio_waveforms: ^1.0.4
   path_provider: ^2.1.1
   aws_kinesis_api: ^2.0.0
+  aws_sns_api: ^2.0.0
+  aws_s3_api: ^2.0.0
+  video_player: ^2.7.2
 
 dev_dependencies:
   flutter_test:
