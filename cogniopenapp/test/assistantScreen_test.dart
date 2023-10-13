@@ -43,7 +43,6 @@ void main() {
     await tester.pumpAndSettle();
 
     // Check for correct answer
-    final bar = find.widgetWithText(ChatMessage, answerToExpect);
     answerChatMessage = find.widgetWithText(ChatMessage, answerToExpect);
     expect(answerChatMessage, findsOneWidget);
   });
