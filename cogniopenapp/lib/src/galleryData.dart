@@ -15,7 +15,7 @@ class GalleryData {
   static Directory? videoDirectory;
 
   GalleryData._internal() {
-    print("internal created");
+    print("Internal gallery data created");
     getAllPhotos();
     getAllVideos();
   }
@@ -39,20 +39,17 @@ class GalleryData {
   }
 
   void getAllPhotos() async {
-    print("----------------- GRABBING ALL PHOTOS -----------------");
     List<Media> allPhotos = [];
     final rootDirectory = await getApplicationDocumentsDirectory();
     Directory photos = Directory('${rootDirectory.path}/photos');
     photoDirectory = photos;
-    printDirectoriesAndContents(photos);
+    //printDirectoriesAndContents(photos);
 
     if (photos.existsSync()) {
       List<FileSystemEntity> files = photos.listSync();
 
       for (var file in files) {
         if (file is File) {
-          print("FILE");
-          print(file.path);
           Photo photo = Photo(
             Image.file(file),
             Media(
@@ -68,19 +65,16 @@ class GalleryData {
         }
       }
     }
-    print("----------------- ALL PHOTOS GRABBED -----------------");
   }
 
   void getAllVideos() async {
-    print("----------------- GRABBING ALL VIDEOS -----------------");
     List<Media> allPhotos = [];
     final rootDirectory = await getApplicationDocumentsDirectory();
     Directory videos = Directory('${rootDirectory.path}/videos');
     videoDirectory = videos;
-    printDirectoriesAndContents(videos);
+    //printDirectoriesAndContents(videos);
 
     //TO DO POPULATE WITH THE VIDEO STUFF
-    print("----------------- ALL VIDEOS GRABBED -----------------");
   }
 
   void printDirectoriesAndContents(Directory directory, {int depth = 0}) {
