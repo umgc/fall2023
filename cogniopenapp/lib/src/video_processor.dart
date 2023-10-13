@@ -64,12 +64,12 @@ class VideoProcessor {
       //jobTag: jobTag,
       minConfidence: confidence,
     );
-    return job;
     //notificationChannel: notes);
     //jobId = job.jobId;
-    //return job.then((value) {
-    //  value.jobId;
-    //});
+    job.then((value) {
+      jobId = value.jobId!;
+    });
+    return job;
   }
 
   Future<StartLabelDetectionResponse> sendRequestToProcessVideoOld() async {
@@ -90,24 +90,34 @@ class VideoProcessor {
   }
 
   void pollForCompletedRequest() {
+    Future<GetLabelDetectionResponse> labelsResponse =
+        service!.getLabelDetection(jobId: jobId);
+
+    //print the processed video results
+    //helpful in debugging, as needed.
+    //bool inProgress = true;
+    //while (inProgress) {
+    labelsResponse.then((value) {
+      if (value.jobStatus == VideoJobStatus.inProgress) {
+        //keep looping
+      } else if (value.jobStatus == VideoJobStatus.succeeded) {
+        //stop looping
+        //inProgress = false;
+        print(value.statusMessage);
+      } else if (value.jobStatus == VideoJobStatus.failed) {
+        //stop looping, but print message.
+        //inProgress = false;
+        print(value.statusMessage);
+      }
+      print(value.jobStatus);
+    });
+    //}
+
     print(jobId);
     //TODO: default value until we get tied into the Notifications
     //jobId = "c6066a5db28405887230197d6b668fb7523097cf057c5efaccfdd7c3af7432fe";
     //jobId = "e647f111e80cefa919298c86b518b0f5ee4d805b722493ca4492f26770840993";
     //jobId = "8728b1791baec4ca41f218f4713f651dca97c3971a7bd6bb8f6fb515093ac185";
-    //job.then((value) {
-    //  jobId = value.jobId!;
-    //});
-
-    //poll for completed job in the NotificationChannel
-    //To get the results of the label detection operation, first
-    //check that the status value published to the Amazon SNS topic is SUCCEEDED.
-    //If so, call GetLabelDetection and pass the job identifier (JobId)
-    //from the initial call to StartLabelDetection.
-
-    //When the label detection operation finishes,
-    //Amazon Rekognition publishes a completion status to the
-    //Amazon Simple Notification Service topic registered in the initial call to StartlabelDetection
   }
 
   Future<GetLabelDetectionResponse> grabResults(jobId) {
@@ -117,7 +127,9 @@ class VideoProcessor {
 
     //print the processed video results
     //helpful in debugging, as needed.
-
+    /*labelsResponse.then((value) {
+      print(value.videoMetadata);
+    });
     labelsResponse.then((value) {
       Iterator<LabelDetection> iter = value.labels!.iterator;
       while (iter.moveNext()) {
@@ -144,7 +156,7 @@ class VideoProcessor {
         */
       }
     });
-
+*/
     return labelsResponse;
   }
 }

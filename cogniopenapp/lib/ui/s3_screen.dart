@@ -90,7 +90,7 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              String title = "1MinuteSampleVideo.mp4";
+              String title = "cogni_recorded_test.mp4";
               Future<ByteData> file =
                   rootBundle.load('assets/test_images/$title');
               file.then((value) async {
@@ -99,12 +99,8 @@ class TestScreenState extends State<TestScreen> {
                 uploadedVideo.then((value) async {
                   StartLabelDetectionResponse job =
                       await vp.sendRequestToProcessVideo(value);
-                  //StartLabelDetectionResponse job =
-                  //    await vp.sendRequestToProcessVideoOld();
-                  print(job.jobId);
                 });
               });
-              print("Loading user content...");
             },
             label: 'Add video',
             labelStyle: const TextStyle(

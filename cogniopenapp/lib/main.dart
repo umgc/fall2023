@@ -4,7 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:cogniopenapp/src/s3_connection.dart';
 import 'dart:io';
 
 import 'src/galleryData.dart';
