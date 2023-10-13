@@ -7,12 +7,8 @@ import 'videoResponseScreen.dart';
 
 class VideoScreen extends StatefulWidget {
   VideoScreen({super.key});
-  //call video processor object, and start the rekognition service
-  //VideoProcessor vp = VideoProcessor(80, "");
 
   Widget build(BuildContext context) {
-    //vp.startService();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Video Recording'),
@@ -26,14 +22,12 @@ class VideoScreen extends StatefulWidget {
 
 class VideoScreenState extends State<VideoScreen> {
   String text = 'Open bottom-left menu, and select "Grab Job".';
-  bool jobNotDone = false;
+
   //call video processor object, and start the rekognition service
-  VideoProcessor vp = VideoProcessor(80, "");
+  VideoProcessor vp = VideoProcessor();
 
   @override
   Widget build(BuildContext context) {
-    vp.startService();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Video Recording'),

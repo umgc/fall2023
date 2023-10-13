@@ -1,7 +1,5 @@
 import 'dart:typed_data';
-
 import 'package:aws_s3_api/s3-2006-03-01.dart';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class S3Bucket {
@@ -10,7 +8,9 @@ class S3Bucket {
   static final S3Bucket _instance = S3Bucket._internal();
 
   S3Bucket._internal() {
-    startService();
+    startService().then((value) {
+      createBucket();
+    });
   }
 
   factory S3Bucket() {
@@ -22,13 +22,15 @@ class S3Bucket {
 
     connection = S3(
         //this region is hard-coded because the 'us-east-2' region would not run/load.
-        region: 'us-east-1',
+        region: dotenv.get('region'),
         credentials: AwsClientCredentials(
             accessKey: dotenv.get('accessKey'),
             secretKey: dotenv.get('secretKey')));
+    print("S3 is connected...");
   }
 
   void createBucket() {
+    //impotent method that creates bucket if it is not already present.
     Future<CreateBucketOutput> creating =
         connection!.createBucket(bucket: dotenv.get('videoS3Bucket'));
     //TODO:debug/testing statements
@@ -37,15 +39,17 @@ class S3Bucket {
     });
   }
 
-  void addVideo(String title, Uint8List content) {
-    Future<PutObjectOutput> putting = connection!.putObject(
+  //adds the Video to the S3 bucket
+  //if the file already exists with that name, it is overwritten
+  //method returns the name of the file being uploaded (used in queueing the object detection)
+  Future<String> addVideo(String title, Uint8List content) async {
+    await connection!.putObject(
       bucket: dotenv.get('videoS3Bucket'),
       key: title,
       body: content,
     );
     //TODO:debug/testing statements
-    putting.then((value) {
-      print("content added to bucket.");
-    });
+    print("content added to bucket.");
+    return title;
   }
 }

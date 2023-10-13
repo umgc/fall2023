@@ -2,15 +2,29 @@
 
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:aws_sns_api/sns-2010-03-31.dart';
 
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
   //(default is 50; the higher the more confident - and thus better and fewer results)
-  double confidence;
+  double confidence = 80;
   Rekognition? service;
-  String jobId;
+  SNS? sns;
+  String jobId = '';
 
-  VideoProcessor(this.confidence, this.jobId);
+  NotificationChannel? notes;
+  String clientRequestToken = "donacdum";
+  String jobTag = "devandtest";
+
+  static final VideoProcessor _instance = VideoProcessor._internal();
+
+  VideoProcessor._internal() {
+    startService().then((value) {});
+  }
+
+  factory VideoProcessor() {
+    return _instance;
+  }
 
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
@@ -19,31 +33,56 @@ class VideoProcessor {
         credentials: AwsClientCredentials(
             accessKey: dotenv.get('accessKey'),
             secretKey: dotenv.get('secretKey')));
+    sns = SNS(
+        region: dotenv.get('region'),
+        credentials: AwsClientCredentials(
+            accessKey: dotenv.get('accessKey'),
+            secretKey: dotenv.get('secretKey')));
+    //impotent method to create notification topic if not already created
+    sns!.createTopic(name: dotenv.get('snsTopicName'));
+    notes = NotificationChannel(
+        roleArn: "arn:aws:iam::${dotenv.get('accountID')}:role/sns-role",
+        sNSTopicArn:
+            "arn:aws:sns:${dotenv.get('region')}:${dotenv.get('accountID')}:${dotenv.get('snsTopicName')}");
+
+    print("Rekognition is up...");
   }
 
-  Future<StartLabelDetectionResponse> sendRequestToProcessVideo() async {
+  Future<String?> sendRequestToProcessVideo(String title) async {
     //grab Video
     //TODO: allow parameters for bucket and video name
     Video video = Video(
-        s3Object: S3Object(
-            bucket: dotenv.get('videoS3Bucket'),
-            name:
-                "Sea waves & beach drone video _ Free HD Video - no copyright.mp4"));
-
+        s3Object: S3Object(bucket: dotenv.get('videoS3Bucket'), name: title));
+    //"Sea waves & beach drone video _ Free HD Video - no copyright.mp4"));
+    print(video.s3Object!.bucket.toString());
+    print(video.s3Object!.name.toString());
     //start label detection service of Video
     //The label detection operation is started by a call to StartLabelDetection which returns a job identifier
-    Future<StartLabelDetectionResponse> job =
-        service!.startLabelDetection(video: video, minConfidence: confidence);
-
-    return job;
+    StartLabelDetectionResponse job = await service!.startLabelDetection(
+      video: video,
+      //clientRequestToken: clientRequestToken,
+      //jobTag: jobTag,
+      minConfidence: confidence,
+    );
+    //notificationChannel: notes);
+    jobId = job.jobId!;
+    return jobId;
   }
 
   void pollForCompletedRequest() {
+    print(jobId);
     //TODO: default value until we get tied into the Notifications
-    jobId = "c6066a5db28405887230197d6b668fb7523097cf057c5efaccfdd7c3af7432fe";
+    //jobId = "c6066a5db28405887230197d6b668fb7523097cf057c5efaccfdd7c3af7432fe";
+    //jobId = "e647f111e80cefa919298c86b518b0f5ee4d805b722493ca4492f26770840993";
+    //job.then((value) {
+    //  jobId = value.jobId!;
+    //});
 
-    //poll for completed job
-    //NotificationChannel
+    //poll for completed job in the NotificationChannel
+    //To get the results of the label detection operation, first
+    //check that the status value published to the Amazon SNS topic is SUCCEEDED.
+    //If so, call GetLabelDetection and pass the job identifier (JobId)
+    //from the initial call to StartLabelDetection.
 
     //When the label detection operation finishes,
     //Amazon Rekognition publishes a completion status to the
