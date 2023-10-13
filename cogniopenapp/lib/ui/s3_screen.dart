@@ -1,6 +1,7 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
+import 'package:cogniopenapp/ui/testVideoScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -77,6 +78,7 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.search),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
+              //creates a bucket; not needed since we are doing this on app load
               s3.createBucket();
             },
             label: 'Create bucket',
@@ -90,17 +92,25 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
+              //TODO:hardcoded filename; will need updated to grab latest from user.
               String title = "cogni_recorded_test.mp4";
               Future<ByteData> file =
                   rootBundle.load('assets/test_images/$title');
               file.then((value) async {
+                //convert to byte stream for S3 upload
                 Uint8List bytes = value.buffer.asUint8List();
+                //upload video
                 Future<String> uploadedVideo = s3.addVideo(title, bytes);
+                //once uploaded, initiate Rekognition request
                 uploadedVideo.then((value) async {
                   StartLabelDetectionResponse job =
                       await vp.sendRequestToProcessVideo(value);
                 });
               });
+              //adding this to move to the video processing screen.
+              //for testing
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TestVideoScreen()));
             },
             label: 'Add video',
             labelStyle: const TextStyle(
