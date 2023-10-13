@@ -1,6 +1,7 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
+import 'package:cogniopenapp/ui/testVideoScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -79,6 +80,7 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.search),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
+              //creates a bucket; not needed since we are doing this on app load
               s3.createBucket();
             },
             label: 'Create bucket',
@@ -93,6 +95,8 @@ class TestScreenState extends State<TestScreen> {
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
               vp.uploadVideoToS3();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TestVideoScreen()));
             },
             label: 'Add video',
             labelStyle: const TextStyle(
