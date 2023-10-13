@@ -1,8 +1,12 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
+import 'package:path/path.dart' as p;
 
 class TestScreen extends StatefulWidget {
   //TestScreen({super.key});
@@ -88,9 +92,23 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              List<int> list = 'example data changed'.codeUnits;
-              Uint8List bytes = Uint8List.fromList(list);
-              s3.addVideo(bytes);
+              //List<int> list = 'example data changed'.codeUnits;
+              //Uint8List bytes = Uint8List.fromList(list);
+
+              Future<ByteData> file =
+                  rootBundle.load('assets/test_images/eyeglass-green.jpg');
+              file.then((value) {
+                Uint8List bytes = value.buffer.asUint8List();
+                s3.addVideo(bytes);
+              });
+
+              //print(Directory.current.path);
+              //print(p.dirname(path));
+              //File file = File("/1MinuteSampleVideo.mp4");
+              //var data = file.readAsBytesSync();
+              //VideoPlayerController controller = VideoPlayerController.file(
+              //    "/assets/test_images/1 Minute Sample Video.mp4" as File);
+              //controller.dataSourceType;
             },
             label: 'Add video',
             labelStyle: const TextStyle(
