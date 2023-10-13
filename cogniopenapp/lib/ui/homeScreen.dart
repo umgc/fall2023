@@ -10,6 +10,7 @@ import 'profileScreen.dart';
 import 'recentScreen.dart';
 import 'searchScreen.dart';
 import 'videoScreen.dart';
+import 'significantObjectScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -149,9 +150,41 @@ class HomeScreen extends StatelessWidget {
                   key: const Key("VirtualAssistantButtonKey"),
                 ),
                 ElevatedButton(
+                                  onPressed: () {
+                                    // Navigate to Gallery screen
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => GalleryScreen()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.black,
+                                    backgroundColor: const Color(0XFFC6FF00), // Button text color
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0), // Square border
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/icons/gallery.png',
+                                        width: 75.0, // You can adjust the width and height
+                                        height: 75.0, // as per your requirement
+                                      ),
+                                      const SizedBox(
+                                        height: 8.0, // Add some spacing between the image and text
+                                      ),
+                                      const Text('Gallery'),
+                                    ],
+                                  ),
+                                  key: const Key("GalleryButtonKey"),
+                                ),
+
+
+
+
+                ElevatedButton(
                   onPressed: () {
                     // Navigate to Gallery screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => GalleryScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignificantObjectScreen ()));
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.black,
@@ -171,7 +204,7 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(
                         height: 8.0, // Add some spacing between the image and text
                       ),
-                      const Text('Gallery'),
+                      const Text('Signifiant Object'),
                     ],
                   ),
                   key: const Key("GalleryButtonKey"),
