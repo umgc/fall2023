@@ -746,24 +746,8 @@ class _CameraHomeState extends State<VideoScreen>
         case 'CameraAccessDenied':
           showInSnackBar('You have denied camera access.');
           break;
-        case 'CameraAccessDeniedWithoutPrompt':
-          // iOS only
-          showInSnackBar('Please go to Settings app to enable camera access.');
-          break;
-        case 'CameraAccessRestricted':
-          // iOS only
-          showInSnackBar('Camera access is restricted.');
-          break;
         case 'AudioAccessDenied':
           showInSnackBar('You have denied audio access.');
-          break;
-        case 'AudioAccessDeniedWithoutPrompt':
-          // iOS only
-          showInSnackBar('Please go to Settings app to enable audio access.');
-          break;
-        case 'AudioAccessRestricted':
-          // iOS only
-          showInSnackBar('Audio access is restricted.');
           break;
         default:
           _showCameraException(e);
@@ -1142,11 +1126,10 @@ class _CameraHomeState extends State<VideoScreen>
 
   // Check if the media file has been successfully saved
   if (localFile.existsSync()) {
-    // You can perform additional actions here, such as displaying a confirmation message
-    // or updating a list of saved media in your app.
+    
     print('Media saved locally: ${localFile.path}');
+    
   } else {
-    // Handle the case where the media was not saved
     print('Failed to save media locally.');
   }
 }
@@ -1157,9 +1140,9 @@ class _CameraHomeState extends State<VideoScreen>
   }
 }
 
-/// CameraApp is the Main Application.
+
 class CameraApp extends StatelessWidget {
-  /// Default Constructor
+  
   const CameraApp({super.key});
 
   @override
