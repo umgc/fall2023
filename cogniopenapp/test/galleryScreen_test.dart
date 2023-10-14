@@ -95,4 +95,70 @@ void main() {
     final gridFinal = tester.widget<GridView>(gridFinder);
     expect(gridFinal.childrenDelegate.estimatedChildCount, 7);
   });
+
+  testWidgets(
+      'when photo filter icon is clicked, then only photo items should appear/disappear ',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: GalleryScreen(), //Gallery Scren
+    ));
+
+    final photoItemsFinder =
+        find.byKey(const Key('photoItem'), skipOffstage: false);
+
+    await tester.ensureVisible(photoItemsFinder.first);
+    await tester.pumpAndSettle();
+
+    expect(photoItemsFinder, findsNWidgets(5));
+
+    //click photo filter icon, remove photos
+    final photoFilter =
+        find.byKey(const Key('filterPhotoIcon'), skipOffstage: false);
+
+    await tester.tap(photoFilter);
+    await tester.pumpAndSettle();
+
+    expect(photoItemsFinder, findsNothing);
+
+    //toggle back on
+    await tester.tap(photoFilter);
+    await tester.pumpAndSettle();
+
+    expect(photoItemsFinder, findsNWidgets(5));
+  });
+
+  testWidgets(
+      'when video filter icon is clicked, then only video items should appear/disappear ',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: GalleryScreen(), //Gallery Scren
+    ));
+
+    //find videoItem widget
+    final videoItemsFinder =
+        find.byKey(const Key('videoItem'), skipOffstage: false);
+    //find vertical scrollbar
+    final scrollView =
+        find.byType(PrimaryScrollController, skipOffstage: false).first;
+    //drag until videoitem is visible
+    await tester.dragUntilVisible(
+        videoItemsFinder, scrollView, Offset(0, -500));
+
+    expect(videoItemsFinder, findsNWidgets(1));
+
+    //click video filter icon, remove videos
+    final videoFilter =
+        find.byKey(const Key('filterVideoIcon'), skipOffstage: false);
+
+    await tester.tap(videoFilter);
+    await tester.pumpAndSettle();
+
+    expect(videoItemsFinder, findsNothing);
+
+    //toggle back on
+    await tester.tap(videoFilter);
+    await tester.pumpAndSettle();
+
+    expect(videoItemsFinder, findsNWidgets(1));
+  });
 }

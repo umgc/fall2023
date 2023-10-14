@@ -410,6 +410,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Expanded(
       child: Center(
         child: Image(
+          key: const Key('photoItem'),
           image: media.associatedImage.image,
         ),
       ),
@@ -418,6 +419,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   Widget _buildVideoImage(Video media) {
     return Image(
+      key: const Key('videoItem'),
       image: media.thumbnail.image,
       // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
       width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
