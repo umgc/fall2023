@@ -95,8 +95,10 @@ class TestScreenState extends State<TestScreen> {
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
               vp.uploadVideoToS3();
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TestVideoScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const TestVideoScreen()));
             },
             label: 'Add video',
             labelStyle: const TextStyle(

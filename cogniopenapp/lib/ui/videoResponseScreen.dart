@@ -94,7 +94,8 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
   Widget build(BuildContext context) {
     //List<VideoResponse> realResponse = createTestResponseList();
     List<VideoResponse> realResponse = createResponseList(awsResponses);
-
+    double imageWidth = 320;
+    double imageHeight = 240;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Query Responses'),
@@ -125,6 +126,8 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
               return GestureDetector(
                 onTap: () async {
                   //response.setImage(response.timestamp);
+                  imageWidth = realResponse[0].exampleImage.width!;
+                  imageHeight = realResponse[0].exampleImage.height!;
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) {
@@ -144,16 +147,18 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
                                     //if (_isRectangleVisible)
                                     Positioned(
                                       //TODO: hardcoded video frame width and height; these need replaced with whatever actually comes in as the image
-                                      left: 320 * response.boundingBox!.left,
-                                      top: 240 * response.boundingBox!.top,
+                                      left: imageWidth *
+                                          response.boundingBox!.left,
+                                      top: imageHeight *
+                                          response.boundingBox!.top,
                                       child: Opacity(
                                         opacity: 0.35,
                                         child: Material(
                                           child: InkWell(
                                             child: Container(
-                                              width: 320 *
+                                              width: imageWidth *
                                                   response.boundingBox!.width,
-                                              height: 240 *
+                                              height: imageHeight *
                                                   response.boundingBox!.height,
                                               decoration: BoxDecoration(
                                                 border: Border.all(
