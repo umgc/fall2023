@@ -82,7 +82,7 @@ class GalleryData {
             Media(
               title: '<placeholder title>',
               description: '<placeholder title>',
-              tags: ['<placeholder tag>', 'purple', 'pink'],
+              tags: ['<placeholder tag>'],
               timeStamp: DateTime.parse(getFileTimestamp(file.path)),
               storageSize: file.lengthSync(),
               isFavorited: false,
@@ -92,6 +92,49 @@ class GalleryData {
         }
       }
     }
+
+    allMedia.add(Video(
+      '2:30', // Duration
+      true, // Auto-delete
+      [
+        IdentifiedItem(
+          'Item 1',
+          DateTime.now(), // Time spotted
+          Image.network(
+            'https://www.example.com/item1.jpg', // Item image URL
+          ),
+        ),
+        IdentifiedItem(
+          'Item 2',
+          DateTime.now()
+              .subtract(Duration(days: 1)), // Time spotted (1 day ago)
+          Image.network(
+            'https://www.example.com/item2.jpg', // Item image URL
+          ),
+        ),
+      ],
+      Image.network(
+          'https://cdn.fstoppers.com/styles/article_med/s3/media/2020/05/18/exploration_is_key_to_making_unique_landscape_photos_01.jpg'),
+      Media(
+        title: 'Test Video',
+        description: 'This is a placeholder for a video',
+        tags: ['video', 'test'],
+        timeStamp: DateTime.now(),
+        storageSize: 4096,
+        isFavorited: false,
+      ), // Associated media (in this case, a photo)
+    ));
+
+    allMedia.add(Conversation(
+        "A test conversation",
+        Media(
+          title: "Conversation",
+          description: "This is a sample conversation",
+          tags: ["sample", "conversation"],
+          timeStamp: DateTime(2023, 10, 5),
+          storageSize: 2048, // 2 KB
+          isFavorited: true,
+        )));
   }
 
   static void _setMostRecentVideo() async {
