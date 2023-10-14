@@ -94,6 +94,7 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
   Widget build(BuildContext context) {
     //List<VideoResponse> realResponse = createTestResponseList();
     List<VideoResponse> realResponse = createResponseList(awsResponses);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Query Responses'),
@@ -120,10 +121,11 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
             itemCount: realResponse.length,
             itemBuilder: (BuildContext context, int index) {
               VideoResponse response = realResponse[index];
+              response.setImage(response.timestamp);
               return GestureDetector(
                 onTap: () async {
                   print("SHOULD BE A NEW IMAGE");
-                  response.setImage(response.timestamp);
+                  //response.setImage(response.timestamp);
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) {
@@ -208,7 +210,7 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        //Image(image: response.associatedImage.image),
+                        //Image(image: response.exampleImage.image),
                         const SizedBox(height: 8),
                         Text(
                           response.name,

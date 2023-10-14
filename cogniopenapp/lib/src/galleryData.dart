@@ -203,9 +203,10 @@ class GalleryData {
       if (thumbPath != null) {
         // You can now load the image from the thumbnailPath and display it in your Flutter app.
         // For example, using the Image widget:
-        print("WE GOT THE FILE PATH THUMBNAIL. IT IS ${thumbPath}");
-        print("WE GOT TIMESTAMP IS. IT IS ${timesStamp}");
-        return Image.file(File(thumbPath));
+        File renamed = await File(thumbPath).rename(
+            "${thumbPath.replaceAll(".png", ".mp4")}-${timesStamp}.png");
+        print("new path is renamed ${newPath}");
+        return Image.file(renamed);
       }
     } catch (e) {
       print("Error generating thumbnail: $e");
