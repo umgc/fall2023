@@ -6,7 +6,7 @@ import '../src/video_processor.dart';
 import 'videoResponseScreen.dart';
 
 class TestVideoScreen extends StatefulWidget {
-  TestVideoScreen({super.key});
+  const TestVideoScreen({super.key});
 
   Widget build(BuildContext context) {
     return Scaffold(

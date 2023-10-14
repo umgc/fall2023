@@ -1,4 +1,5 @@
 import 'package:aws_kinesis_api/kinesis-2013-12-02.dart';
+import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class VideoStreamer {
@@ -8,7 +9,7 @@ class VideoStreamer {
   Kinesis? service;
   int shardCount = 5;
   String streamName = "";
-  //String jobId;
+  String streamARN = "";
 
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
@@ -18,6 +19,8 @@ class VideoStreamer {
         credentials: AwsClientCredentials(
             accessKey: dotenv.get('accessKey'),
             secretKey: dotenv.get('secretKey')));
+    streamARN =
+        "arn:aws:kinesis:${dotenv.get('region')}:${dotenv.get('accountID')}:stream/${dotenv.get('KinesisStreamName')}";
   }
 
   Future<ListStreamsOutput> checkForStream() {

@@ -135,12 +135,54 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                //Image(image: response.associatedImage.image),
+                                Stack(
+                                  children: [
+                                    const Image(
+                                        image: AssetImage(
+                                            'assets/test_images/eyeglass-frame.jpg')),
+                                    //if (_isRectangleVisible)
+                                    Positioned(
+                                      //TODO: hardcoded video frame width and height; these need replaced with whatever actually comes in as the image
+                                      left: 320 * response.boundingBox!.left,
+                                      top: 240 * response.boundingBox!.top,
+                                      child: Opacity(
+                                        opacity: 0.35,
+                                        child: Material(
+                                          child: InkWell(
+                                            child: Container(
+                                              width: 320 *
+                                                  response.boundingBox!.width,
+                                              height: 240 *
+                                                  response.boundingBox!.height,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  width: 2,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Container(
+                                                  color: Colors.black,
+                                                  child: Text(
+                                                    '${response.name} ${((response.confidence * 100).truncateToDouble()) / 100}%',
+                                                    style: const TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 const SizedBox(height: 16),
                                 Text('Name: ${response.name}',
                                     style: const TextStyle(fontSize: 18)),
-                                Text('Confidence: ${response.confidence}'),
-                                Text('Timestamp: ${response.timestamp}'),
+                                //Text('Confidence: ${response.confidence}'),
+                                //Text('Timestamp: ${response.timestamp}'),
                                 Text(
                                     'BoundingBox: ${response.boundingBox?.toString() ?? "N/A"}'),
                               ],

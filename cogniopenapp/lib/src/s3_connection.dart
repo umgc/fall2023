@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:typed_data';
 import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -26,6 +28,7 @@ class S3Bucket {
         credentials: AwsClientCredentials(
             accessKey: dotenv.get('accessKey'),
             secretKey: dotenv.get('secretKey')));
+    //TODO:debug/testing statements
     print("S3 is connected...");
   }
 
