@@ -124,7 +124,6 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
               response.setImage(response.timestamp);
               return GestureDetector(
                 onTap: () async {
-                  print("SHOULD BE A NEW IMAGE");
                   //response.setImage(response.timestamp);
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(

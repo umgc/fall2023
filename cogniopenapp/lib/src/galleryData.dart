@@ -16,6 +16,7 @@ class GalleryData {
   static Directory? videoDirectory;
   static String mostRecentVideoPath = "";
   static String mostRecentVideoName = "";
+  static List<String> processedImages = [];
 
   GalleryData._internal() {
     print("Internal gallery data created");
@@ -188,10 +189,20 @@ class GalleryData {
   }
 
   static Future<Image> getThumbnail(String vidPath, int timesStamp) async {
-    print("Video path for frame is ${vidPath}");
-    print("timesStamp for frame is ${timesStamp}");
-    String newPath = "${videoDirectory?.path}/stills/";
+    //print("Video path for frame is ${vidPath}");
+    //print("timesStamp for frame is ${timesStamp}");
+
+    String newFile =
+        "${videoDirectory?.path}/stills/${path.basename(vidPath)}-${timesStamp}.png";
+
+    if (processedImages.contains(newFile)) {
+      return Image.file(File(newFile));
+    }
+
+    processedImages.add(newFile); // Add the image if not added already
+
     try {
+      String newPath = "${videoDirectory?.path}/stills/";
       String? thumbPath = await VideoThumbnail.thumbnailFile(
         video: vidPath,
         thumbnailPath: newPath,
@@ -203,14 +214,13 @@ class GalleryData {
       if (thumbPath != null) {
         // You can now load the image from the thumbnailPath and display it in your Flutter app.
         // For example, using the Image widget:
-        File renamed = await File(thumbPath).rename(
-            "${thumbPath.replaceAll(".png", ".mp4")}-${timesStamp}.png");
-        print("new path is renamed ${newPath}");
+        File renamed = await File(thumbPath).rename(newFile);
         return Image.file(renamed);
       }
     } catch (e) {
       print("Error generating thumbnail: $e");
     }
+    // REturn this to signfiy an erro
     return Image.network(
         "https://media.istockphoto.com/id/1349592578/de/vektor/leeres-warnschild-und-vorfahrtsschild-an-einem-mast-vektorillustration.webp?s=2048x2048&w=is&k=20&c=zmhLi9Ot96KXUe1OLd3dGNYJk0KMZZBQl39iQf6lcMk=");
   }
