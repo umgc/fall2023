@@ -42,6 +42,7 @@ class GalleryData {
     return videoDirectory;
   }
 
+/*
   static void addTestPhoto() async {
     Image image = await VideoFrameExporter.getThumbnail(
         "/data/user/0/comcogniopen.cogniopenapp/app_flutter/videos/2023-10-13_17:27:03.158963.mp4",
@@ -61,6 +62,7 @@ class GalleryData {
     );
     allMedia.add(photo);
   }
+  */
 
   void getAllPhotos() async {
     List<Media> allPhotos = [];
@@ -188,21 +190,23 @@ class GalleryData {
 
 class VideoFrameExporter {
   static Future<Image> getThumbnail(String vidPath, int timesStamp) async {
+    print("Video path for frame is ${vidPath}");
+    print("timesStamp for frame is ${timesStamp}");
+    //String newPath = "${vidPath}-${timesStamp}";
     try {
-      String? thumbnailPath = await VideoThumbnail.thumbnailFile(
+      String? thumbPath = await VideoThumbnail.thumbnailFile(
         video: vidPath,
+        //thumbnailPath: newPath,
         imageFormat:
             ImageFormat.PNG, // You can use other formats like JPEG, etc.
         timeMs: timesStamp,
       );
 
-      thumbnailPath = thumbnailPath;
-
-      if (thumbnailPath != null) {
+      if (thumbPath != null) {
         // You can now load the image from the thumbnailPath and display it in your Flutter app.
         // For example, using the Image widget:
-        print("WE GOT THE FILE PATH THUMBNAIL. IT IS ${thumbnailPath}");
-        return Image.file(File(thumbnailPath));
+        print("WE GOT THE FILE PATH THUMBNAIL. IT IS ${thumbPath}");
+        return Image.file(File(thumbPath));
       }
     } catch (e) {
       print("Error generating thumbnail: $e");

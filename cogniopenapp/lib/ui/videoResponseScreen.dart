@@ -1,5 +1,6 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:flutter/material.dart';
+import '../src/galleryData.dart';
 
 import '../src/video_response.dart';
 
@@ -92,7 +93,6 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //List<VideoResponse> realResponse = createTestResponseList();
     List<VideoResponse> realResponse = createResponseList(awsResponses);
     return Scaffold(
       appBar: AppBar(
@@ -121,7 +121,8 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
             itemBuilder: (BuildContext context, int index) {
               VideoResponse response = realResponse[index];
               return GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  response.setImage();
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) {
@@ -135,7 +136,7 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                //Image(image: response.associatedImage.image),
+                                Image(image: response.exampleImage.image),
                                 const SizedBox(height: 16),
                                 Text('Name: ${response.name}',
                                     style: const TextStyle(fontSize: 18)),
@@ -164,8 +165,8 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        //Image(image: response.associatedImage.image),
-                        const SizedBox(height: 8),
+                        Image(image: response.exampleImage.image),
+                        const SizedBox(height: 10),
                         Text(
                           response.name,
                           style: const TextStyle(fontSize: 16),

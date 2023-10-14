@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../src/galleryData.dart';
 
 class VideoResponse {
   String name;
@@ -11,7 +12,17 @@ class VideoResponse {
   VideoResponse(this.name, this.confidence, this.timestamp);
 
   VideoResponse.overloaded(
-      this.name, this.confidence, this.timestamp, this.boundingBox);
+      this.name, this.confidence, this.timestamp, this.boundingBox) {}
+
+  Future<Image> getImage() async {
+    return await VideoFrameExporter.getThumbnail(
+        GalleryData.mostRecentVideoPath, timestamp);
+  }
+
+  void setImage() async {
+    exampleImage = await VideoFrameExporter.getThumbnail(
+        GalleryData.mostRecentVideoPath, timestamp);
+  }
 }
 
 class ResponseBoundingBox {
