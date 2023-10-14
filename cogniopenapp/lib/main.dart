@@ -44,6 +44,7 @@ void initializeData() {
   //initialize backend services
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
+  GalleryData.addTestPhoto();
 }
 
 void createDirectoryIfNotExists(String directoryPath) {

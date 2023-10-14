@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../src/media.dart';
 import '../src/video.dart';
@@ -39,6 +40,26 @@ class GalleryData {
 
   static Directory? getVideoDirectory() {
     return videoDirectory;
+  }
+
+  static void addTestPhoto() async {
+    Image image = await VideoFrameExporter.getThumbnail(
+        "/data/user/0/comcogniopen.cogniopenapp/app_flutter/videos/2023-10-13_17:27:03.158963.mp4",
+        1000);
+
+    print("GRABBING CUSTOM IMAGE HOPEFULLY");
+    Photo photo = Photo(
+      image,
+      Media(
+        title: 'PLEASE THUMBNAIL',
+        description: '<placeholder title>',
+        tags: ['<placeholder tag>', 'purple', 'pink'],
+        timeStamp: DateTime.now(),
+        storageSize: 12345,
+        isFavorited: false,
+      ),
+    );
+    allMedia.add(photo);
   }
 
   void getAllPhotos() async {
@@ -89,6 +110,29 @@ class GalleryData {
     final rootDirectory = await getApplicationDocumentsDirectory();
     Directory videos = Directory('${rootDirectory.path}/videos');
     videoDirectory = videos;
+
+    if (videos.existsSync()) {
+      List<FileSystemEntity> files = videos.listSync();
+
+      for (var file in files) {
+        if (file is File) {
+          print("VIDEO PATH PLEASE");
+          print(file.path);
+          /* Photo photo = Photo(
+            Image.file(file),
+            Media(
+              title: '<placeholder title>',
+              description: '<placeholder title>',
+              tags: ['<placeholder tag>', 'purple', 'pink'],
+              timeStamp: DateTime.parse(getFileTimestamp(file.path)),
+              storageSize: file.lengthSync(),
+              isFavorited: false,
+            ),
+          );
+          allMedia.add(photo); */
+        }
+      }
+    }
     //printDirectoriesAndContents(videos);
 
     //TO DO POPULATE WITH THE VIDEO STUFF
@@ -139,5 +183,31 @@ class GalleryData {
     String partOne = fileName.replaceAll(":", "_");
 
     return partOne.replaceFirst(".", "_");
+  }
+}
+
+class VideoFrameExporter {
+  static Future<Image> getThumbnail(String vidPath, int timesStamp) async {
+    try {
+      String? thumbnailPath = await VideoThumbnail.thumbnailFile(
+        video: vidPath,
+        imageFormat:
+            ImageFormat.PNG, // You can use other formats like JPEG, etc.
+        timeMs: timesStamp,
+      );
+
+      thumbnailPath = thumbnailPath;
+
+      if (thumbnailPath != null) {
+        // You can now load the image from the thumbnailPath and display it in your Flutter app.
+        // For example, using the Image widget:
+        print("WE GOT THE FILE PATH THUMBNAIL. IT IS ${thumbnailPath}");
+        return Image.file(File(thumbnailPath));
+      }
+    } catch (e) {
+      print("Error generating thumbnail: $e");
+    }
+    return Image.network(
+        "https://media.istockphoto.com/id/1349592578/de/vektor/leeres-warnschild-und-vorfahrtsschild-an-einem-mast-vektorillustration.webp?s=2048x2048&w=is&k=20&c=zmhLi9Ot96KXUe1OLd3dGNYJk0KMZZBQl39iQf6lcMk=");
   }
 }
