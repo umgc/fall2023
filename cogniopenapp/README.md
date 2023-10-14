@@ -11,7 +11,7 @@ The CogniOpen (FKA 'RemindMe!') application for the UMGC Capstone - SWEN 670 fal
 
 # Using the .env file
 
-The .env file will store environmental (and other secret) variables used in the development and execution of the application functions.
+The .env file will store environmental (and other secret) variables used in the development and execution of the application functions. See the `temp-env` file with variables to fill in.
 For example, the ChatGPT access token variable will be stored here to access the ChatGPT API (used in various audio transcription related features). Likewise, the AWS S3 and Rekognition accessKeys are also stored in this file.
 
 This .env file IS NOT to be checked into the source code repo. Before committing code, please ensure that your .env file is not being pushed into the branches; similarly, ensure that the .gitignore file include ` *.env` so that this .env file will never be uploaded to the repository.

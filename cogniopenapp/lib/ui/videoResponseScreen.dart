@@ -1,8 +1,6 @@
-import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
+import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:flutter/material.dart';
-//import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-//import '../src/video_processor.dart';
 import '../src/video_response.dart';
 
 List<VideoResponse> createTestResponseList() {
@@ -41,13 +39,13 @@ List<VideoResponse> createTestResponseList() {
   ];
 }
 
-List<VideoResponse> createResponseList(GetLabelDetectionResponse response) {
+List<VideoResponse> createResponseList(rek.GetLabelDetectionResponse response) {
   List<VideoResponse> responseList = [];
   List<String?> recognizedItems = [];
 
-  Iterator<LabelDetection> iter = response.labels!.iterator;
+  Iterator<rek.LabelDetection> iter = response.labels!.iterator;
   while (iter.moveNext()) {
-    for (Instance inst in iter.current.label!.instances!) {
+    for (rek.Instance inst in iter.current.label!.instances!) {
       String? name = iter.current.label!.name;
       if (recognizedItems.contains(name)) {
         continue;
@@ -71,7 +69,7 @@ List<VideoResponse> createResponseList(GetLabelDetectionResponse response) {
 }
 
 class VideoResponseScreen extends StatefulWidget {
-  final GetLabelDetectionResponse awsResponses;
+  final rek.GetLabelDetectionResponse awsResponses;
   const VideoResponseScreen(this.awsResponses, {super.key});
 
   Widget build(BuildContext context) {
@@ -89,7 +87,7 @@ class VideoResponseScreen extends StatefulWidget {
 }
 
 class VideoResponseScreenState extends State<VideoResponseScreen> {
-  GetLabelDetectionResponse awsResponses;
+  rek.GetLabelDetectionResponse awsResponses;
   VideoResponseScreenState(this.awsResponses);
 
   @override
