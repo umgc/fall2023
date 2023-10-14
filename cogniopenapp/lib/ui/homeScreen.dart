@@ -1,12 +1,12 @@
-import 'package:cogniopenapp/ui/testVideoScreen.dart';
+import 'package:cogniopenapp/ui/thumbs_BB_screen.dart';
 import 'package:flutter/material.dart';
 //import 'package:cogniopen/chatbotscreen.dart';
 
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
-import 'checkVideoStreamScreen.dart';
+//import 'checkVideoStreamScreen.dart';
 import 'galleryScreen.dart';
-import 'helpScreen.dart';
+//import 'helpScreen.dart';
 import 'profileScreen.dart';
 import 'recentScreen.dart';
 import 'searchScreen.dart';
@@ -71,7 +71,7 @@ class HomeScreen extends StatelessWidget {
               onTap: () {
                 Navigator.pop(context); // Close the drawer
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => TestVideoScreen()));
+                    MaterialPageRoute(builder: (context) => CameraAppScreen()));
               },
             ),
             ListTile(
