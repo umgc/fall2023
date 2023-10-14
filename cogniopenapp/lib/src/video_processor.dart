@@ -10,6 +10,7 @@ import 'dart:io';
 import 'galleryData.dart';
 import 's3_connection.dart';
 
+
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
   //(default is 50; the higher the more confident - and thus better and fewer results)
