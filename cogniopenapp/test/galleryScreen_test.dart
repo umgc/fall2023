@@ -161,4 +161,39 @@ void main() {
 
     expect(videoItemsFinder, findsNWidgets(1));
   });
+
+  testWidgets(
+      'when conversation filter icon is clicked, then only conversation items should appear/disappear ',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: GalleryScreen(), //Gallery Scren
+    ));
+
+    //find conversationItem widget
+    final conversationItemsFinder =
+        find.byKey(const Key('conversationItem'), skipOffstage: false);
+    //find vertical scrollbar
+    final scrollView =
+        find.byType(PrimaryScrollController, skipOffstage: false).first;
+    //drag until conversationitem is visible
+    await tester.dragUntilVisible(
+        conversationItemsFinder, scrollView, Offset(0, -500));
+
+    expect(conversationItemsFinder, findsNWidgets(1));
+
+    //click conversation filter icon, remove conversation
+    final conversationFilter =
+        find.byKey(const Key('filterConversationIcon'), skipOffstage: false);
+
+    await tester.tap(conversationFilter);
+    await tester.pumpAndSettle();
+
+    expect(conversationItemsFinder, findsNothing);
+
+    //toggle back on
+    await tester.tap(conversationFilter);
+    await tester.pumpAndSettle();
+
+    expect(conversationItemsFinder, findsNWidgets(1));
+  });
 }

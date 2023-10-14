@@ -428,7 +428,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Widget _buildConversationIcon() {
-    return Icon(Icons.chat, size: 50);
+    return const Icon(
+      key: Key('conversationItem'),
+      Icons.chat,
+      size: 50,
+    );
   }
 
   Widget _buildGridItemTitle(String title) {
