@@ -196,4 +196,36 @@ void main() {
 
     expect(conversationItemsFinder, findsNWidgets(1));
   });
+
+  testWidgets(
+      'when menu icon is clicked, then sort menu should appear/disappear ',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: GalleryScreen(), //Gallery Scren
+    ));
+
+    //tap sort button to bring up menu
+    final sortGalleryButton =
+        find.byKey(const Key('sortGalleryButton'), skipOffstage: false);
+
+    //find center of button, to ensure our tap doesnt miss
+    //this got rid of "warn if miss" warnings in the test output
+    await tester.tapAt(tester.getCenter(sortGalleryButton));
+    await tester.pump();
+
+    //menu is visible on screen
+    expect(find.text('Sort by Storage Size'), findsOneWidget);
+    expect(find.text('Sort by Time Stamp'), findsOneWidget);
+    expect(find.text('Sort by Title'), findsOneWidget);
+    expect(find.text('Sort by Type'), findsOneWidget);
+
+    //another click toggles it off again
+    await tester.tapAt(tester.getCenter(sortGalleryButton));
+    await tester.pump();
+
+    expect(find.text('Sort by Storage Size'), findsNothing);
+    expect(find.text('Sort by Time Stamp'), findsNothing);
+    expect(find.text('Sort by Title'), findsNothing);
+    expect(find.text('Sort by Type'), findsNothing);
+  });
 }

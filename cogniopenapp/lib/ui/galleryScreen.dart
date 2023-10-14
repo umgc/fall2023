@@ -327,6 +327,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         ),
         // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| POP UP MENU BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         PopupMenuButton<SortingCriteria>(
+          key: const Key('sortGalleryButton'),
           itemBuilder: (BuildContext context) {
             return _buildSortingCriteriaMenuItems();
           },
