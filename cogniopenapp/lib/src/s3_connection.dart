@@ -3,6 +3,9 @@
 import 'dart:typed_data';
 import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:io';
+
+import 'galleryData.dart';
 
 class S3Bucket {
   S3? connection;
@@ -42,13 +45,29 @@ class S3Bucket {
     });
   }
 
+  Future<String> addAudioToS3(String title, String localPath) {
+    // TODO Specify folder structure
+    Uint8List bytes = File(localPath).readAsBytesSync();
+    return _addToS3(title, bytes);
+  }
+
+  // Adds the file to the S3 bucket
+  Future<String> addVideoToS3(String title, String localPath) {
+    // TODO Specify folder structure
+    Uint8List bytes = File(localPath).readAsBytesSync();
+    return _addToS3(title, bytes);
+  }
+
   //adds the Video to the S3 bucket
   //if the file already exists with that name, it is overwritten
   //method returns the name of the file being uploaded (used in queueing the object detection)
-  Future<String> addVideo(String title, Uint8List content) async {
+  Future<String> _addToS3(String title, Uint8List content) async {
+    // TODO: Add logic to detect file type and create a folder
+    // .mp3 files go to bucket/audio, .mp4 files go to bucket/audio
+    String formattedTitle = GalleryData.getFileNameForAWS(title);
     await connection!.putObject(
       bucket: dotenv.get('videoS3Bucket'),
-      key: title,
+      key: formattedTitle,
       body: content,
     );
     //TODO:debug/testing statements

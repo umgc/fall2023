@@ -142,10 +142,10 @@ class VideoProcessor {
     // Set the name for the file to be added to the bucket based on the file name
     String title = GalleryData.mostRecentVideoName;
     //TODO:debug/testing statements
-    print("TITLE");
-    print(title);
-    Uint8List bytes = File(GalleryData.mostRecentVideoPath).readAsBytesSync();
-    Future<String> uploadedVideo = s3.addVideo(title, bytes);
+    print("Video to S3: ${title}");
+
+    Future<String> uploadedVideo =
+        s3.addVideoToS3(title, GalleryData.mostRecentVideoPath);
     uploadedVideo.then((value) async {
       await sendRequestToProcessVideo(value);
     });

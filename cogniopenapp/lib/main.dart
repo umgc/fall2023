@@ -12,12 +12,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   initializeData();
   runApp(MyApp());
-  final rootDirectory =
-      await getApplicationDocumentsDirectory(); // Use the current working directory
-  String path = rootDirectory.path;
-  createDirectoryIfNotExists('${rootDirectory.path}/photos');
-  createDirectoryIfNotExists('${rootDirectory.path}/videos');
-  createDirectoryIfNotExists('${rootDirectory.path}/videos/stills');
+  initializeDirectories();
 }
 
 class MyApp extends StatelessWidget {
@@ -39,13 +34,25 @@ class MyApp extends StatelessWidget {
   }
 }
 
-void initializeData() {
+// These are all singleton objects and should be initialized at the beginning
+void initializeData() async {
   // Create the singleton object to grab all local files
   GalleryData data = GalleryData();
   //initialize backend services
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
-  //GalleryData.addTestPhoto();
+}
+
+void initializeDirectories() async {
+  final rootDirectory =
+      await getApplicationDocumentsDirectory(); // Use the current working directory
+  String path = rootDirectory.path;
+  createDirectoryIfNotExists('${rootDirectory.path}/photos');
+  createDirectoryIfNotExists('${rootDirectory.path}/videos');
+  createDirectoryIfNotExists('${rootDirectory.path}/videos/stills');
+  createDirectoryIfNotExists('${rootDirectory.path}/videos/responses');
+  createDirectoryIfNotExists('${rootDirectory.path}/audio');
+  createDirectoryIfNotExists('${rootDirectory.path}/audio/transcripts');
 }
 
 void createDirectoryIfNotExists(String directoryPath) {

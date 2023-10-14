@@ -12,14 +12,27 @@ import 'dart:io';
 
 class GalleryData {
   static final GalleryData _instance = GalleryData._internal();
-  static Directory? photoDirectory;
-  static Directory? videoDirectory;
+  static late Directory photoDirectory;
+  static late Directory videoDirectory;
+  static late Directory audioDirectory;
+  static late Directory transcriptDirectory;
   static String mostRecentVideoPath = "";
   static String mostRecentVideoName = "";
   static List<String> processedImages = [];
 
   GalleryData._internal() {
     print("Internal gallery data created");
+    _initializedDirectories();
+  }
+
+  void _initializedDirectories() async {
+    final rootDirectory = await getApplicationDocumentsDirectory();
+    photoDirectory = Directory('${rootDirectory.path}/photos');
+    videoDirectory = Directory('${rootDirectory.path}/videos');
+    audioDirectory = Directory('${rootDirectory.path}/audio');
+    transcriptDirectory = Directory('${rootDirectory.path}/audio/transcripts');
+    print("done setting directories");
+    print("Starting photos");
     getAllPhotos();
     getAllVideos();
     _setMostRecentVideo();
@@ -43,37 +56,17 @@ class GalleryData {
     return videoDirectory;
   }
 
-/*
-  static void addTestPhoto() async {
-    Image image = await VideoFrameExporter.getThumbnail(
-        "/data/user/0/comcogniopen.cogniopenapp/app_flutter/videos/2023-10-13_17:27:03.158963.mp4",
-        1000);
-
-    print("GRABBING CUSTOM IMAGE HOPEFULLY");
-    Photo photo = Photo(
-      image,
-      Media(
-        title: 'PLEASE THUMBNAIL',
-        description: '<placeholder title>',
-        tags: ['<placeholder tag>', 'purple', 'pink'],
-        timeStamp: DateTime.now(),
-        storageSize: 12345,
-        isFavorited: false,
-      ),
-    );
-    allMedia.add(photo);
+  static Directory? getAudioDirectory() {
+    return audioDirectory;
   }
-  */
+
+  static Directory? getTranscriptDirectory() {
+    return transcriptDirectory;
+  }
 
   void getAllPhotos() async {
-    List<Media> allPhotos = [];
-    final rootDirectory = await getApplicationDocumentsDirectory();
-    Directory photos = Directory('${rootDirectory.path}/photos');
-    photoDirectory = photos;
-    //printDirectoriesAndContents(photos);
-
-    if (photos.existsSync()) {
-      List<FileSystemEntity> files = photos.listSync();
+    if (photoDirectory.existsSync()) {
+      List<FileSystemEntity> files = photoDirectory.listSync();
 
       for (var file in files) {
         if (file is File) {
@@ -138,12 +131,8 @@ class GalleryData {
   }
 
   static void _setMostRecentVideo() async {
-    final rootDirectory = await getApplicationDocumentsDirectory();
-    Directory videos = Directory('${rootDirectory.path}/videos');
-    //printDirectoriesAndContents(photos);
-
-    if (videos.existsSync()) {
-      List<FileSystemEntity> files = videos.listSync();
+    if (videoDirectory.existsSync()) {
+      List<FileSystemEntity> files = videoDirectory.listSync();
       print("Most recently recorded video:");
       print(files.last.path);
       mostRecentVideoName = getFileNameForAWS(files.last.path);
@@ -152,18 +141,13 @@ class GalleryData {
   }
 
   void getAllVideos() async {
-    List<Media> allPhotos = [];
-    final rootDirectory = await getApplicationDocumentsDirectory();
-    Directory videos = Directory('${rootDirectory.path}/videos');
-    videoDirectory = videos;
-
-    if (videos.existsSync()) {
-      List<FileSystemEntity> files = videos.listSync();
+    if (videoDirectory.existsSync()) {
+      List<FileSystemEntity> files = videoDirectory.listSync();
 
       for (var file in files) {
         if (file is File) {
-          print("VIDEO PATH PLEASE");
-          print(file.path);
+          //print("VIDEO PATH PLEASE");
+          //print(file.path);
           /* Photo photo = Photo(
             Image.file(file),
             Media(
@@ -222,13 +206,20 @@ class GalleryData {
     }
   }
 
+  // TODO: Get better logic
   static getFileNameForAWS(String filePath) {
     // Get the file name from the full file path
     String fileName = path.basename(filePath);
 
-    String partOne = fileName.replaceAll(":", "_");
+    String partOne = fileName.replaceAll(" ", "_");
 
-    return partOne.replaceFirst(".", "_");
+    String partTwo = partOne.replaceAll(":", "_");
+
+    if (('.'.allMatches(partTwo).length > 1)) {
+      return partTwo.replaceFirst(".", "_");
+    }
+
+    return partTwo;
   }
 
   static Future<Image> getThumbnail(String vidPath, int timesStamp) async {

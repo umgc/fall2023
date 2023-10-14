@@ -126,8 +126,8 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
               return GestureDetector(
                 onTap: () async {
                   //response.setImage(response.timestamp);
-                  imageWidth = realResponse[0].exampleImage.width!;
-                  imageHeight = realResponse[0].exampleImage.height!;
+                  // imageWidth = realResponse[0].exampleImage.width!;
+                  //imageHeight = realResponse[0].exampleImage.height!;
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) {
