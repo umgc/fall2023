@@ -228,4 +228,6 @@ void main() {
     expect(find.text('Sort by Title'), findsNothing);
     expect(find.text('Sort by Type'), findsNothing);
   });
+
+//TODO: add in tests for sorting, https://dev.azure.com/ProjectCogniOpen/CogniOpen/_workitems/edit/322
 }
