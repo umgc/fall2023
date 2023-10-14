@@ -17,6 +17,7 @@ void main() async {
   String path = rootDirectory.path;
   createDirectoryIfNotExists('${rootDirectory.path}/photos');
   createDirectoryIfNotExists('${rootDirectory.path}/videos');
+  createDirectoryIfNotExists('${rootDirectory.path}/videos/stills');
 }
 
 class MyApp extends StatelessWidget {

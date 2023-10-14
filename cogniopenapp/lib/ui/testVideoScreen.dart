@@ -81,7 +81,7 @@ class TestVideoScreenState extends State<TestVideoScreen> {
               vp.pollForCompletedRequest();
               setState(() {
                 text =
-                    "Job ID: ${vp.jobId}\n\n Open bottom-left menu, and select \"Show Results\".";
+                    "Job ID: ${vp.jobId}\n\n Open bottom-right menu, and select \"Show Results\".";
               });
             },
             label: 'Grab Job',

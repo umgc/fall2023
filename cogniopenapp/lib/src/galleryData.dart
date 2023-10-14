@@ -186,17 +186,15 @@ class GalleryData {
 
     return partOne.replaceFirst(".", "_");
   }
-}
 
-class VideoFrameExporter {
   static Future<Image> getThumbnail(String vidPath, int timesStamp) async {
     print("Video path for frame is ${vidPath}");
     print("timesStamp for frame is ${timesStamp}");
-    //String newPath = "${vidPath}-${timesStamp}";
+    String newPath = "${videoDirectory?.path}/stills/";
     try {
       String? thumbPath = await VideoThumbnail.thumbnailFile(
         video: vidPath,
-        //thumbnailPath: newPath,
+        thumbnailPath: newPath,
         imageFormat:
             ImageFormat.PNG, // You can use other formats like JPEG, etc.
         timeMs: timesStamp,
@@ -206,6 +204,7 @@ class VideoFrameExporter {
         // You can now load the image from the thumbnailPath and display it in your Flutter app.
         // For example, using the Image widget:
         print("WE GOT THE FILE PATH THUMBNAIL. IT IS ${thumbPath}");
+        print("WE GOT TIMESTAMP IS. IT IS ${timesStamp}");
         return Image.file(File(thumbPath));
       }
     } catch (e) {

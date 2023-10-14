@@ -12,16 +12,18 @@ class VideoResponse {
   VideoResponse(this.name, this.confidence, this.timestamp);
 
   VideoResponse.overloaded(
-      this.name, this.confidence, this.timestamp, this.boundingBox) {}
+      this.name, this.confidence, this.timestamp, this.boundingBox) {
+    setImage(timestamp);
+  }
 
   Future<Image> getImage() async {
-    return await VideoFrameExporter.getThumbnail(
+    return await GalleryData.getThumbnail(
         GalleryData.mostRecentVideoPath, timestamp);
   }
 
-  void setImage() async {
-    exampleImage = await VideoFrameExporter.getThumbnail(
-        GalleryData.mostRecentVideoPath, timestamp);
+  void setImage(int timeStampNew) async {
+    exampleImage = await GalleryData.getThumbnail(
+        GalleryData.mostRecentVideoPath, timeStampNew);
   }
 }
 
