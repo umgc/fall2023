@@ -4,12 +4,11 @@ import 'dart:typed_data';
 
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:aws_sns_api/sns-2010-03-31.dart';
+//import 'package:aws_sns_api/sns-2010-03-31.dart';
 import 'dart:io';
 
 import 'galleryData.dart';
 import 's3_connection.dart';
-
 
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
@@ -38,6 +37,7 @@ class VideoProcessor {
         credentials: AwsClientCredentials(
             accessKey: dotenv.get('accessKey'),
             secretKey: dotenv.get('secretKey')));
+    //TODO:debug/testing statements
     print("Rekognition is up...");
   }
 
@@ -92,6 +92,7 @@ class VideoProcessor {
       } else if (labelsResponse.jobStatus == VideoJobStatus.failed) {
         //stop looping, but print error message.
         inProgress = false;
+        //TODO:debug/testing statements
         print(labelsResponse.statusMessage);
       }
     }
@@ -140,6 +141,7 @@ class VideoProcessor {
     S3Bucket s3 = S3Bucket();
     // Set the name for the file to be added to the bucket based on the file name
     String title = GalleryData.mostRecentVideoName;
+    //TODO:debug/testing statements
     print("TITLE");
     print(title);
     Uint8List bytes = File(GalleryData.mostRecentVideoPath).readAsBytesSync();
