@@ -229,5 +229,82 @@ void main() {
     expect(find.text('Sort by Type'), findsNothing);
   });
 
+  testWidgets('when photo item is clicked, then photo item should be expanded ',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: GalleryScreen(), //Gallery Scren
+    ));
+
+    final photoItem = find.byKey(const Key('photoItem'));
+    await tester.tapAt(tester.getCenter(photoItem.first));
+    await tester.pumpAndSettle();
+
+    //check text visible on screen
+    expect(find.text('Title: Spunky Sam'), findsOneWidget);
+    expect(find.text('Description: Avatar of Spunky Sam'), findsOneWidget);
+    expect(find.text('Tags: avatar, spunky'), findsOneWidget);
+    expect(find.text('Storage Size: 1.00 KB'), findsOneWidget);
+    expect(find.text('Full Screen Image and Details'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
+  });
+
+  testWidgets('when video item is clicked, then video item should be expanded ',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: GalleryScreen(), //Gallery Scren
+    ));
+
+    //find videoItem widget
+    final videoItemsFinder =
+        find.byKey(const Key('videoItem'), skipOffstage: false);
+    //find vertical scrollbar
+    final scrollView =
+        find.byType(PrimaryScrollController, skipOffstage: false).first;
+    //drag until videoitem is visible
+    await tester.dragUntilVisible(
+        videoItemsFinder, scrollView, Offset(0, -500));
+
+    await tester.tapAt(tester.getCenter(videoItemsFinder));
+    await tester.pumpAndSettle();
+
+    //check text visible on screen
+    expect(find.text('Title: Test Video'), findsOneWidget);
+    expect(find.text('Description: This is a placeholder for a video'),
+        findsOneWidget);
+    expect(find.text('Tags: video, test'), findsOneWidget);
+    expect(find.text('Storage Size: 4.00 KB'), findsOneWidget);
+    expect(find.text('Full Screen Image and Details'), findsOneWidget);
+    expect(find.byType(Image), findsOneWidget);
+  });
+
+  testWidgets(
+      'when conversation item is clicked, then conversation item should be expanded ',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: GalleryScreen(), //Gallery Scren
+    ));
+
+    //find videoItem widget
+    final conversationItemsFinder =
+        find.byKey(const Key('conversationItem'), skipOffstage: false);
+    //find vertical scrollbar
+    final scrollView =
+        find.byType(PrimaryScrollController, skipOffstage: false).first;
+    //drag until videoitem is visible
+    await tester.dragUntilVisible(
+        conversationItemsFinder, scrollView, Offset(0, -900));
+
+    await tester.tapAt(tester.getCenter(conversationItemsFinder));
+    await tester.pumpAndSettle();
+
+    //check text visible on screen
+    expect(find.text('Title: Conversation'), findsOneWidget);
+    expect(find.text('Description: This is a sample conversation'),
+        findsOneWidget);
+    expect(find.text('Time Stamp: October 5th, 2023'), findsOneWidget);
+    expect(find.text('Tags: sample, conversation'), findsOneWidget);
+    expect(find.text('Storage Size: 2.00 KB'), findsOneWidget);
+    expect(find.text('Full Screen Image and Details'), findsOneWidget);
+  });
 //TODO: add in tests for sorting, https://dev.azure.com/ProjectCogniOpen/CogniOpen/_workitems/edit/322
 }
