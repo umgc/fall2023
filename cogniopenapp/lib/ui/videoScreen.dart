@@ -1079,7 +1079,7 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
     await Address.whereIAm().then((String address) {
       physicalAddress = address;
     });
-    debugPrint(physicalAddress);
+    print('The street address is: $physicalAddress');
 
     // Create a new file by copying the media file to the local directory
     final File localFile = isVideo ? File('${directory.path}/videos/$fileName') : File('${directory.path}/photos/$fileName');
