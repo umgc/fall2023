@@ -1,0 +1,19 @@
+#!!!!!!!!!!!!!!!!!!!!
+#RENAME FILE TO .env
+#!!!!!!!!!!!!!!!!!!!!
+#FILL IN THESE WITH AWS USER ACCOUNT keys
+#!!!!!!!!!!!!!!!!!!!!
+accessKey = ""
+secretKey = ""
+
+# you can use # in .env file for comments
+# This is a comment
+
+
+region = "us-east-1"
+snsTopicName = "cogniopen-notifications"
+
+#!!!!!!!!!!!!!!!!!!!!
+#RENAME BUCKET VAR
+videoS3Bucket = "cogniopen-videos-test-yournamehere"
+#!!!!!!!!!!!!!!!!!!!!

@@ -5,6 +5,7 @@ import '../src/media.dart';
 import '../src/video.dart';
 import '../src/photo.dart';
 import '../src/conversation.dart';
+import '../src/galleryData.dart';
 
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
@@ -29,7 +30,7 @@ class GalleryScreen extends StatefulWidget {
 // Define the state for the Gallery screen
 class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
-  List<Media> testMedia = createTestMediaList();
+  List<Media> testMedia = GalleryData.getAllMedia();
 
   final double _defaultFontSize = 20.0;
   bool _searchBarVisible = false;
@@ -49,6 +50,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
   // Variables used for sorting
   SortingCriteria? _selectedSortingCriteria;
   bool _isSortAscending = true;
+
+  _GalleryScreenState() {
+    _populateMedia();
+  }
+
+  void _populateMedia() async {
+    testMedia = await GalleryData.allMedia;
+  }
 
   // Function to update font and icon size based on grid size
   void _updateLayoutValues() {
