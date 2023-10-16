@@ -12,7 +12,7 @@ pubspec.lock
 doc/api/
 
 # dotenv environment variables file
-.env*
+*.env*
 
 # Avoid committing generated Javascript files:
 *.dart.js
@@ -25,5 +25,10 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/fall2023/v16/.suo
+.vs/fall2023/v16/Browse.VC.db
 Podfile
 Dart_Packages.xml
