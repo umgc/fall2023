@@ -1,12 +1,9 @@
-//import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:cogniopenapp/ui/testVideoScreen.dart';
-import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-//import '../src/galleryData.dart';
-//import 'dart:io';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});

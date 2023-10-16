@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../src/galleryData.dart';
+
+import 'package:cogniopenapp/src/galleryData.dart';
 
 class VideoResponse {
   String name;

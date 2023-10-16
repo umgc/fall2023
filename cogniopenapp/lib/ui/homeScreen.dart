@@ -5,15 +5,15 @@ import 'package:local_auth/local_auth.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
 //import 'checkVideoStreamScreen.dart';
-import 'galleryScreen.dart';
+import 'package:cogniopenapp/ui/galleryScreen.dart';
 //import 'helpScreen.dart';
-import 'profileScreen.dart';
-import 'recentScreen.dart';
-import 'searchScreen.dart';
-import 'videoScreen.dart';
-import 'registrationScreen.dart';
-import 'loginScreen.dart';
-import 's3_screen.dart';
+import 'package:cogniopenapp/ui/profileScreen.dart';
+import 'package:cogniopenapp/ui/recentScreen.dart';
+import 'package:cogniopenapp/ui/searchScreen.dart';
+import 'package:cogniopenapp/ui/videoScreen.dart';
+import 'package:cogniopenapp/ui/registrationScreen.dart';
+import 'package:cogniopenapp/ui/loginScreen.dart';
+import 'package:cogniopenapp/ui/s3_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -94,8 +94,9 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: const Text('Login'),
               onTap: () {
-                Navigator.pop(context);  // Close the drawer
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                Navigator.pop(context); // Close the drawer
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()));
               },
             ),
           ],

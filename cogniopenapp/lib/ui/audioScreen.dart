@@ -13,10 +13,10 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 /// Importing other application screens for navigation purposes.
-import 'homeScreen.dart';
-import 'assistantScreen.dart';
-import 'searchScreen.dart';
-import 'galleryScreen.dart';
+import 'package:cogniopenapp/ui/homeScreen.dart';
+import 'package:cogniopenapp/ui/assistantScreen.dart';
+import 'package:cogniopenapp/ui/searchScreen.dart';
+import 'package:cogniopenapp/ui/galleryScreen.dart';
 
 /// AudioScreen widget provides the main interface for audio recording.
 class AudioScreen extends StatefulWidget {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'homeScreen.dart';
-import '../src/media.dart';
-import '../src/video.dart';
-import '../src/photo.dart';
-import '../src/conversation.dart';
-import '../src/galleryData.dart';
+//import 'homeScreen.dart';
+import 'package:cogniopenapp/src/media.dart';
+import 'package:cogniopenapp/src/video.dart';
+import 'package:cogniopenapp/src/photo.dart';
+import 'package:cogniopenapp/src/conversation.dart';
+import 'package:cogniopenapp/src/galleryData.dart';
 
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }

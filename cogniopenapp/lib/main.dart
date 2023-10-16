@@ -1,4 +1,3 @@
-import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cogniopenapp/ui/loginScreen.dart';
@@ -7,7 +6,10 @@ import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
-import 'src/galleryData.dart';
+import 'package:cogniopenapp/ui/homeScreen.dart';
+import 'package:cogniopenapp/src/galleryData.dart';
+import 'package:cogniopenapp/src/s3_connection.dart';
+import 'package:cogniopenapp/src/video_processor.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -15,6 +17,7 @@ void main() async {
   runApp(MyApp());
   initializeDirectories();
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
   @override
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/loginScreen',  // the initial screen when the app starts
+      initialRoute: '/loginScreen', // the initial screen when the app starts
       routes: {
         '/loginScreen': (context) => LoginScreen(),
         '/homeScreen': (context) => HomeScreen(),

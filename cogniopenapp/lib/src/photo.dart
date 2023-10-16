@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'media.dart';
+
+import 'package:cogniopenapp/src/media.dart';
 
 class Photo extends Media {
   Image associatedImage;
