@@ -1,7 +1,7 @@
 import 'package:cogniopenapp/ui/thumbs_BB_screen.dart';
 import 'package:flutter/material.dart';
-//import 'package:cogniopen/chatbotscreen.dart';
-
+//import 'package:cogniopen/virtualAssistantScreen.dart';
+import 'package:local_auth/local_auth.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
 //import 'checkVideoStreamScreen.dart';
@@ -11,6 +11,8 @@ import 'profileScreen.dart';
 import 'recentScreen.dart';
 import 'searchScreen.dart';
 import 'videoScreen.dart';
+import 'registrationScreen.dart';
+import 'loginScreen.dart';
 import 's3_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -89,6 +91,13 @@ class HomeScreen extends StatelessWidget {
                 Navigator.popUntil(context, ModalRoute.withName('/'));
               },
             ),
+            ListTile(
+              title: const Text('Login'),
+              onTap: () {
+                Navigator.pop(context);  // Close the drawer
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+              },
+            ),
           ],
         ),
       ),
@@ -149,7 +158,7 @@ class HomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/icons/chatbot.png',
+                        'assets/icons/virtual_assistant.png',
                         width: 75.0, // You can adjust the width and height
                         height: 75.0, // as per your requirement
                       ),
@@ -352,7 +361,7 @@ class HomeScreen extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Chatbot',
+            label: 'Virtual Assistant',
           ),
         ],
         onTap: (int index) {
