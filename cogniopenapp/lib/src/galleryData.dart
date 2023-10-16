@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:video_thumbnail/video_thumbnail.dart';
-
-import '../src/media.dart';
-import '../src/video.dart';
-import '../src/photo.dart';
-import '../src/conversation.dart';
-import '../main.dart';
 import 'dart:io';
+
+import 'package:cogniopenapp/src/media.dart';
+import 'package:cogniopenapp/src/video.dart';
+import 'package:cogniopenapp/src/photo.dart';
+import 'package:cogniopenapp/src/conversation.dart';
+//import '../main.dart';
 
 class GalleryData {
   static final GalleryData _instance = GalleryData._internal();

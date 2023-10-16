@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'media.dart';
+
+import 'package:cogniopenapp/src/media.dart';
 
 // PLaceholder for testing
 class Conversation extends Media {

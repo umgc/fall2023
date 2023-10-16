@@ -2,8 +2,8 @@ import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-import '../src/video_processor.dart';
-import 'videoResponseScreen.dart';
+import 'package:cogniopenapp/src/video_processor.dart';
+import 'package:cogniopenapp/ui/videoResponseScreen.dart';
 
 class TestVideoScreen extends StatefulWidget {
   const TestVideoScreen({super.key});

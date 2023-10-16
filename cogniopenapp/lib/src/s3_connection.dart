@@ -5,7 +5,7 @@ import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
-import 'galleryData.dart';
+import 'package:cogniopenapp/src/galleryData.dart';
 
 class S3Bucket {
   S3? connection;

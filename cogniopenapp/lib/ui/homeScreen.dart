@@ -2,16 +2,16 @@ import 'package:cogniopenapp/ui/thumbs_BB_screen.dart';
 import 'package:flutter/material.dart';
 //import 'package:cogniopen/chatbotscreen.dart';
 
-import 'assistantScreen.dart';
-import 'audioScreen.dart';
+import 'package:cogniopenapp/ui/assistantScreen.dart';
+import 'package:cogniopenapp/ui/audioScreen.dart';
 //import 'checkVideoStreamScreen.dart';
-import 'galleryScreen.dart';
+import 'package:cogniopenapp/ui/galleryScreen.dart';
 //import 'helpScreen.dart';
-import 'profileScreen.dart';
-import 'recentScreen.dart';
-import 'searchScreen.dart';
-import 'videoScreen.dart';
-import 's3_screen.dart';
+import 'package:cogniopenapp/ui/profileScreen.dart';
+import 'package:cogniopenapp/ui/recentScreen.dart';
+import 'package:cogniopenapp/ui/searchScreen.dart';
+import 'package:cogniopenapp/ui/videoScreen.dart';
+import 'package:cogniopenapp/ui/s3_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'conversation.dart';
-import 'video.dart';
-import 'photo.dart';
+import 'package:cogniopenapp/src/conversation.dart';
+import 'package:cogniopenapp/src/video.dart';
+import 'package:cogniopenapp/src/photo.dart';
 
 // Optional parameter stuff https://stackoverflow.com/questions/52449508/constructor-optional-params
 // Avoid getters and setters (if both are included, just having getters or setters is fine): https://dart.dev/tools/linter-rules/unnecessary_getters_setters
