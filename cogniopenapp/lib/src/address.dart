@@ -35,6 +35,10 @@
          physicalAddress = address;
        });
      debugPrint(physicalAddress);
+
+  Note
+  ----
+  If run on an emulator, the return will always be "1650 Amphitheatre Pkwy, Mountain View, 94043, United States".
 */
 
 import 'package:geocoding/geocoding.dart';

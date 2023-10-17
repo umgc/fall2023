@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
-import "../src/address.dart";
+import 'package:cogniopenapp/src/address.dart';
 
 /// Camera home widget.
 class VideoScreen extends StatefulWidget {
