@@ -12,9 +12,6 @@ import 'dart:io';
 /// Path provider helps in getting system directory paths to store the recorded audio.
 import 'package:path_provider/path_provider.dart';
 
-// Record button glow effect
-import 'package:avatar_glow/avatar_glow.dart';
-
 /// Importing other application screens for navigation purposes.
 import 'homeScreen.dart';
 import 'assistantScreen.dart';
@@ -151,180 +148,100 @@ class _AudioScreenState extends State<AudioScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      extendBody: true,
       appBar: AppBar(
-        backgroundColor: const Color(0x440000),
-        elevation: 0,
-
-        leading: const BackButton(
-            color: Colors.black54
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background.jpg"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Row(
+        backgroundColor: const Color(0xFF893789),
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                const SizedBox(height: 20),
-                if (_isRecording)
-                  Column(
-                    children: [
-
-                      // THE TIMER WOULD GO HERE
-
-                      AvatarGlow(
-                        glowColor: Colors.red,
-                        endRadius: 100.0,
-                        duration: Duration(milliseconds: 2000),
-                        repeat: true,
-                        showTwoGlows: true,
-                        repeatPauseDuration: Duration(milliseconds: 100),
-                        child: Material(     // Replace this child with your own
-                          elevation: 8.0,
-                          shape: CircleBorder(),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.grey[100],
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                TextButton(
-                                  style: ButtonStyle(
-                                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(75.0),
-                                          )
-                                      )
-                                  ),
-                                  onPressed: () async {
-                                    await _stopRecording();
-                                  }, child: const Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.stop, size: 65, color: Colors.red),
-                                    Text("Stop Audio Recording", textAlign: TextAlign.center,)
-                                  ],
-                                ),
-                                ),
-                              ],
-                            ),
-                            radius: 70.0,
-                          ),
-                        ),
-                      )
-
-
-                  ],
-                  )
-                else if (_pathToSaveRecording != null)
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed:
-                        _isPlaying ? _stopPlayback : _startPlayback,
-                        child: Text(
-                            _isPlaying ? 'Stop Preview' : 'Play Preview'),
-                      ),
-
-
-                      ElevatedButton(
-                        onPressed: () {
-                          /// Notify user that the recording has been saved
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Recording saved!')),
-                          );
-                        },
-
-                        child: const Text('Save'),
-                      ),
-
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _pathToSaveRecording = null;
-                            _duration = const Duration(seconds: 0);
-                          });
-                        },
-                        child: const Text('Cancel'),
-                      ),
-
-
-
-
-
-
-
-
-                    ],
-                  )
-                else
-
-                  AvatarGlow(
-                    glowColor: Colors.blue,
-                    endRadius: 100.0,
-                    duration: Duration(milliseconds: 2000),
-                    repeat: true,
-                    showTwoGlows: true,
-                    repeatPauseDuration: Duration(milliseconds: 100),
-                    child:Material(     // Replace this child with your own
-                      elevation: 8.0,
-                      shape: CircleBorder(),
-                      child: CircleAvatar(
-
-                        backgroundColor: const Color(0xFFFFFFFF),
-                        child: TextButton(
-                          onPressed: _startRecording,
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                           RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(75.0),
-                             )
-                          )
-                           ),
-
-                          child: const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(Icons.mic, size: 60, color: Colors.green),
-                              Text("Start Audio Recording", textAlign: TextAlign.center,)
-                            ],
-                          ),
-                        ),
-                        radius: 70.0,
-                      ),
-                    ),
-
-                  ),
-
-              ],
+            Image.asset(
+              'assets/icons/virtual_assistant.png',
+              fit: BoxFit.contain,
+              height: 32,
             ),
-
+            const SizedBox(width: 10),
+            const Text('Audio Recording'),
           ],
         ),
-
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(
+              _duration.toString().split('.').first.padLeft(8, "0"),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+          ),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/icons/virtual_assistant.png', height: 150),
+                  const SizedBox(height: 20),
+                  if (_isRecording)
+                    IconButton(
+                      icon: const Icon(Icons.stop, size: 64, color: Colors.red),
+                      onPressed: () async {
+                        await _stopRecording();
+                      },
+                    )
+                  else if (_pathToSaveRecording != null)
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed:
+                              _isPlaying ? _stopPlayback : _startPlayback,
+                          child: Text(
+                              _isPlaying ? 'Stop Preview' : 'Play Preview'),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                /// Notify user that the recording has been saved
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Recording saved!')),
+                                );
+                              },
+                              child: const Text('Save'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  _pathToSaveRecording = null;
+                                  _duration = const Duration(seconds: 0);
+                                });
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                          ],
+                        )
+                      ],
+                    )
+                  else
+                    TextButton(
+                      onPressed: _startRecording,
+                      child: const Column(
+                        children: [
+                          Icon(Icons.mic, size: 64, color: Colors.green),
+                          Text("Press to Start Audio Recording")
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
-        elevation: 0.0,
-
+        backgroundColor: const Color(0XFFE91E63),
         items: const [
           BottomNavigationBarItem(
-            backgroundColor: Color(0x00ffffff),
-
+            backgroundColor: Color(0xFF893789),
             icon: Icon(Icons.home),
             label: 'Home',
           ),
@@ -338,24 +255,20 @@ class _AudioScreenState extends State<AudioScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Chatbot',
+            label: 'Virtual Assistant',
           ),
         ],
         onTap: (int index) {
-          // Handle navigation bar item taps
           if (index == 0) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => HomeScreen()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomeScreen()));
           } else if (index == 1) {
-            // Navigate to Search screen
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => SearchScreen()));
           } else if (index == 2) {
-            // Navigate to Gallery screen
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => GalleryScreen()));
           } else if (index == 3) {
-            // Navigate to Chatbot screen
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => AssistantScreen()));
           }

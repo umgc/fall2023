@@ -6,10 +6,10 @@ import 'package:chat_gpt_flutter/chat_gpt_flutter.dart';
 
 class AssistantScreen extends StatefulWidget {
   @override
-  _AssitantScreenState createState() => _AssitantScreenState();
+  _AssistantScreenState createState() => _AssistantScreenState();
 }
 
-class _AssitantScreenState extends State<AssistantScreen> {
+class _AssistantScreenState extends State<AssistantScreen> {
   TextEditingController _messageController = TextEditingController();
   List<ChatMessage> _chatMessages = [];
 
