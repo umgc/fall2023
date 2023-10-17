@@ -144,14 +144,14 @@ class HomeScreen extends StatelessWidget {
                   context: context,
                   iconPath: 'assets/icons/gallery.png',
                   text: 'Gallery',
-                  screen: SignificantObjectScreen(),
+                  screen: GalleryScreen(),
                   keyName: "GalleryButtonKey",
                 ),
                 _buildElevatedButton(
                   context: context,
                   iconPath: 'assets/icons/gallery.png',
-                  text: 'GallSignifiant Objects',
-                  screen: GalleryScreen(),
+                  text: 'Signifiant Objects',
+                  screen: SignificantObjectScreen(),
                   keyName: "GalleryButtonKey",
                 ),
                 _buildElevatedButton(

@@ -8,14 +8,9 @@ class SignificantObjectScreen extends StatelessWidget {
     "assets/test_images/coat.jpg",
     "assets/test_images/coffee.jpg",
     "assets/test_images/key.jpg",
-    "assets/test_images/key.jpg",
-    "assets/test_images/coffee.jpg",
-    "assets/test_images/key.jpg",
-    "assets/test_images/key.jpg",
     "assets/test_images/laptop.jpg",
     "assets/test_images/pen.jpg",
-    "assets/test_images/phone.jpg",
-    "assets/test_images/walet.jpg",
+    "assets/test_images/wallet.jpg",
   ];
 
   @override
@@ -137,7 +132,7 @@ class SignificantObjectScreen extends StatelessWidget {
                             height:
                                 8.0, // Add some spacing between the image and text
                           ),
-                          const Text('  Gallery'),
+                          const Text('Gallery'),
                         ],
                       ),
                       key: const Key("UploadFromGalleryButtonKey"),
