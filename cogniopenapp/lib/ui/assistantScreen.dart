@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cogniopenapp/src/typingIndicator.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
@@ -13,21 +14,37 @@ class AssistantScreen extends StatefulWidget {
 
 class _AssitantScreenState extends State<AssistantScreen> {
   TextEditingController _messageController = TextEditingController();
+  ScrollController _scrollController = new ScrollController();
   List<ChatMessage> _chatMessages = [];
+  late Future<bool> goodAPIKey;
+  bool _isTyping = false;
+
+  @override
+  void initState() {
+    super.initState();
+    goodAPIKey = loadAPIKey();
+  }
 
   // Add user messages to chat list then query ChatGPT API and add its
   // response to chat list
-  Future<void> _handleUserMessage(String messageText) async {
-    // Create a user message
-    ChatMessage userMessage = ChatMessage(
-      messageText: messageText,
-      isUserMessage: true,
-    );
+  Future<void> _handleUserMessage(String messageText, bool display) async {
+    if (display) {
+      // Create a user message
+      ChatMessage userMessage = ChatMessage(
+        messageText: messageText,
+        isUserMessage: true,
+      );
 
-    // Add the user message to the chat
-    setState(() {
-      _chatMessages.add(userMessage);
-    });
+      // Add the user message to the chat
+      setState(() {
+        _chatMessages.add(userMessage);
+      });
+    }
+
+    _scrollDown();
+
+    // Clear the input field
+    _messageController.clear();
 
     // Send the user message to the AI assistant (ChatGPT) and get a response
     String aiResponse = await getChatGPTResponse(messageText);
@@ -43,12 +60,36 @@ class _AssitantScreenState extends State<AssistantScreen> {
       _chatMessages.add(aiMessage);
     });
 
-    // Clear the input field
-    _messageController.clear();
+    _scrollDown();
+  }
+
+// Scroll to the bottom of the chat list with delay to make sure newest message is rendered
+  void _scrollDown() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   // Send user Message to ChatGPT 3.5 Turbo and return response
   Future<String> getChatGPTResponse(String userMessage) async {
+    // when testing UI, set to true to avoid API calls
+    bool debugSampleText = false;
+
+    // TODO: remove this before sending to production
+    if (debugSampleText) {
+      await Future.delayed(const Duration(seconds: 5));
+      return "AI Assistant: Sample response message.";
+    }
+
+    setState(() {
+      _isTyping = true;
+    });
+
+    String response;
     try {
       OpenAIChatCompletionModel chatCompletion =
           await OpenAI.instance.chat.create(
@@ -61,22 +102,28 @@ class _AssitantScreenState extends State<AssistantScreen> {
         ],
       );
 
-      final response = chatCompletion.choices[0].message.content;
+      final content = chatCompletion.choices[0].message.content;
 
-      return 'AI Assistant: $response';
+      response = 'AI Assistant: $content';
     } on RequestFailedException catch (e) {
       _showAlert("API Request Error", e.message);
-      return "";
+      response = "";
     } on Exception catch (e) {
       _showAlert("Unknown Error", e.toString());
-      return "";
+      response = "";
     }
+
+    setState(() {
+      _isTyping = false;
+    });
+
+    return response;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: loadAPIKey(), //Lock text input if API key is not found
+        future: goodAPIKey, //Lock text input if API key is not found
         initialData: false,
         builder: (BuildContext context, AsyncSnapshot<bool> isLoad) {
           return Scaffold(
@@ -87,12 +134,14 @@ class _AssitantScreenState extends State<AssistantScreen> {
               children: <Widget>[
                 Expanded(
                   child: ListView.builder(
+                    controller: _scrollController,
                     itemCount: _chatMessages.length,
                     itemBuilder: (context, index) {
                       return _chatMessages[index];
                     },
                   ),
                 ),
+                if (_isTyping) TypingIndicator(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -112,7 +161,7 @@ class _AssitantScreenState extends State<AssistantScreen> {
                         onPressed: () {
                           String messageText = _messageController.text.trim();
                           if (messageText.isNotEmpty) {
-                            _handleUserMessage(messageText);
+                            _handleUserMessage(messageText, true);
                           }
                         },
                       ),
@@ -138,6 +187,8 @@ class _AssitantScreenState extends State<AssistantScreen> {
     } else {
       //TODO: API key sould be stored in the database, not env file
       OpenAI.apiKey = apiKeyEnv;
+      print("Welcome user here");
+      _handleUserMessage("Welcome John and offer to help him.", false);
       return true;
     }
   }
@@ -164,6 +215,8 @@ class _AssitantScreenState extends State<AssistantScreen> {
 class ChatMessage extends StatelessWidget {
   final String messageText;
   final bool isUserMessage;
+
+// TODO: add text to speech button for AI messages
 
   ChatMessage({
     required this.messageText,
