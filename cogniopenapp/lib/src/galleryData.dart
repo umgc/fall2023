@@ -254,7 +254,7 @@ class GalleryData {
     } catch (e) {
       print("Error generating thumbnail: $e");
     }
-    // REturn this to signfiy an erro
+    // Return this to signfiy an error
     return Image.network(
         "https://media.istockphoto.com/id/1349592578/de/vektor/leeres-warnschild-und-vorfahrtsschild-an-einem-mast-vektorillustration.webp?s=2048x2048&w=is&k=20&c=zmhLi9Ot96KXUe1OLd3dGNYJk0KMZZBQl39iQf6lcMk=");
   }
