@@ -1,7 +1,8 @@
 // Imported libraries and packages
 import 'package:cogniopenapp/ui/thumbs_BB_screen.dart';
 import 'package:flutter/material.dart';
-
+//import 'package:cogniopen/virtualAssistantScreen.dart';
+import 'package:local_auth/local_auth.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
 import 'galleryScreen.dart';
@@ -9,6 +10,8 @@ import 'profileScreen.dart';
 import 'recentScreen.dart';
 import 'searchScreen.dart';
 import 'videoScreen.dart';
+import 'registrationScreen.dart';
+import 'loginScreen.dart';
 import 's3_screen.dart';
 
 // Main HomeScreen widget which is a stateless widget.
@@ -94,7 +97,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-
       // Main content of the screen
       body: Column(
         children: [
@@ -197,7 +199,7 @@ class HomeScreen extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Chatbot',
+            label: 'Virtual Assistant',
           ),
         ],
         onTap: (int index) {
