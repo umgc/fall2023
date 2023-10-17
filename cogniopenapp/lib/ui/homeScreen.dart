@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => RecordMenuScreen()));
+                              builder: (context) => VideoScreen()));
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
@@ -114,7 +114,7 @@ class HomeScreen extends StatelessWidget {
                               8.0, // Add some spacing between the image and text
                         ),
                         const Text(
-                          'Record', // This is the subheading text
+                          'Video Recording', // This is the subheading text
                           style: TextStyle(
                             fontSize: _iconFontSize, // Adjust font size
                           ),
@@ -130,7 +130,7 @@ class HomeScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  ConversationHistoryScreen()));
+                                  AudioScreen()));
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
@@ -147,7 +147,7 @@ class HomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/icons/message.png',
+                          'assets/icons/mic_on.png',
                           width: _iconWidth, // Adjusts icon width
                           height: _iconHeight, // as per your requirement
                         ),
@@ -156,7 +156,7 @@ class HomeScreen extends StatelessWidget {
                               8.0, // Add some spacing between the image and text
                         ),
                         const Text(
-                          'Conversation History', // This is the subheading text
+                          'Audio Recording', // This is the subheading text
                           style: TextStyle(
                             fontSize: _iconFontSize, // Adjust font size
                           ),
@@ -373,47 +373,6 @@ class HomeScreen extends StatelessWidget {
                   Container(
                       //Empty container makes space in middle column
                       ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Navigate to Recent Questions/Requests screen
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SettingsScreen()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      elevation: 0.0,
-                      shadowColor: Colors.transparent,
-                      backgroundColor: const Color(0xFFFFFFFF)
-                          .withOpacity(0.30), // Button text color
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(10.0), // Square border
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/icons/settings.png',
-                          width: _iconWidth, // Adjusts icon width
-                          height: _iconHeight, // as per your requirement
-                        ),
-                        const SizedBox(
-                          height:
-                              8.0, // Add some spacing between the image and text
-                        ),
-                        const Text(
-                          'Settings', // This is the subheading text
-                          style: TextStyle(
-                            fontSize: _iconFontSize, // Adjust font size
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -422,6 +381,7 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0.0,
+        backgroundColor: const Color(0x00440000),
         items: const [
           BottomNavigationBarItem(
             backgroundColor: Color(0x00ffffff),
@@ -429,16 +389,12 @@ class HomeScreen extends StatelessWidget {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+            icon: Icon(Icons.front_hand_rounded),
+            label: 'Virtual Assistant',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.photo),
             label: 'Gallery',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chatbot',
           ),
         ],
         onTap: (int index) {
@@ -448,15 +404,11 @@ class HomeScreen extends StatelessWidget {
           } else if (index == 1) {
             // Navigate to Search screen
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SearchScreen()));
+                MaterialPageRoute(builder: (context) => AssistantScreen()));
           } else if (index == 2) {
             // Navigate to Gallery screen
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => GalleryScreen()));
-          } else if (index == 3) {
-            // Navigate to Chatbot screen
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AssistantScreen()));
           }
         },
       ),
