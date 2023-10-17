@@ -30,22 +30,43 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  # A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
+  camera: ^0.10.5+5
+  
+  # A Flutter plugin for iOS, Android and Web for playing back video on a Widget surface.
+  video_player: ^2.7.2
+
+  # A Flutter plugin for finding commonly used locations on the filesystem. Supports Android, iOS, Linux, macOS and Windows. Not all methods are supported on all platforms.
+  #path_provider: ^2.1.1
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  chat_gpt_flutter: ^1.0.15
+  aws_rekognition_api: ^2.0.0
+  flutter_dotenv: ^5.1.0
+  flutter_speed_dial: ^7.0.0
+  chat_gpt_flutter: ^1.0.13
   audioplayers: ^5.2.0
   local_auth: ^2.1.7
-  flutter_dotenv: ^5.1.0
   flutter_sound: ^9.2.13
   assets_audio_player: ^3.1.1
   permission_handler: ^11.0.1
   speech_to_text: ^6.3.0
   audio_waveforms: ^1.0.4
   path_provider: ^2.1.1
+<<<<<<< HEAD
   path: ^1.8.3
+=======
+  aws_kinesis_api: ^2.0.0
+  aws_sns_api: ^2.0.0
+  aws_s3_api: ^2.0.0
+
+  path: ^1.8.3
+
+  video_thumbnail: ^0.5.3
+>>>>>>> 1316a3100cc59d78daf12f59484924ae7da2f7ac
 
 dev_dependencies:
   flutter_test:
@@ -76,7 +97,9 @@ flutter:
   assets:
     - assets/icons/
     - assets/test_images/
+    - assets/icons/app_icon.png
     - .env
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
