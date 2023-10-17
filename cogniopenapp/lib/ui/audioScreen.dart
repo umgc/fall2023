@@ -42,6 +42,7 @@ class _AudioScreenState extends State<AudioScreen> {
 
   /// Timer is used to update the duration of the recording in real-time.
   Timer? _timer;
+  
 
   @override
   void initState() {
@@ -261,6 +262,14 @@ class _AudioScreenState extends State<AudioScreen> {
                         ],
                       ),
                     ),
+                  if (transcription != null)
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(
+              transcription!,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
                 ],
               ),
             ),
