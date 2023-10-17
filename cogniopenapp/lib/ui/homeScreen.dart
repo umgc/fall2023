@@ -1,26 +1,35 @@
+// Imported libraries and packages
+import 'package:cogniopenapp/ui/thumbs_BB_screen.dart';
 import 'package:flutter/material.dart';
-//import 'package:cogniopen/chatbotscreen.dart';
-
+//import 'package:cogniopen/virtualAssistantScreen.dart';
+import 'package:local_auth/local_auth.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
-import 'customizableScreen.dart';
 import 'galleryScreen.dart';
-import 'helpScreen.dart';
 import 'profileScreen.dart';
 import 'recentScreen.dart';
 import 'searchScreen.dart';
 import 'videoScreen.dart';
 import 'significantObjectScreen.dart';
+import 'registrationScreen.dart';
+import 'loginScreen.dart';
+import 's3_screen.dart';
 
+// Main HomeScreen widget which is a stateless widget.
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0XFF880E4F), // Set background color
+      // Set the background color for the entire screen
+      backgroundColor: const Color(0XFF880E4F),
+
+      // Setting up the app bar at the top of the screen
       appBar: AppBar(
         backgroundColor: const Color(0XFFE91E63), // Set appbar background color
+        centerTitle: true, // This centers the title
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize
+              .min, // This ensures the Row takes the least amount of space
           children: [
             Image.asset(
               'assets/icons/app_icon.png', // Replace this with your icon's path
@@ -31,71 +40,73 @@ class HomeScreen extends StatelessWidget {
             const Text('CogniOpen', textAlign: TextAlign.center),
           ],
         ),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(
-                Icons.menu, // Hamburger icon
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          },
-        ),
+
+        // Widgets on the right side of the AppBar
         actions: [
+          // Vertical popup menu on the right side of the AppBar
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (String result) {
+              switch (result) {
+                case 'Profile':
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ProfileScreen()));
+                  break;
+                case 'Help Center':
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CameraAppScreen()));
+                  break;
+                case 'Customizable Application':
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const TestScreen()));
+                  break;
+                case 'Logout':
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'Profile',
+                child: Text('Profile'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Help Center',
+                child: Text('Help Center'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Customizable Application',
+                child: Text('Customizable Application'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Logout',
+                child: Text('Logout'),
+              ),
+            ],
+          ),
+
+          // First page icon to navigate back
           IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.first_page),
             onPressed: () {
-              // Navigate back to the previous screen
               Navigator.pop(context);
             },
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            ListTile(
-              title: const Text('Profile'),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileScreen()));
-              },
-            ),
-            ListTile(
-              title: const Text('Help Center'),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HelpCenterScreen()));
-              },
-            ),
-            ListTile(
-              title: const Text('Customizable Application'),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomScreen()));
-              },
-            ),
-            ListTile(
-              title: const Text('Logout'),
-              onTap: () {
-                // Handle logout logic (e.g., clear user session and navigate to login screen)
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-              },
-            ),
-          ],
-        ),
-      ),
+      // Main content of the screen
       body: Column(
         children: [
           const Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
+            padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
             child: Text(
-              'Welcome!', // This is the header text
+              'Welcome!',
               style: TextStyle(
-                fontSize: 24.0, // Adjust font size as needed
+                fontSize: 24.0,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -103,232 +114,83 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const Padding(
-            // New subheading section starts here
-            padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
+            padding: EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
             child: Text(
-              'Helping you remember the important thing\n Choose a feature from here to get started!', // This is the subheading text
+              'Helping you remember the important thing\n Choose a feature from here to get started!',
               style: TextStyle(
-                fontSize: 16.0, // Adjust font size as needed
-                color: Colors.white70, // Slightly transparent white for subheading
+                fontSize: 16.0,
+                color: Colors.white70,
               ),
               textAlign: TextAlign.center,
             ),
-          ), // New subheading section ends here
+          ),
+          // Grid view to display multiple options/buttons
           Expanded(
             child: GridView.count(
-              crossAxisCount: 2, // Two columns
-              crossAxisSpacing: 16.0, // Spacing between columns
-              mainAxisSpacing: 16.0, // Spacing between rows
+              crossAxisCount: 2,
+              crossAxisSpacing: 16.0,
+              mainAxisSpacing: 16.0,
               padding: const EdgeInsets.all(16.0),
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Chat bot/Virtual Assistant screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AssistantScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/icons/chatbot.png',
-                        width: 75.0, // You can adjust the width and height
-                        height: 75.0, // as per your requirement
-                      ),
-                      const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
-                      ),
-                      const Text('Virtual Assistant'),
-                    ],
-                  ),
-                  key: const Key("VirtualAssistantButtonKey"),
+                // Using the helper function to build each button in the grid
+                _buildElevatedButton(
+                  context: context,
+                  iconPath: 'assets/icons/virtual_assistant.png',
+                  text: 'Virtual Assistant',
+                  screen: AssistantScreen(),
+                  keyName: "VirtualAssistantButtonKey",
                 ),
-                ElevatedButton(
-                                  onPressed: () {
-                                    // Navigate to Gallery screen
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => GalleryScreen()));
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.black,
-                                    backgroundColor: const Color(0XFFC6FF00), // Button text color
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0), // Square border
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        'assets/icons/gallery.png',
-                                        width: 75.0, // You can adjust the width and height
-                                        height: 75.0, // as per your requirement
-                                      ),
-                                      const SizedBox(
-                                        height: 8.0, // Add some spacing between the image and text
-                                      ),
-                                      const Text('Gallery'),
-                                    ],
-                                  ),
-                                  key: const Key("GalleryButtonKey"),
-                                ),
-
-
-
-
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Gallery screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SignificantObjectScreen ()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/icons/gallery.png',
-                        width: 75.0, // You can adjust the width and height
-                        height: 75.0, // as per your requirement
-                      ),
-                      const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
-                      ),
-                      const Text('Signifiant Object'),
-                    ],
-                  ),
-                  key: const Key("GalleryButtonKey"),
+                _buildElevatedButton(
+                  context: context,
+                  iconPath: 'assets/icons/gallery.png',
+                  text: 'Gallery',
+                  screen: SignificantObjectScreen(),
+                  keyName: "GalleryButtonKey",
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Video Screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => VideoScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/icons/video.png',
-                        width: 75.0, // You can adjust the width and height
-                        height: 75.0, // as per your requirement
-                      ),
-                      const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
-                      ),
-                      const Text('Video Recording'),
-                    ],
-                  ),
-                  key: const Key("VideoRecordingButtonKey"),
+                _buildElevatedButton(
+                  context: context,
+                  iconPath: 'assets/icons/gallery.png',
+                  text: 'GallSignifiant Objects',
+                  screen: GalleryScreen(),
+                  keyName: "GalleryButtonKey",
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Audio Recording screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AudioScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/icons/audio.png',
-                        width: 75.0, // You can adjust the width and height
-                        height: 75.0, // as per your requirement
-                      ),
-                      const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
-                      ),
-                      const Text('Audio Recording'),
-                    ],
-                  ),
-                  key: const Key("AudioRecordingButtonKey"),
+                _buildElevatedButton(
+                  context: context,
+                  iconPath: 'assets/icons/video.png',
+                  text: 'Video Recording',
+                  screen: const VideoScreen(),
+                  keyName: "VideoRecordingButtonKey",
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Search screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/icons/search.png',
-                        width: 75.0, // You can adjust the width and height
-                        height: 75.0, // as per your requirement
-                      ),
-                      const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
-                      ),
-                      const Text('Search'),
-                    ],
-                  ),
-                  key: const Key("SearchButtonKey"),
+                _buildElevatedButton(
+                  context: context,
+                  iconPath: 'assets/icons/audio.png',
+                  text: 'Audio Recording',
+                  screen: AudioScreen(),
+                  keyName: "AudioRecordingButtonKey",
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Recent Questions/Requests screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => RecentScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: const Color(0XFFC6FF00), // Button text color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0), // Square border
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/icons/recentrequest.png',
-                        width: 75.0, // You can adjust the width and height
-                        height: 75.0, // as per your requirement
-                      ),
-                      const SizedBox(
-                        height: 8.0, // Add some spacing between the image and text
-                      ),
-                      const Text('Recent Requests'),
-                    ],
-                  ),
-                  key: const Key("RecentRequestsButtonKey"),
+                _buildElevatedButton(
+                  context: context,
+                  iconPath: 'assets/icons/search.png',
+                  text: 'Search',
+                  screen: SearchScreen(),
+                  keyName: "SearchButtonKey",
+                ),
+                _buildElevatedButton(
+                  context: context,
+                  iconPath: 'assets/icons/recentrequest.png',
+                  text: 'Recent Requests',
+                  screen: RecentScreen(),
+                  keyName: "RecentRequestsButtonKey",
                 ),
               ],
             ),
           ),
         ],
       ),
+
+      // Bottom navigation bar with multiple options for quick navigation
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0XFFE91E63),
-        // Set the BottomNavigationBar background color
         items: const [
           BottomNavigationBarItem(
             backgroundColor: Color(0XFFE91E63),
@@ -345,24 +207,72 @@ class HomeScreen extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
-            label: 'Chatbot',
+            label: 'Virtual Assistant',
           ),
         ],
         onTap: (int index) {
-          // Handle navigation bar item taps
+          // Handling taps on the bottom navigation bar items
           if (index == 0) {
-            // Stay on the Home Interface Screen
+            // For Home, do nothing (or reload current screen if needed)
           } else if (index == 1) {
-            // Navigate to Search screen
-            Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SearchScreen()));
           } else if (index == 2) {
-            // Navigate to Gallery screen
-            Navigator.push(context, MaterialPageRoute(builder: (context) => GalleryScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => GalleryScreen()));
           } else if (index == 3) {
-            // Navigate to Chatbot screen
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AssistantScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AssistantScreen()));
           }
         },
+      ),
+    );
+  }
+
+  // Helper function to create each button for the GridView
+  Widget _buildElevatedButton({
+    required BuildContext context,
+    required String iconPath,
+    required String text,
+    required Widget screen,
+    required String keyName,
+  }) {
+    return ElevatedButton(
+      key: Key(keyName),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black,
+        backgroundColor: const Color(0XFFC6FF00), // Button text color
+        padding: const EdgeInsets.all(16.0),
+        elevation: 8.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => screen),
+        );
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            iconPath,
+            fit: BoxFit.contain,
+            height: 64,
+          ),
+          const SizedBox(height: 16.0),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+              color: Color(0XFF000000),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
