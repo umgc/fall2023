@@ -152,7 +152,7 @@ class SignificantObjectScreen extends StatelessWidget {
               endIndent: 15,
             )),
             Text(
-              "Significants",
+              "Significant Objects",
               style: TextStyle(
                 fontSize: 20.0, // Adjust font size as needed
                 color:
