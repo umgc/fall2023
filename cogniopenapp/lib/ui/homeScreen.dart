@@ -134,7 +134,7 @@ class HomeScreen extends StatelessWidget {
                 // Using the helper function to build each button in the grid
                 _buildElevatedButton(
                   context: context,
-                  iconPath: 'assets/icons/chatbot.png',
+                  iconPath: 'assets/icons/virtual_assistant.png',
                   text: 'Virtual Assistant',
                   screen: AssistantScreen(),
                   keyName: "VirtualAssistantButtonKey",
