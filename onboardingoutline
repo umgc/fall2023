@@ -1,0 +1,79 @@
+// import flutter packages, costum classes, and dependencies
+import 'package:flutter/material.dart';
+import 'package:your_app/guided_tour.dart'; // Import your GuidedTour class.
+
+// stateful widget 2 represent onboarding and manage process and ui
+class OnboardingScreen extends StatefulWidget {
+  final GuidedTour guidedTour;
+
+  OnboardingScreen({required this.guidedTour});
+
+  @override
+  _OnboardingScreenState createState() => _OnboardingScreenState();
+}
+
+// implement state, needs variables 2 keep track of current page, total number of pages in tour
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  int currentPage = 0;
+  int totalPages = 5; // Set this to the total number of tour pages.
+}
+
+// build ui, swipe thru pgs, buttons 2 navigate btw pgs, exit tour, open menu
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Guided Tour'),
+    ),
+    body: Column(
+      children: [
+        Expanded(
+          child: PageView(
+            controller: PageController(initialPage: currentPage),
+            children: [
+              // Create your onboarding pages here.
+              // Each page could be a custom widget or a simple screen.
+              // You might want to use your GuidedTour class for this.
+              // Use widgets to display information for each page.
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (currentPage > 0)
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    currentPage--;
+                  });
+                },
+                child: Text('Previous'),
+              ),
+            if (currentPage < totalPages - 1)
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    currentPage++;
+                  });
+                },
+                child: Text('Next'),
+              ),
+          ],
+        ),
+        ElevatedButton(
+          onPressed: () {
+            // Handle the exit button press.
+          },
+          child: Text('Exit Tour'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            // Handle opening the app menu.
+          },
+          child: Text('Open Menu'),
+        ),
+      ],
+    ),
+  );
+}
