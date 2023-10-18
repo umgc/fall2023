@@ -10,6 +10,11 @@ import '../src/conversation.dart';
 import '../main.dart';
 import 'dart:io';
 
+import 'package:cogniopenapp/src/database/model/media.dart' as database_media;
+import 'package:cogniopenapp/src/database/repository/conversation_repository.dart';
+import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+
 class GalleryData {
   static final GalleryData _instance = GalleryData._internal();
   static late Directory photoDirectory;
@@ -36,6 +41,26 @@ class GalleryData {
     getAllPhotos();
     getAllVideos();
     _setMostRecentVideo();
+    _initializeMedia(); // temporary db testing
+  }
+
+  // temporary db testing:
+  Future<List<database_media.Media>> _initializeMedia() async {
+    final conversations = await ConversationRepository.instance.readAll();
+    final photos = await PhotoRepository.instance.readAll();
+    final videos = await VideoRepository.instance.readAll();
+
+    for (var conversation in conversations) {
+      print(conversation.toJson());
+    }
+    for (var photo in photos) {
+      print(photo.toJson());
+    }
+    for (var video in videos) {
+      print(video.toJson());
+    }
+
+    return [...conversations, ...photos, ...videos];
   }
 
   factory GalleryData() {
