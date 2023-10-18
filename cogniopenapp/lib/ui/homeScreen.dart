@@ -26,6 +26,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0XFFE91E63), // Set appbar background color
         centerTitle: true, // This centers the title
+        automaticallyImplyLeading: false,
         title: Row(
           mainAxisSize: MainAxisSize
               .min, // This ensures the Row takes the least amount of space
