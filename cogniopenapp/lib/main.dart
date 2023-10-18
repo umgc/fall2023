@@ -10,7 +10,6 @@ import 'dart:io';
 import 'src/galleryData.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
   initializeData();
   runApp(MyApp());
   initializeDirectories();
