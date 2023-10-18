@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cogniopenapp/src/address.dart';
+import 'package:quiver/async.dart';
 
 /// Camera home widget.
 class VideoScreen extends StatefulWidget {
@@ -61,6 +62,8 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
   VideoPlayerController? videoController;
   VoidCallback? videoPlayerListener;
   bool enableAudio = true;
+  bool isRecording = false; // To track whether recording is ongoing
+  Timer? _timer; // A timer to update the record timer
 
   //Uncomment to add Flash and Exposure feature
   /*double _minAvailableExposureOffset = 0.0;
@@ -73,6 +76,7 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
   late Animation<double> _exposureModeControlRowAnimation;
   late AnimationController _focusModeControlRowAnimationController;
   late Animation<double> _focusModeControlRowAnimation;*/
+
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
@@ -86,6 +90,26 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
     super.initState();
     _initializeCamera();
     WidgetsBinding.instance.addObserver(this);
+
+    // Get a list of available cameras.
+  availableCameras().then((cameras) {
+    _cameras = cameras;
+
+    // Check if any cameras are available.
+    if (_cameras.isNotEmpty) {
+      // Set the initial camera description to the first camera (usually rear camera).
+      onNewCameraSelected(_cameras.first);
+    } else {
+      showInSnackBar('No camera found.');
+    }
+  }).catchError((e) {
+    _showCameraException(e);
+  });
+
+    // Set up a timer to update the record timer
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
 
     //Uncomment to add Flash and Exposure feature
     /*_flashModeControlRowAnimationController = AnimationController(
@@ -120,6 +144,7 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
     //Uncomment to add Flash and Exposure feature
     /*_flashModeControlRowAnimationController.dispose();
     _exposureModeControlRowAnimationController.dispose();*/
+    _timer?.cancel(); // Cancel the timer when the widget is disposed
     super.dispose();
   }
 
@@ -143,6 +168,8 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
 
   @override
   Widget build(BuildContext context) {
+    final recordTimerText = TimerText(timer: _timer);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Camera'),
@@ -167,6 +194,24 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
             ),
           ),
           _captureControlRowWidget(),
+
+          Text('Record Timer: ${recordTimerText.toString()}'),
+
+        // Add your buttons for starting and stopping recording here
+        Row(
+          children: <Widget>[
+            isRecording
+                ? ElevatedButton(
+                    onPressed: stopVideoRecording,
+                    child: Text('Stop Recording'),
+                  )
+                : ElevatedButton(
+                    onPressed: startVideoRecording,
+                    child: Text('Start Recording'),
+                  ),
+          ],
+        ),
+
 
           // Uncomment to add Flash and Exposure feature
           //_modeControlRowWidget(),
@@ -198,14 +243,7 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
     final CameraController? cameraController = controller;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
-      return const Text(
-        'Tap a camera icon below',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 24.0,
-          fontWeight: FontWeight.w900,
-        ),
-      );
+      return Container();
     } else {
       return Listener(
         onPointerDown: (_) => _pointers++,
@@ -623,7 +661,7 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
             width: 90.0,
             child: RadioListTile<CameraDescription>(
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
-              groupValue: controller?.description,
+              groupValue: controller?.description ?? _cameras.first,
               value: cameraDescription,
               onChanged: onChanged,
             ),
@@ -658,11 +696,18 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
     if (controller != null) {
-      return controller!.setDescription(cameraDescription);
-    } else {
-      return _initializeCameraController(cameraDescription);
+      await controller!.dispose();
+    }
+
+    controller = CameraController(cameraDescription, ResolutionPreset.medium);
+    // Initialize the controller
+    await controller!.initialize();
+
+    if (mounted) {
+      setState(() {});
     }
   }
+
 
   Future<void> _initializeCameraController(CameraDescription cameraDescription) async {
     final CameraController cameraController = CameraController(
@@ -888,7 +933,7 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
     final CameraController? cameraController = controller;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
-      showInSnackBar('Error: select a camera first.');
+      showInSnackBar('Error: Select a camera first.');
       return;
     }
 
@@ -899,6 +944,9 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
 
     try {
       await cameraController.startVideoRecording();
+      setState(() {
+        isRecording = true;
+      });
     } on CameraException catch (e) {
       _showCameraException(e);
       return;
@@ -917,6 +965,10 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
     } on CameraException catch (e) {
       _showCameraException(e);
       return null;
+    } finally {
+      setState(() {
+        isRecording = false;
+      });
     }
   }
 
@@ -1113,3 +1165,17 @@ class CameraApp extends StatelessWidget {
 }
 
 List<CameraDescription> _cameras = <CameraDescription>[];
+
+class TimerText extends StatelessWidget {
+  final Timer timer;
+
+  TimerText({required this.timer});
+
+  @override
+  Widget build(BuildContext context) {
+    final Duration duration = Duration(seconds: timer.tick);
+    final String timerText =
+        '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    return Text(timerText);
+  }
+}
