@@ -4,6 +4,7 @@ import 'package:cogniopenapp/src/typingIndicator.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 // This is a AssistantScreen class.
 
@@ -13,6 +14,9 @@ class AssistantScreen extends StatefulWidget {
 }
 
 class _AssitantScreenState extends State<AssistantScreen> {
+  late FlutterTts tts;
+  bool isPlaying = false;
+
   TextEditingController _messageController = TextEditingController();
   ScrollController _scrollController = new ScrollController();
   List<ChatMessage> _chatMessages = [];
@@ -23,6 +27,47 @@ class _AssitantScreenState extends State<AssistantScreen> {
   void initState() {
     super.initState();
     goodAPIKey = loadAPIKey();
+    initTTS();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    tts.stop();
+  }
+
+  void initTTS() {
+    tts = FlutterTts();
+
+    tts.setStartHandler(() {
+      setState(() {
+        print("Playing");
+        isPlaying = true;
+      });
+    });
+
+    tts.setCompletionHandler(() {
+      setState(() {
+        print("Complete");
+        isPlaying = false;
+      });
+    });
+
+    tts.setCancelHandler(() {
+      setState(() {
+        print("Cancel");
+        isPlaying = false;
+      });
+    });
+  }
+
+// Play or stop text to speech
+  void toggleTTS(String text) async {
+    if (isPlaying) {
+      await tts.stop();
+    } else {
+      await tts.speak(text);
+    }
   }
 
   // Add user messages to chat list then query ChatGPT API and add its
@@ -33,6 +78,7 @@ class _AssitantScreenState extends State<AssistantScreen> {
       ChatMessage userMessage = ChatMessage(
         messageText: messageText,
         isUserMessage: true,
+        toggleTTS: (chatText) => toggleTTS(chatText),
       );
 
       // Add the user message to the chat
@@ -53,6 +99,7 @@ class _AssitantScreenState extends State<AssistantScreen> {
     ChatMessage aiMessage = ChatMessage(
       messageText: aiResponse,
       isUserMessage: false,
+      toggleTTS: (chatText) => toggleTTS(chatText),
     );
 
     // Add the AI message to the chat
@@ -81,8 +128,8 @@ class _AssitantScreenState extends State<AssistantScreen> {
 
     // TODO: remove this before sending to production
     if (debugSampleText) {
-      await Future.delayed(const Duration(seconds: 5));
-      return "AI Assistant: Sample response message.";
+      await Future.delayed(const Duration(seconds: 3));
+      return "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
     }
 
     setState(() {
@@ -213,32 +260,63 @@ class _AssitantScreenState extends State<AssistantScreen> {
 }
 
 class ChatMessage extends StatelessWidget {
+  final Function toggleTTS;
   final String messageText;
   final bool isUserMessage;
-
-// TODO: add text to speech button for AI messages
 
   ChatMessage({
     required this.messageText,
     required this.isUserMessage,
+    required this.toggleTTS,
   });
 
   @override
   Widget build(BuildContext context) {
+    var chatbotIcon = Image.asset(
+      'assets/icons/chatbot.png',
+      width: 25.0, // You can adjust the width and height
+      height: 25.0, // as per your requirement
+    );
+    IconButton speakerButton = IconButton(
+      icon: const Icon(IconData(0xe6c5, fontFamily: 'MaterialIcons')),
+      onPressed: () {
+        toggleTTS(messageText);
+      },
+    );
+    const TextStyle messageStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 16.0,
+    );
+    const TextStyle titleStyle = TextStyle(
+      color: Color.fromRGBO(223, 223, 223, 1.0),
+      fontSize: 16.0,
+    );
+
     return Align(
       alignment: isUserMessage ? Alignment.topRight : Alignment.topLeft,
       child: Container(
-        margin: EdgeInsets.all(8.0),
-        padding: EdgeInsets.all(12.0),
+        margin: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: isUserMessage ? Colors.blue : Colors.grey,
+          color: isUserMessage ? Colors.blue : Colors.blueGrey,
           borderRadius: BorderRadius.circular(10.0),
         ),
-        child: Text(
-          messageText,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
+        child: FractionallySizedBox(
+          widthFactor: 0.85,
+          child: ListTile(
+            textColor: Colors.white,
+            leading: isUserMessage ? null : chatbotIcon,
+            minLeadingWidth: 25,
+            title: Text(
+              isUserMessage ? "User:" : "Virtual Assistant:",
+              style: titleStyle,
+            ),
+            subtitle: Text(
+              messageText,
+              style: messageStyle,
+            ),
+            trailing: isUserMessage ? null : speakerButton,
+            horizontalTitleGap: 16,
+            minVerticalPadding: 16,
           ),
         ),
       ),
