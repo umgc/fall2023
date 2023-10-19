@@ -31,6 +31,12 @@ dependencies:
   flutter:
     sdk: flutter
   
+  # A Flutter geocoding plugin which provides easy geocoding and reverse-geocoding features. 
+  geocoding: ^2.1.1
+  
+  # A Flutter geolocation plugin which provides easy access to platform specific location services.
+  geolocator: ^10.1.0
+
   # A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
   camera: ^0.10.5+5
   
@@ -97,7 +103,9 @@ flutter:
   assets:
     - assets/icons/
     - assets/test_images/
+    - assets/icons/app_icon.png
     - .env
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
