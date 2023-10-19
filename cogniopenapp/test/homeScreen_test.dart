@@ -13,15 +13,16 @@ void main() {
     await tester.pumpAndSettle();
     await tester.pump();
 
-    // Check that the title is displayed
+    // Verify application's title
     expect(find.text('CogniOpen', skipOffstage: false), findsOneWidget);
 
-    // Check all the buttons are visible
-    final recordButtonFinder = find.widgetWithText(ElevatedButton, "Record", skipOffstage: false);
-    expect(recordButtonFinder, findsOneWidget);
-
-    // It breaks the build unless button is forcibly put in view
-    await tester.ensureVisible(recordButtonFinder);
+    // Verify the task buttons are visible
+    expect(find.widgetWithText(ElevatedButton, "Virtual Assistant", skipOffstage: false), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, "Gallery", skipOffstage: false), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, "Video Recording", skipOffstage: false), findsOneWidget);
+    final audioRecordingButtonFinder = find.widgetWithText(ElevatedButton, "Audio Recording", skipOffstage: false);
+    expect(audioRecordingButtonFinder, findsOneWidget);
+    await tester.ensureVisible(audioRecordingButtonFinder);
     await tester.pumpAndSettle();
 
     expect(find.widgetWithText(ElevatedButton, "Conversation History", skipOffstage: false), findsOneWidget);
