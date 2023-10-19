@@ -10,7 +10,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 class AssistantScreen extends StatefulWidget {
   @override
-  _AssitantScreenState createState() => _AssitantScreenState();
+  _AssistantScreenState createState() => _AssistantScreenState();
 }
 
 class _AssitantScreenState extends State<AssistantScreen> {
