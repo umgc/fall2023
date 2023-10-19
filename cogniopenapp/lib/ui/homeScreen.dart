@@ -13,6 +13,7 @@ import 'videoScreen.dart';
 import 'registrationScreen.dart';
 import 'loginScreen.dart';
 import 's3_screen.dart';
+import 'tourScreen.dart';
 
 // Main HomeScreen widget which is a stateless widget.
 class HomeScreen extends StatelessWidget {
@@ -182,42 +183,46 @@ class HomeScreen extends StatelessWidget {
 
       // Bottom navigation bar with multiple options for quick navigation
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0XFFE91E63),
-        items: const [
-          BottomNavigationBarItem(
-            backgroundColor: Color(0XFFE91E63),
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo),
-            label: 'Gallery',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Virtual Assistant',
-          ),
-        ],
-        onTap: (int index) {
-          // Handling taps on the bottom navigation bar items
-          if (index == 0) {
-            // For Home, do nothing (or reload current screen if needed)
-          } else if (index == 1) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SearchScreen()));
-          } else if (index == 2) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => GalleryScreen()));
-          } else if (index == 3) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AssistantScreen()));
-          }
-        },
-      ),
+      elevation: 0.0,
+
+                 items: const [
+                  BottomNavigationBarItem(
+                  backgroundColor: Color(0x00ffffff),
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                   ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.back_hand_rounded),
+                    label: 'Virtual Assistant',
+                  ),
+                  BottomNavigationBarItem(
+                  icon: Icon(Icons.photo),
+                  label: 'Gallery',
+                  ),
+                  BottomNavigationBarItem(
+                  icon: Icon(Icons.help),
+                  label: 'Tour',
+                  ),
+                    ],
+                  onTap: (int index) {
+                  // Handle navigation bar item taps
+                  if (index == 0) {
+
+                  } else if (index == 1) {
+                 // Navigate to Search screen
+                 Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AssistantScreen()));
+                  } else if (index == 2) {
+                  // Navigate to Gallery screen
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => GalleryScreen()));
+                  } else if (index == 3) {
+                  // Navigate to Gallery screen
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TourScreen()));
+                    }
+                  }
+      )
     );
   }
 
