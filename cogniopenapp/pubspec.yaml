@@ -56,17 +56,20 @@ dependencies:
   speech_to_text: ^6.3.0
   audio_waveforms: ^1.0.4
   path_provider: ^2.1.1
-<<<<<<< HEAD
+
   path: ^1.8.3
-=======
+
   aws_kinesis_api: ^2.0.0
   aws_sns_api: ^2.0.0
   aws_s3_api: ^2.0.0
 
-  path: ^1.8.3
+  
 
   video_thumbnail: ^0.5.3
->>>>>>> 1316a3100cc59d78daf12f59484924ae7da2f7ac
+  aws_transcribe_api: ^2.0.0
+  http: ^0.13.6
+  aws_client: ^0.4.1
+
 
 dev_dependencies:
   flutter_test:
