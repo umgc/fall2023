@@ -71,7 +71,6 @@ dependencies:
   video_thumbnail: ^0.5.3
   mockito: ^5.4.2
   plugin_platform_interface: ^2.1.6
-  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:
