@@ -209,16 +209,17 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
             child: Row(
               children: <Widget>[
                 _cameraTogglesRowWidget(),
-                //_thumbnailWidget(),
+                _thumbnailWidget(),
 
-                GestureDetector(
+                // Adding a sub menu by tapping on the thumbnail. It works, but theres widget errors.
+                /*GestureDetector(
                   onTap: () async {
                     if (imageFile != null || videoFile != null) {
                       openOptionsBottomSheet(context); // Open the options bottom sheet
                     }
                   },
                   child: _thumbnailWidget(),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -303,7 +304,8 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
     );
   }
 
-  void openOptionsBottomSheet(BuildContext context) {
+  // Adding a sub menu by tapping on the thumbnail. It works, but theres widget errors.
+  /*void openOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
@@ -344,7 +346,7 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
         );
       },
     );
-  }
+  }*/
 
   //Uncomment to add Flash and Exposure feature
   /// Display a bar with buttons to change the flash and exposure modes
@@ -653,7 +655,6 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
       );
     }
     
-
     return Row(children: toggles);
   }
 
@@ -1161,6 +1162,8 @@ void onResumeButtonPressed() {
         ? VideoPlayerController.network(videoFile!.path)
         : VideoPlayerController.file(File(videoFile!.path));
 
+    vController.setVolume(0); // Mute the video displaying the thumbnail
+    
     videoPlayerListener = () {
       if (videoController != null) {
         // Refreshing the state to update video player with the correct ratio.
