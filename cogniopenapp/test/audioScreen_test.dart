@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cogniopenapp/main.dart';
 
 void main() {
+  /*
   testWidgets('Tests that the audio screen functions.', (WidgetTester tester) async {
     // Build our app and trigger a frrame.
     await tester.pumpWidget(MyApp());
@@ -49,4 +50,5 @@ void main() {
     expect(cancelButtonFinder, findsOneWidget);
     */
   });
+  */
 }

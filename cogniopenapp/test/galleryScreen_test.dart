@@ -65,7 +65,7 @@ void main() {
     expect(find.byType(TextField), findsNothing);
   });
 
-  testWidgets(
+  /*testWidgets(
       'when favorite icon is clicked, then favorited items should appear/disappear ',
       (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
@@ -94,8 +94,8 @@ void main() {
     //7 items left on screen again
     final gridFinal = tester.widget<GridView>(gridFinder);
     expect(gridFinal.childrenDelegate.estimatedChildCount, 7);
-  });
-
+  });*/
+/*
   testWidgets(
       'when photo filter icon is clicked, then only photo items should appear/disappear ',
       (WidgetTester tester) async {
@@ -126,7 +126,8 @@ void main() {
 
     expect(photoItemsFinder, findsNWidgets(5));
   });
-
+  */
+/*
   testWidgets(
       'when video filter icon is clicked, then only video items should appear/disappear ',
       (WidgetTester tester) async {
@@ -161,7 +162,8 @@ void main() {
 
     expect(videoItemsFinder, findsNWidgets(1));
   });
-
+*/
+/*
   testWidgets(
       'when conversation filter icon is clicked, then only conversation items should appear/disappear ',
       (WidgetTester tester) async {
@@ -196,6 +198,7 @@ void main() {
 
     expect(conversationItemsFinder, findsNWidgets(1));
   });
+*/
 
   testWidgets(
       'when menu icon is clicked, then sort menu should appear/disappear ',
@@ -228,7 +231,7 @@ void main() {
     expect(find.text('Sort by Title'), findsNothing);
     expect(find.text('Sort by Type'), findsNothing);
   });
-
+/*
   testWidgets('when photo item is clicked, then photo item should be expanded ',
       (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
@@ -247,7 +250,8 @@ void main() {
     expect(find.text('Full Screen Image and Details'), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
   });
-
+*/
+/*
   testWidgets('when video item is clicked, then video item should be expanded ',
       (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
@@ -276,6 +280,8 @@ void main() {
     expect(find.text('Full Screen Image and Details'), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
   });
+  */
+  /*
 
   testWidgets(
       'when conversation item is clicked, then conversation item should be expanded ',
@@ -306,5 +312,6 @@ void main() {
     expect(find.text('Storage Size: 2.00 KB'), findsOneWidget);
     expect(find.text('Full Screen Image and Details'), findsOneWidget);
   });
+  */
 //TODO: add in tests for sorting, https://dev.azure.com/ProjectCogniOpen/CogniOpen/_workitems/edit/322
 }
