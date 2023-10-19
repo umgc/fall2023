@@ -295,11 +295,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
           children: [
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
+              key: const Key('searchIcon'),
               icon: Icon(Icons.search),
               onPressed: _toggleSearchBarVisibility,
             ),
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
+              key: const Key('favoriteIcon'),
               color: _showFavoritedOnly ? Colors.yellow : Colors.grey,
               icon: _showFavoritedOnly
                   ? Icon(Icons.star)
@@ -307,6 +309,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowFavorited,
             ),
             IconButton(
+              key: const Key('filterPhotoIcon'),
               icon: _showPhotos
                   ? const Icon(Icons.photo)
                   : const Icon(Icons.photo_outlined),
@@ -314,6 +317,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowPhotos,
             ),
             IconButton(
+              key: const Key('filterVideoIcon'),
               color: _showVideos ? Colors.white : Colors.grey,
               icon: _showVideos
                   ? const Icon(Icons.videocam)
@@ -321,6 +325,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowVideos,
             ),
             IconButton(
+              key: const Key('filterConversationIcon'),
               color: _showConversations ? Colors.white : Colors.grey,
               icon: _showConversations
                   ? const Icon(Icons.chat)
@@ -331,6 +336,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         ),
         // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| POP UP MENU BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         PopupMenuButton<SortingCriteria>(
+          key: const Key('sortGalleryButton'),
           itemBuilder: (BuildContext context) {
             return _buildSortingCriteriaMenuItems();
           },
@@ -414,6 +420,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Expanded(
       child: Center(
         child: Image(
+          key: const Key('photoItem'),
           image: media.associatedImage.image,
         ),
       ),
@@ -422,6 +429,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   Widget _buildVideoImage(Video media) {
     return Image(
+      key: const Key('videoItem'),
       image: media.thumbnail.image,
       // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
       width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
@@ -430,7 +438,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Widget _buildConversationIcon() {
-    return Icon(Icons.chat, size: 50);
+    return const Icon(
+      key: Key('conversationItem'),
+      Icons.chat,
+      size: 50,
+    );
   }
 
   Widget _buildGridItemTitle(String title) {
