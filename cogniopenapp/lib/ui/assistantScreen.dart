@@ -13,7 +13,7 @@ class AssistantScreen extends StatefulWidget {
   _AssistantScreenState createState() => _AssistantScreenState();
 }
 
-class _AssitantScreenState extends State<AssistantScreen> {
+class _AssistantScreenState extends State<AssistantScreen> {
   late FlutterTts tts;
   bool isPlaying = false;
 
