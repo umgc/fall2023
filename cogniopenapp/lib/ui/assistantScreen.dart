@@ -272,8 +272,8 @@ class ChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var chatbotIcon = Image.asset(
-      'assets/icons/chatbot.png',
+    var virtualAssistantIcon = Image.asset(
+      'assets/icons/virtual_assistant.png',
       width: 25.0, // You can adjust the width and height
       height: 25.0, // as per your requirement
     );
@@ -304,7 +304,7 @@ class ChatMessage extends StatelessWidget {
           widthFactor: 0.85,
           child: ListTile(
             textColor: Colors.white,
-            leading: isUserMessage ? null : chatbotIcon,
+            leading: isUserMessage ? null : virtualAssistantIcon,
             minLeadingWidth: 25,
             title: Text(
               isUserMessage ? "User:" : "Virtual Assistant:",
