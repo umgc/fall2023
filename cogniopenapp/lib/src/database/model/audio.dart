@@ -1,9 +1,9 @@
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 
-const String tableConversations = 'conversations';
+const String tableAudios = 'audios';
 
-class ConversationFields extends MediaFields {
+class AudioFields extends MediaFields {
   static final List<String> values = [
     ...MediaFields.values,
     summary,
@@ -12,10 +12,10 @@ class ConversationFields extends MediaFields {
   static const String summary = 'summary';
 }
 
-class Conversation extends Media {
+class Audio extends Media {
   final String? summary;
 
-  Conversation({
+  Audio({
     int? id,
     String? title,
     String? description,
@@ -27,7 +27,7 @@ class Conversation extends Media {
     this.summary,
   }) : super(
           id: id,
-          mediaType: MediaType.conversation,
+          mediaType: MediaType.audio,
           title: title,
           description: description,
           tags: tags,
@@ -38,7 +38,7 @@ class Conversation extends Media {
         );
 
   @override
-  Conversation copy({
+  Audio copy({
     int? id,
     String? title,
     String? description,
@@ -49,7 +49,7 @@ class Conversation extends Media {
     bool? isFavorited,
     String? summary,
   }) =>
-      Conversation(
+      Audio(
         id: id ?? this.id,
         title: title ?? this.title,
         description: description ?? this.description,
@@ -65,13 +65,13 @@ class Conversation extends Media {
   Map<String, Object?> toJson() {
     return {
       ...super.toJson(),
-      ConversationFields.summary: summary,
+      AudioFields.summary: summary,
     };
   }
 
   @override
-  static Conversation fromJson(Map<String, Object?> json) {
-    return Conversation(
+  static Audio fromJson(Map<String, Object?> json) {
+    return Audio(
       id: json[MediaFields.id] as int?,
       title: json[MediaFields.title] as String?,
       description: json[MediaFields.description] as String?,
@@ -82,7 +82,7 @@ class Conversation extends Media {
       fileName: json[MediaFields.fileName] as String,
       storageSize: json[MediaFields.storageSize] as int,
       isFavorited: json[MediaFields.isFavorited] == 1,
-      summary: json[ConversationFields.summary] as String?,
+      summary: json[AudioFields.summary] as String?,
     );
   }
 }
