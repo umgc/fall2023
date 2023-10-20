@@ -12,7 +12,7 @@ import '../main.dart';
 import 'dart:io';
 
 import 'package:cogniopenapp/src/database/model/media.dart' as database_media;
-import 'package:cogniopenapp/src/database/repository/conversation_repository.dart';
+import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 
@@ -48,12 +48,12 @@ class GalleryData {
 
   // temporary db testing:
   Future<List<database_media.Media>> _initializeMedia() async {
-    final conversations = await ConversationRepository.instance.readAll();
+    final audios = await AudioRepository.instance.readAll();
     final photos = await PhotoRepository.instance.readAll();
     final videos = await VideoRepository.instance.readAll();
 
-    for (var conversation in conversations) {
-      print(conversation.toJson());
+    for (var audio in audios) {
+      print(audio.toJson());
     }
     for (var photo in photos) {
       print(photo.toJson());
@@ -62,7 +62,7 @@ class GalleryData {
       print(video.toJson());
     }
 
-    return [...conversations, ...photos, ...videos];
+    return [...audios, ...photos, ...videos];
   }
 
   factory GalleryData() {
