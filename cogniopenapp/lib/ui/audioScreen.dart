@@ -257,7 +257,7 @@ class _AudioScreenState extends State<AudioScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/icons/chatbot.png',
+              'assets/icons/virtual_assistant.png',
               fit: BoxFit.contain,
               height: 32,
             ),
@@ -280,7 +280,7 @@ class _AudioScreenState extends State<AudioScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/icons/chatbot.png', height: 150),
+                  Image.asset('assets/icons/virtual_assistant.png', height: 150),
                   const SizedBox(height: 20),
                   if (_isRecording)
                     IconButton(
