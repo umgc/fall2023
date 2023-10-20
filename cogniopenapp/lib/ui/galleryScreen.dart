@@ -213,6 +213,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text('Full Screen Image and Details'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    displayEditPopup(context, media);
+                  },
+                ),
+              ],
             ),
             body: Center(
               child: SingleChildScrollView(
@@ -253,6 +261,77 @@ class _GalleryScreenState extends State<GalleryScreen> {
           );
         },
       ),
+    );
+  }
+
+  Future<void> displayEditPopup(BuildContext context, Media media) async {
+    TextEditingController titleController =
+        TextEditingController(text: media.title);
+    TextEditingController descriptionController =
+        TextEditingController(text: media.description);
+    TextEditingController tagsController =
+        TextEditingController(text: media.tags?.join(', ') ?? '');
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Media'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  buildEditableField(titleController, 'Title', setState),
+                  buildEditableField(
+                      descriptionController, 'Description', setState),
+                  buildEditableField(
+                      tagsController, 'Tags (comma-separated)', setState),
+                ],
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () {
+                setState(() {
+                  media.title = titleController.text;
+                  media.description = descriptionController.text;
+                  media.tags = tagsController.text
+                      .split(',')
+                      .map((tag) => tag.trim())
+                      .toList();
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildEditableField(
+    TextEditingController controller,
+    String label,
+    StateSetter setState,
+  ) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label),
+      enabled: true,
+      onChanged: (value) {
+        setState(() {
+          // You can add logic here if needed when the text changes.
+        });
+      },
     );
   }
 
