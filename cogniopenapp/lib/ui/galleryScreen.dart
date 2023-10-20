@@ -206,7 +206,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     SortingCriteria.type: 'Sort by Type',
   };
 
-  void displayFullObjectView(BuildContext context, Media media) {
+  void displayFullObjectView(BuildContext context, Media media) async {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
@@ -216,8 +216,17 @@ class _GalleryScreenState extends State<GalleryScreen> {
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.edit),
-                  onPressed: () {
-                    displayEditPopup(context, media);
+                  onPressed: () async {
+                    print("MEDIA: ${media.title}");
+                    final updatedMedia = await displayEditPopup(context, media);
+                    if (updatedMedia != null) {
+                      print("MEDIA: ${media.title}");
+                      // Call a callback to update the parent view
+                      Navigator.pop(context); // Close the current view
+                      setState(() {
+                        displayFullObjectView(context, updatedMedia);
+                      });
+                    }
                   },
                 ),
               ],
@@ -264,7 +273,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Future<void> displayEditPopup(BuildContext context, Media media) async {
+  Future<Media?> displayEditPopup(BuildContext context, Media media) async {
     TextEditingController titleController =
         TextEditingController(text: media.title);
     TextEditingController descriptionController =
@@ -272,9 +281,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     TextEditingController tagsController =
         TextEditingController(text: media.tags?.join(', ') ?? '');
 
-    return showDialog<void>(
+    return showDialog<Media>(
       context: context,
       builder: (BuildContext context) {
+        Media? updatedMedia;
         return AlertDialog(
           title: Text('Edit Media'),
           content: StatefulBuilder(
@@ -308,8 +318,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       .split(',')
                       .map((tag) => tag.trim())
                       .toList();
+                  updatedMedia = media; // Update the updatedMedia variable
                 });
-                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pop(updatedMedia); // Return the updated media
               },
             ),
           ],
