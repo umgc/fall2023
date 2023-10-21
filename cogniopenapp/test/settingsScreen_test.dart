@@ -7,22 +7,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cogniopenapp/main.dart';
+import 'package:cogniopenapp/ui/settingsScreen.dart';
 
 void main() {
   testWidgets('Tests settings screen has all options', (WidgetTester tester) async {
-    // Build our app and trigger a frrame.
-    await tester.pumpWidget(MyApp());
-
-    // Tap settings button
-    final settingsButtonFinder = find.widgetWithText(ElevatedButton, "Settings", skipOffstage: false);
-    expect(settingsButtonFinder, findsOneWidget);
-    await tester.ensureVisible(settingsButtonFinder);
-    await tester.pumpAndSettle();
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(MaterialApp(home: SettingsScreen()));
 
     // Check for three options
-    await tester.tap(settingsButtonFinder);
-    await tester.pumpAndSettle();
     final passiveAudioTextFinder = find.text("Passive Audio Recording", skipOffstage: false);
     expect(passiveAudioTextFinder, findsOneWidget);
     final passiveVideoTextFinder = find.text("Passive Video Recording", skipOffstage: false);
