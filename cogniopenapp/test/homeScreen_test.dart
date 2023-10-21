@@ -3,17 +3,18 @@
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cogniopenapp/main.dart';
 
 void main() {
   testWidgets('Tests that the application home page loads correctly.', (WidgetTester tester) async {
-    // Build our app and trigger a frrame.
+    // Build our app and trigger a frame.
     await tester.pumpWidget(MaterialApp(home: HomeScreen()));
     await tester.pumpAndSettle();
     await tester.pump();
 
-    // Verify that our counter starts at 0.
+    // Verify application's title
     expect(find.text('CogniOpen', skipOffstage: false), findsOneWidget);
+
+    // Verify the task buttons are visible
     expect(find.widgetWithText(ElevatedButton, "Virtual Assistant", skipOffstage: false), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, "Gallery", skipOffstage: false), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, "Video Recording", skipOffstage: false), findsOneWidget);
