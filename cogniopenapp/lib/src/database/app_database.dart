@@ -1,9 +1,9 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
-import 'package:cogniopenapp/src/database/model/conversation.dart';
+import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
-import 'package:cogniopenapp/src/database/model/video.dart'; // Import the Video model
+import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/app_database_seed_data.dart';
 
 class AppDatabase {
@@ -46,9 +46,9 @@ class AppDatabase {
     ];
 
     await db.execute('''
-      CREATE TABLE $tableConversations (
+      CREATE TABLE $tableAudios (
         ${mediaColumns.join(',\n')},
-        ${ConversationFields.summary} $textType
+        ${AudioFields.summary} $textType
       )
     ''');
 
