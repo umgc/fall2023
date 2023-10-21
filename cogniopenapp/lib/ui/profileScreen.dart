@@ -75,21 +75,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: const Color(0x440000), // Set appbar background color
         elevation: 0.0,
         centerTitle: true,
-          leading: const BackButton(
-          color: Colors.black54
-          )
+        leading: const BackButton(color: Colors.black54),
+        title: const Text('Profile'),
       ),
       body: Container(
-            decoration: const BoxDecoration(
-            image: DecorationImage(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
             image: AssetImage("assets/images/background.jpg"),
             fit: BoxFit.cover,
-            ),
           ),
-
+        ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
             child: Container(
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
@@ -152,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       TextFormField(
                         controller: _emergencyFirstNameController,
                         decoration:
-                        InputDecoration(labelText: 'Emergency First Name'),
+                            InputDecoration(labelText: 'Emergency First Name'),
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please enter the emergency first name';
@@ -163,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       TextFormField(
                         controller: _emergencyLastNameController,
                         decoration:
-                        InputDecoration(labelText: 'Emergency Last Name'),
+                            InputDecoration(labelText: 'Emergency Last Name'),
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please enter the emergency last name';
@@ -173,8 +172,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       TextFormField(
                         controller: _emergencyPhoneController,
-                        decoration:
-                        InputDecoration(labelText: 'Emergency Phone Number'),
+                        decoration: InputDecoration(
+                            labelText: 'Emergency Phone Number'),
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please enter the emergency phone number';
@@ -220,4 +219,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-

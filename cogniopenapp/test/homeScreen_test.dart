@@ -3,12 +3,10 @@
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cogniopenapp/main.dart';
 
 void main() {
   testWidgets('Tests that the application home page loads correctly.', (WidgetTester tester) async {
-    // Build our app and trigger a frrame.
-
+    // Build our app and trigger a frame.
     await tester.pumpWidget(MaterialApp(home: HomeScreen()));
     await tester.pumpAndSettle();
     await tester.pump();

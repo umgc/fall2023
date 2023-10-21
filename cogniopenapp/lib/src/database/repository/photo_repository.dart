@@ -30,7 +30,6 @@ class PhotoRepository {
 
     final maps = await db.query(
       tablePhotos,
-      columns: MediaFields.values,
       where: '${MediaFields.id} = ?',
       whereArgs: [id],
     );
