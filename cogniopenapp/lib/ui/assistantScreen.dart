@@ -176,46 +176,59 @@ class _AssistantScreenState extends State<AssistantScreen> {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Virtual Assistant'),
+              backgroundColor: const Color(0xFFB3E5FC),
+              elevation: 0,
+              leading: const BackButton(color: Colors.black54),
             ),
-            body: Column(
-              children: <Widget>[
-                Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _chatMessages.length,
-                    itemBuilder: (context, index) {
-                      return _chatMessages[index];
-                    },
-                  ),
+            body: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/background.jpg"),
+                  fit: BoxFit.cover,
                 ),
-                if (_isTyping) TypingIndicator(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: TextField(
-                          enabled: isLoad.data, //Disable input without API key
-                          controller: _messageController,
-                          decoration: const InputDecoration(
-                            hintText: 'Type your message...',
+              ),
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.fromLTRB(20, 115, 20, 0),
+                      controller: _scrollController,
+                      itemCount: _chatMessages.length,
+                      itemBuilder: (context, index) {
+                        return _chatMessages[index];
+                      },
+                    ),
+                  ),
+                  if (_isTyping) TypingIndicator(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(25.0, 20, 0, 30),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextField(
+                            enabled:
+                                isLoad.data, //Disable input without API key
+                            controller: _messageController,
+                            decoration: const InputDecoration(
+                              hintText: 'Type your message...',
+                            ),
+                            maxLines: null,
                           ),
-                          maxLines: null,
                         ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.send),
-                        onPressed: () {
-                          String messageText = _messageController.text.trim();
-                          if (messageText.isNotEmpty) {
-                            _handleUserMessage(messageText, true);
-                          }
-                        },
-                      ),
-                    ],
+                        IconButton(
+                          icon: Icon(Icons.send),
+                          onPressed: () {
+                            String messageText = _messageController.text.trim();
+                            if (messageText.isNotEmpty) {
+                              _handleUserMessage(messageText, true);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });
@@ -293,12 +306,21 @@ class ChatMessage extends StatelessWidget {
     );
 
     return Align(
-      alignment: isUserMessage ? Alignment.topRight : Alignment.topLeft,
+      alignment: isUserMessage
+          ? const Alignment(1.0, 0.0)
+          : const Alignment(-1.0, 0.0),
       child: Container(
-        margin: const EdgeInsets.all(8.0),
+        margin: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: isUserMessage ? Colors.blue : Colors.blueGrey,
+          color: isUserMessage ? Colors.red[300] : Colors.blue[300],
           borderRadius: BorderRadius.circular(10.0),
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.grey, //New
+                blurRadius: 15,
+                offset: Offset(0, 12))
+          ],
         ),
         child: FractionallySizedBox(
           widthFactor: 0.85,

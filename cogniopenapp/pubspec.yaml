@@ -46,6 +46,7 @@ dependencies:
   # A Flutter plugin for finding commonly used locations on the filesystem. Supports Android, iOS, Linux, macOS and Windows. Not all methods are supported on all platforms.
   #path_provider: ^2.1.1
 
+  avatar_glow: ^2.0.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -98,7 +99,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -106,6 +106,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/
     - assets/icons/
     - assets/test_images/
     - assets/icons/app_icon.png
