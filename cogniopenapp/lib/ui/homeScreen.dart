@@ -191,10 +191,6 @@ class HomeScreen extends StatelessWidget {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.photo),
             label: 'Gallery',
           ),
@@ -209,11 +205,8 @@ class HomeScreen extends StatelessWidget {
             // For Home, do nothing (or reload current screen if needed)
           } else if (index == 1) {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SearchScreen()));
-          } else if (index == 2) {
-            Navigator.push(context,
                 MaterialPageRoute(builder: (context) => GalleryScreen()));
-          } else if (index == 3) {
+          } else if (index == 2) {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => AssistantScreen()));
           }
