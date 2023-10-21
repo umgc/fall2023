@@ -3,7 +3,6 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 abstract class MediaFields {
   static final List<String> values = [
     id,
-    mediaType,
     title,
     description,
     tags,
@@ -14,7 +13,6 @@ abstract class MediaFields {
   ];
 
   static const String id = '_id';
-  static const String mediaType = 'mediaType';
   static const String title = 'title';
   static const String description = 'description';
   static const String tags = 'tags';
