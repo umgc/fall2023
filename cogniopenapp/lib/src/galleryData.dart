@@ -111,7 +111,10 @@ class GalleryData {
       }
     }
 
-    allMedia.add(Video(
+    Video video = VideoDisplay()
+    allMedia.add(video);
+
+    /*allMedia.add(Video(
       '2:30', // Duration
       true, // Auto-delete
       [
@@ -141,7 +144,7 @@ class GalleryData {
         storageSize: 4096,
         isFavorited: false,
       ), // Associated media (in this case, a photo)
-    ));
+    ));*/
 
     allMedia.add(Conversation(
         "A test conversation",

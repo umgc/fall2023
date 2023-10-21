@@ -21,7 +21,7 @@ class Media {
     this.tags,
     this.timeStamp,
     this.storageSize = 0,
-    this.isFavorited = false,
+    this.isFavorited = false, required VideoDisplay home,
   });
 
   Media.overloaded(this.title, this.description, this.tags, this.timeStamp,
