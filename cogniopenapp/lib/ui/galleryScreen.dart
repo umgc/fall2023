@@ -1,3 +1,4 @@
+import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'homeScreen.dart';
@@ -240,7 +241,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     Text('Title: ${media.title}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                        'Time Stamp: ${media.formatDateTime(media.timeStamp) ?? "N/A"}',
+                        'Time Stamp: ${FormatUtils.getDateString(media.timeStamp)}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     if (media is Photo && media.associatedImage != null)
                       Image(
@@ -260,7 +261,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     Text('Tags: ${media.tags?.join(", ")}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                      'Storage Size: ${media.getStorageSizeString()}',
+                      'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
                       style: TextStyle(fontSize: _defaultFontSize),
                     ),
                   ],
