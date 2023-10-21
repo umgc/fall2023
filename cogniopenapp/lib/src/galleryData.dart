@@ -48,7 +48,7 @@ class GalleryData {
 
   // temporary db testing:
   Future<List<database_media.Media>> _initializeMedia() async {
-    final audios = await AudioRepository.instance.readAll();
+    final audios = [];
     final photos = await PhotoRepository.instance.readAll();
     final videos = await VideoRepository.instance.readAll();
 

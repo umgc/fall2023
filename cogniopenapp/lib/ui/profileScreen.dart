@@ -121,6 +121,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         if (value!.isEmpty) {
                           return 'Please enter your email';
                         }
+                        if (!RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            .hasMatch(value)) {
+                          return 'Please enter a valid email address';
+                        }
                         return null;
                       },
                     ),
@@ -130,6 +134,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter your phone number';
+                        }
+                        if (!RegExp(r"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")
+                            .hasMatch(value)) {
+                          return 'Please enter a valid phone number';
                         }
                         return null;
                       },
@@ -163,6 +171,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter the emergency phone number';
+                        }
+                        if (!RegExp(r"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")
+                            .hasMatch(value)) {
+                          return 'Please enter a valid phone number';
                         }
                         return null;
                       },
