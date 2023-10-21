@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 import '../src/media.dart';
@@ -10,32 +11,58 @@ import '../src/conversation.dart';
 import '../main.dart';
 import 'dart:io';
 
+import 'package:cogniopenapp/src/database/model/media.dart' as database_media;
+import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
+import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+
 class GalleryData {
   static final GalleryData _instance = GalleryData._internal();
-  static late Directory photoDirectory;
-  static late Directory videoDirectory;
-  static late Directory audioDirectory;
-  static late Directory transcriptDirectory;
+  static final Directory photosDirectory =
+      DirectoryManager.instance.photosDirectory;
+  static final Directory videosDirectory =
+      DirectoryManager.instance.videosDirectory;
+  static final Directory audiosDirectory =
+      DirectoryManager.instance.audiosDirectory;
+  static final Directory transcriptsDirectory =
+      DirectoryManager.instance.transcriptsDirectory;
+  static final Directory videoStillsDirectory =
+      DirectoryManager.instance.videoStillsDirectory;
+  static final Directory videoResponsesDirectory =
+      DirectoryManager.instance.videoResponsesDirectory;
   static String mostRecentVideoPath = "";
   static String mostRecentVideoName = "";
   static List<String> processedImages = [];
 
   GalleryData._internal() {
     print("Internal gallery data created");
-    _initializedDirectories();
+    _initializeData();
   }
 
-  void _initializedDirectories() async {
-    final rootDirectory = await getApplicationDocumentsDirectory();
-    photoDirectory = Directory('${rootDirectory.path}/photos');
-    videoDirectory = Directory('${rootDirectory.path}/videos');
-    audioDirectory = Directory('${rootDirectory.path}/audio');
-    transcriptDirectory = Directory('${rootDirectory.path}/audio/transcripts');
-    print("done setting directories");
-    print("Starting photos");
+  void _initializeData() async {
     getAllPhotos();
     getAllVideos();
     _setMostRecentVideo();
+    _initializeMedia(); // temporary db testing
+  }
+
+  // temporary db testing:
+  Future<List<database_media.Media>> _initializeMedia() async {
+    final audios = await AudioRepository.instance.readAll();
+    final photos = await PhotoRepository.instance.readAll();
+    final videos = await VideoRepository.instance.readAll();
+
+    for (var audio in audios) {
+      print(audio.toJson());
+    }
+    for (var photo in photos) {
+      print(photo.toJson());
+    }
+    for (var video in videos) {
+      print(video.toJson());
+    }
+
+    return [...audios, ...photos, ...videos];
   }
 
   factory GalleryData() {
@@ -48,25 +75,9 @@ class GalleryData {
     return allMedia;
   }
 
-  static Directory? getPhotoDirectory() {
-    return photoDirectory;
-  }
-
-  static Directory? getVideoDirectory() {
-    return videoDirectory;
-  }
-
-  static Directory? getAudioDirectory() {
-    return audioDirectory;
-  }
-
-  static Directory? getTranscriptDirectory() {
-    return transcriptDirectory;
-  }
-
   void getAllPhotos() async {
-    if (photoDirectory.existsSync()) {
-      List<FileSystemEntity> files = photoDirectory.listSync();
+    if (photosDirectory.existsSync()) {
+      List<FileSystemEntity> files = photosDirectory.listSync();
 
       for (var file in files) {
         if (file is File) {
@@ -131,8 +142,8 @@ class GalleryData {
   }
 
   static void _setMostRecentVideo() async {
-    if (videoDirectory.existsSync()) {
-      List<FileSystemEntity> files = videoDirectory.listSync();
+    if (videosDirectory.existsSync()) {
+      List<FileSystemEntity> files = videosDirectory.listSync();
       print("Most recently recorded video:");
       print(files.last.path);
       mostRecentVideoName = getFileNameForAWS(files.last.path);
@@ -141,8 +152,8 @@ class GalleryData {
   }
 
   void getAllVideos() async {
-    if (videoDirectory.existsSync()) {
-      List<FileSystemEntity> files = videoDirectory.listSync();
+    if (videosDirectory.existsSync()) {
+      List<FileSystemEntity> files = videosDirectory.listSync();
 
       for (var file in files) {
         if (file is File) {
@@ -227,7 +238,7 @@ class GalleryData {
     //print("timesStamp for frame is ${timesStamp}");
 
     String newFile =
-        "${videoDirectory?.path}/stills/${path.basename(vidPath)}-${timesStamp}.png";
+        "${videoStillsDirectory.path}/${path.basename(vidPath)}-${timesStamp}.png";
 
     if (processedImages.contains(newFile)) {
       return Image.file(File(newFile));
@@ -236,7 +247,7 @@ class GalleryData {
     processedImages.add(newFile); // Add the image if not added already
 
     try {
-      String newPath = "${videoDirectory?.path}/stills/";
+      String newPath = "${videoStillsDirectory.path}/";
       String? thumbPath = await VideoThumbnail.thumbnailFile(
         video: vidPath,
         thumbnailPath: newPath,

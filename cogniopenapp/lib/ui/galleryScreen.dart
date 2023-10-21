@@ -206,13 +206,30 @@ class _GalleryScreenState extends State<GalleryScreen> {
     SortingCriteria.type: 'Sort by Type',
   };
 
-  void displayFullObjectView(BuildContext context, Media media) {
+  void displayFullObjectView(BuildContext context, Media media) async {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
               title: Text('Full Screen Image and Details'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    print("MEDIA: ${media.title}");
+                    final updatedMedia = await displayEditPopup(context, media);
+                    if (updatedMedia != null) {
+                      print("MEDIA: ${media.title}");
+                      // Call a callback to update the parent view
+                      Navigator.pop(context); // Close the current view
+                      setState(() {
+                        displayFullObjectView(context, updatedMedia);
+                      });
+                    }
+                  },
+                ),
+              ],
             ),
             body: Center(
               child: SingleChildScrollView(
@@ -256,6 +273,80 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  Future<Media?> displayEditPopup(BuildContext context, Media media) async {
+    TextEditingController titleController =
+        TextEditingController(text: media.title);
+    TextEditingController descriptionController =
+        TextEditingController(text: media.description);
+    TextEditingController tagsController =
+        TextEditingController(text: media.tags?.join(', ') ?? '');
+
+    return showDialog<Media>(
+      context: context,
+      builder: (BuildContext context) {
+        Media? updatedMedia;
+        return AlertDialog(
+          title: Text('Edit Media'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  buildEditableField(titleController, 'Title', setState),
+                  buildEditableField(
+                      descriptionController, 'Description', setState),
+                  buildEditableField(
+                      tagsController, 'Tags (comma-separated)', setState),
+                ],
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () {
+                setState(() {
+                  media.title = titleController.text;
+                  media.description = descriptionController.text;
+                  media.tags = tagsController.text
+                      .split(',')
+                      .map((tag) => tag.trim())
+                      .toList();
+                  updatedMedia = media; // Update the updatedMedia variable
+                });
+                Navigator.of(context)
+                    .pop(updatedMedia); // Return the updated media
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildEditableField(
+    TextEditingController controller,
+    String label,
+    StateSetter setState,
+  ) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label),
+      enabled: true,
+      onChanged: (value) {
+        setState(() {
+          // You can add logic here if needed when the text changes.
+        });
+      },
+    );
+  }
+
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| BUILD METHODS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -295,11 +386,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
           children: [
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
+              key: const Key('searchIcon'),
               icon: Icon(Icons.search),
               onPressed: _toggleSearchBarVisibility,
             ),
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
+              key: const Key('favoriteIcon'),
               color: _showFavoritedOnly ? Colors.yellow : Colors.grey,
               icon: _showFavoritedOnly
                   ? Icon(Icons.star)
@@ -307,6 +400,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowFavorited,
             ),
             IconButton(
+              key: const Key('filterPhotoIcon'),
               icon: _showPhotos
                   ? const Icon(Icons.photo)
                   : const Icon(Icons.photo_outlined),
@@ -314,6 +408,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowPhotos,
             ),
             IconButton(
+              key: const Key('filterVideoIcon'),
               color: _showVideos ? Colors.white : Colors.grey,
               icon: _showVideos
                   ? const Icon(Icons.videocam)
@@ -321,6 +416,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowVideos,
             ),
             IconButton(
+              key: const Key('filterConversationIcon'),
               color: _showConversations ? Colors.white : Colors.grey,
               icon: _showConversations
                   ? const Icon(Icons.chat)
@@ -331,6 +427,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         ),
         // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| POP UP MENU BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         PopupMenuButton<SortingCriteria>(
+          key: const Key('sortGalleryButton'),
           itemBuilder: (BuildContext context) {
             return _buildSortingCriteriaMenuItems();
           },
@@ -414,6 +511,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Expanded(
       child: Center(
         child: Image(
+          key: const Key('photoItem'),
           image: media.associatedImage.image,
         ),
       ),
@@ -422,6 +520,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   Widget _buildVideoImage(Video media) {
     return Image(
+      key: const Key('videoItem'),
       image: media.thumbnail.image,
       // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
       width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
@@ -430,7 +529,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Widget _buildConversationIcon() {
-    return Icon(Icons.chat, size: 50);
+    return const Icon(
+      key: Key('conversationItem'),
+      Icons.chat,
+      size: 50,
+    );
   }
 
   Widget _buildGridItemTitle(String title) {

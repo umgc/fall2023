@@ -12,8 +12,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.pump();
 
-    // Verify that our counter starts at 0.
+    // Verify application's title
     expect(find.text('CogniOpen', skipOffstage: false), findsOneWidget);
+
+    // Verify the task buttons are visible
     expect(find.widgetWithText(ElevatedButton, "Virtual Assistant", skipOffstage: false), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, "Gallery", skipOffstage: false), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, "Video Recording", skipOffstage: false), findsOneWidget);

@@ -30,8 +30,6 @@ The following outlines setting up a new key and adding it to the .env created wi
 8. Save the key somewhere like OneNote where it will be safe, you cannot retrieve this key once you close this dialog. You can however make more.
 9. Click done.
 
-You should have $5 in credits to start with, which is ample for testing with the ChatGPT model 3.5 ConvoBuddy uses.
-
 
 # Getting the AWS access key
 
@@ -39,7 +37,7 @@ You should have $5 in credits to start with, which is ample for testing with the
 2. Once you are at the console home, navigate to your account and then "Security credentials"
 3. Select "Users" and then "Create user"
 4. Give the user a name. Select "next" to move to "Step 2: Set permissions"
-5. Select "attach policies directly". Then select the "AdministratorAccess-Amplify", "AmazonRekognitionFullAccess", "AmazonKinesisFullAccess",AmazonS3FullAccess, and AmazonTranscribeFullAccess permission policies
+5. Select "attach policies directly". Then select the "AdministratorAccess-Amplify", "AmazonRekognitionFullAccess", "AmazonKinesisFullAccess", "AmazonS3FullAccess", and "AmazonTranscribeFullAccess" permission policies
 6. Select "Create user" in "Step 3: Review and create".
  The new secret key will appear in a text box with copy button next to it.
 7. Copy the accesskey and paste it into your .env file.
