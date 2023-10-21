@@ -5,7 +5,7 @@ import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as AWSRekogniti
 import 'package:cogniopenapp/main.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'video_processor_test.mocks.dart';
+import 'mocks/video_processor_test.mocks.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 */
