@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'database/model/media_type.dart';
 import 'media.dart';
 
 class Video extends Media {
@@ -6,16 +7,12 @@ class Video extends Media {
   late bool autoDelete; // This is a comment
   late List<IdentifiedItem> identifiedItems;
   late Image thumbnail;
+  MediaType mediaType = MediaType.video;
 
   // Constructor using initializing formals: https://dart.dev/tools/linter-rules/prefer_initializing_formals
   Video(this.duration, this.autoDelete, this.identifiedItems, this.thumbnail,
       Media media)
-      : super.copy(media) {
-    iconType = const Icon(
-      Icons.video_camera_back,
-      color: Colors.grey,
-    );
-  }
+      : super.copy(media);
 }
 
 // Removed the photo class, and changed the int time spotted to date time (can just go off of recent dates)

@@ -1,4 +1,6 @@
+import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'homeScreen.dart';
@@ -513,7 +515,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               ],
             ),
             _buildFavoriteIcon(media),
-            _buildMediaTypeIcon(media.iconType.icon),
+            _buildMediaTypeIcon(media.mediaType),
           ],
         ),
       ),
@@ -596,12 +598,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildMediaTypeIcon(IconData? icon) {
+  Widget _buildMediaTypeIcon(MediaType mediaType) {
     return Positioned(
       top: 0,
       left: 0,
       child: Icon(
-        icon,
+        UiUtils.getMediaIconData(mediaType),
         size: _iconSize,
       ),
     );
