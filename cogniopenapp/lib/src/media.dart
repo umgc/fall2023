@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-
-import 'conversation.dart';
-import 'video.dart';
-import 'photo.dart';
+import 'package:cogniopenapp/src/database/model/media_type.dart';
 
 // Optional parameter stuff https://stackoverflow.com/questions/52449508/constructor-optional-params
 // Avoid getters and setters (if both are included, just having getters or setters is fine): https://dart.dev/tools/linter-rules/unnecessary_getters_setters
@@ -13,7 +9,7 @@ class Media {
   DateTime? timeStamp;
   int storageSize;
   bool isFavorited;
-  late Icon iconType;
+  late MediaType mediaType;
 
   Media({
     this.title = "",

@@ -1,14 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:cogniopenapp/src/database/model/media_type.dart';
+
 import 'media.dart';
 
 // PLaceholder for testing
 class Conversation extends Media {
   String summary;
+  MediaType mediaType = MediaType.audio;
 
-  Conversation(this.summary, Media media) : super.copy(media) {
-    iconType = Icon(
-      Icons.chat,
-      color: Colors.grey,
-    );
-  }
+  Conversation(this.summary, Media media) : super.copy(media);
 }
