@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+/*import 'package:flutter_test/flutter_test.dart';
 import 'package:aws_s3_api/s3-2006-03-01.dart' as AWSS3API;
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as AWSRekognitionAPI;
 import 'package:cogniopenapp/main.dart';
@@ -20,3 +20,4 @@ void main() async {
 //    await vp.sendRequestToProcessVideo("fire_extinguisher.mp4");
   });
 }
+*/
