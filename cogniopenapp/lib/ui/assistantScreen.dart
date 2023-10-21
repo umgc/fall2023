@@ -176,7 +176,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Virtual Assistant'),
-              backgroundColor: const Color(0x440000),
+              backgroundColor: const Color(0xFFB3E5FC),
               elevation: 0,
               leading: const BackButton(color: Colors.black54),
             ),
