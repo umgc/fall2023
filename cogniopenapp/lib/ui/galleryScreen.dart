@@ -265,21 +265,33 @@ class _GalleryScreenState extends State<GalleryScreen> {
     _updateLayoutValues();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFB3E5FC),
       appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          if (_searchBarVisible) _buildSearchBar(),
-          Expanded(
-            child: _buildGridView(),
+      body: Container(
+    decoration: const BoxDecoration(
+    image: DecorationImage(
+    image: AssetImage("assets/images/background.jpg"),
+    fit: BoxFit.cover,
+            ),
           ),
-          _buildSliderBar(),
-        ],
-      ),
+        child: Column(
+          children: [
+            if (_searchBarVisible) _buildSearchBar(),
+            Expanded(
+              child: _buildGridView(),
+            ),
+            _buildSliderBar(),
+          ],
+        ),
+
+      )
     );
   }
 
   AppBar _buildAppBar() {
     return AppBar(
+      backgroundColor: const Color(0x440000),
+      elevation: 0.0,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

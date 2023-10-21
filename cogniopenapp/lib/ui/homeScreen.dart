@@ -1,4 +1,5 @@
 // Imported libraries and packages
+import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/ui/thumbs_BB_screen.dart';
 import 'package:flutter/material.dart';
 //import 'package:cogniopen/virtualAssistantScreen.dart';
@@ -14,6 +15,7 @@ import 'registrationScreen.dart';
 import 'loginScreen.dart';
 import 's3_screen.dart';
 import 'tourScreen.dart';
+import 'settingsScreen.dart';
 
 // Main HomeScreen widget which is a stateless widget.
 class HomeScreen extends StatelessWidget {
@@ -21,7 +23,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // Set the background color for the entire screen
-      backgroundColor: const Color(0XFF880E4F),
+        backgroundColor: const Color(0XFF880E4F),
         extendBodyBehindAppBar: true,
         extendBody: true,
       // Setting up the app bar at the top of the screen
@@ -44,8 +46,7 @@ class HomeScreen extends StatelessWidget {
             const Text('CogniOpen', textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black54
-
-            )
+              )
             ),
           ],
         ),
@@ -67,11 +68,11 @@ class HomeScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => const CameraAppScreen()));
                   break;
-                case 'Customizable Application':
+                case 'Settings':
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const TestScreen()));
+                          builder: (context) => SettingsScreen()));
                   break;
                 case 'Logout':
                   Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -88,8 +89,8 @@ class HomeScreen extends StatelessWidget {
                 child: Text('Help Center'),
               ),
               const PopupMenuItem<String>(
-                value: 'Customizable Application',
-                child: Text('Customizable Application'),
+                value: 'Settings',
+                child: Text('Settings'),
               ),
               const PopupMenuItem<String>(
                 value: 'Logout',
@@ -170,17 +171,17 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _buildElevatedButton(
                     context: context,
-                    iconPath: 'assets/icons/search-v2.png',
-                    text: 'Search',
-                    screen: SearchScreen(),
-                    keyName: "SearchButtonKey",
+                    iconPath: 'assets/icons/significant_object.png',
+                    text: 'Significant Objects',
+                    screen: SignificantObjectsScreen(),
+                    keyName: "SignificantObjectButtonKey",
                   ),
                   _buildElevatedButton(
                     context: context,
-                    iconPath: 'assets/icons/recentrequest-v2.png',
-                    text: 'Recent Requests',
-                    screen: RecentScreen(),
-                    keyName: "RecentRequestsButtonKey",
+                    iconPath: 'assets/icons/tour.png',
+                    text: 'Tour Guide',
+                    screen: TourScreen(),
+                    keyName: "TourGuideButtonKey",
                   ),
                 ],
               ),
