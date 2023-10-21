@@ -31,6 +31,7 @@ doc/api/
 .vs/fall2023/v16/.suo
 .vs/fall2023/v16/Browse.VC.db
 Podfile
+*/Podfile
 Dart_Packages.xml
 
 # FLUTTER MASTER .GITIGNORE FROM https://github.com/flutter/flutter/blob/master/.gitignore :
