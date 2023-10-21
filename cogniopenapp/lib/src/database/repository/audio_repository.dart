@@ -30,7 +30,6 @@ class AudioRepository {
 
     final maps = await db.query(
       tableAudios,
-      columns: AudioFields.values,
       where: '${MediaFields.id} = ?',
       whereArgs: [id],
     );

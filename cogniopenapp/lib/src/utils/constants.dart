@@ -10,6 +10,7 @@ const String audioTranscriptsDirName = "transcripts";
 const String videosDirName = "videos";
 const String videoStillsDirName = "stills";
 const String videoResponsesDirName = "responses";
+const String tmpDirName = "tmp";
 
 // Directory Paths (relative to ApplicationDocumentsDirectory):
 const String filesPath = "/$filesDirName";
@@ -19,3 +20,4 @@ const String audioTranscriptsPath = "$audiosPath/$audioTranscriptsDirName";
 const String videosPath = "$filesPath/$videosDirName";
 const String videoStillsPath = "$videosPath/$videoStillsDirName";
 const String videoResponsesPath = "$videosPath/$videoResponsesDirName";
+const String tmpPath = "/$tmpDirName";

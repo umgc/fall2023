@@ -30,7 +30,6 @@ class VideoRepository {
 
     final maps = await db.query(
       tableVideos,
-      columns: VideoFields.values,
       where: '${MediaFields.id} = ?',
       whereArgs: [id],
     );

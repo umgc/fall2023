@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:cogniopenapp/src/database/model/audio.dart';
-import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
-import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
+import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/media_controller.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class AppDatabaseSeedData {
   void insertAppDatabaseSeedData() async {
@@ -18,6 +22,8 @@ class AppDatabaseSeedData {
     await VideoRepository.instance.create(video1);
     await VideoRepository.instance.create(video2);
     await VideoRepository.instance.create(video3);
+
+    await loadSeedPhoto();
   }
 
   /* App Database Seed Data */
@@ -123,4 +129,22 @@ class AppDatabaseSeedData {
       isFavorited: true,
       duration: "5:05",
       thumbnail: "Thumbnail_3");
+
+  Future<void> loadSeedPhoto() async {
+    try {
+      File? photoFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/cat.png', 'cat.png');
+      List<String>? tagsList = ['pet', 'cat'];
+      int newPhotoId = await MediaController.addPhoto(
+        title: 'Cat',
+        description: 'A photo of my pet cat, Kit Kat.',
+        tags: tagsList,
+        file: photoFile,
+      );
+      FileManager.unloadAssetFile('cat.png');
+      print('Loaded seed photo, id: $newPhotoId');
+    } catch (e) {
+      print('Error loading seed data photo: $e');
+    }
+  }
 }
