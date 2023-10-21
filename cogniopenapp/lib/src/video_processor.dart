@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, unused_element
 
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
+import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
@@ -13,14 +14,13 @@ class VideoProcessor {
   double confidence = 85;
   Rekognition? service;
   String jobId = '';
-
-  String clientRequestToken = "donacdum";
-  String jobTag = "chainsHoxton4ever";
+  String projectArn = '';
 
   static final VideoProcessor _instance = VideoProcessor._internal();
 
   VideoProcessor._internal() {
     startService().then((value) {});
+    createProject();
   }
 
   factory VideoProcessor() {
@@ -100,37 +100,6 @@ class VideoProcessor {
     //get a specific job in debuggin
     Future<GetLabelDetectionResponse> labelsResponse =
         service!.getLabelDetection(jobId: jobId);
-
-    //print the processed video results
-    //helpful in debugging, as needed.
-    /*
-    labelsResponse.then((value) {
-      Iterator<LabelDetection> iter = value.labels!.iterator;
-      while (iter.moveNext()) {
-        print("Timestamp: ${iter.current.timestamp}");
-        print("Name: ${iter.current.label?.name}");
-        for (Instance inst in iter.current.label!.instances!) {
-          //bounding Box information is given in decimal form
-          //left=0.2 means the initial x-coordinate is 20% from left of frame
-          // a frame of width 1000 would mean left=200 px from left
-          print("Bounding Box: Left: ${inst.boundingBox!.left}"
-              " Top: ${inst.boundingBox!.top}"
-              " Width: ${inst.boundingBox!.width}"
-              " Height: ${inst.boundingBox!.height}");
-          print("Instance Confidence: ${inst.confidence}");
-        }
-        print("Confidence: ${iter.current.label?.confidence}");
-        //ignoring the parents
-        //parents may be used later if object can't be found (where are my clothes? vs where are my jeans?)
-        /*
-        print("Parents: ");
-        for (Parent rent in iter.current.label!.parents!) {
-          print("Parent: ${rent.name}");
-        }
-        */
-      }
-    });
-    */
     return labelsResponse;
   }
 
@@ -146,5 +115,53 @@ class VideoProcessor {
     uploadedVideo.then((value) async {
       await sendRequestToProcessVideo(value);
     });
+  }
+
+  //create a new Amazon Rekognition Custom Labels project
+  void createProject() {
+    String projectName = "cogniopen";
+    service!.createProject(projectName: projectName);
+    projectArn =
+        "arn:aws:rekognition:${dotenv.get('region')}:${dotenv.get('accountID')}:project/$projectName";
+  }
+
+  //needs a modelName ("my glasses"), and the title of the input file(s)
+  void addNewModel(String modelName, String title) {
+    List<Asset> assets = [];
+    //TODO: create some sort of loop given the significant object to create a list of Assets for training data
+    Asset sigObj = Asset(
+        groundTruthManifest: GroundTruthManifest(
+            s3Object:
+                S3Object(bucket: dotenv.get('videoS3Bucket'), name: title)));
+    assets.add(sigObj);
+
+    service!.createProjectVersion(
+        outputConfig: OutputConfig(
+            s3Bucket: dotenv.get('videoS3Bucket'),
+            s3KeyPrefix: "custom-labels"),
+        projectArn: projectArn,
+        testingData: TestingData(autoCreate: true),
+        trainingData: TrainingData(assets: assets),
+        versionName: modelName);
+  }
+
+  //check for a certain status (depending on input)
+  void pollVersionDescription(String status) {
+    //service.describeProjectVersions
+  }
+
+  //start the inference of custom labels
+  void startCustomDetection() {
+    //service.startProjectVersion
+  }
+
+  //stop the inference of custom labels
+  void stopCustomDetection() {
+    //service.stopProjectVersion
+  }
+
+  //run Rekognition custom label detection on a specified set of images
+  void searchForSignificantObject() {
+    //service.detectCustomeLabel
   }
 }
