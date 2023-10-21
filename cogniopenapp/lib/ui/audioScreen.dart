@@ -87,6 +87,7 @@ class _AudioScreenState extends State<AudioScreen> {
 
     /// Setting up the recorder by checking permissions.
     _initializeRecorder();
+    _startRecording();
   }
 
   /// This function initializes the recorder by checking necessary permissions.
@@ -128,7 +129,7 @@ class _AudioScreenState extends State<AudioScreen> {
     }
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
     key2 = DateTime.now().millisecondsSinceEpoch.toString();
-    _pathToSaveRecording = '${appDocDirectory.path}/$key2.wav'; // creates unique name
+    _pathToSaveRecording = '${appDocDirectory.path}/audio/$key2.wav'; // creates unique name
     debugPrint('initial app directory $appDocDirectory');
 
     await _recorder!.startRecorder(toFile: _pathToSaveRecording, codec: Codec.pcm16WAV);
@@ -222,6 +223,7 @@ class _AudioScreenState extends State<AudioScreen> {
               var jsonResponse = jsonDecode(transcriptResponse.body);
               setState(() {
                 transcription = jsonResponse['results']['transcripts'][0]['transcript'];
+                
               });
             } else {
               print('Failed to fetch transcript: ${transcriptResponse.statusCode}');
@@ -238,10 +240,27 @@ class _AudioScreenState extends State<AudioScreen> {
     } catch (e) {
       print('Error starting transcription: $e');
     }
+    _saveTranscriptionToFile('${key2}transcript');
 }
 
+Future<void> _saveTranscriptionToFile(String transcriptionJobName) async {
+  if (transcription.isEmpty) {
+    print("Transcription is empty. Nothing to save.");
+    return;
+  }
 
-  
+  try {
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    String filePath = '${appDocDirectory.path}/audio/transcripts/${transcriptionJobName}.txt';
+
+    File file = File(filePath);
+    await file.writeAsString(transcription);
+
+    print("Transcription saved at $filePath");
+  } catch (e) {
+    print("Error saving transcription");
+  }
+}
 
 
 
@@ -316,6 +335,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                 setState(() {
                                   _pathToSaveRecording = null;
                                   _duration = const Duration(seconds: 0);
+                                  transcription = '';
                                 });
                               },
                               child: const Text('Cancel'),
