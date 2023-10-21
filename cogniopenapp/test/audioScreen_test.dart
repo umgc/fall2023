@@ -7,7 +7,7 @@ import 'package:cogniopenapp/main.dart';
 void main() {
   /*
   testWidgets('Tests that the audio screen functions.', (WidgetTester tester) async {
-    // Build our app and trigger a frrame.
+    // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
 
     // Open the audio recording screen
