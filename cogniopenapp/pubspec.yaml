@@ -76,6 +76,7 @@ dependencies:
   aws_client: ^0.4.1
   mockito: ^5.4.2
   plugin_platform_interface: ^2.1.6
+  moment_dart: ^1.1.0
 
 dev_dependencies:
   flutter_test:
