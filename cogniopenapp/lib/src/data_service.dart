@@ -4,11 +4,12 @@ import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 
 class DataService {
-  DataService._();
-  static final DataService _instance = DataService._();
+  DataService._internal();
+
+  static final DataService _instance = DataService._internal();
   static DataService get instance => _instance;
 
-  List<Media> mediaList = [];
+  late List<Media> mediaList;
 
   Future<void> initializeData() async {
     await loadMedia();
