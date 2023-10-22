@@ -78,7 +78,7 @@ class _AudioScreenState extends State<AudioScreen> {
 
   S3Bucket s3Connection = S3Bucket();
 
-  String transcription = 'sample text will change';
+  String transcription = '';
 
   @override
   void initState() {
