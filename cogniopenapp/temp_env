@@ -1,8 +1,8 @@
 #!!!!!!!!!!!!!!!!!!!!
 
-#RENAME the temp_env FILE TO .env
+# RENAME the temp_env FILE TO .env
 #!!!!!!!!!!!!!!!!!!!!
-#FILL IN THESE WITH AWS USER ACCOUNT keys
+# FILL IN THESE WITH AWS USER ACCOUNT keys
 #!!!!!!!!!!!!!!!!!!!!
 accessKey = ""
 secretKey = ""
@@ -15,6 +15,11 @@ region = "us-east-1"
 snsTopicName = "cogniopen-notifications"
 
 #!!!!!!!!!!!!!!!!!!!!
-#RENAME BUCKET VAR
+# RENAME BUCKET VAR
 videoS3Bucket = "cogniopen-videos-test-yournamehere"
+#!!!!!!!!!!!!!!!!!!!!
+
+#!!!!!!!!!!!!!!!!!!!!
+# Enter OpenAI API Key
+OPEN_AI_API_KEY = xyz
 #!!!!!!!!!!!!!!!!!!!!
