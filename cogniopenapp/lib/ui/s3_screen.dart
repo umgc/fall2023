@@ -78,9 +78,10 @@ class TestScreenState extends State<TestScreen> {
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
               //creates a bucket; not needed since we are doing this on app load
-              s3.createBucket();
+              //s3.createBucket();
+              vp.pollVersionDescription();
             },
-            label: 'Create bucket',
+            label: 'Check service',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
@@ -91,18 +92,49 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              vp.uploadVideoToS3();
-              Navigator.push(
+              //logic to upload video and start video process.
+              //vp.uploadVideoToS3();
+              /*Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const TestVideoScreen()));
+              */
+
+              //TODO: hardcoded values to be modified
+              vp.addNewModel("green-glasses", "eyeglasses-manifest.json");
             },
-            label: 'Add video',
+            label: 'Add model',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
                 fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63))
+            labelBackgroundColor: const Color(0XFFE91E63)),
+        // FAB 3
+        SpeedDialChild(
+            child: const Icon(Icons.interests),
+            backgroundColor: const Color(0XFFE91E63),
+            onTap: () {
+              vp.startCustomDetection("green-glasses");
+            },
+            label: 'Start model',
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 16.0),
+            labelBackgroundColor: const Color(0XFFE91E63)),
+        // FAB 4
+        SpeedDialChild(
+            child: const Icon(Icons.interests),
+            backgroundColor: const Color(0XFFE91E63),
+            onTap: () {
+              vp.stopCustomDetection("green-glasses");
+            },
+            label: 'Stop model',
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 16.0),
+            labelBackgroundColor: const Color(0XFFE91E63)),
       ],
     );
   }

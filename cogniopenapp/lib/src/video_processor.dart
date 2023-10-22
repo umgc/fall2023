@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print, unused_element
 
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
-import 'package:aws_s3_api/s3-2006-03-01.dart';
+//import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
@@ -14,13 +14,14 @@ class VideoProcessor {
   double confidence = 85;
   Rekognition? service;
   String jobId = '';
-  String projectArn = '';
+  String projectArn = 'No project found';
 
   static final VideoProcessor _instance = VideoProcessor._internal();
 
   VideoProcessor._internal() {
-    startService().then((value) {});
-    createProject();
+    startService().then((value) {
+      createProject();
+    });
   }
 
   factory VideoProcessor() {
@@ -118,17 +119,43 @@ class VideoProcessor {
   }
 
   //create a new Amazon Rekognition Custom Labels project
+  //checks if one exists, and if so, sets that projectARN as the current projectArn
+  //if one does not exists, creates one and set that projectARN as the current projectArn for later polling.
   void createProject() {
-    String projectName = "cogniopen";
-    service!.createProject(projectName: projectName);
-    projectArn =
-        "arn:aws:rekognition:${dotenv.get('region')}:${dotenv.get('accountID')}:project/$projectName";
+    String projectName = "cogni-open";
+    bool projectDoesNotExists = true;
+    Future<DescribeProjectsResponse> checkForProject =
+        service!.describeProjects();
+
+    checkForProject.then((value) {
+      Iterator<ProjectDescription> iter = value.projectDescriptions!.iterator;
+      while (iter.moveNext()) {
+        //print(iter.current.projectArn);
+        if (iter.current.projectArn!.contains(projectName)) {
+          //print("Project found");
+          projectDoesNotExists = false;
+          projectArn = iter.current.projectArn!;
+        }
+      }
+
+      if (projectDoesNotExists) {
+        Future<CreateProjectResponse> projectResponse =
+            service!.createProject(projectName: projectName);
+        projectResponse.then((value) {
+          projectArn = value.projectArn!;
+          //print(projectArn);
+        });
+      }
+    });
+
+    //print(projectArn);
   }
 
-  //needs a modelName ("my glasses"), and the title of the input file(s)
+  //needs a modelName ("my glasses"), and the title of the input manifest file in S3 bucket
   void addNewModel(String modelName, String title) {
     List<Asset> assets = [];
-    //TODO: create some sort of loop given the significant object to create a list of Assets for training data
+    //TODO: create some sort of loop given the significant object to create the manifest for training data
+    //Asset is a manifest file (that has the s3 images and bounding box information)
     Asset sigObj = Asset(
         groundTruthManifest: GroundTruthManifest(
             s3Object:
@@ -138,6 +165,7 @@ class VideoProcessor {
     service!.createProjectVersion(
         outputConfig: OutputConfig(
             s3Bucket: dotenv.get('videoS3Bucket'),
+            //dumps files from the model process(es) into a new folder
             s3KeyPrefix: "custom-labels"),
         projectArn: projectArn,
         testingData: TestingData(autoCreate: true),
@@ -146,18 +174,86 @@ class VideoProcessor {
   }
 
   //check for a certain status (depending on input)
-  void pollVersionDescription(String status) {
-    //service.describeProjectVersions
+  void pollVersionDescription() {
+    //String status) {
+    Future<DescribeProjectVersionsResponse> projectVersions =
+        service!.describeProjectVersions(projectArn: projectArn);
+    projectVersions.then((value) {
+      Iterator<ProjectVersionDescription> iter =
+          value.projectVersionDescriptions!.iterator;
+      while (iter.moveNext()) {
+        print("${iter.current.projectVersionArn} is ${iter.current.status}");
+        //deletes a model if it failed training
+        if (iter.current.status == ProjectVersionStatus.trainingFailed) {
+          service!.deleteProjectVersion(
+            projectVersionArn: iter.current.projectVersionArn!,
+          );
+        }
+      }
+    });
   }
 
   //start the inference of custom labels
-  void startCustomDetection() {
-    //service.startProjectVersion
+  //can return a null if no such label is found (or if it failed training)
+  String? startCustomDetection(String labelName) {
+    //given an object label, check that the version is ready (i.e., trained)
+    String? modelArn;
+    //get all models in the project
+    Future<DescribeProjectVersionsResponse> projectVersions =
+        service!.describeProjectVersions(projectArn: projectArn);
+    projectVersions.then((value) async {
+      Iterator<ProjectVersionDescription> iter =
+          value.projectVersionDescriptions!.iterator;
+      while (iter.moveNext()) {
+        //find model like the label name
+        if (iter.current.projectVersionArn!.contains(labelName)) {
+          //check that the model is either trained or stopped
+          if (iter.current.status == ProjectVersionStatus.trainingCompleted ||
+              iter.current.status == ProjectVersionStatus.stopped) {
+            //start the model
+            StartProjectVersionResponse response = await service!
+                .startProjectVersion(
+                    minInferenceUnits: 1,
+                    projectVersionArn: iter.current.projectVersionArn!);
+            print(response.status);
+            //returns the modelArn of the projectVersion being started
+            //still need to poll the that the model has started
+            return iter.current.projectVersionArn;
+          }
+        }
+      }
+    });
+    return modelArn;
   }
 
   //stop the inference of custom labels
-  void stopCustomDetection() {
-    //service.stopProjectVersion
+  String? stopCustomDetection(String labelName) {
+    String? modelArn;
+    //given an object label, check that the version is ready (i.e., trained)
+    //get all models in the project
+    Future<DescribeProjectVersionsResponse> projectVersions =
+        service!.describeProjectVersions(projectArn: projectArn);
+    projectVersions.then((value) async {
+      Iterator<ProjectVersionDescription> iter =
+          value.projectVersionDescriptions!.iterator;
+      while (iter.moveNext()) {
+        //find model like the label name
+        if (iter.current.projectVersionArn!.contains(labelName)) {
+          //check that the model is running
+          if (iter.current.status == ProjectVersionStatus.running) {
+            //stop the model
+            StopProjectVersionResponse response = await service!
+                .stopProjectVersion(
+                    projectVersionArn: iter.current.projectVersionArn!);
+            print(response.status);
+            //returns the modelArn of the projectVersion being stopped
+            //still need to poll the that the model has finished stopping
+            return iter.current.projectVersionArn;
+          }
+        }
+      }
+    });
+    return modelArn;
   }
 
   //run Rekognition custom label detection on a specified set of images

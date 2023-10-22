@@ -10,6 +10,7 @@ import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/src/galleryData.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/video_processor.dart';
 import 'src/galleryData.dart';
 
 void main() async {

@@ -274,7 +274,6 @@ class _AudioScreenState extends State<AudioScreen> {
           children: [
             Image.asset(
               'assets/icons/virtual_assistant.png',
-              'assets/icons/virtual_assistant.png',
               fit: BoxFit.contain,
               height: 32,
             ),

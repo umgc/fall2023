@@ -9,6 +9,10 @@ import 'package:cogniopenapp/src/database/model/media.dart' as database_media;
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/media.dart';
+import 'package:cogniopenapp/src/video.dart';
+import 'package:cogniopenapp/src/photo.dart';
+import 'package:cogniopenapp/src/conversation.dart';
 
 class GalleryData {
   static final GalleryData _instance = GalleryData._internal();
