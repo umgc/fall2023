@@ -4,7 +4,8 @@ import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'homeScreen.dart';
-import '../src/galleryData.dart';
+
+import 'package:cogniopenapp/src/data_service.dart';
 
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
@@ -34,7 +35,7 @@ class GalleryScreen extends StatefulWidget {
 // Define the state for the Gallery screen
 class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
-  List<Media> testMedia = GalleryData.mediaList;
+  List<Media> testMedia = DataService.instance.mediaList;
 
   final double _defaultFontSize = 20.0;
   bool _searchBarVisible = false;
@@ -60,7 +61,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _populateMedia() async {
-    testMedia = GalleryData.mediaList;
+    testMedia = DataService.instance.mediaList;
   }
 
   // Function to update font and icon size based on grid size
