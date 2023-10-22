@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/database/controller/photo_controller.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
@@ -135,7 +136,7 @@ class AppDatabaseSeedData {
       File? photoFile = await FileManager.loadAssetFile(
           'assets/seed_data_files/cat.png', 'cat.png');
       List<String>? tagsList = ['pet', 'cat'];
-      await PhotoController.addPhoto(
+      await DataService.instance.addPhoto(
         title: 'Cat',
         description: 'A photo of my pet cat, Kit Kat.',
         tags: tagsList,
