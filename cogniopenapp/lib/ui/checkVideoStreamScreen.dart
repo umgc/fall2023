@@ -14,7 +14,7 @@ class checkVideoStreamScreen extends StatefulWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Video Recording'),
+        title: const Text('Video Recording', style: TextStyle(color: Colors.black54)),
       ),
     );
   }
@@ -35,7 +35,7 @@ class checkVideoStreamScreenState extends State<checkVideoStreamScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Video Streaming'),
+        title: const Text('Video Streaming', style: TextStyle(color: Colors.black54)),
       ),
       body: Column(children: [
         const Padding(
