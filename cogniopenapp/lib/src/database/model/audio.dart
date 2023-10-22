@@ -1,16 +1,6 @@
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
-
-const String tableAudios = 'audios';
-
-class AudioFields extends MediaFields {
-  static final List<String> values = [
-    ...MediaFields.values,
-    summary,
-  ];
-
-  static const String summary = 'summary';
-}
+import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 
 class Audio extends Media {
   final String? summary;
@@ -28,7 +18,7 @@ class Audio extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.audio,
-          title: title,
+          title: title ?? fileName, // TODO: Decide on default file name
           description: description,
           tags: tags,
           timestamp: timestamp,

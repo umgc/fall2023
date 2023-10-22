@@ -1,9 +1,9 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
-import 'package:cogniopenapp/src/database/model/audio.dart';
-import 'package:cogniopenapp/src/database/model/photo.dart';
-import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
+import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/database/app_database_seed_data.dart';
 
 class AppDatabase {

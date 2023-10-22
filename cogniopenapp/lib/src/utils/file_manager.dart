@@ -98,16 +98,16 @@ class FileManager {
     return path.extension(file.path).replaceAll('.', '');
   }
 
-  static Image? loadImage(String filePath, String fileName) {
+  static Image loadImage(String filePath, String fileName) {
     try {
       final File imageFile = File('$filePath/$fileName');
       if (!imageFile.existsSync()) {
-        return null;
+        return Image.network('https://example.com/default_image.jpg'); // TODO: Replace with your default image URL
       }
       return Image.file(imageFile);
     } catch (e) {
       print('Error loading image: $e');
-      return null;
+      return Image.network('https://example.com/default_image.jpg'); // TODO: Replace with your default image URL
     }
   }
 }

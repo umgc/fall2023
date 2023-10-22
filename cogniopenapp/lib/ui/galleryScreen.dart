@@ -4,11 +4,12 @@ import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'homeScreen.dart';
-import '../src/media.dart';
-import '../src/video.dart';
-import '../src/photo.dart';
-import '../src/conversation.dart';
 import '../src/galleryData.dart';
+
+import 'package:cogniopenapp/src/database/model/media.dart';
+import 'package:cogniopenapp/src/database/model/audio.dart';
+import 'package:cogniopenapp/src/database/model/photo.dart';
+import 'package:cogniopenapp/src/database/model/video.dart';
 
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
@@ -33,7 +34,7 @@ class GalleryScreen extends StatefulWidget {
 // Define the state for the Gallery screen
 class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
-  List<Media> testMedia = GalleryData.getAllMedia();
+  List<Media> testMedia = GalleryData.mediaList;
 
   final double _defaultFontSize = 20.0;
   bool _searchBarVisible = false;
@@ -59,7 +60,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _populateMedia() async {
-    testMedia = await GalleryData.allMedia;
+    testMedia = GalleryData.mediaList;
   }
 
   // Function to update font and icon size based on grid size
@@ -125,7 +126,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   void _toggleFavoriteStatus(Media media) {
     setState(() {
-      media.isFavorited = !media.isFavorited;
+      //media.isFavorited = !media.isFavorited;
     });
   }
 
@@ -168,8 +169,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
         break;
       case SortingCriteria.timeStamp:
         testMedia.sort((a, b) => _isSortAscending
-            ? a.timeStamp!.compareTo(b.timeStamp!)
-            : b.timeStamp!.compareTo(a.timeStamp!));
+            ? a.timestamp!.compareTo(b.timestamp!)
+            : b.timestamp!.compareTo(a.timestamp!));
         break;
       case SortingCriteria.title:
         testMedia.sort((a, b) => _isSortAscending
@@ -243,17 +244,17 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     Text('Title: ${media.title}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                        'Time Stamp: ${FormatUtils.getDateString(media.timeStamp)}',
+                        'Time Stamp: ${FormatUtils.getDateString(media.timestamp)}',
                         style: TextStyle(fontSize: _defaultFontSize)),
-                    if (media is Photo && media.associatedImage != null)
+                    if (media is Photo && media.image != null)
                       Image(
-                        image: media.associatedImage.image,
+                        image: media.image.image,
                       ),
                     if (media is Video)
-                      Image(
-                        image: media.thumbnail.image,
-                      ),
-                    if (media is Conversation) Icon(Icons.chat, size: 100),
+                      //Image(
+                      //  image: media.thumbnail.image,
+                      //),
+                    if (media is Audio) Icon(Icons.chat, size: 100),
                     SizedBox(height: 16),
                     Text(
                       'Description: ${media.description}',
@@ -314,7 +315,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
             TextButton(
               child: Text('Save'),
               onPressed: () {
-                setState(() {
+                /*setState(() {
+
                   media.title = titleController.text;
                   media.description = descriptionController.text;
                   media.tags = tagsController.text
@@ -322,7 +324,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       .map((tag) => tag.trim())
                       .toList();
                   updatedMedia = media; // Update the updatedMedia variable
-                });
+                });*/
                 Navigator.of(context)
                     .pop(updatedMedia); // Return the updated media
               },
@@ -507,10 +509,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (media is Photo && media.associatedImage != null)
+                if (media is Photo && media.image != null)
                   _buildPhotoImage(media),
-                if (media is Video) _buildVideoImage(media),
-                if (media is Conversation) _buildConversationIcon(),
+                //if (media is Video) _buildVideoImage(media),
+                if (media is Audio) _buildConversationIcon(),
                 _buildGridItemTitle(media.title),
               ],
             ),
@@ -527,12 +529,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
       child: Center(
         child: Image(
           key: const Key('photoItem'),
-          image: media.associatedImage.image,
+          image: media.image.image,
         ),
       ),
     );
   }
 
+  /*
   Widget _buildVideoImage(Video media) {
     return Image(
       key: const Key('videoItem'),
@@ -542,6 +545,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       height: 100.0 + (2.0 - _crossAxisCount) * 25.0,
     );
   }
+   */
 
   Widget _buildConversationIcon() {
     return const Icon(
@@ -570,7 +574,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       if (media is Video && !_showVideos) {
         return false;
       }
-      if (media is Conversation && !_showConversations) {
+      if (media is Audio && !_showConversations) {
         return false;
       }
       return true;
