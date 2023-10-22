@@ -15,9 +15,12 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0x440000),
         elevation: 0,
+        centerTitle: true,
         leading: const BackButton(
             color: Colors.black54
         ),
+        title: const Text('Settings'),
+
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -84,49 +87,45 @@ class SettingsScreen extends StatelessWidget {
         ),
 
         ),
-      bottomNavigationBar: BottomNavigationBar(
-      elevation: 0.0,
+        bottomNavigationBar: BottomNavigationBar(
+            elevation: 0.0,
 
-      items: const [
-        BottomNavigationBarItem(
-          backgroundColor: Color(0x00ffffff),
-
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Search',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.photo),
-          label: 'Gallery',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.chat),
-          label: 'Chatbot',
-        ),
-      ],
-      onTap: (int index) {
-        // Handle navigation bar item taps
-        if (index == 0) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => HomeScreen()));
-        } else if (index == 1) {
-          // Navigate to Search screen
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SearchScreen()));
-        } else if (index == 2) {
-          // Navigate to Gallery screen
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => GalleryScreen()));
-        } else if (index == 3) {
-          // Navigate to Chatbot screen
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AssistantScreen()));
-        }
-      },
-    ),
+            items: const [
+              BottomNavigationBarItem(
+                backgroundColor: Color(0x00ffffff),
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.back_hand_rounded),
+                label: 'Virtual Assistant',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.photo),
+                label: 'Gallery',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Settings',
+              ),
+            ],
+            onTap: (int index) {
+              // Handle navigation bar item taps
+              if (index == 0) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              } else if (index == 1) {
+                // Navigate to Search screen
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AssistantScreen()));
+              } else if (index == 2) {
+                // Navigate to Gallery screen
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => GalleryScreen()));
+              } else if (index == 3) {
+              }
+            }
+        )
 
 
     );

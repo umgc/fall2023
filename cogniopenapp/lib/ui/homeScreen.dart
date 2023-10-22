@@ -23,7 +23,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // Set the background color for the entire screen
-        backgroundColor: const Color(0XFF880E4F),
         extendBodyBehindAppBar: true,
         extendBody: true,
       // Setting up the app bar at the top of the screen
@@ -122,7 +121,7 @@ class HomeScreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.fromLTRB(16.0, 140, 16.0, 25),
               child: Text(
-                'Helping you remember the important things.\n Choose a feature from here to get started!',
+                'Helping you remember the important things.\n Choose a feature to get started!',
                 style: TextStyle(
                   fontSize: 16.0,
                   color: Colors.black54,
@@ -134,11 +133,11 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: GridView.count(
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
+                crossAxisCount: 2,
                 crossAxisSpacing: 12.0,
                 mainAxisSpacing: 12.0,
-                childAspectRatio: 0.80,
-                padding: const EdgeInsets.all(10.0),
+                childAspectRatio: 1.30,
+                padding: const EdgeInsets.all(26.0),
                 children: [
                   // Using the helper function to build each button in the grid
                   _buildElevatedButton(
@@ -212,8 +211,8 @@ class HomeScreen extends StatelessWidget {
                   label: 'Gallery',
                   ),
                   BottomNavigationBarItem(
-                  icon: Icon(Icons.help),
-                  label: 'Tour',
+                  icon: Icon(Icons.settings),
+                  label: 'Settings',
                   ),
                     ],
                   onTap: (int index) {
@@ -231,7 +230,7 @@ class HomeScreen extends StatelessWidget {
                   } else if (index == 3) {
                   // Navigate to Gallery screen
                   Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TourScreen()));
+                  MaterialPageRoute(builder: (context) => SettingsScreen()));
                     }
                   }
       )

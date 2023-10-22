@@ -174,9 +174,11 @@ class _AssistantScreenState extends State<AssistantScreen> {
         initialData: false,
         builder: (BuildContext context, AsyncSnapshot<bool> isLoad) {
           return Scaffold(
+            extendBodyBehindAppBar: true,
             appBar: AppBar(
+              backgroundColor: const Color(0x440000), // Set appbar background color
+              centerTitle: true,
               title: const Text('Virtual Assistant'),
-              backgroundColor: const Color(0xFFB3E5FC),
               elevation: 0,
               leading: const BackButton(color: Colors.black54),
             ),
