@@ -5,7 +5,7 @@ class RecentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recent Requests'),
+        title: const Text('Recent Requests', style: TextStyle(color: Colors.black54)),
       ),
       // Implement the Recent Questions/Requests screen UI here
     );

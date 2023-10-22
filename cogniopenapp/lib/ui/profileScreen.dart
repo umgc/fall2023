@@ -76,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0.0,
         centerTitle: true,
         leading: const BackButton(color: Colors.black54),
-        title: const Text('Profile'),
+        title: const Text('Profile', style: TextStyle(color: Colors.black54)),
       ),
       body: Container(
         decoration: const BoxDecoration(

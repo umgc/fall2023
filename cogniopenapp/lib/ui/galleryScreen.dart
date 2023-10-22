@@ -17,7 +17,7 @@ class GalleryScreen extends StatefulWidget {
     // Scaffold widget for the Gallery screen
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gallery'), // AppBar title
+        title: const Text('Gallery', style: TextStyle(color: Colors.black54)),
       ),
       // Implement the Gallery screen UI here
     );

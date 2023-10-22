@@ -75,7 +75,7 @@ class VideoResponseScreen extends StatefulWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Query Responses'),
+        title: const Text('Query Responses', style: TextStyle(color: Colors.black54)),
       ),
     );
   }
@@ -98,7 +98,7 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
     double imageHeight = 240;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Query Responses'),
+        title: const Text('Query Responses', style: TextStyle(color: Colors.black54)),
       ),
       body: Column(children: [
         const Padding(

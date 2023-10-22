@@ -150,7 +150,7 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
           backgroundColor: const Color(0xFFB3E5FC), // Set appbar background color
         elevation: 0.0,
         centerTitle: true,
-        title: const Text('Camera'),
+        title: const Text('Camera', style: TextStyle(color: Colors.black54)),
           leading: GestureDetector(
               child: Icon( Icons.arrow_back, color: Colors.white,),
               onTap: () {

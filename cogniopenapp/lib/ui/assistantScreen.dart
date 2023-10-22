@@ -178,7 +178,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
             appBar: AppBar(
               backgroundColor: const Color(0x440000), // Set appbar background color
               centerTitle: true,
-              title: const Text('Virtual Assistant'),
+              title: const Text('Virtual Assistant', style: TextStyle(color: Colors.black54)),
               elevation: 0,
               leading: const BackButton(color: Colors.black54),
             ),

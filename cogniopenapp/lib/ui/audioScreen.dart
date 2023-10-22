@@ -283,7 +283,7 @@ Future<void> _saveTranscriptionToFile(String transcriptionJobName) async {
         leading: const BackButton(
             color: Colors.black54
         ),
-        title: const Text('Audio Recording'),
+        title: const Text('Audio Recording', style: TextStyle(color: Colors.black54)),
       ),
       body: Container(
         decoration: const BoxDecoration(

@@ -19,7 +19,7 @@ class SettingsScreen extends StatelessWidget {
         leading: const BackButton(
             color: Colors.black54
         ),
-        title: const Text('Settings'),
+        title: const Text('Settings', style: TextStyle(color: Colors.black54)),
 
       ),
       body: Container(
