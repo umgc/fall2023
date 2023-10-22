@@ -19,6 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController _emergencyFirstNameController = TextEditingController();
   TextEditingController _emergencyLastNameController = TextEditingController();
   TextEditingController _emergencyPhoneController = TextEditingController();
+  String _biometricAuth = '';
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -52,16 +53,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _firstNameController.text = details[0];
       _lastNameController.text = details[1];
       _emailController.text = details[2];
-      if (details.length > 3) _phoneController.text = details[3];
-      if (details.length > 4) _emergencyFirstNameController.text = details[4];
-      if (details.length > 5) _emergencyLastNameController.text = details[5];
-      if (details.length > 6) _emergencyPhoneController.text = details[6];
+      if (details.length > 4) _phoneController.text = details[4];
+      if (details.length > 5) _emergencyFirstNameController.text = details[5];
+      if (details.length > 6) _emergencyLastNameController.text = details[6];
+      if (details.length > 7) _emergencyPhoneController.text = details[7];
     }
+  }
+
+  Future<void> setBiometricAuth() async {
+    String data = await readUserData();
+    List<String> details = data.split(', ');
+    _biometricAuth = details[3];
   }
 
   @override
   void initState() {
     super.initState();
+    setBiometricAuth();
     populateData();
   }
 
@@ -198,7 +206,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 String userData =
-                                    '${_firstNameController.text}, ${_lastNameController.text}, ${_emailController.text}, ${_phoneController.text}, ${_emergencyFirstNameController.text}, ${_emergencyLastNameController.text}, ${_emergencyPhoneController.text}';
+                                    '${_firstNameController.text}, ${_lastNameController.text}, ${_emailController.text}, ${_biometricAuth}, ${_phoneController.text}, ${_emergencyFirstNameController.text}, ${_emergencyLastNameController.text}, ${_emergencyPhoneController.text}';
                                 await writeUserData(userData);
                                 Navigator.pushReplacementNamed(
                                     context, '/homeScreen');

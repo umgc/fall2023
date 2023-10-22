@@ -78,7 +78,7 @@ class _AudioScreenState extends State<AudioScreen> {
 
   S3Bucket s3Connection = S3Bucket();
 
-  String transcription = 'sample text will change';
+  String transcription = '';
 
   @override
   void initState() {
@@ -132,7 +132,7 @@ class _AudioScreenState extends State<AudioScreen> {
     }
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
     key2 = DateTime.now().millisecondsSinceEpoch.toString();
-    _pathToSaveRecording = '${appDocDirectory.path}/audio/$key2.wav'; // creates unique name
+    _pathToSaveRecording = '${appDocDirectory.path}/files/audios/$key2.wav'; // creates unique name
     debugPrint('initial app directory $appDocDirectory');
 
     await _recorder!.startRecorder(toFile: _pathToSaveRecording, codec: Codec.pcm16WAV);
@@ -254,7 +254,7 @@ Future<void> _saveTranscriptionToFile(String transcriptionJobName) async {
 
   try {
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    String filePath = '${appDocDirectory.path}/audio/transcripts/${transcriptionJobName}.txt';
+    String filePath = '${appDocDirectory.path}/files/audios/transcripts/${transcriptionJobName}.txt';
 
     File file = File(filePath);
     await file.writeAsString(transcription);
