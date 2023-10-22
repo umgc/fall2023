@@ -9,7 +9,7 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 class VideoController {
   VideoController._();
 
-  static Future<int> addVideo({
+  static Future<Video?> addVideo({
     String? title,
     String? description,
     List<String>? tags,
@@ -26,7 +26,6 @@ class VideoController {
         fileExtension,
       );
       int fileSize = FileManager.calculateFileSizeInBytes(file);
-
       Video newVideo = Video(
         title: title,
         description: description,
@@ -38,23 +37,20 @@ class VideoController {
         duration: duration,
         thumbnail: thumbnail,
       );
-
       Video createdVideo = await VideoRepository.instance.create(newVideo);
-
       await FileManager.addFileToFilesystem(
         file,
         DirectoryManager.instance.videosDirectory.path,
         fileName,
       );
-
-      return createdVideo.id!;
+      return createdVideo;
     } catch (e) {
-      print('Error adding video: $e');
-      return -1;
+      print('Video Controller -- Error adding video: $e');
+      return null;
     }
   }
 
-  static Future<void> updateVideo({
+  static Future<Video?> updateVideo({
     required int id,
     String? title,
     String? description,
@@ -64,7 +60,6 @@ class VideoController {
   }) async {
     try {
       final existingVideo = await VideoRepository.instance.read(id);
-
       final updatedVideo = existingVideo.copy(
         title: title ?? existingVideo.title,
         description: description ?? existingVideo.description,
@@ -72,25 +67,25 @@ class VideoController {
         duration: duration ?? existingVideo.duration,
         thumbnail: thumbnail ?? existingVideo.thumbnail,
       );
-
       await VideoRepository.instance.update(updatedVideo);
+      return updatedVideo;
     } catch (e) {
-      print('Error updating video: $e');
+      print('Video Controller -- Error updating video: $e');
+      return null;
     }
   }
 
-  static Future<void> removeVideo(int id) async {
+  static Future<Video?> removeVideo(int id) async {
     try {
       final existingVideo = await VideoRepository.instance.read(id);
-
       await VideoRepository.instance.delete(id);
-
       final videoFilePath =
           '${DirectoryManager.instance.videosDirectory.path}/${existingVideo.fileName}';
-
       await FileManager.removeFileFromFilesystem(videoFilePath);
+      return existingVideo;
     } catch (e) {
-      print('Error removing video: $e');
+      print('Video Controller -- Error removing video: $e');
+      return null;
     }
   }
 }

@@ -9,7 +9,7 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 class PhotoController {
   PhotoController._();
 
-  static Future<int> addPhoto({
+  static Future<Photo?> addPhoto({
     String? title,
     String? description,
     List<String>? tags,
@@ -24,7 +24,6 @@ class PhotoController {
         fileExtension,
       );
       int fileSize = FileManager.calculateFileSizeInBytes(file);
-
       Photo newPhoto = Photo(
         title: title,
         description: description,
@@ -34,23 +33,20 @@ class PhotoController {
         storageSize: fileSize,
         isFavorited: false,
       );
-
       Photo createdPhoto = await PhotoRepository.instance.create(newPhoto);
-
       await FileManager.addFileToFilesystem(
         file,
         DirectoryManager.instance.photosDirectory.path,
         fileName,
       );
-
-      return createdPhoto.id!;
+      return createdPhoto;
     } catch (e) {
-      print('Error adding photo: $e');
-      return -1;
+      print('Photo Controller -- Error adding photo: $e');
+      return null;
     }
   }
 
-  static Future<void> updatePhoto({
+  static Future<Photo?> updatePhoto({
     required int id,
     String? title,
     String? description,
@@ -58,31 +54,30 @@ class PhotoController {
   }) async {
     try {
       final existingPhoto = await PhotoRepository.instance.read(id);
-
       final updatedPhoto = existingPhoto.copy(
         title: title ?? existingPhoto.title,
         description: description ?? existingPhoto.description,
         tags: tags ?? existingPhoto.tags,
       );
-
       await PhotoRepository.instance.update(updatedPhoto);
+      return updatedPhoto;
     } catch (e) {
-      print('Error updating photo: $e');
+      print('Photo Controller -- Error updating photo: $e');
+      return null;
     }
   }
 
-  static Future<void> removePhoto(int id) async {
+  static Future<Photo?> removePhoto(int id) async {
     try {
       final existingPhoto = await PhotoRepository.instance.read(id);
-
       await PhotoRepository.instance.delete(id);
-
       final photoFilePath =
           '${DirectoryManager.instance.photosDirectory.path}/${existingPhoto.fileName}';
-
       await FileManager.removeFileFromFilesystem(photoFilePath);
+      return existingPhoto;
     } catch (e) {
-      print('Error removing photo: $e');
+      print('Photo Controller -- Error removing photo: $e');
+      return null;
     }
   }
 }
