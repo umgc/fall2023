@@ -11,17 +11,17 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class AppDatabaseSeedData {
   void insertAppDatabaseSeedData() async {
-    await AudioRepository.instance.create(audio1);
-    await AudioRepository.instance.create(audio2);
-    await AudioRepository.instance.create(audio3);
+    //await AudioRepository.instance.create(audio1);
+    //await AudioRepository.instance.create(audio2);
+    //await AudioRepository.instance.create(audio3);
 
-    await PhotoRepository.instance.create(photo1);
-    await PhotoRepository.instance.create(photo2);
-    await PhotoRepository.instance.create(photo3);
+    //await PhotoRepository.instance.create(photo1);
+    //await PhotoRepository.instance.create(photo2);
+    //await PhotoRepository.instance.create(photo3);
 
-    await VideoRepository.instance.create(video1);
-    await VideoRepository.instance.create(video2);
-    await VideoRepository.instance.create(video3);
+    //await VideoRepository.instance.create(video1);
+    //await VideoRepository.instance.create(video2);
+    //await VideoRepository.instance.create(video3);
 
     await loadSeedPhoto();
   }
@@ -135,14 +135,13 @@ class AppDatabaseSeedData {
       File? photoFile = await FileManager.loadAssetFile(
           'assets/seed_data_files/cat.png', 'cat.png');
       List<String>? tagsList = ['pet', 'cat'];
-      int newPhotoId = await PhotoController.addPhoto(
+      await PhotoController.addPhoto(
         title: 'Cat',
         description: 'A photo of my pet cat, Kit Kat.',
         tags: tagsList,
         file: photoFile,
       );
       FileManager.unloadAssetFile('cat.png');
-      print('Loaded seed photo, id: $newPhotoId');
     } catch (e) {
       print('Error loading seed data photo: $e');
     }
