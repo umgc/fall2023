@@ -4,16 +4,8 @@ import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:flutter/widgets.dart';
 
-const String tablePhotos = 'photos';
-
-class PhotoFields extends MediaFields {
-  static final List<String> values = [
-    ...MediaFields.values,
-  ];
-}
-
 class Photo extends Media {
-  Image? _image;
+  late Image image;
 
   Photo({
     int? id,
@@ -27,14 +19,21 @@ class Photo extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.photo,
-          title: title,
+          title: title ?? fileName, // TODO: Decide on default file name
           description: description,
           tags: tags,
           timestamp: timestamp,
           fileName: fileName,
           storageSize: storageSize,
           isFavorited: isFavorited,
-        );
+        ) {
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    image = await FileManager.loadImage(
+        DirectoryManager.instance.photosDirectory.path, fileName);
+  }
 
   @override
   Photo copy({
@@ -79,11 +78,5 @@ class Photo extends Media {
       storageSize: json[MediaFields.storageSize] as int,
       isFavorited: json[MediaFields.isFavorited] == 1,
     );
-  }
-
-  Image? get image {
-    _image ??= FileManager.loadImage(
-        DirectoryManager.instance.photosDirectory.path, fileName);
-    return _image;
   }
 }

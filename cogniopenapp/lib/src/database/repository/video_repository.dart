@@ -2,6 +2,19 @@ import 'package:cogniopenapp/src/database/app_database.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 
+const String tableVideos = 'videos';
+
+class VideoFields extends MediaFields {
+  static final List<String> values = [
+    ...MediaFields.values,
+    duration,
+    thumbnail,
+  ];
+
+  static const String duration = 'duration';
+  static const String thumbnail = 'thumbnail';
+}
+
 class VideoRepository {
   static final VideoRepository instance = VideoRepository._init();
 

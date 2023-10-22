@@ -2,6 +2,14 @@ import 'package:cogniopenapp/src/database/app_database.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 
+const String tablePhotos = 'photos';
+
+class PhotoFields extends MediaFields {
+  static final List<String> values = [
+    ...MediaFields.values,
+  ];
+}
+
 class PhotoRepository {
   static final PhotoRepository instance = PhotoRepository._init();
 

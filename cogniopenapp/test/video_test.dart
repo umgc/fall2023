@@ -1,7 +1,3 @@
-import 'package:cogniopenapp/src/video.dart';
-import 'package:cogniopenapp/src/media.dart';
-import 'package:flutter_test/flutter_test.dart';
-
 // TODO -- Fix Tests
 
 /*

@@ -4,10 +4,6 @@ import 'package:path/path.dart' as path;
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
-import '../src/media.dart';
-import '../src/video.dart';
-import '../src/photo.dart';
-import '../src/conversation.dart';
 import '../main.dart';
 import 'dart:io';
 
@@ -34,16 +30,19 @@ class GalleryData {
   static String mostRecentVideoName = "";
   static List<String> processedImages = [];
 
+  static List<database_media.Media> mediaList = [];
+
+
   GalleryData._internal() {
     print("Internal gallery data created");
     _initializeData();
   }
 
   void _initializeData() async {
-    getAllPhotos();
-    getAllVideos();
-    _setMostRecentVideo();
-    _initializeMedia(); // temporary db testing
+    //getAllPhotos();
+    //getAllVideos();
+    //_setMostRecentVideo();
+    await _initializeMedia(); // temporary db testing
   }
 
   // temporary db testing:
@@ -62,19 +61,25 @@ class GalleryData {
       print(video.toJson());
     }
 
-    return [...audios, ...photos, ...videos];
+    mediaList = [...audios, ...photos, ...videos];
+    return mediaList;
   }
+
+
 
   factory GalleryData() {
     return _instance;
   }
 
-  static List<Media> allMedia = [];
+  //static List<Media> allMedia = [];
 
+  /*
   static List<Media> getAllMedia() {
     return allMedia;
   }
+   */
 
+  /*
   void getAllPhotos() async {
     if (photosDirectory.existsSync()) {
       List<FileSystemEntity> files = photosDirectory.listSync();
@@ -140,7 +145,8 @@ class GalleryData {
           isFavorited: true,
         )));
   }
-
+*/
+  /*
   static void _setMostRecentVideo() async {
     if (videosDirectory.existsSync()) {
       List<FileSystemEntity> files = videosDirectory.listSync();
@@ -150,7 +156,8 @@ class GalleryData {
       mostRecentVideoPath = files.last.path;
     }
   }
-
+   */
+/*
   void getAllVideos() async {
     if (videosDirectory.existsSync()) {
       List<FileSystemEntity> files = videosDirectory.listSync();
@@ -178,7 +185,7 @@ class GalleryData {
 
     //TO DO POPULATE WITH THE VIDEO STUFF
   }
-
+*/
   void printDirectoriesAndContents(Directory directory, {int depth = 0}) {
     final prefix = '  ' * depth;
     print('$prefix${directory.path}/'); // Print the current directory

@@ -25,7 +25,7 @@ abstract class MediaFields {
 abstract class Media {
   final int? id;
   final MediaType mediaType;
-  final String? title;
+  final String title;
   final String? description;
   final List<String>? tags;
   final DateTime timestamp;
@@ -36,7 +36,7 @@ abstract class Media {
   Media({
     this.id,
     required this.mediaType,
-    this.title,
+    required this.title,
     this.description,
     this.tags,
     required this.timestamp,
@@ -47,7 +47,7 @@ abstract class Media {
 
   Media copy({
     int? id,
-    String? title,
+    String title,
     String? description,
     List<String>? tags,
     DateTime? timestamp,
