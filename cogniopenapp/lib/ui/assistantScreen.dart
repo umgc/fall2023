@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:cogniopenapp/src/typingIndicator.dart';
 import 'package:dart_openai/dart_openai.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -240,20 +242,28 @@ class _AssistantScreenState extends State<AssistantScreen> {
     // Also, make sure not to share your API key or push it to Git
     await dotenv.load(fileName: ".env");
     String apiKeyEnv = dotenv.get('OPEN_AI_API_KEY', fallback: "");
+
+    // Find the user's name to welcome them personally
+    final directory = await getApplicationDocumentsDirectory();
+    String path = directory.path;
+    final file = File('$path/user_data.txt');
+    String contents = await file.readAsString();
+    List<String> details = contents.split(', ');
+    String _userName = details[0];
+
+    // If there's no API key, throw internal error
     if (apiKeyEnv.isEmpty) {
       _showAlert("API Key Error",
           "OpenAI API Key must be set to use the Virtual Assistant.");
       return false;
     } else {
-      //TODO: API key sould be stored in the database, not env file
       OpenAI.apiKey = apiKeyEnv;
-      print("Welcome user here");
-      _handleUserMessage("Welcome John and offer to help him.", false);
+      _handleUserMessage("Welcome $_userName and offer to help them.", false);
       return true;
     }
   }
 
-// Display alert when API key is empty
+  // Display alert when API key is empty
   FutureOr _showAlert(String title, String message) {
     showDialog(
         context: context,
