@@ -6,7 +6,7 @@ void main() {
   Video video = createTestMediaList()[5] as Video;
   List<IdentifiedItem> identifiedItems = video.identifiedItems;
   //test code here!
-  test("create a video", () {
+  test("U-9-1: create a video", () {
     expect(video.duration, '2:30');
     expect(video.autoDelete, true);
 
@@ -17,7 +17,7 @@ void main() {
     }
   });
 
-  test("IdentifiedItem", () {
+  test("U-9-2: IdentifiedItem", () {
     IdentifiedItem item = identifiedItems[0];
 
     expect(item.itemName, "Item 1");

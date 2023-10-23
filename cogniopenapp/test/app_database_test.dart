@@ -53,7 +53,7 @@ void sqfliteTestInit() {
 void main() async {
   sqfliteTestInit();
   group('adding to database (db)', () {
-    test('adding audio to db', () async {
+    test('U-13-1: adding audio to db', () async {
       final db = await AppDatabase.instance.database;
       await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
       var audioTableQueryResult = await db.query(tableAudios, groupBy: "title", where: "title in ('$unitTestAudioTitle')");
@@ -63,7 +63,7 @@ void main() async {
       expect(audioTableQueryResult.length, 1);
       await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
     });
-    test('adding photo to db', () async {
+    test('U-13-2: adding photo to db', () async {
       final db = await AppDatabase.instance.database;
       await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
       var photoTableQueryResult = await db.query(tablePhotos, groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
@@ -73,7 +73,7 @@ void main() async {
       expect(photoTableQueryResult.length, 1);
       await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
     });
-    test('adding video to db', () async {
+    test('U-13-3: adding video to db', () async {
       final db = await AppDatabase.instance.database;
       await db.execute("DELETE FROM $tableVideos WHERE title='$unitTestVideoTitle'");
       var videoTableQueryResult = await db.query(tableVideos, groupBy: "title", where: "title in ('$unitTestVideoTitle')");
