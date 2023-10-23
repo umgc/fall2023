@@ -5,8 +5,27 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class AppSeedData {
   void loadAppSeedData() async {
+    await loadSeedAudio();
     await loadSeedPhoto();
     await loadSeedVideo();
+  }
+
+  Future<void> loadSeedAudio() async {
+    try {
+      File? audioFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/bird.mp3', 'bird.mp3');
+      List<String>? tagsList = ['nature', 'bird'];
+      await DataService.instance.addAudio(
+        title: 'Bird',
+        description: 'Audio of birds singing in the forest.',
+        tags: tagsList,
+        audioFile: audioFile,
+        summary: "This is a nature recording of birds singing."
+      );
+      FileManager.unloadAssetFile('bird.png');
+    } catch (e) {
+      print('Error loading seed data photo: $e');
+    }
   }
 
   Future<void> loadSeedPhoto() async {
