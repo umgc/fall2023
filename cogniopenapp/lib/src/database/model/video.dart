@@ -3,8 +3,9 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 
 class Video extends Media {
-  final String? duration;
-  final String? thumbnail;
+  final String videoFileName;
+  final String? thumbnailFileName;
+  final String duration;
 
   Video({
     int? id,
@@ -12,19 +13,18 @@ class Video extends Media {
     String? description,
     List<String>? tags,
     required DateTime timestamp,
-    required String fileName,
     required int storageSize,
     required bool isFavorited,
-    this.duration,
-    this.thumbnail,
+    required this.videoFileName,
+    this.thumbnailFileName,
+    required this.duration,
   }) : super(
           id: id,
           mediaType: MediaType.video,
-          title: title ?? fileName, // TODO: Decide on default file name
+          title: title ?? videoFileName, // TODO: Decide on default video file name
           description: description,
           tags: tags,
           timestamp: timestamp,
-          fileName: fileName,
           storageSize: storageSize,
           isFavorited: isFavorited,
         );
@@ -36,11 +36,11 @@ class Video extends Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
-    String? fileName,
     int? storageSize,
     bool? isFavorited,
+    String? videoFileName,
+    String? thumbnailFileName,
     String? duration,
-    String? thumbnail,
   }) =>
       Video(
         id: id ?? this.id,
@@ -48,19 +48,20 @@ class Video extends Media {
         description: description ?? this.description,
         tags: tags ?? this.tags,
         timestamp: timestamp ?? this.timestamp,
-        fileName: fileName ?? this.fileName,
         storageSize: storageSize ?? this.storageSize,
         isFavorited: isFavorited ?? this.isFavorited,
+        videoFileName: videoFileName ?? this.videoFileName,
+        thumbnailFileName: thumbnailFileName ?? this.thumbnailFileName,
         duration: duration ?? this.duration,
-        thumbnail: thumbnail ?? this.thumbnail,
       );
 
   @override
   Map<String, Object?> toJson() {
     return {
       ...super.toJson(),
+      VideoFields.videoFileName: videoFileName,
+      VideoFields.thumbnailFileName: thumbnailFileName,
       VideoFields.duration: duration,
-      VideoFields.thumbnail: thumbnail,
     };
   }
 
@@ -74,11 +75,11 @@ class Video extends Media {
       timestamp: DateTime.fromMillisecondsSinceEpoch(
         json[MediaFields.timestamp] as int,
       ),
-      fileName: json[MediaFields.fileName] as String,
       storageSize: json[MediaFields.storageSize] as int,
       isFavorited: json[MediaFields.isFavorited] == 1,
-      duration: json[VideoFields.duration] as String?,
-      thumbnail: json[VideoFields.thumbnail] as String?,
+      videoFileName: json[VideoFields.videoFileName] as String,
+      thumbnailFileName: json[VideoFields.thumbnailFileName] as String?,
+      duration: json[VideoFields.duration] as String,
     );
   }
 }

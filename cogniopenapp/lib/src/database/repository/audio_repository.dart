@@ -7,9 +7,11 @@ const String tableAudios = 'audios';
 class AudioFields extends MediaFields {
   static final List<String> values = [
     ...MediaFields.values,
+    audioFileName,
     summary,
   ];
 
+  static const String audioFileName = 'audio_file_name';
   static const String summary = 'summary';
 }
 

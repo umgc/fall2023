@@ -46,7 +46,7 @@ class DataService {
     String? title,
     String? description,
     List<String>? tags,
-    required File file,
+    required File audioFile,
     String? summary,
   }) async {
     try {
@@ -54,7 +54,7 @@ class DataService {
         title: title,
         description: description,
         tags: tags,
-        file: file,
+        audioFile: audioFile,
         summary: summary,
       );
       if (audio != null) {
@@ -111,14 +111,14 @@ class DataService {
     String? title,
     String? description,
     List<String>? tags,
-    required File file,
+    required File photoFile,
   }) async {
     try {
       final photo = await PhotoController.addPhoto(
         title: title,
         description: description,
         tags: tags,
-        file: file,
+        photoFile: photoFile,
       );
       if (photo != null) {
         await refreshMedia();
@@ -172,18 +172,18 @@ class DataService {
     String? title,
     String? description,
     List<String>? tags,
-    required File file,
-    String? duration,
-    String? thumbnail,
+    required File videoFile,
+    File? thumbnailFile,
+    required String duration,
   }) async {
     try {
       final video = await VideoController.addVideo(
         title: title,
         description: description,
         tags: tags,
-        file: file,
+        videoFile: videoFile,
+        thumbnailFile: thumbnailFile,
         duration: duration,
-        thumbnail: thumbnail,
       );
       if (video != null) {
         await refreshMedia();
@@ -200,8 +200,6 @@ class DataService {
     String? title,
     String? description,
     List<String>? tags,
-    String? duration,
-    String? thumbnail,
   }) async {
     try {
       final video = await VideoController.updateVideo(
@@ -209,8 +207,6 @@ class DataService {
         title: title,
         description: description,
         tags: tags,
-        duration: duration,
-        thumbnail: thumbnail,
       );
       if (video != null) {
         await refreshMedia();

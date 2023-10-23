@@ -40,7 +40,6 @@ class AppDatabase {
       '${MediaFields.description} $textNullableType',
       '${MediaFields.tags} $textNullableType',
       '${MediaFields.timestamp} $integerType',
-      '${MediaFields.fileName} $textType',
       '${MediaFields.storageSize} $integerType',
       '${MediaFields.isFavorited} $boolType',
     ];
@@ -48,26 +47,29 @@ class AppDatabase {
     await db.execute('''
       CREATE TABLE $tableAudios (
         ${mediaColumns.join(',\n')},
-        ${AudioFields.summary} $textType
+        ${AudioFields.audioFileName} $textType,
+        ${AudioFields.summary} $textNullableType
       )
     ''');
 
     await db.execute('''
       CREATE TABLE $tablePhotos (
-        ${mediaColumns.join(',\n')}
+        ${mediaColumns.join(',\n')},
+        ${PhotoFields.photoFileName} $textType
       )
     ''');
 
     await db.execute('''
       CREATE TABLE $tableVideos (
         ${mediaColumns.join(',\n')},
-        ${VideoFields.duration} $textNullableType,
-        ${VideoFields.thumbnail} $textNullableType
+        ${VideoFields.videoFileName} $textType,
+        ${VideoFields.thumbnailFileName} $textNullableType,
+        ${VideoFields.duration} $textType
       )
     ''');
 
-    final appDatabaseSeedData = AppSeedData();
-    appDatabaseSeedData.loadAppSeedData();
+    final appSeedData = AppSeedData();
+    appSeedData.loadAppSeedData();
   }
 
   Future close() async {

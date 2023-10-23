@@ -11,6 +11,7 @@ class DirectoryManager {
   late Directory _videosDirectory;
   late Directory _audiosDirectory;
   late Directory _transcriptsDirectory;
+  late Directory _videoThumbnailsDirectory;
   late Directory _videoStillsDirectory;
   late Directory _videoResponsesDirectory;
   late Directory _tmpDirectory;
@@ -25,6 +26,7 @@ class DirectoryManager {
   Directory get audiosDirectory => _audiosDirectory;
   Directory get transcriptsDirectory => _transcriptsDirectory;
   Directory get videoStillsDirectory => _videoStillsDirectory;
+  Directory get videoThumbnailsDirectory => _videoThumbnailsDirectory;
   Directory get videoResponsesDirectory => _videoResponsesDirectory;
   Directory get tmpDirectory => _tmpDirectory;
 
@@ -39,6 +41,8 @@ class DirectoryManager {
           _createDirectoryIfDoesNotExist('${_rootDirectory.path}$audiosPath');
       _transcriptsDirectory = _createDirectoryIfDoesNotExist(
           '${_rootDirectory.path}$audioTranscriptsPath');
+      _videoThumbnailsDirectory = _createDirectoryIfDoesNotExist(
+          '${_rootDirectory.path}$videoThumbnailsPath');
       _videoStillsDirectory = _createDirectoryIfDoesNotExist(
           '${_rootDirectory.path}$videoStillsPath');
       _videoResponsesDirectory = _createDirectoryIfDoesNotExist(

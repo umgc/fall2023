@@ -13,33 +13,33 @@ class AudioController {
     String? title,
     String? description,
     List<String>? tags,
-    required File file,
+    required File audioFile,
     String? summary,
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String fileExtension = FileManager().getFileExtensionFromFile(file);
-      String fileName = FileManager().generateFileName(
+      String audioFileExtension = FileManager().getFileExtensionFromFile(audioFile);
+      String audioFileName = FileManager().generateFileName(
         MediaType.audio.name,
         timestamp,
-        fileExtension,
+        audioFileExtension,
       );
-      int fileSize = FileManager.calculateFileSizeInBytes(file);
+      int audioFileSize = FileManager.calculateFileSizeInBytes(audioFile);
       Audio newAudio = Audio(
         title: title,
         description: description,
         tags: tags,
         timestamp: timestamp,
-        fileName: fileName,
-        storageSize: fileSize,
+        audioFileName: audioFileName,
+        storageSize: audioFileSize,
         isFavorited: false,
         summary: summary,
       );
       Audio createdAudio = await AudioRepository.instance.create(newAudio);
       await FileManager.addFileToFilesystem(
-        file,
+        audioFile,
         DirectoryManager.instance.audiosDirectory.path,
-        fileName,
+        audioFileName,
       );
       return createdAudio;
     } catch (e) {
@@ -76,7 +76,7 @@ class AudioController {
       final existingAudio = await AudioRepository.instance.read(id);
       await AudioRepository.instance.delete(id);
       final audioFilePath =
-          '${DirectoryManager.instance.audiosDirectory.path}/${existingAudio.fileName}';
+          '${DirectoryManager.instance.audiosDirectory.path}/${existingAudio.audioFileName}';
       await FileManager.removeFileFromFilesystem(audioFilePath);
       return existingAudio;
     } catch (e) {

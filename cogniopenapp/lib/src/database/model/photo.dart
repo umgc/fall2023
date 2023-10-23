@@ -1,10 +1,13 @@
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
+import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:flutter/widgets.dart';
 
 class Photo extends Media {
+  final String photoFileName;
+
   late Image image;
 
   Photo({
@@ -13,17 +16,16 @@ class Photo extends Media {
     String? description,
     List<String>? tags,
     required DateTime timestamp,
-    required String fileName,
     required int storageSize,
     required bool isFavorited,
+    required this.photoFileName,
   }) : super(
           id: id,
           mediaType: MediaType.photo,
-          title: title ?? fileName, // TODO: Decide on default file name
+          title: title ?? photoFileName, // TODO: Decide on default photo file name
           description: description,
           tags: tags,
           timestamp: timestamp,
-          fileName: fileName,
           storageSize: storageSize,
           isFavorited: isFavorited,
         ) {
@@ -32,7 +34,7 @@ class Photo extends Media {
 
   Future<void> _loadImage() async {
     image = await FileManager.loadImage(
-        DirectoryManager.instance.photosDirectory.path, fileName);
+        DirectoryManager.instance.photosDirectory.path, photoFileName);
   }
 
   @override
@@ -42,9 +44,9 @@ class Photo extends Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
-    String? fileName,
     int? storageSize,
     bool? isFavorited,
+    String? photoFileName,
   }) =>
       Photo(
         id: id ?? this.id,
@@ -52,15 +54,16 @@ class Photo extends Media {
         description: description ?? this.description,
         tags: tags ?? this.tags,
         timestamp: timestamp ?? this.timestamp,
-        fileName: fileName ?? this.fileName,
         storageSize: storageSize ?? this.storageSize,
         isFavorited: isFavorited ?? this.isFavorited,
+        photoFileName: photoFileName ?? this.photoFileName,
       );
 
   @override
   Map<String, Object?> toJson() {
     return {
       ...super.toJson(),
+      PhotoFields.photoFileName: photoFileName,
     };
   }
 
@@ -74,9 +77,9 @@ class Photo extends Media {
       timestamp: DateTime.fromMillisecondsSinceEpoch(
           (json[MediaFields.timestamp] as int),
           isUtc: true),
-      fileName: json[MediaFields.fileName] as String,
       storageSize: json[MediaFields.storageSize] as int,
       isFavorited: json[MediaFields.isFavorited] == 1,
+      photoFileName: json[PhotoFields.photoFileName] as String,
     );
   }
 }
