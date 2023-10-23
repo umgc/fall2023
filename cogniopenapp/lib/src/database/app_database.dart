@@ -1,4 +1,4 @@
-import 'package:cogniopenapp/src/database/app_database_seed_data.dart';
+import 'package:cogniopenapp/src/database/app_seed_data.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
@@ -66,8 +66,8 @@ class AppDatabase {
       )
     ''');
 
-    final appDatabaseSeedData = AppDatabaseSeedData();
-    appDatabaseSeedData.insertAppDatabaseSeedData();
+    final appDatabaseSeedData = AppSeedData();
+    appDatabaseSeedData.loadAppSeedData();
   }
 
   Future close() async {
