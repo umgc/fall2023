@@ -9,7 +9,7 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 class PhotoController {
   PhotoController._();
 
-  static Future<Photo?> addPhoto({
+  static Future<Photo?> addSeedPhoto({
     String? title,
     String? description,
     List<String>? tags,
@@ -47,7 +47,7 @@ class PhotoController {
     }
   }
 
-  static Future<Photo?> addPhotoFromLocalPath({
+  static Future<Photo?> addPhoto({
     String? title,
     String? description,
     List<String>? tags,

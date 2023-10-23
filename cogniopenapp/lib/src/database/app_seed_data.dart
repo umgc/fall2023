@@ -15,7 +15,7 @@ class AppSeedData {
       File? audioFile = await FileManager.loadAssetFile(
           'assets/seed_data_files/bird.mp3', 'bird.mp3');
       List<String>? tagsList = ['nature', 'bird'];
-      await DataService.instance.addAudio(
+      await DataService.instance.addSeedAudio(
           title: 'Bird',
           description: 'Audio of birds singing in the forest.',
           tags: tagsList,
@@ -32,7 +32,7 @@ class AppSeedData {
       File? photoFile = await FileManager.loadAssetFile(
           'assets/seed_data_files/cat.png', 'cat.png');
       List<String>? tagsList = ['pet', 'cat'];
-      await DataService.instance.addPhoto(
+      await DataService.instance.addSeedPhoto(
         title: 'Cat',
         description: 'A photo of my pet cat, Kit Kat.',
         tags: tagsList,
@@ -51,7 +51,7 @@ class AppSeedData {
       File? thumbnailFile = await FileManager.loadAssetFile(
           'assets/seed_data_files/dog.png', 'dog.png');
       List<String>? tagsList = ['pet', 'dog'];
-      await DataService.instance.addVideo(
+      await DataService.instance.addSeedVideo(
         title: 'Dog',
         description: 'A photo of my pet dog, Spot.',
         tags: tagsList,

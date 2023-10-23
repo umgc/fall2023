@@ -40,7 +40,35 @@ class DataService {
     await loadMedia();
   }
 
-  // Audio Operations:
+  // |-----------------------------------------------------------------------------------------|
+  // |------------------------------------- AUDIO OPERATIONS -------------------------------------|
+  // |-----------------------------------------------------------------------------------------|
+
+  // TODO, refactor seed data to just use addAudio();
+  Future<Audio?> addSeedAudio({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File audioFile,
+    String? summary,
+  }) async {
+    try {
+      final audio = await AudioController.addSeedAudio(
+        title: title,
+        description: description,
+        tags: tags,
+        audioFile: audioFile,
+        summary: summary,
+      );
+      if (audio != null) {
+        await refreshMedia();
+      }
+      return audio;
+    } catch (e) {
+      print('Data Service -- Error adding audio: $e');
+      return null;
+    }
+  }
 
   Future<Audio?> addAudio({
     String? title,
@@ -50,7 +78,7 @@ class DataService {
     String? summary,
   }) async {
     try {
-      final audio = await AudioController.addAudio(
+      final audio = await AudioController.addSeedAudio(
         title: title,
         description: description,
         tags: tags,
@@ -105,7 +133,33 @@ class DataService {
     }
   }
 
-  // Photo Operations:
+  // |-----------------------------------------------------------------------------------------|
+  // |-------------------------------------- PHOTO OPERATIONS --------------------------------------|
+  // |-----------------------------------------------------------------------------------------|
+
+// TODO, refactor seed data to just use addPhoto();
+  Future<Photo?> addSeedPhoto({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File photoFile,
+  }) async {
+    try {
+      final photo = await PhotoController.addSeedPhoto(
+        title: title,
+        description: description,
+        tags: tags,
+        photoFile: photoFile,
+      );
+      if (photo != null) {
+        await refreshMedia();
+      }
+      return photo;
+    } catch (e) {
+      print('Data Service -- Error adding photo: $e');
+      return null;
+    }
+  }
 
   Future<Photo?> addPhoto({
     String? title,
@@ -114,7 +168,7 @@ class DataService {
     required File photoFile,
   }) async {
     try {
-      final photo = await PhotoController.addPhotoFromLocalPath(
+      final photo = await PhotoController.addPhoto(
         title: title,
         description: description,
         tags: tags,
@@ -166,7 +220,37 @@ class DataService {
     }
   }
 
-// Video Operations:
+  // |-----------------------------------------------------------------------------------------|
+  // |------------------------------------- VIDEO OPERATIONS -------------------------------------|
+  // |-----------------------------------------------------------------------------------------|
+
+  // TODO, refactor seed data to just use addVideo();
+  Future<Video?> addSeedVideo({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File videoFile,
+    File? thumbnailFile,
+    required String duration,
+  }) async {
+    try {
+      final video = await VideoController.addSeedVideo(
+        title: title,
+        description: description,
+        tags: tags,
+        videoFile: videoFile,
+        thumbnailFile: thumbnailFile,
+        duration: duration,
+      );
+      if (video != null) {
+        await refreshMedia();
+      }
+      return video;
+    } catch (e) {
+      print('Data Service -- Error adding video: $e');
+      return null;
+    }
+  }
 
   Future<Video?> addVideo({
     String? title,
@@ -174,7 +258,7 @@ class DataService {
     List<String>? tags,
     required File videoFile,
     File? thumbnailFile,
-    required String duration,
+    String? duration,
   }) async {
     try {
       final video = await VideoController.addVideo(

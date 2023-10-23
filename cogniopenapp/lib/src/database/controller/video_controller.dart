@@ -5,11 +5,12 @@ import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:flutter/material.dart';
 
 class VideoController {
   VideoController._();
 
-  static Future<Video?> addVideo({
+  static Future<Video?> addSeedVideo({
     String? title,
     String? description,
     List<String>? tags,
@@ -59,6 +60,47 @@ class VideoController {
           thumbnailFileName!,
         );
       }
+      return createdVideo;
+    } catch (e) {
+      print('Video Controller -- Error adding video: $e');
+      return null;
+    }
+  }
+
+  static Future<Video?> addVideo({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File videoFile,
+    File? thumbnailFile, // TODO: Update to auto get the thumbnail
+    String? duration, // TODO: Update to auto get the duration
+  }) async {
+    try {
+      String videoFileName = FileManager.getFileName(videoFile.path);
+      int videoFileSize = FileManager.calculateFileSizeInBytes(videoFile);
+      DateTime timestamp =
+          DateTime.parse(FileManager.getFileTimestamp(videoFile.path));
+      String updatedPath = videoFile
+          .path; // The method will update with the path (hopefully), when a video is added
+      print("UPDATED PATH IS: ${updatedPath}");
+      Image thumb =
+          await FileManager.getThumbnail(updatedPath, 0, isThumbnail: true);
+      String thumbnailFileName =
+          FileManager.getThumbnailFileName(updatedPath, 0, isThumbnail: true);
+      print("UPDATED PATH IS NOW: ${thumbnailFileName}");
+      Video newVideo = Video(
+        title: title ?? "",
+        description: description ?? "",
+        tags: tags ?? [],
+        timestamp: timestamp,
+        storageSize: videoFileSize,
+        isFavorited: false,
+        videoFileName: videoFileName,
+        thumbnailFileName: thumbnailFileName,
+        duration: duration ?? "0",
+      );
+
+      Video createdVideo = await VideoRepository.instance.create(newVideo);
       return createdVideo;
     } catch (e) {
       print('Video Controller -- Error adding video: $e');

@@ -10,6 +10,7 @@ import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cogniopenapp/src/address.dart';
 import '../src/data_service.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 import 'homeScreen.dart';
 
@@ -1151,12 +1152,15 @@ class _CameraHomeState extends State<VideoScreen>
     await localFile.writeAsBytes(await mediaFile.readAsBytes());
 
     if (!isVideo) {
-      DataService.instance.addPhoto(photoFile: localFile);
+      await DataService.instance.addPhoto(photoFile: localFile);
+    } else {
+      await DataService.instance.addVideo(videoFile: localFile);
     }
 
     // Check if the media file has been successfully saved
     if (localFile.existsSync()) {
       print('Media saved locally: ${localFile.path}');
+      FileManager.getMostRecentVideo();
     } else {
       print('Failed to save media locally.');
     }
