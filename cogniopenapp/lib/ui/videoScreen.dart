@@ -8,6 +8,8 @@ import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cogniopenapp/src/address.dart';
 
+import 'homeScreen.dart';
+
 /// Camera home widget.
 class VideoScreen extends StatefulWidget {
   /// Default Constructor
@@ -130,7 +132,17 @@ class _CameraHomeState extends State<VideoScreen> with WidgetsBindingObserver, T
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Camera'),
+          backgroundColor: const Color(0xFFB3E5FC), // Set appbar background color
+        elevation: 0.0,
+        centerTitle: true,
+        title: const Text('Camera', style: TextStyle(color: Colors.black54)),
+          leading: GestureDetector(
+              child: Icon( Icons.arrow_back, color: Colors.white,),
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
+              }
+        ),
       ),
       body: Column(
         children: <Widget>[

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as path;
 
 class FileManager {
@@ -95,5 +96,26 @@ class FileManager {
 
   String getFileExtensionFromFile(File file) {
     return path.extension(file.path).replaceAll('.', '');
+  }
+
+  String getFileNameWithoutExtension(String fileNameWithExtension) {
+    int lastIndex = fileNameWithExtension.lastIndexOf('.');
+    if (lastIndex != -1) {
+      return fileNameWithExtension.substring(0, lastIndex);
+    }
+    return fileNameWithExtension;
+  }
+
+  static Image? loadImage(String filePath, String fileName) {
+    try {
+      final File imageFile = File('$filePath/$fileName');
+      if (!imageFile.existsSync()) {
+        return null;
+      }
+      return Image.file(imageFile);
+    } catch (e) {
+      print('Error loading image: $e');
+      return null;
+    }
   }
 }

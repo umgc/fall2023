@@ -78,6 +78,9 @@ dependencies:
   aws_client: ^0.4.1
   mockito: ^5.4.2
   plugin_platform_interface: ^2.1.6
+  path_provider_platform_interface: ^2.1.1
+  path_provider_android: ^2.2.0
+  moment_dart: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -112,7 +115,7 @@ flutter:
     - assets/icons/
     - assets/test_images/
     - assets/icons/app_icon.png
-    - assets/seed_data_files/cat.png
+    - assets/seed_data_files/
     - .env
 
 
