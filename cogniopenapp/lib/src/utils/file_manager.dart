@@ -188,7 +188,6 @@ class FileManager {
         // For example, using the Image widget:
         File renamed = await File(thumbPath).rename(newFile);
         vidPath = newFile;
-        print("THIS IS THE FINAL THUMBNAIL PTH ${vidPath}");
         return Image.file(renamed);
       }
     } catch (e) {
@@ -203,8 +202,7 @@ class FileManager {
     if (DirectoryManager.instance.videosDirectory.existsSync()) {
       List<FileSystemEntity> files =
           DirectoryManager.instance.videosDirectory.listSync();
-      print("Most recently recorded video:");
-      print(files.last.path);
+      print("Most recently recorded video: ${files.last.path}");
       mostRecentVideoName = getFileNameForAWS(files.last.path);
       mostRecentVideoPath = files.last.path;
     }

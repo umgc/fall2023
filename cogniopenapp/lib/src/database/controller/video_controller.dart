@@ -82,12 +82,10 @@ class VideoController {
           DateTime.parse(FileManager.getFileTimestamp(videoFile.path));
       String updatedPath = videoFile
           .path; // The method will update with the path (hopefully), when a video is added
-      print("UPDATED PATH IS: ${updatedPath}");
-      Image thumb =
+      Image thumbnail =
           await FileManager.getThumbnail(updatedPath, 0, isThumbnail: true);
       String thumbnailFileName =
           FileManager.getThumbnailFileName(updatedPath, 0, isThumbnail: true);
-      print("UPDATED PATH IS NOW: ${thumbnailFileName}");
       Video newVideo = Video(
         title: title ?? "",
         description: description ?? "",

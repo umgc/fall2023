@@ -218,10 +218,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () async {
-                    print("MEDIA: ${media.title}");
                     final updatedMedia = await displayEditPopup(context, media);
                     if (updatedMedia != null) {
-                      print("MEDIA: ${media.title}");
                       // Call a callback to update the parent view
                       Navigator.pop(context); // Close the current view
                       setState(() {
@@ -315,17 +313,63 @@ class _GalleryScreenState extends State<GalleryScreen> {
             TextButton(
               child: Text('Save'),
               onPressed: () {
+                List<String> tags = tagsController.text
+                    .split(',')
+                    .map((tag) => tag.trim())
+                    .toList();
                 // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
-                /*setState(() {
+                if (media is Photo) {
+                  DataService.instance.updatePhoto(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
 
-                  media.title = titleController.text;
-                  media.description = descriptionController.text;
-                  media.tags = tagsController.text
-                      .split(',')
-                      .map((tag) => tag.trim())
-                      .toList();
-                  updatedMedia = media; // Update the updatedMedia variable
-                });*/
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Photo(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      photoFileName: media.photoFileName,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
+                } else if (media is Video) {
+                  DataService.instance.updateVideo(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
+
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Video(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      videoFileName: media.videoFileName,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags,
+                      duration: media.duration,
+                      thumbnailFileName: media.thumbnailFileName);
+                } else if (media is Audio) {
+                  DataService.instance.updateAudio(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
+
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Audio(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      audioFileName: media.audioFileName,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
+                }
+                setState(() {});
                 Navigator.of(context)
                     .pop(updatedMedia); // Return the updated media
               },
