@@ -72,8 +72,8 @@ class VideoController {
     String? description,
     List<String>? tags,
     required File videoFile,
-    File? thumbnailFile, // TODO: Update to auto get the thumbnail
-    String? duration, // TODO: Update to auto get the duration
+    File? thumbnailFile,
+    String? duration,
   }) async {
     try {
       String videoFileName = FileManager.getFileName(videoFile.path);
