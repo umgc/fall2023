@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cogniopenapp/src/galleryData.dart';
 import 'package:cogniopenapp/src/video_response.dart';
 
 void main() {
