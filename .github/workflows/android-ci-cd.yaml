@@ -41,5 +41,5 @@ jobs:
       if: always()
       with:
         files: |
-          test-results/**/*.json
+          test_output.json
 
