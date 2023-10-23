@@ -33,7 +33,10 @@ jobs:
     - name: "Install Flutter dependencies"
       run: flutter pub get
       working-directory: ./cogniopenapp
-    - name: "Run Unit Tests"
+    - name: "Run Tests"
+      run: flutter test
+      working-directory: ./cogniopenapp
+    - name: "Create test output file"
       run: flutter test -r json > test_output.json
       working-directory: ./cogniopenapp
     - name: "Publish Test Results"
@@ -41,5 +44,5 @@ jobs:
       if: always()
       with:
         files: |
-          test_output.json
+          ./cogniopenapp/test_output.json
 
