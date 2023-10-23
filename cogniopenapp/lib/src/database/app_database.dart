@@ -1,10 +1,10 @@
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:cogniopenapp/src/database/app_database_seed_data.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
-import 'package:cogniopenapp/src/database/app_database_seed_data.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
   static final AppDatabase instance = AppDatabase._init();
@@ -61,7 +61,7 @@ class AppDatabase {
     await db.execute('''
       CREATE TABLE $tableVideos (
         ${mediaColumns.join(',\n')},
-        ${VideoFields.duration} $textType,
+        ${VideoFields.duration} $textNullableType,
         ${VideoFields.thumbnail} $textNullableType
       )
     ''');

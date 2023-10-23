@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:cogniopenapp/src/database/controller/audio_controller.dart';
 import 'package:cogniopenapp/src/database/controller/photo_controller.dart';
+import 'package:cogniopenapp/src/database/controller/video_controller.dart';
+import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
+import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
@@ -37,6 +41,69 @@ class DataService {
   }
 
   // Audio Operations:
+
+  Future<Audio?> addAudio({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File file,
+    String? summary,
+  }) async {
+    try {
+      final audio = await AudioController.addAudio(
+        title: title,
+        description: description,
+        tags: tags,
+        file: file,
+        summary: summary,
+      );
+      if (audio != null) {
+        await refreshMedia();
+      }
+      return audio;
+    } catch (e) {
+      print('Data Service -- Error adding audio: $e');
+      return null;
+    }
+  }
+
+  Future<Audio?> updateAudio({
+    required int id,
+    String? title,
+    String? description,
+    List<String>? tags,
+    String? summary,
+  }) async {
+    try {
+      final audio = await AudioController.updateAudio(
+        id: id,
+        title: title,
+        description: description,
+        tags: tags,
+        summary: summary,
+      );
+      if (audio != null) {
+        await refreshMedia();
+      }
+      return audio;
+    } catch (e) {
+      print('Data Service -- Error updating audio: $e');
+      return null;
+    }
+  }
+
+  Future<Audio?> removeAudio(int id) async {
+    try {
+      final audio = await AudioController.removeAudio(id);
+      if (audio != null) {
+        await refreshMedia();
+      }
+      return audio;
+    } catch (e) {
+      print('Data Service -- Error removing audio: $e');
+      return null;
+    }
+  }
 
   // Photo Operations:
 
@@ -100,4 +167,71 @@ class DataService {
   }
 
 // Video Operations:
+
+  Future<Video?> addVideo({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File file,
+    String? duration,
+    String? thumbnail,
+  }) async {
+    try {
+      final video = await VideoController.addVideo(
+        title: title,
+        description: description,
+        tags: tags,
+        file: file,
+        duration: duration,
+        thumbnail: thumbnail,
+      );
+      if (video != null) {
+        await refreshMedia();
+      }
+      return video;
+    } catch (e) {
+      print('Data Service -- Error adding video: $e');
+      return null;
+    }
+  }
+
+  Future<Video?> updateVideo({
+    required int id,
+    String? title,
+    String? description,
+    List<String>? tags,
+    String? duration,
+    String? thumbnail,
+  }) async {
+    try {
+      final video = await VideoController.updateVideo(
+        id: id,
+        title: title,
+        description: description,
+        tags: tags,
+        duration: duration,
+        thumbnail: thumbnail,
+      );
+      if (video != null) {
+        await refreshMedia();
+      }
+      return video;
+    } catch (e) {
+      print('Data Service -- Error updating video: $e');
+      return null;
+    }
+  }
+
+  Future<Video?> removeVideo(int id) async {
+    try {
+      final video = await VideoController.removeVideo(id);
+      if (video != null) {
+        await refreshMedia();
+      }
+      return video;
+    } catch (e) {
+      print('Data Service -- Error removing video: $e');
+      return null;
+    }
+  }
 }

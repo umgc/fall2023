@@ -3,7 +3,7 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 
 class Video extends Media {
-  final String duration;
+  final String? duration;
   final String? thumbnail;
 
   Video({
@@ -15,7 +15,7 @@ class Video extends Media {
     required String fileName,
     required int storageSize,
     required bool isFavorited,
-    required this.duration,
+    this.duration,
     this.thumbnail,
   }) : super(
           id: id,
@@ -77,7 +77,7 @@ class Video extends Media {
       fileName: json[MediaFields.fileName] as String,
       storageSize: json[MediaFields.storageSize] as int,
       isFavorited: json[MediaFields.isFavorited] == 1,
-      duration: json[VideoFields.duration] as String,
+      duration: json[VideoFields.duration] as String?,
       thumbnail: json[VideoFields.thumbnail] as String?,
     );
   }
