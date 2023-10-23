@@ -34,7 +34,7 @@ jobs:
       run: flutter pub get
       working-directory: ./cogniopenapp
     - name: "Run Unit Tests"
-      run: flutter test
+      run: flutter test -r json > test_output.json
       working-directory: ./cogniopenapp
     - name: "Publish Test Results"
       uses: EnricoMi/publish-unit-test-result-action@v2
