@@ -8,7 +8,7 @@ import 'mocks/s3_connection_test.mocks.dart';
 void main() {
   final s3Bucket = MockS3Bucket();
 
-  test('add audio to S3', () async {
+  test('U-6-1: add audio to S3', () async {
     s3Bucket.createBucket;
     expect(s3Bucket.connection, null);
     expect(s3Bucket.toString(), "MockS3Bucket");
@@ -26,7 +26,7 @@ void main() {
     verifyNever(s3Bucket.addAudioToS3('testAudio', '\some\localPath'));
   });
 
-  test('add video to S3', () async {
+  test('U-6-2: add video to S3', () async {
     s3Bucket.createBucket;
     expect(s3Bucket.connection, null);
     expect(s3Bucket.toString(), "MockS3Bucket");

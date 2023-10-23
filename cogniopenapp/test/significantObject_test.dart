@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 void main() {
   //test code here!
-  test('testing deleteAlternateName', () {
+  test('U-8-1: testing deleteAlternateName', () {
     List<Image> images = [
       Image.asset('eyeglass-frame.jpg'),
       Image.asset('eyeglass-green.jpg')
@@ -17,7 +17,7 @@ void main() {
     expect(so.alternateNames.length, 1);
   });
 
-  test('testing addAlternateName', () {
+  test('U-8-2: testing addAlternateName', () {
     List<Image> images = [
       Image.asset('eyeglass-frame.jpg'),
       Image.asset('eyeglass-green.jpg')
