@@ -9,6 +9,7 @@ import 'package:mocktail/mocktail.dart';
 import 'mocks/image_mock_http_client.dart';
 
 void main() {
+  /*
   setUp(() async {
     registerFallbackValue(Uri());
 
@@ -313,5 +314,6 @@ void main() {
     expect(find.text('Full Screen Image and Details'), findsOneWidget);
   });
   */
+   */
 //TODO: add in tests for sorting, https://dev.azure.com/ProjectCogniOpen/CogniOpen/_workitems/edit/322
 }

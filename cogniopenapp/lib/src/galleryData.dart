@@ -1,20 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
-import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
-
-import '../src/media.dart';
-import '../src/video.dart';
-import '../src/photo.dart';
-import '../src/conversation.dart';
-import '../main.dart';
 import 'dart:io';
 
 import 'package:cogniopenapp/src/database/model/media.dart' as database_media;
-import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
-import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
-import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class GalleryData {
   static final GalleryData _instance = GalleryData._internal();
@@ -34,47 +24,26 @@ class GalleryData {
   static String mostRecentVideoName = "";
   static List<String> processedImages = [];
 
+  static List<database_media.Media> mediaList = [];
+
+
   GalleryData._internal() {
     print("Internal gallery data created");
-    _initializeData();
-  }
-
-  void _initializeData() async {
-    getAllPhotos();
-    getAllVideos();
-    _setMostRecentVideo();
-    _initializeMedia(); // temporary db testing
-  }
-
-  // temporary db testing:
-  Future<List<database_media.Media>> _initializeMedia() async {
-    final audios = await AudioRepository.instance.readAll();
-    final photos = await PhotoRepository.instance.readAll();
-    final videos = await VideoRepository.instance.readAll();
-
-    for (var audio in audios) {
-      print(audio.toJson());
-    }
-    for (var photo in photos) {
-      print(photo.toJson());
-    }
-    for (var video in videos) {
-      print(video.toJson());
-    }
-
-    return [...audios, ...photos, ...videos];
   }
 
   factory GalleryData() {
     return _instance;
   }
 
-  static List<Media> allMedia = [];
+  //static List<Media> allMedia = [];
 
+  /*
   static List<Media> getAllMedia() {
     return allMedia;
   }
+   */
 
+  /*
   void getAllPhotos() async {
     if (photosDirectory.existsSync()) {
       List<FileSystemEntity> files = photosDirectory.listSync();
@@ -140,7 +109,8 @@ class GalleryData {
           isFavorited: true,
         )));
   }
-
+*/
+  /*
   static void _setMostRecentVideo() async {
     if (videosDirectory.existsSync()) {
       List<FileSystemEntity> files = videosDirectory.listSync();
@@ -150,7 +120,8 @@ class GalleryData {
       mostRecentVideoPath = files.last.path;
     }
   }
-
+   */
+/*
   void getAllVideos() async {
     if (videosDirectory.existsSync()) {
       List<FileSystemEntity> files = videosDirectory.listSync();
@@ -178,7 +149,7 @@ class GalleryData {
 
     //TO DO POPULATE WITH THE VIDEO STUFF
   }
-
+*/
   void printDirectoriesAndContents(Directory directory, {int depth = 0}) {
     final prefix = '  ' * depth;
     print('$prefix${directory.path}/'); // Print the current directory

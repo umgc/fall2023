@@ -1,11 +1,12 @@
+import 'package:cogniopenapp/src/data_service.dart';
+import 'package:cogniopenapp/src/database/model/audio.dart';
+import 'package:cogniopenapp/src/database/model/media.dart';
+import 'package:cogniopenapp/src/database/model/media_type.dart';
+import 'package:cogniopenapp/src/database/model/photo.dart';
+import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
-
-import 'homeScreen.dart';
-import '../src/media.dart';
-import '../src/video.dart';
-import '../src/photo.dart';
-import '../src/conversation.dart';
-import '../src/galleryData.dart';
 
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
@@ -30,7 +31,7 @@ class GalleryScreen extends StatefulWidget {
 // Define the state for the Gallery screen
 class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
-  List<Media> testMedia = GalleryData.getAllMedia();
+  List<Media> testMedia = DataService.instance.mediaList;
 
   final double _defaultFontSize = 20.0;
   bool _searchBarVisible = false;
@@ -56,7 +57,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _populateMedia() async {
-    testMedia = await GalleryData.allMedia;
+    testMedia = DataService.instance.mediaList;
   }
 
   // Function to update font and icon size based on grid size
@@ -122,7 +123,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   void _toggleFavoriteStatus(Media media) {
     setState(() {
-      media.isFavorited = !media.isFavorited;
+      //media.isFavorited = !media.isFavorited; // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
     });
   }
 
@@ -165,8 +166,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
         break;
       case SortingCriteria.timeStamp:
         testMedia.sort((a, b) => _isSortAscending
-            ? a.timeStamp!.compareTo(b.timeStamp!)
-            : b.timeStamp!.compareTo(a.timeStamp!));
+            ? a.timestamp.compareTo(b.timestamp)
+            : b.timestamp.compareTo(a.timestamp));
         break;
       case SortingCriteria.title:
         testMedia.sort((a, b) => _isSortAscending
@@ -240,17 +241,17 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     Text('Title: ${media.title}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                        'Time Stamp: ${media.formatDateTime(media.timeStamp) ?? "N/A"}',
+                        'Time Stamp: ${FormatUtils.getDateString(media.timestamp)}', // TODO: Confirm logic / output correctness
                         style: TextStyle(fontSize: _defaultFontSize)),
-                    if (media is Photo && media.associatedImage != null)
+                    if (media is Photo && media.photo != null)
                       Image(
-                        image: media.associatedImage.image,
+                        image: media.photo!.image,
                       ),
-                    if (media is Video)
+                    if (media is Video && media.thumbnail != null)
                       Image(
-                        image: media.thumbnail.image,
+                        image: media.thumbnail!.image,
                       ),
-                    if (media is Conversation) Icon(Icons.chat, size: 100),
+                    if (media is Audio) Icon(Icons.chat, size: 100),
                     SizedBox(height: 16),
                     Text(
                       'Description: ${media.description}',
@@ -260,7 +261,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     Text('Tags: ${media.tags?.join(", ")}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                      'Storage Size: ${media.getStorageSizeString()}',
+                      'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
                       style: TextStyle(fontSize: _defaultFontSize),
                     ),
                   ],
@@ -311,7 +312,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
             TextButton(
               child: Text('Save'),
               onPressed: () {
-                setState(() {
+                // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
+                /*setState(() {
+
                   media.title = titleController.text;
                   media.description = descriptionController.text;
                   media.tags = tagsController.text
@@ -319,7 +322,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       .map((tag) => tag.trim())
                       .toList();
                   updatedMedia = media; // Update the updatedMedia variable
-                });
+                });*/
                 Navigator.of(context)
                     .pop(updatedMedia); // Return the updated media
               },
@@ -504,15 +507,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (media is Photo && media.associatedImage != null)
+                if (media is Photo && media.photo != null)
                   _buildPhotoImage(media),
-                if (media is Video) _buildVideoImage(media),
-                if (media is Conversation) _buildConversationIcon(),
+                if (media is Video && media.thumbnail != null)
+                  _buildVideoImage(media),
+                if (media is Audio) _buildConversationIcon(),
                 _buildGridItemTitle(media.title),
               ],
             ),
             _buildFavoriteIcon(media),
-            _buildMediaTypeIcon(media.iconType.icon),
+            _buildMediaTypeIcon(media.mediaType),
           ],
         ),
       ),
@@ -524,7 +528,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       child: Center(
         child: Image(
           key: const Key('photoItem'),
-          image: media.associatedImage.image,
+          image: media.photo!.image,
         ),
       ),
     );
@@ -533,7 +537,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget _buildVideoImage(Video media) {
     return Image(
       key: const Key('videoItem'),
-      image: media.thumbnail.image,
+      image: media.thumbnail!.image,
       // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
       width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
       height: 100.0 + (2.0 - _crossAxisCount) * 25.0,
@@ -567,7 +571,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       if (media is Video && !_showVideos) {
         return false;
       }
-      if (media is Conversation && !_showConversations) {
+      if (media is Audio && !_showConversations) {
         return false;
       }
       return true;
@@ -595,12 +599,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildMediaTypeIcon(IconData? icon) {
+  Widget _buildMediaTypeIcon(MediaType mediaType) {
     return Positioned(
       top: 0,
       left: 0,
       child: Icon(
-        icon,
+        UiUtils.getMediaIconData(mediaType),
         size: _iconSize,
       ),
     );
