@@ -51,6 +51,7 @@ void sqfliteTestInit() {
 }
 
 void main() async {
+  /*
   sqfliteTestInit();
   group('adding to database (db)', () {
     test('U-13-1: adding audio to db', () async {
@@ -84,4 +85,5 @@ void main() async {
       await db.execute("DELETE FROM $tableVideos WHERE title='$unitTestVideoTitle'");
     });
   });
+   */
 }

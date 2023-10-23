@@ -1,7 +1,7 @@
 // TODO -- Fix Tests
 
-/*
 void main() {
+  /*
   List<Media> testMedia = createTestMediaList();
 
   //test code here!
@@ -190,5 +190,5 @@ List<Media> createTestMediaList() {
           isFavorited: true,
         )),
   ];
+ */
 }
-*/

@@ -1,7 +1,7 @@
 // TODO -- Fix Tests
 
-/*
 void main() {
+  /*
   Video video = createTestMediaList()[5] as Video;
   List<IdentifiedItem> identifiedItems = video.identifiedItems;
   //test code here!
@@ -23,5 +23,5 @@ void main() {
     expect(item.timeSpotted.day, DateTime.now().day);
     expect(item.itemImage, isNot(null));
   });
+   */
 }
-*/
