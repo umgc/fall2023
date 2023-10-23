@@ -37,8 +37,6 @@ class MyApp extends StatelessWidget {
 
 // These are all singleton objects and should be initialized at the beginning
 void initializeData() async {
-  // Create the singleton object to grab all local files
-  //GalleryData data = GalleryData();
   //initialize backend services
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
