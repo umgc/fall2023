@@ -615,6 +615,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Slider(
+        key: Key('gridSizeSlider'),
         value: _crossAxisCount,
         min: 1.0,
         max: 4.0,

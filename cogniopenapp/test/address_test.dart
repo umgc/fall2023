@@ -36,7 +36,7 @@ final mockPlacemark = Placemark(
     thoroughfare: 'Hungerford Drive');
 
 void main() {
-  test('Making sure that location and address are obtainable', () async {
+  test('U-1-1: Making sure that location and address are obtainable', () async {
     GeolocatorPlatform.instance = MockGeolocatorPlatform();
     GeocodingPlatform.instance = MockGeocodingPlatform();
     var physicalAddress = "";
