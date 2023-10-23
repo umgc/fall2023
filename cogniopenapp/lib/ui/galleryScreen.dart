@@ -249,7 +249,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         style: TextStyle(fontSize: _defaultFontSize)),
                     if (media is Photo && media.image != null)
                       Image(
-                        image: media.image.image,
+                        image: media.image!.image,
                       ),
                     if (media is Video)
                       //Image(
@@ -530,7 +530,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       child: Center(
         child: Image(
           key: const Key('photoItem'),
-          image: media.image.image,
+          image: media.image!.image,
         ),
       ),
     );
