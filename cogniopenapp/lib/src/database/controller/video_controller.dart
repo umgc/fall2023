@@ -14,7 +14,7 @@ class VideoController {
     String? description,
     List<String>? tags,
     required File file,
-    String duration = "",
+    String? duration, // Make duration optional
     String? thumbnail,
   }) async {
     try {
