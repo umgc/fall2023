@@ -17,15 +17,16 @@ class Audio extends Media {
     required this.audioFileName,
     this.summary,
   }) : super(
-    id: id,
-    mediaType: MediaType.audio,
-    title: title ?? audioFileName, // TODO: Decide on default photo file name
-    description: description,
-    tags: tags,
-    timestamp: timestamp,
-    storageSize: storageSize,
-    isFavorited: isFavorited,
-  );
+          id: id,
+          mediaType: MediaType.audio,
+          title:
+              title ?? audioFileName, // TODO: Decide on default photo file name
+          description: description,
+          tags: tags,
+          timestamp: timestamp,
+          storageSize: storageSize,
+          isFavorited: isFavorited,
+        );
 
   @override
   Audio copy({
