@@ -9,7 +9,7 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 class PhotoController {
   PhotoController._();
 
-  static Future<Photo?> addPhoto({
+  static Future<Photo?> addSeedPhoto({
     String? title,
     String? description,
     List<String>? tags,
@@ -17,7 +17,8 @@ class PhotoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String photoFileExtension = FileManager().getFileExtensionFromFile(photoFile);
+      String photoFileExtension =
+          FileManager().getFileExtensionFromFile(photoFile);
       String photoFileName = FileManager().generateFileName(
         MediaType.photo.name,
         timestamp,
@@ -39,6 +40,34 @@ class PhotoController {
         DirectoryManager.instance.photosDirectory.path,
         photoFileName,
       );
+      return createdPhoto;
+    } catch (e) {
+      print('Photo Controller -- Error adding photo: $e');
+      return null;
+    }
+  }
+
+  static Future<Photo?> addPhoto({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File photoFile,
+  }) async {
+    try {
+      String photoFileName = FileManager.getFileName(photoFile.path);
+      int photoFileSize = FileManager.calculateFileSizeInBytes(photoFile);
+      DateTime timestamp =
+          DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
+      Photo newPhoto = Photo(
+        title: title ?? "",
+        description: description ?? "",
+        tags: tags ?? [],
+        timestamp: timestamp,
+        photoFileName: photoFileName,
+        storageSize: photoFileSize,
+        isFavorited: false,
+      );
+      Photo createdPhoto = await PhotoRepository.instance.create(newPhoto);
       return createdPhoto;
     } catch (e) {
       print('Photo Controller -- Error adding photo: $e');
