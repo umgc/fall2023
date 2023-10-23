@@ -9,7 +9,7 @@ import 'package:mocktail/mocktail.dart';
 import 'mocks/image_mock_http_client.dart';
 
 void main() {
-  testWidgets('U-18-1: gallery screen loads correctly ',
+  testWidgets('W-2: gallery screen loads correctly ',
       (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
       home: GalleryScreen(), //Gallery Scren

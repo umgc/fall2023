@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Tests that the application home page loads correctly.', (WidgetTester tester) async {
+  testWidgets('W-1: Tests that the application home page loads correctly.',
+      (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MaterialApp(home: HomeScreen()));
     await tester.pumpAndSettle();
