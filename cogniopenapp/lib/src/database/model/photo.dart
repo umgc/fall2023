@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 class Photo extends Media {
   final String photoFileName;
 
-  late Image image;
+  late Image? image;
 
   Photo({
     int? id,

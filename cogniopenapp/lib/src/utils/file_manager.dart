@@ -98,16 +98,24 @@ class FileManager {
     return path.extension(file.path).replaceAll('.', '');
   }
 
-  static Image loadImage(String filePath, String fileName) {
+  String getFileNameWithoutExtension(String fileNameWithExtension) {
+    int lastIndex = fileNameWithExtension.lastIndexOf('.');
+    if (lastIndex != -1) {
+      return fileNameWithExtension.substring(0, lastIndex);
+    }
+    return fileNameWithExtension;
+  }
+
+  static Image? loadImage(String filePath, String fileName) {
     try {
       final File imageFile = File('$filePath/$fileName');
       if (!imageFile.existsSync()) {
-        return Image.network('https://example.com/default_image.jpg'); // TODO: Replace with your default image URL
+        return null;
       }
       return Image.file(imageFile);
     } catch (e) {
       print('Error loading image: $e');
-      return Image.network('https://example.com/default_image.jpg'); // TODO: Replace with your default image URL
+      return null;
     }
   }
 }

@@ -30,8 +30,9 @@ class VideoController {
       String? thumbnailFileName;
       if (thumbnailFile != null) {
         thumbnailFileExtension =
-            FileManager().getFileExtensionFromFile(videoFile);
-        thumbnailFileName = videoFileName + thumbnailFileExtension;
+            FileManager().getFileExtensionFromFile(thumbnailFile);
+        thumbnailFileName =
+            '${FileManager().getFileNameWithoutExtension(videoFileName)}.$thumbnailFileExtension';
       }
       int videoFileSize = FileManager.calculateFileSizeInBytes(videoFile);
       Video newVideo = Video(
