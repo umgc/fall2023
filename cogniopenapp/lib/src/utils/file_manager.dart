@@ -118,4 +118,26 @@ class FileManager {
       return null;
     }
   }
+
+  static String getFileName(String filePath) {
+    return path.basename(filePath);
+  }
+
+  static String getFileTimestamp(String filePath) {
+    // Get the file name from the full file path
+    String fileName = getFileName(filePath);
+
+    // Find the last dot (.) in the file name to separate the extension
+    int dotIndex = fileName.lastIndexOf('.');
+
+    String newName = fileName.replaceFirst("_", " ");
+
+    if (dotIndex != -1) {
+      // Return the file name without the extension
+      return newName.substring(0, dotIndex);
+    } else {
+      // If there's no dot in the file name, return the entire name
+      return newName;
+    }
+  }
 }

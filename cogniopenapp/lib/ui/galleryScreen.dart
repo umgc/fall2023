@@ -238,8 +238,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Title: ${media.title}',
-                        style: TextStyle(fontSize: _defaultFontSize)),
+                    if (!media.title.isEmpty)
+                      Text('Title: ${media.title}',
+                          style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
                         'Time Stamp: ${FormatUtils.getDateString(media.timestamp)}', // TODO: Confirm logic / output correctness
                         style: TextStyle(fontSize: _defaultFontSize)),
@@ -253,13 +254,15 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       ),
                     if (media is Audio) Icon(Icons.chat, size: 100),
                     SizedBox(height: 16),
-                    Text(
-                      'Description: ${media.description}',
-                      style: TextStyle(fontSize: _defaultFontSize),
-                      textAlign: TextAlign.center,
-                    ),
-                    Text('Tags: ${media.tags?.join(", ")}',
-                        style: TextStyle(fontSize: _defaultFontSize)),
+                    if (media.description != null && media.description != "")
+                      Text(
+                        'Description: ${media.description}',
+                        style: TextStyle(fontSize: _defaultFontSize),
+                        textAlign: TextAlign.center,
+                      ),
+                    if (media.tags != null && media.tags!.length < 1)
+                      Text('Tags: ${media.tags?.join(", ")}',
+                          style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
                       'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
                       style: TextStyle(fontSize: _defaultFontSize),
@@ -359,27 +362,25 @@ class _GalleryScreenState extends State<GalleryScreen> {
     _updateLayoutValues();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFB3E5FC),
-      appBar: _buildAppBar(),
-      body: Container(
-    decoration: const BoxDecoration(
-    image: DecorationImage(
-    image: AssetImage("assets/images/background.jpg"),
-    fit: BoxFit.cover,
+        backgroundColor: const Color(0xFFB3E5FC),
+        appBar: _buildAppBar(),
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.jpg"),
+              fit: BoxFit.cover,
             ),
           ),
-        child: Column(
-          children: [
-            if (_searchBarVisible) _buildSearchBar(),
-            Expanded(
-              child: _buildGridView(),
-            ),
-            _buildSliderBar(),
-          ],
-        ),
-
-      )
-    );
+          child: Column(
+            children: [
+              if (_searchBarVisible) _buildSearchBar(),
+              Expanded(
+                child: _buildGridView(),
+              ),
+              _buildSliderBar(),
+            ],
+          ),
+        ));
   }
 
   AppBar _buildAppBar() {

@@ -114,7 +114,7 @@ class DataService {
     required File photoFile,
   }) async {
     try {
-      final photo = await PhotoController.addPhoto(
+      final photo = await PhotoController.addPhotoFromLocalPath(
         title: title,
         description: description,
         tags: tags,
