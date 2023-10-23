@@ -7,7 +7,6 @@ abstract class MediaFields {
     description,
     tags,
     timestamp,
-    fileName,
     storageSize,
     isFavorited,
   ];
@@ -17,7 +16,6 @@ abstract class MediaFields {
   static const String description = 'description';
   static const String tags = 'tags';
   static const String timestamp = 'timestamp';
-  static const String fileName = 'fileName';
   static const String storageSize = 'storageSize';
   static const String isFavorited = 'isFavorited';
 }
@@ -29,7 +27,6 @@ abstract class Media {
   final String? description;
   final List<String>? tags;
   final DateTime timestamp;
-  final String fileName;
   final int storageSize;
   final bool isFavorited;
 
@@ -40,7 +37,6 @@ abstract class Media {
     this.description,
     this.tags,
     required this.timestamp,
-    required this.fileName,
     required this.storageSize,
     required this.isFavorited,
   });
@@ -51,7 +47,6 @@ abstract class Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
-    String? fileName,
     int? storageSize,
     bool? isFavorited,
   });
@@ -62,7 +57,6 @@ abstract class Media {
         MediaFields.description: description,
         MediaFields.tags: tags?.join(','),
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
-        MediaFields.fileName: fileName,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: isFavorited ? 1 : 0,
       };

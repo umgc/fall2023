@@ -13,36 +13,51 @@ class VideoController {
     String? title,
     String? description,
     List<String>? tags,
-    required File file,
-    String? duration, // Make duration optional
-    String? thumbnail,
+    required File videoFile,
+    File? thumbnailFile, // TODO: Update to auto get the thumbnail
+    required String duration, // TODO: Update to auto get the duration
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String fileExtension = FileManager().getFileExtensionFromFile(file);
-      String fileName = FileManager().generateFileName(
+      String videoFileExtension =
+          FileManager().getFileExtensionFromFile(videoFile);
+      String videoFileName = FileManager().generateFileName(
         MediaType.video.name,
         timestamp,
-        fileExtension,
+        videoFileExtension,
       );
-      int fileSize = FileManager.calculateFileSizeInBytes(file);
+      String? thumbnailFileExtension;
+      String? thumbnailFileName;
+      if (thumbnailFile != null) {
+        thumbnailFileExtension =
+            FileManager().getFileExtensionFromFile(videoFile);
+        thumbnailFileName = videoFileName + thumbnailFileExtension;
+      }
+      int videoFileSize = FileManager.calculateFileSizeInBytes(videoFile);
       Video newVideo = Video(
         title: title,
         description: description,
         tags: tags,
         timestamp: timestamp,
-        fileName: fileName,
-        storageSize: fileSize,
+        storageSize: videoFileSize,
         isFavorited: false,
+        videoFileName: videoFileName,
+        thumbnailFileName: thumbnailFileName,
         duration: duration,
-        thumbnail: thumbnail,
       );
       Video createdVideo = await VideoRepository.instance.create(newVideo);
       await FileManager.addFileToFilesystem(
-        file,
+        videoFile,
         DirectoryManager.instance.videosDirectory.path,
-        fileName,
+        videoFileName,
       );
+      if (videoFile != null) {
+        await FileManager.addFileToFilesystem(
+          thumbnailFile!,
+          DirectoryManager.instance.videoThumbnailsDirectory.path,
+          thumbnailFileName!,
+        );
+      }
       return createdVideo;
     } catch (e) {
       print('Video Controller -- Error adding video: $e');
@@ -55,8 +70,6 @@ class VideoController {
     String? title,
     String? description,
     List<String>? tags,
-    String? duration,
-    String? thumbnail,
   }) async {
     try {
       final existingVideo = await VideoRepository.instance.read(id);
@@ -64,8 +77,6 @@ class VideoController {
         title: title ?? existingVideo.title,
         description: description ?? existingVideo.description,
         tags: tags ?? existingVideo.tags,
-        duration: duration ?? existingVideo.duration,
-        thumbnail: thumbnail ?? existingVideo.thumbnail,
       );
       await VideoRepository.instance.update(updatedVideo);
       return updatedVideo;
@@ -80,8 +91,14 @@ class VideoController {
       final existingVideo = await VideoRepository.instance.read(id);
       await VideoRepository.instance.delete(id);
       final videoFilePath =
-          '${DirectoryManager.instance.videosDirectory.path}/${existingVideo.fileName}';
+          '${DirectoryManager.instance.videosDirectory.path}/${existingVideo.videoFileName}';
       await FileManager.removeFileFromFilesystem(videoFilePath);
+      String? thumbnailFileName = existingVideo.thumbnailFileName;
+      if (thumbnailFileName != null && thumbnailFileName.isNotEmpty) {
+        final thumbnailFilePath =
+            '${DirectoryManager.instance.videoThumbnailsDirectory.path}/${existingVideo.thumbnailFileName}';
+        await FileManager.removeFileFromFilesystem(thumbnailFilePath);
+      }
       return existingVideo;
     } catch (e) {
       print('Video Controller -- Error removing video: $e');

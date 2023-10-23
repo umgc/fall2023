@@ -18,7 +18,7 @@ class AppSeedData {
         title: 'Cat',
         description: 'A photo of my pet cat, Kit Kat.',
         tags: tagsList,
-        file: photoFile,
+        photoFile: photoFile,
       );
       FileManager.unloadAssetFile('cat.png');
     } catch (e) {
@@ -30,16 +30,19 @@ class AppSeedData {
     try {
       File? videoFile = await FileManager.loadAssetFile(
           'assets/seed_data_files/dog.mp4', 'dog.mp4');
+      File? thumbnailFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/dog.png', 'dog.png');
       List<String>? tagsList = ['pet', 'dog'];
       await DataService.instance.addVideo(
         title: 'Dog',
         description: 'A photo of my pet dog, Spot.',
         tags: tagsList,
-        file: videoFile,
-        duration: "00:08", // TODO: Add logic to auto calculate duration
-        thumbnail: "", // TODO: Add logic to auto grab thumbnail
+        videoFile: videoFile,
+        thumbnailFile: thumbnailFile,
+        duration: "00:08",
       );
       FileManager.unloadAssetFile('dog.mp4');
+      FileManager.unloadAssetFile('dog.png');
     } catch (e) {
       print('Error loading seed data video: $e');
     }

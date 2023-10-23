@@ -3,6 +3,7 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 
 class Audio extends Media {
+  final String audioFileName;
   final String? summary;
 
   Audio({
@@ -11,21 +12,20 @@ class Audio extends Media {
     String? description,
     List<String>? tags,
     required DateTime timestamp,
-    required String fileName,
     required int storageSize,
     required bool isFavorited,
+    required this.audioFileName,
     this.summary,
   }) : super(
-          id: id,
-          mediaType: MediaType.audio,
-          title: title ?? fileName, // TODO: Decide on default file name
-          description: description,
-          tags: tags,
-          timestamp: timestamp,
-          fileName: fileName,
-          storageSize: storageSize,
-          isFavorited: isFavorited,
-        );
+    id: id,
+    mediaType: MediaType.audio,
+    title: title ?? audioFileName, // TODO: Decide on default photo file name
+    description: description,
+    tags: tags,
+    timestamp: timestamp,
+    storageSize: storageSize,
+    isFavorited: isFavorited,
+  );
 
   @override
   Audio copy({
@@ -34,9 +34,9 @@ class Audio extends Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
-    String? fileName,
     int? storageSize,
     bool? isFavorited,
+    String? audioFileName,
     String? summary,
   }) =>
       Audio(
@@ -45,9 +45,9 @@ class Audio extends Media {
         description: description ?? this.description,
         tags: tags ?? this.tags,
         timestamp: timestamp ?? this.timestamp,
-        fileName: fileName ?? this.fileName,
         storageSize: storageSize ?? this.storageSize,
         isFavorited: isFavorited ?? this.isFavorited,
+        audioFileName: audioFileName ?? this.audioFileName,
         summary: summary ?? this.summary,
       );
 
@@ -55,6 +55,7 @@ class Audio extends Media {
   Map<String, Object?> toJson() {
     return {
       ...super.toJson(),
+      AudioFields.audioFileName: audioFileName,
       AudioFields.summary: summary,
     };
   }
@@ -69,9 +70,9 @@ class Audio extends Media {
       timestamp: DateTime.fromMillisecondsSinceEpoch(
           (json[MediaFields.timestamp] as int),
           isUtc: true),
-      fileName: json[MediaFields.fileName] as String,
       storageSize: json[MediaFields.storageSize] as int,
       isFavorited: json[MediaFields.isFavorited] == 1,
+      audioFileName: json[AudioFields.audioFileName] as String,
       summary: json[AudioFields.summary] as String?,
     );
   }

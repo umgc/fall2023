@@ -7,12 +7,14 @@ const String tableVideos = 'videos';
 class VideoFields extends MediaFields {
   static final List<String> values = [
     ...MediaFields.values,
+    videoFileName,
+    thumbnailFileName,
     duration,
-    thumbnail,
   ];
 
+  static const String videoFileName = 'video_file_name';
+  static const String thumbnailFileName = 'thumbnail_file_name';
   static const String duration = 'duration';
-  static const String thumbnail = 'thumbnail';
 }
 
 class VideoRepository {

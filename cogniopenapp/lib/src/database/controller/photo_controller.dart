@@ -13,31 +13,31 @@ class PhotoController {
     String? title,
     String? description,
     List<String>? tags,
-    required File file,
+    required File photoFile,
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String fileExtension = FileManager().getFileExtensionFromFile(file);
-      String fileName = FileManager().generateFileName(
+      String photoFileExtension = FileManager().getFileExtensionFromFile(photoFile);
+      String photoFileName = FileManager().generateFileName(
         MediaType.photo.name,
         timestamp,
-        fileExtension,
+        photoFileExtension,
       );
-      int fileSize = FileManager.calculateFileSizeInBytes(file);
+      int photoFileSize = FileManager.calculateFileSizeInBytes(photoFile);
       Photo newPhoto = Photo(
         title: title,
         description: description,
         tags: tags,
         timestamp: timestamp,
-        fileName: fileName,
-        storageSize: fileSize,
+        photoFileName: photoFileName,
+        storageSize: photoFileSize,
         isFavorited: false,
       );
       Photo createdPhoto = await PhotoRepository.instance.create(newPhoto);
       await FileManager.addFileToFilesystem(
-        file,
+        photoFile,
         DirectoryManager.instance.photosDirectory.path,
-        fileName,
+        photoFileName,
       );
       return createdPhoto;
     } catch (e) {
@@ -72,7 +72,7 @@ class PhotoController {
       final existingPhoto = await PhotoRepository.instance.read(id);
       await PhotoRepository.instance.delete(id);
       final photoFilePath =
-          '${DirectoryManager.instance.photosDirectory.path}/${existingPhoto.fileName}';
+          '${DirectoryManager.instance.photosDirectory.path}/${existingPhoto.photoFileName}';
       await FileManager.removeFileFromFilesystem(photoFilePath);
       return existingPhoto;
     } catch (e) {
