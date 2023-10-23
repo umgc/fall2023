@@ -8,8 +8,6 @@ import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cogniopenapp/src/database/repository/video_repository.dart';
-
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
 
@@ -210,14 +208,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
   };
 
   void displayFullObjectView(BuildContext context, Media media) async {
-    print("FULL OBJECT VIEW");
-
-    final videos = await VideoRepository.instance.readAll();
-
-    for (var video in videos) {
-      print(video.toJson());
-    }
-    print(media.toString());
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
@@ -228,11 +218,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () async {
-                    print("MEDIA TITLE BEFORE: ${media.title}");
+                    print("MEDIA: ${media.title}");
                     final updatedMedia = await displayEditPopup(context, media);
                     if (updatedMedia != null) {
-                      testMedia = DataService.instance.mediaList;
-                      print("MEDIA TITLE AFTER: ${updatedMedia.title}");
+                      print("MEDIA: ${media.title}");
                       // Call a callback to update the parent view
                       Navigator.pop(context); // Close the current view
                       setState(() {
@@ -286,7 +275,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
         },
       ),
     );
-    Navigator.of(context).pop(); // Return the updated media
   }
 
   Future<Media?> displayEditPopup(BuildContext context, Media media) async {
@@ -297,10 +285,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     TextEditingController tagsController =
         TextEditingController(text: media.tags?.join(', ') ?? '');
 
-    Media? updatedMedia;
     return showDialog<Media>(
       context: context,
       builder: (BuildContext context) {
+        Media? updatedMedia;
         return AlertDialog(
           title: Text('Edit Media'),
           content: StatefulBuilder(
@@ -328,27 +316,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
               child: Text('Save'),
               onPressed: () {
                 // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
-                if (media is Photo) {
-                  List<String> tags = tagsController.text
+                /*setState(() {
+
+                  media.title = titleController.text;
+                  media.description = descriptionController.text;
+                  media.tags = tagsController.text
                       .split(',')
                       .map((tag) => tag.trim())
                       .toList();
-                  DataService.instance.updatePhoto(
-                      id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-
-                  updatedMedia = Photo(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      photoFileName: media.photoFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-                }
-                setState(() {});
+                  updatedMedia = media; // Update the updatedMedia variable
+                });*/
                 Navigator.of(context)
                     .pop(updatedMedia); // Return the updated media
               },
@@ -382,7 +359,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   @override
   Widget build(BuildContext context) {
-    print("GALLERY BUILD");
     _updateLayoutValues();
 
     return Scaffold(
@@ -411,7 +387,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return AppBar(
       backgroundColor: const Color(0x440000),
       elevation: 0.0,
-      title: const Column(
+      title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -479,7 +455,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   Widget _buildSearchBar() {
     return TextField(
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Search by Title',
         prefixIcon: Icon(Icons.search),
       ),
@@ -549,7 +525,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Widget _buildPhotoImage(Photo media) {
-    print("BUILDING A PHOTO");
     return Expanded(
       child: Center(
         child: Image(
@@ -640,7 +615,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Slider(
-        key: Key('gridSizeSlider'),
         value: _crossAxisCount,
         min: 1.0,
         max: 4.0,
