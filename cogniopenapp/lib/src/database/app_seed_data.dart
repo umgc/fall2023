@@ -16,13 +16,12 @@ class AppSeedData {
           'assets/seed_data_files/bird.mp3', 'bird.mp3');
       List<String>? tagsList = ['nature', 'bird'];
       await DataService.instance.addAudio(
-        title: 'Bird',
-        description: 'Audio of birds singing in the forest.',
-        tags: tagsList,
-        audioFile: audioFile,
-        summary: "This is a nature recording of birds singing."
-      );
-      FileManager.unloadAssetFile('bird.png');
+          title: 'Bird',
+          description: 'Audio of birds singing in the forest.',
+          tags: tagsList,
+          audioFile: audioFile,
+          summary: 'This is a nature recording of birds singing.');
+      FileManager.unloadAssetFile('bird.mp3');
     } catch (e) {
       print('Error loading seed data photo: $e');
     }
@@ -58,7 +57,7 @@ class AppSeedData {
         tags: tagsList,
         videoFile: videoFile,
         thumbnailFile: thumbnailFile,
-        duration: "00:08",
+        duration: '00:08',
       );
       FileManager.unloadAssetFile('dog.mp4');
       FileManager.unloadAssetFile('dog.png');

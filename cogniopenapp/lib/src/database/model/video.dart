@@ -1,11 +1,16 @@
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:flutter/widgets.dart';
 
 class Video extends Media {
   final String videoFileName;
   final String? thumbnailFileName;
   final String duration;
+
+  late Image? thumbnail;
 
   Video({
     int? id,
@@ -21,13 +26,16 @@ class Video extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.video,
-          title: title ?? videoFileName, // TODO: Decide on default video file name
+          title:
+              title ?? videoFileName, // TODO: Decide on default video file name
           description: description,
           tags: tags,
           timestamp: timestamp,
           storageSize: storageSize,
           isFavorited: isFavorited,
-        );
+        ) {
+    _loadThumbnail();
+  }
 
   @override
   Video copy({
@@ -81,5 +89,14 @@ class Video extends Media {
       thumbnailFileName: json[VideoFields.thumbnailFileName] as String?,
       duration: json[VideoFields.duration] as String,
     );
+  }
+
+  Future<void> _loadThumbnail() async {
+    if (thumbnailFileName != null && thumbnailFileName!.isNotEmpty) {
+      thumbnail = FileManager.loadImage(
+        DirectoryManager.instance.videoThumbnailsDirectory.path,
+        thumbnailFileName!,
+      );
+    }
   }
 }

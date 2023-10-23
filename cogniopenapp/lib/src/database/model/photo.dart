@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 class Photo extends Media {
   final String photoFileName;
 
-  late Image? image;
+  late Image? photo;
 
   Photo({
     int? id,
@@ -22,19 +22,15 @@ class Photo extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.photo,
-          title: title ?? photoFileName, // TODO: Decide on default photo file name
+          title:
+              title ?? photoFileName, // TODO: Decide on default photo file name
           description: description,
           tags: tags,
           timestamp: timestamp,
           storageSize: storageSize,
           isFavorited: isFavorited,
         ) {
-    _loadImage();
-  }
-
-  Future<void> _loadImage() async {
-    image = await FileManager.loadImage(
-        DirectoryManager.instance.photosDirectory.path, photoFileName);
+    _loadPhoto();
   }
 
   @override
@@ -80,6 +76,13 @@ class Photo extends Media {
       storageSize: json[MediaFields.storageSize] as int,
       isFavorited: json[MediaFields.isFavorited] == 1,
       photoFileName: json[PhotoFields.photoFileName] as String,
+    );
+  }
+
+  Future<void> _loadPhoto() async {
+    photo = FileManager.loadImage(
+      DirectoryManager.instance.photosDirectory.path,
+      photoFileName,
     );
   }
 }
