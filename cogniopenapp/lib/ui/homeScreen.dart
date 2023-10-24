@@ -1,6 +1,6 @@
 // Imported libraries and packages
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
-import 'package:cogniopenapp/ui/thumbs_BB_screen.dart';
+import 'package:cogniopenapp/ui/helpScreen.dart';
 import 'package:flutter/material.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
@@ -62,7 +62,7 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CameraAppScreen()));
+                            builder: (context) => HelpCenterScreen()));
                     break;
                   case 'Settings':
                     Navigator.push(
