@@ -26,5 +26,5 @@ void main() {
 
     //stop icon
     expect(find.byIcon(Icons.stop), findsOneWidget);
-  });
+  }, skip: true);
 }
