@@ -77,7 +77,10 @@ class HomeScreen extends StatelessWidget {
                             builder: (context) => SettingsScreen()));
                     break;
                   case 'Logout':
-                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginScreen()));
                     break;
                 }
               },
