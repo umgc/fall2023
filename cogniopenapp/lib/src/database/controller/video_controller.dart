@@ -5,11 +5,12 @@ import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:flutter/material.dart';
 
 class VideoController {
   VideoController._();
 
-  static Future<Video?> addVideo({
+  static Future<Video?> addSeedVideo({
     String? title,
     String? description,
     List<String>? tags,
@@ -59,6 +60,45 @@ class VideoController {
           thumbnailFileName!,
         );
       }
+      return createdVideo;
+    } catch (e) {
+      print('Video Controller -- Error adding video: $e');
+      return null;
+    }
+  }
+
+  static Future<Video?> addVideo({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File videoFile,
+    File? thumbnailFile,
+    String? duration,
+  }) async {
+    try {
+      String videoFileName = FileManager.getFileName(videoFile.path);
+      int videoFileSize = FileManager.calculateFileSizeInBytes(videoFile);
+      DateTime timestamp =
+          DateTime.parse(FileManager.getFileTimestamp(videoFile.path));
+      String updatedPath = videoFile
+          .path; // The method will update with the path (hopefully), when a video is added
+      Image thumbnail =
+          await FileManager.getThumbnail(updatedPath, 0, isThumbnail: true);
+      String thumbnailFileName =
+          FileManager.getThumbnailFileName(updatedPath, 0, isThumbnail: true);
+      Video newVideo = Video(
+        title: title ?? "",
+        description: description ?? "",
+        tags: tags ?? [],
+        timestamp: timestamp,
+        storageSize: videoFileSize,
+        isFavorited: false,
+        videoFileName: videoFileName,
+        thumbnailFileName: thumbnailFileName,
+        duration: duration ?? "0",
+      );
+
+      Video createdVideo = await VideoRepository.instance.create(newVideo);
       return createdVideo;
     } catch (e) {
       print('Video Controller -- Error adding video: $e');
