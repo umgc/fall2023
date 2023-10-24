@@ -218,10 +218,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 IconButton(
                   icon: Icon(Icons.edit),
                   onPressed: () async {
-                    print("MEDIA: ${media.title}");
                     final updatedMedia = await displayEditPopup(context, media);
                     if (updatedMedia != null) {
-                      print("MEDIA: ${media.title}");
                       // Call a callback to update the parent view
                       Navigator.pop(context); // Close the current view
                       setState(() {
@@ -238,8 +236,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Title: ${media.title}',
-                        style: TextStyle(fontSize: _defaultFontSize)),
+                    if (!media.title.isEmpty)
+                      Text('Title: ${media.title}',
+                          style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
                         'Time Stamp: ${FormatUtils.getDateString(media.timestamp)}', // TODO: Confirm logic / output correctness
                         style: TextStyle(fontSize: _defaultFontSize)),
@@ -253,13 +252,15 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       ),
                     if (media is Audio) Icon(Icons.chat, size: 100),
                     SizedBox(height: 16),
-                    Text(
-                      'Description: ${media.description}',
-                      style: TextStyle(fontSize: _defaultFontSize),
-                      textAlign: TextAlign.center,
-                    ),
-                    Text('Tags: ${media.tags?.join(", ")}',
-                        style: TextStyle(fontSize: _defaultFontSize)),
+                    if (media.description != null && media.description != "")
+                      Text(
+                        'Description: ${media.description}',
+                        style: TextStyle(fontSize: _defaultFontSize),
+                        textAlign: TextAlign.center,
+                      ),
+                    if (media.tags != null && media.tags!.length < 1)
+                      Text('Tags: ${media.tags?.join(", ")}',
+                          style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
                       'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
                       style: TextStyle(fontSize: _defaultFontSize),
@@ -312,17 +313,63 @@ class _GalleryScreenState extends State<GalleryScreen> {
             TextButton(
               child: Text('Save'),
               onPressed: () {
+                List<String> tags = tagsController.text
+                    .split(',')
+                    .map((tag) => tag.trim())
+                    .toList();
                 // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
-                /*setState(() {
+                if (media is Photo) {
+                  DataService.instance.updatePhoto(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
 
-                  media.title = titleController.text;
-                  media.description = descriptionController.text;
-                  media.tags = tagsController.text
-                      .split(',')
-                      .map((tag) => tag.trim())
-                      .toList();
-                  updatedMedia = media; // Update the updatedMedia variable
-                });*/
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Photo(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      photoFileName: media.photoFileName,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
+                } else if (media is Video) {
+                  DataService.instance.updateVideo(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
+
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Video(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      videoFileName: media.videoFileName,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags,
+                      duration: media.duration,
+                      thumbnailFileName: media.thumbnailFileName);
+                } else if (media is Audio) {
+                  DataService.instance.updateAudio(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
+
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Audio(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      audioFileName: media.audioFileName,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      tags: tags);
+                }
+                setState(() {});
                 Navigator.of(context)
                     .pop(updatedMedia); // Return the updated media
               },
@@ -359,27 +406,25 @@ class _GalleryScreenState extends State<GalleryScreen> {
     _updateLayoutValues();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFB3E5FC),
-      appBar: _buildAppBar(),
-      body: Container(
-    decoration: const BoxDecoration(
-    image: DecorationImage(
-    image: AssetImage("assets/images/background.jpg"),
-    fit: BoxFit.cover,
+        backgroundColor: const Color(0xFFB3E5FC),
+        appBar: _buildAppBar(),
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.jpg"),
+              fit: BoxFit.cover,
             ),
           ),
-        child: Column(
-          children: [
-            if (_searchBarVisible) _buildSearchBar(),
-            Expanded(
-              child: _buildGridView(),
-            ),
-            _buildSliderBar(),
-          ],
-        ),
-
-      )
-    );
+          child: Column(
+            children: [
+              if (_searchBarVisible) _buildSearchBar(),
+              Expanded(
+                child: _buildGridView(),
+              ),
+              _buildSliderBar(),
+            ],
+          ),
+        ));
   }
 
   AppBar _buildAppBar() {
@@ -614,7 +659,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Slider(
-        key: Key('gridSizeSlider'),
         value: _crossAxisCount,
         min: 1.0,
         max: 4.0,
