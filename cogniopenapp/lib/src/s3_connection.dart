@@ -74,4 +74,15 @@ class S3Bucket {
     print("content added to bucket.");
     return title;
   }
+
+  // Delete file from S3
+  Future<bool> deleteFileFromS3(String key) async {
+    try {
+      await connection!.deleteObject(bucket: dotenv.get('videoS3Bucket'), key: key);
+      return true;
+    } catch (e) {
+      print('Failed to delete the file from S3: $e');
+      return false;
+    }
+  }
 }
