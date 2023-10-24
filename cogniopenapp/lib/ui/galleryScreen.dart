@@ -1,11 +1,12 @@
+import 'package:cogniopenapp/src/data_service.dart';
+import 'package:cogniopenapp/src/database/model/audio.dart';
+import 'package:cogniopenapp/src/database/model/media.dart';
+import 'package:cogniopenapp/src/database/model/media_type.dart';
+import 'package:cogniopenapp/src/database/model/photo.dart';
+import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
-
-import 'homeScreen.dart';
-import '../src/media.dart';
-import '../src/video.dart';
-import '../src/photo.dart';
-import '../src/conversation.dart';
-import '../src/galleryData.dart';
 
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
@@ -17,7 +18,7 @@ class GalleryScreen extends StatefulWidget {
     // Scaffold widget for the Gallery screen
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gallery'), // AppBar title
+        title: const Text('Gallery', style: TextStyle(color: Colors.black54)),
       ),
       // Implement the Gallery screen UI here
     );
@@ -30,7 +31,7 @@ class GalleryScreen extends StatefulWidget {
 // Define the state for the Gallery screen
 class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
-  List<Media> testMedia = GalleryData.getAllMedia();
+  List<Media> testMedia = DataService.instance.mediaList;
 
   final double _defaultFontSize = 20.0;
   bool _searchBarVisible = false;
@@ -56,7 +57,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _populateMedia() async {
-    testMedia = await GalleryData.allMedia;
+    testMedia = DataService.instance.mediaList;
   }
 
   // Function to update font and icon size based on grid size
@@ -122,7 +123,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   void _toggleFavoriteStatus(Media media) {
     setState(() {
-      media.isFavorited = !media.isFavorited;
+      //media.isFavorited = !media.isFavorited; // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
     });
   }
 
@@ -165,8 +166,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
         break;
       case SortingCriteria.timeStamp:
         testMedia.sort((a, b) => _isSortAscending
-            ? a.timeStamp!.compareTo(b.timeStamp!)
-            : b.timeStamp!.compareTo(a.timeStamp!));
+            ? a.timestamp.compareTo(b.timestamp)
+            : b.timestamp.compareTo(a.timestamp));
         break;
       case SortingCriteria.title:
         testMedia.sort((a, b) => _isSortAscending
@@ -206,13 +207,30 @@ class _GalleryScreenState extends State<GalleryScreen> {
     SortingCriteria.type: 'Sort by Type',
   };
 
-  void displayFullObjectView(BuildContext context, Media media) {
+  void displayFullObjectView(BuildContext context, Media media) async {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
               title: Text('Full Screen Image and Details'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    print("MEDIA: ${media.title}");
+                    final updatedMedia = await displayEditPopup(context, media);
+                    if (updatedMedia != null) {
+                      print("MEDIA: ${media.title}");
+                      // Call a callback to update the parent view
+                      Navigator.pop(context); // Close the current view
+                      setState(() {
+                        displayFullObjectView(context, updatedMedia);
+                      });
+                    }
+                  },
+                ),
+              ],
             ),
             body: Center(
               child: SingleChildScrollView(
@@ -223,17 +241,17 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     Text('Title: ${media.title}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                        'Time Stamp: ${media.formatDateTime(media.timeStamp) ?? "N/A"}',
+                        'Time Stamp: ${FormatUtils.getDateString(media.timestamp)}', // TODO: Confirm logic / output correctness
                         style: TextStyle(fontSize: _defaultFontSize)),
-                    if (media is Photo && media.associatedImage != null)
+                    if (media is Photo && media.photo != null)
                       Image(
-                        image: media.associatedImage.image,
+                        image: media.photo!.image,
                       ),
-                    if (media is Video)
+                    if (media is Video && media.thumbnail != null)
                       Image(
-                        image: media.thumbnail.image,
+                        image: media.thumbnail!.image,
                       ),
-                    if (media is Conversation) Icon(Icons.chat, size: 100),
+                    if (media is Audio) Icon(Icons.chat, size: 100),
                     SizedBox(height: 16),
                     Text(
                       'Description: ${media.description}',
@@ -243,7 +261,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     Text('Tags: ${media.tags?.join(", ")}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                      'Storage Size: ${media.getStorageSizeString()}',
+                      'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
                       style: TextStyle(fontSize: _defaultFontSize),
                     ),
                   ],
@@ -256,6 +274,82 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  Future<Media?> displayEditPopup(BuildContext context, Media media) async {
+    TextEditingController titleController =
+        TextEditingController(text: media.title);
+    TextEditingController descriptionController =
+        TextEditingController(text: media.description);
+    TextEditingController tagsController =
+        TextEditingController(text: media.tags?.join(', ') ?? '');
+
+    return showDialog<Media>(
+      context: context,
+      builder: (BuildContext context) {
+        Media? updatedMedia;
+        return AlertDialog(
+          title: Text('Edit Media'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  buildEditableField(titleController, 'Title', setState),
+                  buildEditableField(
+                      descriptionController, 'Description', setState),
+                  buildEditableField(
+                      tagsController, 'Tags (comma-separated)', setState),
+                ],
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () {
+                // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
+                /*setState(() {
+
+                  media.title = titleController.text;
+                  media.description = descriptionController.text;
+                  media.tags = tagsController.text
+                      .split(',')
+                      .map((tag) => tag.trim())
+                      .toList();
+                  updatedMedia = media; // Update the updatedMedia variable
+                });*/
+                Navigator.of(context)
+                    .pop(updatedMedia); // Return the updated media
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildEditableField(
+    TextEditingController controller,
+    String label,
+    StateSetter setState,
+  ) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label),
+      enabled: true,
+      onChanged: (value) {
+        setState(() {
+          // You can add logic here if needed when the text changes.
+        });
+      },
+    );
+  }
+
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| BUILD METHODS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -265,21 +359,33 @@ class _GalleryScreenState extends State<GalleryScreen> {
     _updateLayoutValues();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFB3E5FC),
       appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          if (_searchBarVisible) _buildSearchBar(),
-          Expanded(
-            child: _buildGridView(),
+      body: Container(
+    decoration: const BoxDecoration(
+    image: DecorationImage(
+    image: AssetImage("assets/images/background.jpg"),
+    fit: BoxFit.cover,
+            ),
           ),
-          _buildSliderBar(),
-        ],
-      ),
+        child: Column(
+          children: [
+            if (_searchBarVisible) _buildSearchBar(),
+            Expanded(
+              child: _buildGridView(),
+            ),
+            _buildSliderBar(),
+          ],
+        ),
+
+      )
     );
   }
 
   AppBar _buildAppBar() {
     return AppBar(
+      backgroundColor: const Color(0x440000),
+      elevation: 0.0,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -295,11 +401,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
           children: [
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
+              key: const Key('searchIcon'),
               icon: Icon(Icons.search),
               onPressed: _toggleSearchBarVisibility,
             ),
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
+              key: const Key('favoriteIcon'),
               color: _showFavoritedOnly ? Colors.yellow : Colors.grey,
               icon: _showFavoritedOnly
                   ? Icon(Icons.star)
@@ -307,6 +415,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowFavorited,
             ),
             IconButton(
+              key: const Key('filterPhotoIcon'),
               icon: _showPhotos
                   ? const Icon(Icons.photo)
                   : const Icon(Icons.photo_outlined),
@@ -314,6 +423,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowPhotos,
             ),
             IconButton(
+              key: const Key('filterVideoIcon'),
               color: _showVideos ? Colors.white : Colors.grey,
               icon: _showVideos
                   ? const Icon(Icons.videocam)
@@ -321,6 +431,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               onPressed: _toggleShowVideos,
             ),
             IconButton(
+              key: const Key('filterConversationIcon'),
               color: _showConversations ? Colors.white : Colors.grey,
               icon: _showConversations
                   ? const Icon(Icons.chat)
@@ -331,6 +442,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         ),
         // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| POP UP MENU BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         PopupMenuButton<SortingCriteria>(
+          key: const Key('sortGalleryButton'),
           itemBuilder: (BuildContext context) {
             return _buildSortingCriteriaMenuItems();
           },
@@ -395,15 +507,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (media is Photo && media.associatedImage != null)
+                if (media is Photo && media.photo != null)
                   _buildPhotoImage(media),
-                if (media is Video) _buildVideoImage(media),
-                if (media is Conversation) _buildConversationIcon(),
+                if (media is Video && media.thumbnail != null)
+                  _buildVideoImage(media),
+                if (media is Audio) _buildConversationIcon(),
                 _buildGridItemTitle(media.title),
               ],
             ),
             _buildFavoriteIcon(media),
-            _buildMediaTypeIcon(media.iconType.icon),
+            _buildMediaTypeIcon(media.mediaType),
           ],
         ),
       ),
@@ -414,7 +527,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Expanded(
       child: Center(
         child: Image(
-          image: media.associatedImage.image,
+          key: const Key('photoItem'),
+          image: media.photo!.image,
         ),
       ),
     );
@@ -422,7 +536,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   Widget _buildVideoImage(Video media) {
     return Image(
-      image: media.thumbnail.image,
+      key: const Key('videoItem'),
+      image: media.thumbnail!.image,
       // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
       width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
       height: 100.0 + (2.0 - _crossAxisCount) * 25.0,
@@ -430,7 +545,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Widget _buildConversationIcon() {
-    return Icon(Icons.chat, size: 50);
+    return const Icon(
+      key: Key('conversationItem'),
+      Icons.chat,
+      size: 50,
+    );
   }
 
   Widget _buildGridItemTitle(String title) {
@@ -452,7 +571,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       if (media is Video && !_showVideos) {
         return false;
       }
-      if (media is Conversation && !_showConversations) {
+      if (media is Audio && !_showConversations) {
         return false;
       }
       return true;
@@ -480,12 +599,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildMediaTypeIcon(IconData? icon) {
+  Widget _buildMediaTypeIcon(MediaType mediaType) {
     return Positioned(
       top: 0,
       left: 0,
       child: Icon(
-        icon,
+        UiUtils.getMediaIconData(mediaType),
         size: _iconSize,
       ),
     );
@@ -495,6 +614,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Slider(
+        key: Key('gridSizeSlider'),
         value: _crossAxisCount,
         min: 1.0,
         max: 4.0,
