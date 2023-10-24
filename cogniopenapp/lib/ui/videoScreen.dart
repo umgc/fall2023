@@ -99,7 +99,7 @@ class _CameraHomeState extends State<VideoScreen>
     });
 
     // Delay for camera initialization
-    Future.delayed(Duration(milliseconds: 300), () {
+    Future.delayed(Duration(milliseconds: 1000), () {
       if (controller != null) {
         showInSnackBar('Recording Started');
         onVideoRecordButtonPressed();
