@@ -81,6 +81,7 @@ dependencies:
   path_provider_platform_interface: ^2.1.1
   path_provider_android: ^2.2.0
   moment_dart: ^1.1.0
+  timeago: ^3.5.0
 
 dev_dependencies:
   flutter_test:
