@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cogniopenapp/src/address.dart';
@@ -56,7 +55,6 @@ Future<void> _initializeCamera() async {
   } on CameraException catch (e) {
     _logError(e.code, e.description);
   }
-  runApp(const CameraApp());
 }
 
 class _CameraHomeState extends State<VideoScreen>
@@ -67,18 +65,10 @@ class _CameraHomeState extends State<VideoScreen>
   VideoPlayerController? videoController;
   VoidCallback? videoPlayerListener;
   bool enableAudio = true;
+  bool isRecording = false;
+  int recordedSeconds = 0;
+  Timer? recordTimer;
 
-  //Uncomment to add Flash and Exposure feature
-  /*double _minAvailableExposureOffset = 0.0;
-  double _maxAvailableExposureOffset = 0.0;
-  double _currentExposureOffset = 0.0;
-  
-  late AnimationController _flashModeControlRowAnimationController;
-  late Animation<double> _flashModeControlRowAnimation;
-  late AnimationController _exposureModeControlRowAnimationController;
-  late Animation<double> _exposureModeControlRowAnimation;
-  late AnimationController _focusModeControlRowAnimationController;
-  late Animation<double> _focusModeControlRowAnimation;*/
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
@@ -93,39 +83,33 @@ class _CameraHomeState extends State<VideoScreen>
     _initializeCamera();
     WidgetsBinding.instance.addObserver(this);
 
-    //Uncomment to add Flash and Exposure feature
-    /*_flashModeControlRowAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _flashModeControlRowAnimation = CurvedAnimation(
-      parent: _flashModeControlRowAnimationController,
-      curve: Curves.easeInCubic,
-    );
-    _exposureModeControlRowAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _exposureModeControlRowAnimation = CurvedAnimation(
-      parent: _exposureModeControlRowAnimationController,
-      curve: Curves.easeInCubic,
-    );
-    _focusModeControlRowAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _focusModeControlRowAnimation = CurvedAnimation(
-      parent: _focusModeControlRowAnimationController,
-      curve: Curves.easeInCubic,
-    );*/
+    // Get a list of available cameras.
+    availableCameras().then((cameras) {
+      _cameras = cameras;
+
+      // Check if any cameras are available.
+      if (_cameras.isNotEmpty) {
+        // Set the initial camera description to the first camera (usually rear camera).
+        onNewCameraSelected(_cameras.first);
+      } else {
+        showInSnackBar('No camera found.');
+      }
+    }).catchError((e) {
+      _showCameraException(e);
+    });
+
+    // Delay for camera initialization
+    Future.delayed(Duration(milliseconds: 1000), () {
+      if (controller != null) {
+        showInSnackBar('Recording Started');
+        onVideoRecordButtonPressed();
+      }
+    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    //Uncomment to add Flash and Exposure feature
-    /*_flashModeControlRowAnimationController.dispose();
-    _exposureModeControlRowAnimationController.dispose();*/
     super.dispose();
   }
 
@@ -187,18 +171,23 @@ class _CameraHomeState extends State<VideoScreen>
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Recorded Time: ${recordedSeconds ~/ 60}:${(recordedSeconds % 60).toString().padLeft(2, '0')}',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
           _captureControlRowWidget(),
-
-          // Uncomment to add Flash and Exposure feature
-          //_modeControlRowWidget(),
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: Row(
               children: <Widget>[
                 _cameraTogglesRowWidget(),
-                //_thumbnailWidget(),
+                _thumbnailWidget(),
 
-                GestureDetector(
+                // Adding a sub menu by tapping on the thumbnail. It works, but theres widget errors.
+                /*GestureDetector(
                   onTap: () async {
                     if (imageFile != null || videoFile != null) {
                       openOptionsBottomSheet(
@@ -206,7 +195,7 @@ class _CameraHomeState extends State<VideoScreen>
                     }
                   },
                   child: _thumbnailWidget(),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -220,14 +209,7 @@ class _CameraHomeState extends State<VideoScreen>
     final CameraController? cameraController = controller;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
-      return const Text(
-        'Tap a camera icon below',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 24.0,
-          fontWeight: FontWeight.w900,
-        ),
-      );
+      return Container();
     } else {
       return Listener(
         onPointerDown: (_) => _pointers++,
@@ -307,7 +289,8 @@ class _CameraHomeState extends State<VideoScreen>
     );
   }
 
-  void openOptionsBottomSheet(BuildContext context) {
+  // Adding a sub menu by tapping on the thumbnail. It works, but theres widget errors.
+  /*void openOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
@@ -347,246 +330,6 @@ class _CameraHomeState extends State<VideoScreen>
           ),
         );
       },
-    );
-  }
-
-  //Uncomment to add Flash and Exposure feature
-  /// Display a bar with buttons to change the flash and exposure modes
-  /*Widget _modeControlRowWidget() {
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.flash_on),
-              color: Colors.blue,
-              onPressed: controller != null ? onFlashModeButtonPressed : null,
-            ),
-            // The exposure and focus mode are currently not supported on the web.
-            ...!kIsWeb
-                ? <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.exposure),
-                      color: Colors.blue,
-                      onPressed: controller != null
-                          ? onExposureModeButtonPressed
-                          : null,
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.filter_center_focus),
-                      color: Colors.blue,
-                      onPressed:
-                          controller != null ? onFocusModeButtonPressed : null,
-                    )
-                  ]
-                : <Widget>[],
-            IconButton(
-              icon: Icon(enableAudio ? Icons.volume_up : Icons.volume_mute),
-              color: Colors.blue,
-              onPressed: controller != null ? onAudioModeButtonPressed : null,
-            ),
-            IconButton(
-              icon: Icon(controller?.value.isCaptureOrientationLocked ?? false
-                  ? Icons.screen_lock_rotation
-                  : Icons.screen_rotation),
-              color: Colors.blue,
-              onPressed: controller != null
-                  ? onCaptureOrientationLockButtonPressed
-                  : null,
-            ),
-          ],
-        ),
-        _flashModeControlRowWidget(),
-        _exposureModeControlRowWidget(),
-        _focusModeControlRowWidget(),
-      ],
-    );
-  }
-
-  Widget _flashModeControlRowWidget() {
-    return SizeTransition(
-      sizeFactor: _flashModeControlRowAnimation,
-      child: ClipRect(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.flash_off),
-              color: controller?.value.flashMode == FlashMode.off
-                  ? Colors.orange
-                  : Colors.blue,
-              onPressed: controller != null
-                  ? () => onSetFlashModeButtonPressed(FlashMode.off)
-                  : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.flash_auto),
-              color: controller?.value.flashMode == FlashMode.auto
-                  ? Colors.orange
-                  : Colors.blue,
-              onPressed: controller != null
-                  ? () => onSetFlashModeButtonPressed(FlashMode.auto)
-                  : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.flash_on),
-              color: controller?.value.flashMode == FlashMode.always
-                  ? Colors.orange
-                  : Colors.blue,
-              onPressed: controller != null
-                  ? () => onSetFlashModeButtonPressed(FlashMode.always)
-                  : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.highlight),
-              color: controller?.value.flashMode == FlashMode.torch
-                  ? Colors.orange
-                  : Colors.blue,
-              onPressed: controller != null
-                  ? () => onSetFlashModeButtonPressed(FlashMode.torch)
-                  : null,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _exposureModeControlRowWidget() {
-    final ButtonStyle styleAuto = TextButton.styleFrom(
-      foregroundColor: controller?.value.exposureMode == ExposureMode.auto
-          ? Colors.orange
-          : Colors.blue,
-    );
-    final ButtonStyle styleLocked = TextButton.styleFrom(
-      foregroundColor: controller?.value.exposureMode == ExposureMode.locked
-          ? Colors.orange
-          : Colors.blue,
-    );
-
-    return SizeTransition(
-      sizeFactor: _exposureModeControlRowAnimation,
-      child: ClipRect(
-        child: Container(
-          color: Colors.grey.shade50,
-          child: Column(
-            children: <Widget>[
-              const Center(
-                child: Text('Exposure Mode'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  TextButton(
-                    style: styleAuto,
-                    onPressed: controller != null
-                        ? () =>
-                            onSetExposureModeButtonPressed(ExposureMode.auto)
-                        : null,
-                    onLongPress: () {
-                      if (controller != null) {
-                        controller!.setExposurePoint(null);
-                        showInSnackBar('Resetting exposure point');
-                      }
-                    },
-                    child: const Text('AUTO'),
-                  ),
-                  TextButton(
-                    style: styleLocked,
-                    onPressed: controller != null
-                        ? () =>
-                            onSetExposureModeButtonPressed(ExposureMode.locked)
-                        : null,
-                    child: const Text('LOCKED'),
-                  ),
-                  TextButton(
-                    style: styleLocked,
-                    onPressed: controller != null
-                        ? () => controller!.setExposureOffset(0.0)
-                        : null,
-                    child: const Text('RESET OFFSET'),
-                  ),
-                ],
-              ),
-              const Center(
-                child: Text('Exposure Offset'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(_minAvailableExposureOffset.toString()),
-                  Slider(
-                    value: _currentExposureOffset,
-                    min: _minAvailableExposureOffset,
-                    max: _maxAvailableExposureOffset,
-                    label: _currentExposureOffset.toString(),
-                    onChanged: _minAvailableExposureOffset ==
-                            _maxAvailableExposureOffset
-                        ? null
-                        : setExposureOffset,
-                  ),
-                  Text(_maxAvailableExposureOffset.toString()),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _focusModeControlRowWidget() {
-    final ButtonStyle styleAuto = TextButton.styleFrom(
-      foregroundColor: controller?.value.focusMode == FocusMode.auto
-          ? Colors.orange
-          : Colors.blue,
-    );
-    final ButtonStyle styleLocked = TextButton.styleFrom(
-      foregroundColor: controller?.value.focusMode == FocusMode.locked
-          ? Colors.orange
-          : Colors.blue,
-    );
-
-    return SizeTransition(
-      sizeFactor: _focusModeControlRowAnimation,
-      child: ClipRect(
-        child: Container(
-          color: Colors.grey.shade50,
-          child: Column(
-            children: <Widget>[
-              const Center(
-                child: Text('Focus Mode'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  TextButton(
-                    style: styleAuto,
-                    onPressed: controller != null
-                        ? () => onSetFocusModeButtonPressed(FocusMode.auto)
-                        : null,
-                    onLongPress: () {
-                      if (controller != null) {
-                        controller!.setFocusPoint(null);
-                      }
-                      showInSnackBar('Resetting focus point');
-                    },
-                    child: const Text('AUTO'),
-                  ),
-                  TextButton(
-                    style: styleLocked,
-                    onPressed: controller != null
-                        ? () => onSetFocusModeButtonPressed(FocusMode.locked)
-                        : null,
-                    child: const Text('LOCKED'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }*/
 
@@ -663,25 +406,18 @@ class _CameraHomeState extends State<VideoScreen>
       onNewCameraSelected(description);
     }
 
-    if (_cameras.isEmpty) {
-      SchedulerBinding.instance.addPostFrameCallback((_) async {
-        showInSnackBar('No camera found.');
-      });
-      return const Text('None');
-    } else {
-      for (final CameraDescription cameraDescription in _cameras) {
-        toggles.add(
-          SizedBox(
-            width: 90.0,
-            child: RadioListTile<CameraDescription>(
-              title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
-              groupValue: controller?.description,
-              value: cameraDescription,
-              onChanged: onChanged,
-            ),
+    for (final CameraDescription cameraDescription in _cameras) {
+      toggles.add(
+        SizedBox(
+          width: 90.0,
+          child: RadioListTile<CameraDescription>(
+            title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
+            groupValue: controller?.description ?? _cameras.first,
+            value: cameraDescription,
+            onChanged: onChanged,
           ),
-        );
-      }
+        ),
+      );
     }
 
     return Row(children: toggles);
@@ -711,9 +447,15 @@ class _CameraHomeState extends State<VideoScreen>
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
     if (controller != null) {
-      return controller!.setDescription(cameraDescription);
-    } else {
-      return _initializeCameraController(cameraDescription);
+      await controller!.dispose();
+    }
+
+    controller = CameraController(cameraDescription, ResolutionPreset.medium);
+    // Initialize the controller
+    await controller!.initialize();
+
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -742,17 +484,6 @@ class _CameraHomeState extends State<VideoScreen>
     try {
       await cameraController.initialize();
       await Future.wait(<Future<Object?>>[
-        //Uncomment to add Flash and Exposure feature
-        // The exposure mode is currently not supported on the web.
-        /*...!kIsWeb
-            ? <Future<Object?>>[
-                cameraController.getMinExposureOffset().then(
-                    (double value) => _minAvailableExposureOffset = value),
-                cameraController
-                    .getMaxExposureOffset()
-                    .then((double value) => _maxAvailableExposureOffset = value)
-              ]
-            : <Future<Object?>>[],*/
         cameraController
             .getMaxZoomLevel()
             .then((double value) => _maxAvailableZoom = value),
@@ -798,37 +529,6 @@ class _CameraHomeState extends State<VideoScreen>
     });
   }
 
-  //Uncomment to add Flash and Exposure feature
-  /*void onFlashModeButtonPressed() {
-    if (_flashModeControlRowAnimationController.value == 1) {
-      _flashModeControlRowAnimationController.reverse();
-    } else {
-      _flashModeControlRowAnimationController.forward();
-      _exposureModeControlRowAnimationController.reverse();
-      _focusModeControlRowAnimationController.reverse();
-    }
-  }
-
-  void onExposureModeButtonPressed() {
-    if (_exposureModeControlRowAnimationController.value == 1) {
-      _exposureModeControlRowAnimationController.reverse();
-    } else {
-      _exposureModeControlRowAnimationController.forward();
-      _flashModeControlRowAnimationController.reverse();
-      _focusModeControlRowAnimationController.reverse();
-    }
-  }
-
-  void onFocusModeButtonPressed() {
-    if (_focusModeControlRowAnimationController.value == 1) {
-      _focusModeControlRowAnimationController.reverse();
-    } else {
-      _focusModeControlRowAnimationController.forward();
-      _flashModeControlRowAnimationController.reverse();
-      _exposureModeControlRowAnimationController.reverse();
-    }
-  }*/
-
   void onAudioModeButtonPressed() {
     enableAudio = !enableAudio;
     if (controller != null) {
@@ -854,43 +554,57 @@ class _CameraHomeState extends State<VideoScreen>
     }
   }
 
-  //Uncomment to add Flash and Exposure feature
-  /* void onSetFlashModeButtonPressed(FlashMode mode) {
-    setFlashMode(mode).then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-      showInSnackBar('Flash mode set to ${mode.toString().split('.').last}');
-    });
-  }
-
-  void onSetExposureModeButtonPressed(ExposureMode mode) {
-    setExposureMode(mode).then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-      showInSnackBar('Exposure mode set to ${mode.toString().split('.').last}');
-    });
-  }
-
-  void onSetFocusModeButtonPressed(FocusMode mode) {
-    setFocusMode(mode).then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-      showInSnackBar('Focus mode set to ${mode.toString().split('.').last}');
-    });
-  }*/
-
   void onVideoRecordButtonPressed() {
-    startVideoRecording().then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-    });
-  }
+    if (isRecording) {
+      // Stop video recording
+      stopVideoRecording().then((XFile? file) {
+        if (mounted) {
+          setState(() {
+            isRecording = false;
+          });
+        }
+        if (file != null) {
+          showInSnackBar('Video recorded to ${file.path}');
+          videoFile = file;
+          _startVideoPlayer();
 
-  void onStopButtonPressed() {
+          // Save the recorded video locally
+          isVideo = true;
+          saveMediaLocally(file); // Call the saveMediaLocally function
+        }
+        // Stop the timer when recording is finished
+        resetTimer();
+        //stopRecordTimer();
+      });
+    } else {
+      // Start video recording
+      startVideoRecording().then((_) {
+        if (mounted) {
+          setState(() {
+            isRecording = true;
+          });
+        }
+        // Start the timer when recording starts
+        startTimer();
+        //startRecordTimer();
+      });
+    }
+  }
+  /*void startRecordTimer() {
+  recordTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    if (mounted) {
+      setState(() {
+        recordedSeconds++;
+      });
+    }
+  });
+}*/
+
+/*void stopRecordTimer() {
+  recordTimer?.cancel();
+}*/
+
+  /*void onStopButtonPressed() {
     stopVideoRecording().then((XFile? file) {
       if (mounted) {
         setState(() {});
@@ -905,43 +619,65 @@ class _CameraHomeState extends State<VideoScreen>
         saveMediaLocally(file); // Call the saveMediaLocally function
       }
     });
-  }
-
-  Future<void> onPausePreviewButtonPressed() async {
-    final CameraController? cameraController = controller;
-
-    if (cameraController == null || !cameraController.value.isInitialized) {
-      showInSnackBar('Error: select a camera first.');
-      return;
+  }*/
+  void onStopButtonPressed() {
+    if (isRecording) {
+      resetTimer(); // Stop the timer
     }
 
-    if (cameraController.value.isPreviewPaused) {
-      await cameraController.resumePreview();
-    } else {
-      await cameraController.pausePreview();
-    }
+    stopVideoRecording().then((XFile? file) {
+      if (mounted) {
+        setState(() {
+          isRecording = false; // Set the recording state to false
+        });
+      }
 
-    if (mounted) {
-      setState(() {});
-    }
+      if (file != null) {
+        showInSnackBar('Video recorded to ${file.path}');
+        videoFile = file;
+        _startVideoPlayer();
+
+        // Save the recorded video locally
+        isVideo = true;
+        saveMediaLocally(file); // Call the saveMediaLocally function
+      }
+    });
   }
 
   void onPauseButtonPressed() {
-    pauseVideoRecording().then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-      showInSnackBar('Video recording paused');
-    });
+    if (isRecording) {
+      stopTimer(); // Pause the timer
+      setState(() {
+        isRecording = false;
+      });
+      pauseVideoRecording().then((_) {
+        if (mounted) {
+          setState(() {});
+        }
+        showInSnackBar('Video recording paused');
+      });
+    }
   }
 
   void onResumeButtonPressed() {
-    resumeVideoRecording().then((_) {
-      if (mounted) {
-        setState(() {});
-      }
-      showInSnackBar('Video recording resumed');
-    });
+    if (!isRecording) {
+      recordTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+        if (isRecording) {
+          setState(() {
+            recordedSeconds++;
+          });
+        }
+      }); // Resume the timer
+      setState(() {
+        isRecording = true;
+      });
+      resumeVideoRecording().then((_) {
+        if (mounted) {
+          setState(() {});
+        }
+        showInSnackBar('Video recording resumed');
+      });
+    }
   }
 
   Future<void> startVideoRecording() async {
@@ -959,10 +695,37 @@ class _CameraHomeState extends State<VideoScreen>
 
     try {
       await cameraController.startVideoRecording();
+      startTimer(); // Start the timer when recording begins
+      setState(() {
+        isRecording = true; // Set the recording state to true
+      });
     } on CameraException catch (e) {
       _showCameraException(e);
       return;
     }
+  }
+
+  void startTimer() {
+    recordTimer = null;
+    recordedSeconds = 0;
+    recordTimer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      if (isRecording) {
+        setState(() {
+          recordedSeconds++;
+        });
+      }
+    });
+  }
+
+  void resetTimer() {
+    stopTimer();
+    setState(() {
+      isRecording = false;
+    });
+  }
+
+  void stopTimer() {
+    recordTimer?.cancel();
   }
 
   Future<XFile?> stopVideoRecording() async {
@@ -971,6 +734,8 @@ class _CameraHomeState extends State<VideoScreen>
     if (cameraController == null || !cameraController.value.isRecordingVideo) {
       return null;
     }
+
+    stopTimer(); // Stop the timer when recording ends
 
     try {
       return cameraController.stopVideoRecording();
@@ -1010,62 +775,6 @@ class _CameraHomeState extends State<VideoScreen>
     }
   }
 
-  //Uncomment to add Flash and Exposure feature
-  /*Future<void> setFlashMode(FlashMode mode) async {
-    if (controller == null) {
-      return;
-    }
-
-    try {
-      await controller!.setFlashMode(mode);
-    } on CameraException catch (e) {
-      _showCameraException(e);
-      rethrow;
-    }
-  }
-
-  Future<void> setExposureMode(ExposureMode mode) async {
-    if (controller == null) {
-      return;
-    }
-
-    try {
-      await controller!.setExposureMode(mode);
-    } on CameraException catch (e) {
-      _showCameraException(e);
-      rethrow;
-    }
-  }
-
-  Future<void> setExposureOffset(double offset) async {
-    if (controller == null) {
-      return;
-    }
-
-    setState(() {
-      _currentExposureOffset = offset;
-    });
-    try {
-      offset = await controller!.setExposureOffset(offset);
-    } on CameraException catch (e) {
-      _showCameraException(e);
-      rethrow;
-    }
-  }
-
-  Future<void> setFocusMode(FocusMode mode) async {
-    if (controller == null) {
-      return;
-    }
-
-    try {
-      await controller!.setFocusMode(mode);
-    } on CameraException catch (e) {
-      _showCameraException(e);
-      rethrow;
-    }
-  }*/
-
   Future<void> _startVideoPlayer() async {
     if (videoFile == null) {
       return;
@@ -1078,6 +787,8 @@ class _CameraHomeState extends State<VideoScreen>
         // ignore: deprecated_member_use
         ? VideoPlayerController.network(videoFile!.path)
         : VideoPlayerController.file(File(videoFile!.path));
+
+    vController.setVolume(0); // Mute the video displaying the thumbnail
 
     videoPlayerListener = () {
       if (videoController != null) {
@@ -1170,16 +881,24 @@ class _CameraHomeState extends State<VideoScreen>
     _logError(e.code, e.description);
     showInSnackBar('Error: ${e.code}\n${e.description}');
   }
-}
 
-class CameraApp extends StatelessWidget {
-  const CameraApp({super.key});
+  Future<void> onPausePreviewButtonPressed() async {
+    final CameraController? cameraController = controller;
 
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: VideoScreen(),
-    );
+    if (cameraController == null || !cameraController.value.isInitialized) {
+      showInSnackBar('Error: select a camera first.');
+      return;
+    }
+
+    if (cameraController.value.isPreviewPaused) {
+      await cameraController.resumePreview();
+    } else {
+      await cameraController.pausePreview();
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
 
