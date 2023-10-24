@@ -5,7 +5,7 @@ import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
-import 'package:cogniopenapp/src/galleryData.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class S3Bucket {
   S3? connection;
@@ -64,7 +64,7 @@ class S3Bucket {
   Future<String> _addToS3(String title, Uint8List content) async {
     // TODO: Add logic to detect file type and create a folder
     // .mp3 files go to bucket/audio, .mp4 files go to bucket/audio
-    String formattedTitle = GalleryData.getFileNameForAWS(title);
+    String formattedTitle = FileManager.getFileNameForAWS(title);
     await connection!.putObject(
       bucket: dotenv.get('videoS3Bucket'),
       key: formattedTitle,

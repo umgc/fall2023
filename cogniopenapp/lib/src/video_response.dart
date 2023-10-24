@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:cogniopenapp/src/galleryData.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class VideoResponse {
   String name;
@@ -18,13 +17,13 @@ class VideoResponse {
   }
 
   Future<Image> getImage() async {
-    return await GalleryData.getThumbnail(
-        GalleryData.mostRecentVideoPath, timestamp);
+    return await FileManager.getThumbnail(
+        FileManager.mostRecentVideoPath, timestamp);
   }
 
   void setImage(int timeStampNew) async {
-    exampleImage = await GalleryData.getThumbnail(
-        GalleryData.mostRecentVideoPath, timeStampNew);
+    exampleImage = await FileManager.getThumbnail(
+        FileManager.mostRecentVideoPath, timeStampNew);
   }
 }
 

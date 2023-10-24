@@ -1,11 +1,9 @@
 // ignore_for_file: avoid_print, unused_element
 
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
-//import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
-
-import 'package:cogniopenapp/src/galleryData.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 
 class VideoProcessor {
@@ -107,12 +105,12 @@ class VideoProcessor {
   void uploadVideoToS3() {
     S3Bucket s3 = S3Bucket();
     // Set the name for the file to be added to the bucket based on the file name
-    String title = GalleryData.mostRecentVideoName;
+    String title = FileManager.mostRecentVideoName;
     //TODO:debug/testing statements
     print("Video to S3: ${title}");
 
     Future<String> uploadedVideo =
-        s3.addVideoToS3(title, GalleryData.mostRecentVideoPath);
+        s3.addVideoToS3(title, FileManager.mostRecentVideoPath);
     uploadedVideo.then((value) async {
       await sendRequestToProcessVideo(value);
     });

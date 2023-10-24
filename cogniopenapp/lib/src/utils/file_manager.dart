@@ -3,9 +3,14 @@ import 'dart:math';
 
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as path;
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class FileManager {
+  static String mostRecentVideoPath = "";
+  static String mostRecentVideoName = "";
+
   static Future<void> addFileToFilesystem(File sourceFile,
       String targetDirectoryPath, String targetFilename) async {
     try {
@@ -95,5 +100,128 @@ class FileManager {
 
   String getFileExtensionFromFile(File file) {
     return path.extension(file.path).replaceAll('.', '');
+  }
+
+  String getFileNameWithoutExtension(String fileNameWithExtension) {
+    int lastIndex = fileNameWithExtension.lastIndexOf('.');
+    if (lastIndex != -1) {
+      return fileNameWithExtension.substring(0, lastIndex);
+    }
+    return fileNameWithExtension;
+  }
+
+  static Image? loadImage(String filePath, String fileName) {
+    try {
+      final File imageFile = File('$filePath/$fileName');
+      if (!imageFile.existsSync()) {
+        return null;
+      }
+      return Image.file(imageFile);
+    } catch (e) {
+      print('Error loading image: $e');
+      return null;
+    }
+  }
+
+  static String getFileName(String filePath) {
+    return path.basename(filePath);
+  }
+
+  static String getFileTimestamp(String filePath) {
+    // Get the file name from the full file path
+    String fileName = getFileName(filePath);
+
+    // Find the last dot (.) in the file name to separate the extension
+    int dotIndex = fileName.lastIndexOf('.');
+
+    String newName = fileName.replaceFirst("_", " ");
+
+    if (dotIndex != -1) {
+      // Return the file name without the extension
+      return newName.substring(0, dotIndex);
+    } else {
+      // If there's no dot in the file name, return the entire name
+      return newName;
+    }
+  }
+
+  static String getThumbnailFileName(String vidPath, int timesStamp,
+      {bool isThumbnail = false}) {
+    String outputPath = isThumbnail
+        ? DirectoryManager.instance.videoThumbnailsDirectory.path
+        : DirectoryManager.instance.videoStillsDirectory.path;
+    String thumPath =
+        "${outputPath}/${path.basename(vidPath)}-${timesStamp}.png";
+    return getFileName(thumPath);
+  }
+
+  static Future<Image> getThumbnail(String vidPath, int timesStamp,
+      {bool isThumbnail = false}) async {
+    getMostRecentVideo();
+    //print("Video path for frame is ${vidPath}");
+    //print("timesStamp for frame is ${timesStamp}");
+    String outputPath = isThumbnail
+        ? DirectoryManager.instance.videoThumbnailsDirectory.path
+        : DirectoryManager.instance.videoStillsDirectory.path;
+    String newFile =
+        "${outputPath}/${path.basename(vidPath)}-${timesStamp}.png";
+
+    /* TODO: Try to fix to prevent redos
+    if (processedImages.contains(newFile)) {
+      return Image.file(File(newFile));
+    }  
+
+    processedImages.add(newFile); // Add the image if not added already
+  */
+    try {
+      String newPath = "${outputPath}/";
+      String? thumbPath = await VideoThumbnail.thumbnailFile(
+        video: vidPath,
+        thumbnailPath: newPath,
+        imageFormat:
+            ImageFormat.PNG, // You can use other formats like JPEG, etc.
+        timeMs: timesStamp,
+      );
+
+      if (thumbPath != null) {
+        // You can now load the image from the thumbnailPath and display it in your Flutter app.
+        // For example, using the Image widget:
+        File renamed = await File(thumbPath).rename(newFile);
+        vidPath = newFile;
+        return Image.file(renamed);
+      }
+    } catch (e) {
+      print("Error generating thumbnail: $e");
+    }
+    // REturn this to signfiy an erro
+    return Image.network(
+        "https://media.istockphoto.com/id/1349592578/de/vektor/leeres-warnschild-und-vorfahrtsschild-an-einem-mast-vektorillustration.webp?s=2048x2048&w=is&k=20&c=zmhLi9Ot96KXUe1OLd3dGNYJk0KMZZBQl39iQf6lcMk=");
+  }
+
+  static void getMostRecentVideo() async {
+    if (DirectoryManager.instance.videosDirectory.existsSync()) {
+      List<FileSystemEntity> files =
+          DirectoryManager.instance.videosDirectory.listSync();
+      print("Most recently recorded video: ${files.last.path}");
+      mostRecentVideoName = getFileNameForAWS(files.last.path);
+      mostRecentVideoPath = files.last.path;
+    }
+  }
+
+  // AWS doesn't like certain characters being used, so they must be fixed
+  // TODO: Get better logic
+  static getFileNameForAWS(String filePath) {
+    // Get the file name from the full file path
+    String fileName = path.basename(filePath);
+
+    String partOne = fileName.replaceAll(" ", "_");
+
+    String partTwo = partOne.replaceAll(":", "_");
+
+    if (('.'.allMatches(partTwo).length > 1)) {
+      return partTwo.replaceFirst(".", "_");
+    }
+
+    return partTwo;
   }
 }
