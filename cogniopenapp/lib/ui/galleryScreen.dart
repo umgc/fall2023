@@ -281,7 +281,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
     String fullFilePath =
         "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
     print("THE PATH IS: ${fullFilePath}");
-    return VideoDisplay();
+    return VideoDisplay(
+        videoUrl:
+            'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4');
   }
 
   Future<Media?> displayEditPopup(BuildContext context, Media media) async {
