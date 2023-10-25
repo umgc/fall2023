@@ -53,7 +53,7 @@ class AppSeedData {
       List<String>? tagsList = ['pet', 'dog'];
       await DataService.instance.addSeedVideo(
         title: 'Dog',
-        description: 'A photo of my pet dog, Spot.',
+        description: 'A video of my pet dog, Spot.',
         tags: tagsList,
         videoFile: videoFile,
         thumbnailFile: thumbnailFile,
