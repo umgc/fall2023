@@ -111,10 +111,6 @@ class GalleryData {
       }
     }
 
-<<<<<<< Updated upstream
-=======
-    
->>>>>>> Stashed changes
     allMedia.add(Video(
       '2:30', // Duration
       true, // Auto-delete
@@ -145,7 +141,7 @@ class GalleryData {
         storageSize: 4096,
         isFavorited: false,
       ), // Associated media (in this case, a photo)
-    ));
+    ));*/
 
     allMedia.add(Conversation(
         "A test conversation",
