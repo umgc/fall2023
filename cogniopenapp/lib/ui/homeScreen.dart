@@ -1,19 +1,14 @@
 // Imported libraries and packages
+import 'package:cogniopenapp/ui/s3_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
-import 'package:cogniopenapp/ui/thumbs_BB_screen.dart';
+import 'package:cogniopenapp/ui/helpScreen.dart';
 import 'package:flutter/material.dart';
-//import 'package:cogniopen/virtualAssistantScreen.dart';
-import 'package:local_auth/local_auth.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
 import 'galleryScreen.dart';
 import 'profileScreen.dart';
-import 'recentScreen.dart';
-import 'searchScreen.dart';
 import 'videoScreen.dart';
-import 'registrationScreen.dart';
 import 'loginScreen.dart';
-import 's3_screen.dart';
 import 'tourScreen.dart';
 import 'settingsScreen.dart';
 
@@ -65,10 +60,8 @@ class HomeScreen extends StatelessWidget {
                             builder: (context) => ProfileScreen()));
                     break;
                   case 'Help Center':
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CameraAppScreen()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => TestScreen()));
                     break;
                   case 'Settings':
                     Navigator.push(
@@ -77,10 +70,8 @@ class HomeScreen extends StatelessWidget {
                             builder: (context) => SettingsScreen()));
                     break;
                   case 'Logout':
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LoginScreen()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()));
                     break;
                 }
               },

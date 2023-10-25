@@ -494,9 +494,6 @@ Future<bool> deleteFileFromDevice(String path) async {
         ),
       ),
 
-
-
-
         bottomNavigationBar: BottomNavigationBar(
             elevation: 0.0,
 
