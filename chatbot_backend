@@ -1,0 +1,117 @@
+// CogniOpen's entry point
+import 'package:flutter/material.dart';
+import 'assistant_screen.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: AssistantScreen(),
+    );
+  }
+}
+
+// main screen with chat interface and user interaction
+import 'package:flutter/material.dart';
+
+class AssistantScreen extends StatefulWidget {
+  @override
+  _AssistantScreenState createState() => _AssistantScreenState();
+}
+
+class _AssistantScreenState extends State<AssistantScreen> {
+  TextEditingController _messageController = TextEditingController();
+  List<ChatMessage> _messages = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Virtual Assistant')),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                return _messages[index];
+              },
+            ),
+          ),
+          _buildUserInput(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              onSubmitted: _sendMessage,
+              decoration: InputDecoration(hintText: 'Type a message'),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.send),
+            onPressed: () => _sendMessage(_messageController.text),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _sendMessage(String text) {
+    setState(() {
+      _messages.add(UserMessage(text));
+    });
+
+    // Simulate assistant response (replace with real logic)
+    _simulateAssistantResponse(text);
+    _messageController.clear();
+  }
+
+  void _simulateAssistantResponse(String userMessage) {
+    // Simulate assistant response based on user input.
+    // This is where you can integrate with your backend and respond accordingly.
+    setState(() {
+      _messages.add(AssistantMessage("Assistant response for: $userMessage"));
+    });
+  }
+}
+
+abstract class ChatMessage extends StatelessWidget {
+  final String text;
+  ChatMessage(this.text);
+}
+
+class UserMessage extends ChatMessage {
+  UserMessage(String text) : super(text);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(text),
+      trailing: CircleAvatar(child: Icon(Icons.person)),
+    );
+  }
+}
+
+class AssistantMessage extends ChatMessage {
+  AssistantMessage(String text) : super(text);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(text),
+      leading: CircleAvatar(child: Icon(Icons.android)),
+    );
+  }
+}
