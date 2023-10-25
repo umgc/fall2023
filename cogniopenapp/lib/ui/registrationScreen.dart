@@ -40,75 +40,90 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Registration")),
-      backgroundColor: Colors.lightBlue[100],
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-          child: Container(
-            padding: const EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                onChanged: () {
-                  setState(() {
-                    _isButtonActive = _firstNameController.text.isNotEmpty &&
-                        _lastNameController.text.isNotEmpty &&
-                        _emailController.text.isNotEmpty;
-                  });
-                },
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      controller: _firstNameController,
-                      decoration: InputDecoration(labelText: 'First Name'),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter your first name';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _lastNameController,
-                      decoration: InputDecoration(labelText: 'Last Name'),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter your last name';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(labelText: 'Email Address'),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                            .hasMatch(value)) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 10),
+      backgroundColor: const Color(0XFF880E4F),
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: AppBar(
+        backgroundColor: const Color(0x440000), // Set appbar background color
+        elevation: 0.0,
+        centerTitle: true,
+        leading: const BackButton(color: Colors.black54),
+        title: const Text('Registration', style: TextStyle(color: Colors.black54)),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+            child: Container(
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  onChanged: () {
+                   setState(()  {
+                     _isButtonActive = _firstNameController.text.isNotEmpty &&
+                         _lastNameController.text.isNotEmpty &&
+                         _emailController.text.isNotEmpty;
+                    });
+                  },
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _firstNameController,
+                        decoration: InputDecoration(labelText: 'First Name'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter your first name';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _lastNameController,
+                        decoration: InputDecoration(labelText: 'Last Name'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter your last name';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(labelText: 'Email Address'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email address';
+                          }
+                          return null;
+                        },
+                      ),                    SizedBox(height: 10),
                     Row(
                       children: [
-                        Text("Use Face ID"),
+                        Text("Use Biometric Authentication"),
                         Switch(
                           value: _useFaceID,
                           onChanged: (value) {
@@ -156,6 +171,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
       ),
+      )
     );
   }
 }

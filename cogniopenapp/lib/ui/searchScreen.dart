@@ -5,7 +5,7 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search'),
+        title: const Text('Search', style: TextStyle(color: Colors.black54)),
       ),
       // Implement the Search screen UI here
     );

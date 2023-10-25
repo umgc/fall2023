@@ -5,7 +5,7 @@ class CustomScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customizable Application Screen'),
+        title: const Text('Customizable Application Screen', style: TextStyle(color: Colors.black54)),
       ),
       // Implement the Customizable Application screen UI here
     );

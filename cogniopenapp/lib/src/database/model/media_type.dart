@@ -1,5 +1,5 @@
 enum MediaType {
-  conversation,
+  audio,
   photo,
   video,
 }

@@ -1,10 +1,10 @@
+import 'package:cogniopenapp/src/database/app_seed_data.dart';
+import 'package:cogniopenapp/src/database/model/media.dart';
+import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
+import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:cogniopenapp/src/database/model/media.dart';
-import 'package:cogniopenapp/src/database/model/conversation.dart';
-import 'package:cogniopenapp/src/database/model/photo.dart';
-import 'package:cogniopenapp/src/database/model/video.dart'; // Import the Video model
-import 'package:cogniopenapp/src/database/app_database_seed_data.dart';
 
 class AppDatabase {
   static final AppDatabase instance = AppDatabase._init();
@@ -40,34 +40,36 @@ class AppDatabase {
       '${MediaFields.description} $textNullableType',
       '${MediaFields.tags} $textNullableType',
       '${MediaFields.timestamp} $integerType',
-      '${MediaFields.fileName} $textType',
       '${MediaFields.storageSize} $integerType',
       '${MediaFields.isFavorited} $boolType',
     ];
 
     await db.execute('''
-      CREATE TABLE $tableConversations (
+      CREATE TABLE $tableAudios (
         ${mediaColumns.join(',\n')},
-        ${ConversationFields.summary} $textType
+        ${AudioFields.audioFileName} $textType,
+        ${AudioFields.summary} $textNullableType
       )
     ''');
 
     await db.execute('''
       CREATE TABLE $tablePhotos (
-        ${mediaColumns.join(',\n')}
+        ${mediaColumns.join(',\n')},
+        ${PhotoFields.photoFileName} $textType
       )
     ''');
 
     await db.execute('''
       CREATE TABLE $tableVideos (
         ${mediaColumns.join(',\n')},
-        ${VideoFields.duration} $textType,
-        ${VideoFields.thumbnail} $textNullableType
+        ${VideoFields.videoFileName} $textType,
+        ${VideoFields.thumbnailFileName} $textNullableType,
+        ${VideoFields.duration} $textType
       )
     ''');
 
-    final appDatabaseSeedData = AppDatabaseSeedData();
-    appDatabaseSeedData.insertAppDatabaseSeedData();
+    final appSeedData = AppSeedData();
+    appSeedData.loadAppSeedData();
   }
 
   Future close() async {
