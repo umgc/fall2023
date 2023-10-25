@@ -5,117 +5,115 @@ import 'galleryScreen.dart';
 import 'assistantScreen.dart';
 import 'searchScreen.dart';
 
-
 class SettingsScreen extends StatelessWidget {
-
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      extendBody: true,
-      appBar: AppBar(
-        backgroundColor: const Color(0x440000),
-        elevation: 0,
-        centerTitle: true,
-        leading: const BackButton(
-            color: Colors.black54
+        extendBodyBehindAppBar: true,
+        extendBody: true,
+        appBar: AppBar(
+          backgroundColor: const Color(0x440000),
+          elevation: 0,
+          centerTitle: true,
+          leading: const BackButton(color: Colors.black54),
+          title:
+              const Text('Settings', style: TextStyle(color: Colors.black54)),
         ),
-        title: const Text('Settings', style: TextStyle(color: Colors.black54)),
-
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background.jpg"),
-            fit: BoxFit.cover,
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Container(
+                    margin: const EdgeInsets.only(top: 225, left: 25),
+                    child: Row(
+                      //mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/icons/camera.png',
+                          width: 35.0, // You can adjust the width and height
+                        ),
+                        const Text("    Significant Objects",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0)),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        SignificantObjectScreen()));
+                          },
+                          icon: const Icon(
+                            Icons.arrow_forward_outlined,
+                            size: 35,
+                            color: Colors.blue,
+                          ),
+                        )
+                      ],
+                    )),
+                Container(
+                    child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/icons/mic_on.png',
+                      width: 75.0, // You can adjust the width and height
+                    ),
+                    const Text("Passive Audio Recording",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0)),
+                    const SwitchExample(),
+                  ],
+                )),
+                Container(
+                    child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/icons/camera_on.png',
+                      width: 75.0, // You can adjust the width and height
+                    ),
+                    const Text("Passive Video Recording",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0)),
+                    const SwitchExample(),
+                  ],
+                )),
+                Container(
+                    child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/icons/location_on.png',
+                      width: 75.0, // You can adjust the width and height
+                    ),
+                    const Text("Location Services",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0)),
+                    const SwitchExample(),
+                  ],
+                )),
+              ],
+            ),
           ),
         ),
-
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              Container(
-                  margin: const EdgeInsets.only(top:225, left:25),
-                  child: Row(
-                    //mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset('assets/icons/camera.png',
-                        width: 35.0, // You can adjust the width and height
-                      ),
-                      const Text("    Significant Objects", textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0)),
-                      IconButton(onPressed: ()
-                      {
-                        Navigator.push(context, MaterialPageRoute(builder:(context)=>SignificantObjects()) );
-
-                      },
-                          icon:const Icon (Icons.arrow_forward_outlined, size: 35, color: Colors.blue,),)
-                    ],
-                  )
-              ),
-              Container(
-                  child: Row(
-                    children: [
-                      Image.asset('assets/icons/mic_on.png',
-                        width: 75.0, // You can adjust the width and height
-                      ),
-                      const Text("Passive Audio Recording", textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0)),
-                      const SwitchExample(),
-                    ],
-                  )
-              ),
-
-              Container(
-                  child: Row(
-                    children: [
-                      Image.asset('assets/icons/camera_on.png',
-                        width: 75.0, // You can adjust the width and height
-
-                      ),
-                      const Text("Passive Video Recording", textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0)),
-
-                      const SwitchExample(),
-                    ],
-                  )
-                  ),
-
-              Container(
-
-                  child: Row(
-                    children: [
-                      Image.asset('assets/icons/location_on.png',
-                        width: 75.0, // You can adjust the width and height
-                      ),
-                      const Text("Location Services", textAlign: TextAlign.left,
-                          style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0)),
-                      const SwitchExample(),
-                    ],
-                  )
-              ),
-
-            ],
-          ),
-        ),
-
-        ),
-
         bottomNavigationBar: BottomNavigationBar(
             elevation: 0.0,
-
             items: const [
               BottomNavigationBarItem(
                 backgroundColor: Color(0x00ffffff),
@@ -148,13 +146,8 @@ class SettingsScreen extends StatelessWidget {
                 // Navigate to Gallery screen
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => GalleryScreen()));
-              } else if (index == 3) {
-              }
-            }
-        )
-
-
-    );
+              } else if (index == 3) {}
+            }));
   }
 }
 

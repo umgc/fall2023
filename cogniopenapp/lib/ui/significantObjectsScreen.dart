@@ -294,7 +294,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
 
   Future<String> _getPath() {
     return ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_PIC_SIG);
+        ExternalPath.DIRECTORY_PICTURES);
   }
 
   _fetchFiles(Directory dir) {
