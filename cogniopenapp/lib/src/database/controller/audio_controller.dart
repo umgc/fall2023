@@ -9,6 +9,46 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 class AudioController {
   AudioController._();
 
+  static Future<Audio?> addSeedAudio({
+    String? title,
+    String? description,
+    List<String>? tags,
+    required File audioFile,
+    String? summary,
+  }) async {
+    try {
+      DateTime timestamp = DateTime.now();
+      String audioFileExtension =
+          FileManager().getFileExtensionFromFile(audioFile);
+      String audioFileName = FileManager().generateFileName(
+        MediaType.audio.name,
+        timestamp,
+        audioFileExtension,
+      );
+      int audioFileSize = FileManager.calculateFileSizeInBytes(audioFile);
+      Audio newAudio = Audio(
+        title: title,
+        description: description,
+        tags: tags,
+        timestamp: timestamp,
+        audioFileName: audioFileName,
+        storageSize: audioFileSize,
+        isFavorited: false,
+        summary: summary,
+      );
+      Audio createdAudio = await AudioRepository.instance.create(newAudio);
+      await FileManager.addFileToFilesystem(
+        audioFile,
+        DirectoryManager.instance.audiosDirectory.path,
+        audioFileName,
+      );
+      return createdAudio;
+    } catch (e) {
+      print('Audio Controller -- Error adding audio: $e');
+      return null;
+    }
+  }
+
   static Future<Audio?> addAudio({
     String? title,
     String? description,
@@ -18,7 +58,8 @@ class AudioController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String audioFileExtension = FileManager().getFileExtensionFromFile(audioFile);
+      String audioFileExtension =
+          FileManager().getFileExtensionFromFile(audioFile);
       String audioFileName = FileManager().generateFileName(
         MediaType.audio.name,
         timestamp,
