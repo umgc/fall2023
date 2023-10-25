@@ -449,7 +449,7 @@ class _CameraHomeState extends State<VideoScreen>
       await controller!.dispose();
     }
 
-    controller = CameraController(cameraDescription, ResolutionPreset.medium);
+    controller = CameraController(cameraDescription, ResolutionPreset.high);
     // Initialize the controller
     await controller!.initialize();
 
@@ -462,7 +462,7 @@ class _CameraHomeState extends State<VideoScreen>
       CameraDescription cameraDescription) async {
     final CameraController cameraController = CameraController(
       cameraDescription,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
+      kIsWeb ? ResolutionPreset.max : ResolutionPreset.high,
       enableAudio: enableAudio,
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
