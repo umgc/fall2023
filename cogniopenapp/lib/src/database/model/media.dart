@@ -28,7 +28,7 @@ abstract class Media {
   final List<String>? tags;
   final DateTime timestamp;
   final int storageSize;
-  final bool isFavorited;
+  bool isFavorited;
 
   Media({
     this.id,

@@ -121,9 +121,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     });
   }
 
-  void _toggleFavoriteStatus(Media media) {
+  void _toggleFavoriteStatus(Media media) async {
+    //TODO: Update persistence
+    //await DataService.instance
+    //    .updateMediaIsFavorited(media, !media.isFavorited);
     setState(() {
-      //media.isFavorited = !media.isFavorited; // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
+      media.isFavorited = !media.isFavorited;
     });
   }
 
