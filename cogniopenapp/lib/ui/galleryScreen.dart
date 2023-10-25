@@ -6,6 +6,7 @@ import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
+import 'package:cogniopenapp/src/video_display.dart';
 import 'package:flutter/material.dart';
 
 // Define an enumeration for sorting criteria
@@ -247,6 +248,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         image: media.photo!.image,
                       ),
                     if (media is Video && media.thumbnail != null)
+                      //TODO: ADD VIDEO PLAYER HERE
                       Image(
                         image: media.thumbnail!.image,
                       ),
