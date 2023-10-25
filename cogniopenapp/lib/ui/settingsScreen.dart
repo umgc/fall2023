@@ -1,3 +1,4 @@
+import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:flutter/material.dart';
 import 'homeScreen.dart';
 import 'galleryScreen.dart';
@@ -34,7 +35,28 @@ class SettingsScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Container(
-                  margin: const EdgeInsets.only(top: 225.0),
+                  margin: const EdgeInsets.only(top:225, left:25),
+                  child: Row(
+                    //mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/icons/camera.png',
+                        width: 35.0, // You can adjust the width and height
+                      ),
+                      const Text("    Significant Objects", textAlign: TextAlign.left,
+                          style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0)),
+                      IconButton(onPressed: ()
+                      {
+                        Navigator.push(context, MaterialPageRoute(builder:(context)=>SignificantObjects()) );
+
+                      },
+                          icon:const Icon (Icons.arrow_forward_outlined, size: 35, color: Colors.blue,),)
+                    ],
+                  )
+              ),
+              Container(
                   child: Row(
                     children: [
                       Image.asset('assets/icons/mic_on.png',
@@ -49,6 +71,7 @@ class SettingsScreen extends StatelessWidget {
                     ],
                   )
               ),
+
               Container(
                   child: Row(
                     children: [
@@ -66,6 +89,7 @@ class SettingsScreen extends StatelessWidget {
                     ],
                   )
                   ),
+
               Container(
 
                   child: Row(
@@ -82,11 +106,13 @@ class SettingsScreen extends StatelessWidget {
                     ],
                   )
               ),
+
             ],
           ),
         ),
 
         ),
+
         bottomNavigationBar: BottomNavigationBar(
             elevation: 0.0,
 

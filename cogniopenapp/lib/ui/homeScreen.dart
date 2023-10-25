@@ -168,13 +168,14 @@ class HomeScreen extends StatelessWidget {
                     screen: AudioScreen(),
                     keyName: "AudioRecordingButtonKey",
                   ),
-                  _buildElevatedButton(
+               /*   _buildElevatedButton(
                     context: context,
                     iconPath: 'assets/icons/significant_object.png',
                     text: 'Significant Objects',
-                    screen: SignificantObjectsScreen(),
+                    screen: SignificantObjects(),
                     keyName: "SignificantObjectButtonKey",
                   ),
+                */
                   _buildElevatedButton(
                     context: context,
                     iconPath: 'assets/icons/tour.png',

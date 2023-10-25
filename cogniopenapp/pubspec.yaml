@@ -79,6 +79,9 @@ dependencies:
   path_provider_platform_interface: ^2.1.1
   path_provider_android: ^2.2.0
   moment_dart: ^1.1.0
+  external_path: ^1.0.3
+  gallery_saver: ^2.3.2
+  image_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:
