@@ -26,16 +26,9 @@ import 'package:avatar_glow/avatar_glow.dart';
 /// Importing other application screens for navigation purposes.
 import 'homeScreen.dart';
 import 'assistantScreen.dart';
+import 'searchScreen.dart';
 import 'galleryScreen.dart';
 import 'settingsScreen.dart';
-
-enum MediaFormat { mp3, mp4, wav }
-
-const List<MediaFormat> mediaFormats = [
-  MediaFormat.mp3,
-  MediaFormat.mp4,
-  MediaFormat.wav
-];
 
 /// AudioScreen widget provides the main interface for audio recording.
 class AudioScreen extends StatefulWidget {
@@ -201,10 +194,16 @@ class _AudioScreenState extends State<AudioScreen> {
 
       // Starting the transcription job
       final response = await service.startTranscriptionJob(
-          transcriptionJobName: '${key2}transcript',
-          media: trans.Media(mediaFileUri: s3Uri),
-          mediaFormat: trans.MediaFormat.wav,
-          languageCode: trans.LanguageCode.enUs);
+        transcriptionJobName: '${key2}transcript',
+        media: trans.Media(mediaFileUri: s3Uri),
+        mediaFormat: trans.MediaFormat.wav,
+        languageCode: trans.LanguageCode.enUs,
+        settings: trans.Settings(
+          showSpeakerLabels: true,
+          maxSpeakerLabels:
+              2, // specify the number of speakers you expect, adjust as needed
+        ),
+      );
 
       print(
           'Transcription job started with status: ${response.transcriptionJob?.transcriptionJobStatus}');
@@ -222,16 +221,39 @@ class _AudioScreenState extends State<AudioScreen> {
             final transcriptResponse = await get(Uri.parse(transcriptUri));
             if (transcriptResponse.statusCode == 200) {
               var jsonResponse = jsonDecode(transcriptResponse.body);
+              var items = jsonResponse['results']['items'];
+
+              // construct transcription text with speaker labels
+              // Construct transcription text with speaker labels and start on a new line for each speaker
+              var fullTranscription = '';
+              String? currentSpeaker;
+
+              for (var item in items) {
+                // Check for speaker label
+                if (item['type'] == 'pronunciation' &&
+                    item.containsKey('speaker_label')) {
+                  String speakerLabel =
+                      _getCustomSpeakerLabel(item['speaker_label']);
+                  if (currentSpeaker != speakerLabel) {
+                    fullTranscription += '\n$speakerLabel: ';
+                    currentSpeaker = speakerLabel;
+                  }
+                  fullTranscription += item['alternatives'][0]['content'] + ' ';
+                } else if (item['type'] == 'punctuation') {
+                  fullTranscription = fullTranscription.trim() +
+                      item['alternatives'][0]['content'] +
+                      ' ';
+                }
+              }
               setState(() {
-                transcription =
-                    jsonResponse['results']['transcripts'][0]['transcript'];
+                transcription = fullTranscription.trim();
               });
             } else {
               print(
                   'Failed to fetch transcript: ${transcriptResponse.statusCode}');
             }
+            break;
           }
-          break;
         } else if (jobResponse.transcriptionJob?.transcriptionJobStatus
                 .toString() ==
             'TranscriptionJobStatus.failed') {
@@ -247,6 +269,20 @@ class _AudioScreenState extends State<AudioScreen> {
     _saveTranscriptionToFile('${key2}transcript');
   }
 
+  String _getCustomSpeakerLabel(String awsSpeakerLabel) {
+    if (awsSpeakerLabel == 'spk_0') {
+      return 'Speaker 1';
+    } else if (awsSpeakerLabel == 'spk_1') {
+      return 'Speaker 2';
+    } else if (awsSpeakerLabel == 'spk_2') {
+      return 'Speaker 3';
+    } else if (awsSpeakerLabel == 'spk_3') {
+      return 'Speaker 4';
+    } else {
+      return awsSpeakerLabel;
+    }
+  }
+
   Future<void> _saveTranscriptionToFile(String transcriptionJobName) async {
     if (transcription.isEmpty) {
       print("Transcription is empty. Nothing to save.");
@@ -256,7 +292,7 @@ class _AudioScreenState extends State<AudioScreen> {
     try {
       Directory appDocDirectory = await getApplicationDocumentsDirectory();
       String filePath =
-          '${appDocDirectory.path}/files/audios/transcripts/${transcriptionJobName}.txt';
+          '${appDocDirectory.path}/files/audios/transcripts/$transcriptionJobName.txt';
 
       File file = File(filePath);
       await file.writeAsString(transcription);
@@ -264,6 +300,34 @@ class _AudioScreenState extends State<AudioScreen> {
       print("Transcription saved at $filePath");
     } catch (e) {
       print("Error saving transcription");
+    }
+  }
+
+// create a function to delete object
+  Future<void> _deleteAudioRecording() async {
+    await s3Connection.deleteFileFromS3(key2);
+    //await s3Connection.deleteFileFromS3('${key2}transcript');
+    // delete file from device
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    await deleteFileFromDevice(
+        '${appDocDirectory.path}/files/audios/$key2.wav');
+    await deleteFileFromDevice(
+        '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt');
+  }
+
+  Future<bool> deleteFileFromDevice(String path) async {
+    try {
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+        return true;
+      } else {
+        print('File does not exist at path: $path');
+        return false;
+      }
+    } catch (e) {
+      print('Failed to delete the file from device: $e');
+      return false;
     }
   }
 
@@ -311,6 +375,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                 shape: CircleBorder(),
                                 child: CircleAvatar(
                                   backgroundColor: Colors.grey[100],
+                                  radius: 70.0,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
@@ -344,7 +409,6 @@ class _AudioScreenState extends State<AudioScreen> {
                                       ),
                                     ],
                                   ),
-                                  radius: 70.0,
                                 ),
                               ),
                             ),
@@ -369,14 +433,16 @@ class _AudioScreenState extends State<AudioScreen> {
                                   _isPlaying ? 'Stop Preview' : 'Play Preview'),
                             ),
                             ElevatedButton(
-                              onPressed: () {
-                                /// Notify user that the recording has been saved
+                              onPressed: () async {
+                                await _deleteAudioRecording();
+
+                                /// Notify user that the recording has been deleted
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                      content: Text('Recording saved!')),
+                                      content: Text('Recording Deleted!')),
                                 );
                               },
-                              child: const Text('Save'),
+                              child: const Text('Delete'),
                             ),
                             ElevatedButton(
                               onPressed: () {
@@ -404,6 +470,7 @@ class _AudioScreenState extends State<AudioScreen> {
                             shape: CircleBorder(),
                             child: CircleAvatar(
                               backgroundColor: const Color(0xFFFFFFFF),
+                              radius: 70.0,
                               child: TextButton(
                                 onPressed: _startRecording,
                                 style: ButtonStyle(
@@ -425,18 +492,16 @@ class _AudioScreenState extends State<AudioScreen> {
                                   ],
                                 ),
                               ),
-                              radius: 70.0,
                             ),
                           ),
                         ),
-                      if (transcription != null)
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Text(
-                            transcription,
-                            style: const TextStyle(fontSize: 16),
-                          ),
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Text(
+                          transcription,
+                          style: const TextStyle(fontSize: 16),
                         ),
+                      ),
                     ],
                   ),
                 ),
