@@ -111,6 +111,10 @@ class GalleryData {
       }
     }
 
+<<<<<<< Updated upstream
+=======
+    
+>>>>>>> Stashed changes
     allMedia.add(Video(
       '2:30', // Duration
       true, // Auto-delete
