@@ -31,6 +31,7 @@ doc/api/
 .vs/fall2023/v16/.suo
 .vs/fall2023/v16/Browse.VC.db
 Podfile
+cogniopenapp/*/Podfile
 Dart_Packages.xml
 
 # FLUTTER MASTER .GITIGNORE FROM https://github.com/flutter/flutter/blob/master/.gitignore :
@@ -170,4 +171,3 @@ app.*.symbols
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
 !.vscode/settings.json
-!**/pubspec.lock

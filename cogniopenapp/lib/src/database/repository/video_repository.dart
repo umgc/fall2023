@@ -2,6 +2,21 @@ import 'package:cogniopenapp/src/database/app_database.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 
+const String tableVideos = 'videos';
+
+class VideoFields extends MediaFields {
+  static final List<String> values = [
+    ...MediaFields.values,
+    videoFileName,
+    thumbnailFileName,
+    duration,
+  ];
+
+  static const String videoFileName = 'video_file_name';
+  static const String thumbnailFileName = 'thumbnail_file_name';
+  static const String duration = 'duration';
+}
+
 class VideoRepository {
   static final VideoRepository instance = VideoRepository._init();
 
@@ -30,7 +45,6 @@ class VideoRepository {
 
     final maps = await db.query(
       tableVideos,
-      columns: VideoFields.values,
       where: '${MediaFields.id} = ?',
       whereArgs: [id],
     );

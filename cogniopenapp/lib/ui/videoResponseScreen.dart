@@ -1,7 +1,7 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:flutter/material.dart';
 
-import '../src/video_response.dart';
+import 'package:cogniopenapp/src/video_response.dart';
 
 List<VideoResponse> createTestResponseList() {
   return [
@@ -75,7 +75,7 @@ class VideoResponseScreen extends StatefulWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Query Responses'),
+        title: const Text('Query Responses', style: TextStyle(color: Colors.black54)),
       ),
     );
   }
@@ -98,7 +98,7 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
     double imageHeight = 240;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Query Responses'),
+        title: const Text('Query Responses', style: TextStyle(color: Colors.black54)),
       ),
       body: Column(children: [
         const Padding(
