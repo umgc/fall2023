@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unused_element
+// ignore_for_file: avoid_print
 
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
@@ -13,6 +13,7 @@ class VideoProcessor {
   Rekognition? service;
   String jobId = '';
   String projectArn = 'No project found';
+  String currentProjectVersionArn = 'Model not started';
 
   static final VideoProcessor _instance = VideoProcessor._internal();
 
@@ -54,24 +55,6 @@ class VideoProcessor {
     });
     return job;
   }
-  /* Deprecated but kept as failsafe
-  Future<StartLabelDetectionResponse> sendRequestToProcessVideoOld() async {
-    //grab Video
-    //TODO: allow parameters for bucket and video name
-    Video video = Video(
-        s3Object: S3Object(
-            bucket: dotenv.get('videoS3Bucket'),
-            name:
-                "Sea waves & beach drone video _ Free HD Video - no copyright.mp4"));
-
-    //start label detection service of Video
-    //The label detection operation is started by a call to StartLabelDetection which returns a job identifier
-    Future<StartLabelDetectionResponse> job =
-        service!.startLabelDetection(video: video, minConfidence: confidence);
-
-    return job;
-  }
-  */
 
   Future<String> pollForCompletedRequest() async {
     //keep polling the getLabelDetection until either failed or succeeded.
@@ -107,7 +90,7 @@ class VideoProcessor {
     // Set the name for the file to be added to the bucket based on the file name
     String title = FileManager.mostRecentVideoName;
     //TODO:debug/testing statements
-    print("Video to S3: ${title}");
+    print("Video to S3: $title");
 
     Future<String> uploadedVideo =
         s3.addVideoToS3(title, FileManager.mostRecentVideoPath);
@@ -254,8 +237,35 @@ class VideoProcessor {
     return modelArn;
   }
 
-  //run Rekognition custom label detection on a specified set of images
-  void searchForSignificantObject() {
-    //service.detectCustomeLabel
+  // When I wrote this, only God and I understood what I was doing
+  // Now only God knows.
+  // run Rekognition custom label detection on a specified set of images
+  Future<DetectCustomLabelsResponse?> findMatchingModel(
+      String labelName) async {
+    //look for a similar project version (model to match the label from the user)
+    DescribeProjectVersionsResponse projectVersions =
+        await service!.describeProjectVersions(projectArn: projectArn);
+    bool search = true;
+    //get together list of images to check against
+    //projectVersions.then((value) {
+    Iterator<ProjectVersionDescription> iter =
+        projectVersions.projectVersionDescriptions!.iterator;
+    while (iter.moveNext() & search) {
+      //find model like the label name
+      if (iter.current.projectVersionArn!.contains(labelName)) {
+        //run the search for custom labels
+        currentProjectVersionArn = iter.current.projectVersionArn!;
+        search = false;
+        return service!.detectCustomLabels(
+            image: Image(
+                s3Object: S3Object(
+                    bucket: dotenv.get('videoS3Bucket'),
+                    name: "eyeglass-green.jpg")),
+            projectVersionArn: currentProjectVersionArn);
+      }
+    }
+    if (search) {
+      return null;
+    }
   }
 }

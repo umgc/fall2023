@@ -1,5 +1,7 @@
+import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
+import 'package:cogniopenapp/ui/customResponseScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
@@ -90,15 +92,6 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              //logic to upload video and start video process.
-              //vp.uploadVideoToS3();
-              /*Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const TestVideoScreen()));
-              */
-
-              //TODO: hardcoded values to be modified
               vp.addNewModel("green-glasses", "eyeglasses-manifest.json");
             },
             label: 'Add model',
@@ -121,6 +114,33 @@ class TestScreenState extends State<TestScreen> {
                 fontSize: 16.0),
             labelBackgroundColor: const Color(0XFFE91E63)),
         // FAB 4
+        SpeedDialChild(
+            child: const Icon(Icons.interests),
+            backgroundColor: const Color(0XFFE91E63),
+            onTap: () async {
+              DetectCustomLabelsResponse? response =
+                  await vp.findMatchingModel("green-glasses");
+              //try {
+              //print("started search too soon");
+              //Future<DetectCustomLabelsResponse?> response =
+              //    vp.searchForSignificantObject(vp.currentProjectVersionArn);
+              //response.then((value) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CustomResponseScreen(response!)));
+              //});
+              //} catch (e) {
+              //  print(e.toString());
+              //}
+            },
+            label: 'Detect \'My green glasses\'',
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 16.0),
+            labelBackgroundColor: const Color(0XFFE91E63)),
+        // FAB 5
         SpeedDialChild(
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
