@@ -4,6 +4,7 @@ import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:cogniopenapp/src/video_display.dart';
@@ -249,9 +250,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       ),
                     if (media is Video && media.thumbnail != null)
                       //TODO: ADD VIDEO PLAYER HERE
-                      Image(
-                        image: media.thumbnail!.image,
-                      ),
+                      videoDisplay(media),
                     if (media is Audio) Icon(Icons.chat, size: 100),
                     SizedBox(height: 16),
                     if (media.description != null && media.description != "")
@@ -275,6 +274,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
         },
       ),
     );
+  }
+
+  // TODO: MAKE THIS LOAD THE VIDEO
+  VideoDisplay videoDisplay(Video video) {
+    String fullFilePath =
+        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
+    print("THE PATH IS: ${fullFilePath}");
+    return VideoDisplay();
   }
 
   Future<Media?> displayEditPopup(BuildContext context, Media media) async {
