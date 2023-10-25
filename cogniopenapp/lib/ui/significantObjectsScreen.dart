@@ -7,14 +7,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class SignificantObjects extends StatefulWidget {
-  SignificantObjects({super.key});
+class SignificantObjectScreen extends StatefulWidget {
+  SignificantObjectScreen({super.key});
 
   @override
-  State<SignificantObjects> createState() => _GalleryPageState();
+  State<SignificantObjectScreen> createState() => _GalleryPageState();
 }
 
-class _GalleryPageState extends State<SignificantObjects> {
+class _GalleryPageState extends State<SignificantObjectScreen> {
   File? _image;
   final imagePicker = ImagePicker();
 
@@ -27,7 +27,8 @@ class _GalleryPageState extends State<SignificantObjects> {
         //   setState(() {
         //   firstbuttontext = 'saving in progress...';
         //  });
-        GallerySaver.saveImage(recordedimage.path,  albumName: 'SignificantObjects')
+        GallerySaver.saveImage(recordedimage.path,
+                albumName: 'SignificantObjects')
             .then((path) {
           setState(() {
             //   firstbuttontext = 'image saved!';
@@ -46,7 +47,8 @@ class _GalleryPageState extends State<SignificantObjects> {
         // setState(() {
         //    firstbuttontext = 'saving in progress...';
         //});
-        GallerySaver.saveImage(recordedimage.path, albumName: 'SignificantObjects')
+        GallerySaver.saveImage(recordedimage.path,
+                albumName: 'SignificantObjects')
             .then((path) {
           setState(() {
             // firstbuttontext = 'image saved!';
@@ -94,16 +96,17 @@ class _GalleryPageState extends State<SignificantObjects> {
                 height: 32, // Adjust the size as needed
               ),
               const SizedBox(width: 10), // Spacing between the icon and title
-              const Text('CogniOpen', textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.black54
-                  )
-              ),
+              const Text('CogniOpen',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black54)),
             ],
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.arrow_back,  color: Colors.black54,),
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.black54,
+              ),
               onPressed: () {
                 // Navigate back to the previous screen
                 Navigator.pop(context);
@@ -111,15 +114,14 @@ class _GalleryPageState extends State<SignificantObjects> {
             ),
           ],
         ),
-    body: Container(
-    decoration: const BoxDecoration(
-    image: DecorationImage(
-    image: AssetImage("assets/images/background.jpg"),
-    fit: BoxFit.cover,
-    ),
-    ),
-
-    child: ListView(
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: ListView(
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -140,10 +142,10 @@ class _GalleryPageState extends State<SignificantObjects> {
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.black,
                             backgroundColor:
-                            const Color(0XFFC6FF00), // Button text color
+                                const Color(0XFFC6FF00), // Button text color
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                              BorderRadius.circular(10.0), // Square border
+                                  BorderRadius.circular(10.0), // Square border
                             ),
                           ),
                           key: const Key("TakePictureButtonKey"),
@@ -153,12 +155,12 @@ class _GalleryPageState extends State<SignificantObjects> {
                               Image.asset(
                                 'assets/icons/camera.png',
                                 width:
-                                75.0, // You can adjust the width and height
+                                    75.0, // You can adjust the width and height
                                 height: 25.0, // as per your requirement
                               ),
                               const SizedBox(
                                 height:
-                                8.0, // Add some spacing between the image and text
+                                    8.0, // Add some spacing between the image and text
                               ),
                               const Text('Camera'),
                             ],
@@ -171,10 +173,10 @@ class _GalleryPageState extends State<SignificantObjects> {
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.black,
                             backgroundColor:
-                            const Color(0XFFC6FF00), // Button text color
+                                const Color(0XFFC6FF00), // Button text color
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                              BorderRadius.circular(10.0), // Square border
+                                  BorderRadius.circular(10.0), // Square border
                             ),
                           ),
                           child: Row(
@@ -183,12 +185,12 @@ class _GalleryPageState extends State<SignificantObjects> {
                               Image.asset(
                                 'assets/icons/gallery.png',
                                 width:
-                                75.0, // You can adjust the width and height
+                                    75.0, // You can adjust the width and height
                                 height: 25.0, // as per your requirement
                               ),
                               const SizedBox(
                                 height:
-                                8.0, // Add some spacing between the image and text
+                                    8.0, // Add some spacing between the image and text
                               ),
                               const Text(' Upload Image'),
                             ],
@@ -219,12 +221,12 @@ class _GalleryPageState extends State<SignificantObjects> {
               const Row(children: <Widget>[
                 Expanded(
                     child: Divider(
-                      color: Colors.black54,
-                      height: 25,
-                      thickness: 2,
-                      indent: 15,
-                      endIndent: 15,
-                    )),
+                  color: Colors.black54,
+                  height: 25,
+                  thickness: 2,
+                  indent: 15,
+                  endIndent: 15,
+                )),
                 Text(
                   "Significant Objects",
                   style: TextStyle(
@@ -235,12 +237,12 @@ class _GalleryPageState extends State<SignificantObjects> {
                 ),
                 Expanded(
                     child: Divider(
-                      color: Colors.black54,
-                      height: 25,
-                      thickness: 2,
-                      indent: 15,
-                      endIndent: 15,
-                    )),
+                  color: Colors.black54,
+                  height: 25,
+                  thickness: 2,
+                  indent: 15,
+                  endIndent: 15,
+                )),
               ]),
 
               /*  SizedBox(
@@ -299,7 +301,7 @@ class _GalleryPageState extends State<SignificantObjects> {
     List<dynamic> listImage = <dynamic>[];
     dir.list().forEach((element) {
       RegExp regExp =
-      new RegExp("\.(gif|jpe?g|tiff?|png|webp|bmp)", caseSensitive: false);
+          new RegExp("\.(gif|jpe?g|tiff?|png|webp|bmp)", caseSensitive: false);
       // Only add in List if path is an image
       if (regExp.hasMatch('$element')) listImage.add(element);
       setState(() {
