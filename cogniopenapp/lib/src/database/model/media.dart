@@ -16,8 +16,8 @@ abstract class MediaFields {
   static const String description = 'description';
   static const String tags = 'tags';
   static const String timestamp = 'timestamp';
-  static const String storageSize = 'storageSize';
-  static const String isFavorited = 'isFavorited';
+  static const String storageSize = 'storage_size';
+  static const String isFavorited = 'is_favorited';
 }
 
 abstract class Media {
