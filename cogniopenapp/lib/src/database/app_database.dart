@@ -2,6 +2,7 @@ import 'package:cogniopenapp/src/database/app_seed_data.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/significant_object_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 import 'package:path/path.dart';
@@ -81,6 +82,14 @@ class AppDatabase {
       ${VideoResponseFields.top} $floatType,
       ${VideoResponseFields.width} $floatType,
       ${VideoResponseFields.height} $floatType
+    )
+  ''');
+
+    await db.execute('''
+    CREATE TABLE $tableSignificantObjects (
+      ${SignificantObjectFields.id} $idType,
+      ${SignificantObjectFields.label} $textType,
+      ${SignificantObjectFields.imageFileName} $textType
     )
   ''');
 
