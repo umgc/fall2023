@@ -93,6 +93,7 @@ class AudioController {
     required int id,
     String? title,
     String? description,
+    bool? isFavorited,
     List<String>? tags,
     String? summary,
   }) async {
@@ -101,6 +102,7 @@ class AudioController {
       final updatedAudio = existingAudio.copy(
         title: title ?? existingAudio.title,
         description: description ?? existingAudio.description,
+        isFavorited: isFavorited ?? existingAudio.isFavorited,
         tags: tags ?? existingAudio.tags,
         summary: summary ?? existingAudio.summary,
       );
