@@ -17,7 +17,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< Updated upstream
         // Set the background color for the entire screen
+=======
+      // Set the background color for the entire screen
+        backgroundColor: const Color(0XFF880E4F),
+>>>>>>> Stashed changes
         extendBodyBehindAppBar: true,
         extendBody: true,
         // Setting up the app bar at the top of the screen
@@ -43,6 +48,7 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
 
+<<<<<<< Updated upstream
           // Widgets on the right side of the AppBar
           actions: [
             // Vertical popup menu on the right side of the AppBar
@@ -79,6 +85,35 @@ class HomeScreen extends StatelessWidget {
                 const PopupMenuItem<String>(
                   value: 'Profile',
                   child: Text('Profile'),
+=======
+          // First page icon to navigate back
+          IconButton(
+            icon: const Icon(Icons.first_page, color: Colors.black54,),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+      // Main content of the screen
+      body: Container(
+            decoration: const BoxDecoration(
+            image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 140, 16.0, 25),
+              child: Text(
+                'Helping you remember the important things.\n Choose a feature from here to get started!',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black54,
+>>>>>>> Stashed changes
                 ),
                 const PopupMenuItem<String>(
                   value: 'Help Center',
@@ -94,12 +129,69 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
+<<<<<<< Updated upstream
 
             // First page icon to navigate back
             IconButton(
               icon: const Icon(
                 Icons.first_page,
                 color: Colors.black54,
+=======
+            // Grid view to display multiple options/buttons
+            Expanded(
+              child: GridView.count(
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 3,
+                crossAxisSpacing: 12.0,
+                mainAxisSpacing: 12.0,
+                childAspectRatio: 0.80,
+                padding: const EdgeInsets.all(10.0),
+                children: [
+                  // Using the helper function to build each button in the grid
+                  _buildElevatedButton(
+                    context: context,
+                    iconPath: 'assets/icons/ask_question.png',
+                    text: 'Virtual Assistant',
+                    screen: AssistantScreen(),
+                    keyName: "VirtualAssistantButtonKey",
+                  ),
+                  _buildElevatedButton(
+                    context: context,
+                    iconPath: 'assets/icons/gallery-v2.png',
+                    text: 'Gallery',
+                    screen: GalleryScreen(),
+                    keyName: "GalleryButtonKey",
+                  ),
+                  _buildElevatedButton(
+                    context: context,
+                    iconPath: 'assets/icons/camera_on.png',
+                    text: 'Record Video',
+                    screen: VideoScreen(),
+                    keyName: "VideoRecordingButtonKey",
+                  ),
+                  _buildElevatedButton(
+                    context: context,
+                    iconPath: 'assets/icons/mic_on.png',
+                    text: 'Record Audio',
+                    screen: AudioScreen(),
+                    keyName: "AudioRecordingButtonKey",
+                  ),
+                  _buildElevatedButton(
+                    context: context,
+                    iconPath: 'assets/icons/significant_object.png',
+                    text: 'Significant Objects',
+                    screen: SignificantObjectsScreen(),
+                    keyName: "SignificantObjectButtonKey",
+                  ),
+                  _buildElevatedButton(
+                    context: context,
+                    iconPath: 'assets/icons/tour.png',
+                    text: 'Tour Guide',
+                    screen: TourScreen(),
+                    keyName: "TourGuideButtonKey",
+                  ),
+                ],
+>>>>>>> Stashed changes
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -125,6 +217,7 @@ class HomeScreen extends StatelessWidget {
                     fontSize: 16.0,
                     color: Colors.black54,
                   ),
+<<<<<<< Updated upstream
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -227,6 +320,37 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => SettingsScreen()));
               }
             }));
+=======
+                  BottomNavigationBarItem(
+                  icon: Icon(Icons.photo),
+                  label: 'Gallery',
+                  ),
+                  BottomNavigationBarItem(
+                  icon: Icon(Icons.help),
+                  label: 'Tour',
+                  ),
+                    ],
+                  onTap: (int index) {
+                  // Handle navigation bar item taps
+                  if (index == 0) {
+
+                  } else if (index == 1) {
+                 // Navigate to Search screen
+                 Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AssistantScreen()));
+                  } else if (index == 2) {
+                  // Navigate to Gallery screen
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => GalleryScreen()));
+                  } else if (index == 3) {
+                  // Navigate to Gallery screen
+                  Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TourScreen()));
+                    }
+                  }
+      )
+    );
+>>>>>>> Stashed changes
   }
 
   // Helper function to create each button for the GridView
