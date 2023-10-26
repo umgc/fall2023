@@ -202,31 +202,29 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                   ),
                 ],
               ),
-              Expanded(
-                flex: 1,
-                child: FutureBuilder(
-                  future: _futureGetPath,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      var dir = Directory(snapshot.data);
-                      print('permission status: $_permissionStatus');
-                      if (_permissionStatus) _fetchFiles(dir);
-                      return Text("");
-                    } else {
-                      return Text("Loading");
-                    }
-                  },
-                ),
+              FutureBuilder(
+                future: _futureGetPath,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    var dir = Directory(snapshot.data);
+                    print('permission status: $_permissionStatus');
+                    if (_permissionStatus) _fetchFiles(dir);
+                    return Text("");
+                  } else {
+                    return Text("Loading");
+                  }
+                },
               ),
-              const Row(children: <Widget>[
-                Expanded(
-                    child: Divider(
+              const Row
+                (mainAxisAlignment:MainAxisAlignment.center,
+              children: <Widget>[
+                Divider(
                   color: Colors.black54,
                   height: 25,
                   thickness: 2,
                   indent: 15,
                   endIndent: 15,
-                )),
+                ),
                 Text(
                   "Significant Objects",
                   style: TextStyle(
@@ -235,14 +233,13 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                         .black87, // Slightly transparent white for subheading
                   ),
                 ),
-                Expanded(
-                    child: Divider(
+                Divider(
                   color: Colors.black54,
                   height: 25,
                   thickness: 2,
                   indent: 15,
                   endIndent: 15,
-                )),
+                ),
               ]),
 
               /*  SizedBox(
