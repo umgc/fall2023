@@ -75,20 +75,25 @@ class Video extends Media {
 
   @override
   static Video fromJson(Map<String, Object?> json) {
-    return Video(
-      id: json[MediaFields.id] as int?,
-      title: json[MediaFields.title] as String?,
-      description: json[MediaFields.description] as String?,
-      tags: (json[MediaFields.tags] as String?)?.split(','),
-      timestamp: DateTime.fromMillisecondsSinceEpoch(
-        json[MediaFields.timestamp] as int,
-      ),
-      storageSize: json[MediaFields.storageSize] as int,
-      isFavorited: json[MediaFields.isFavorited] == 1,
-      videoFileName: json[VideoFields.videoFileName] as String,
-      thumbnailFileName: json[VideoFields.thumbnailFileName] as String?,
-      duration: json[VideoFields.duration] as String,
-    );
+    try {
+      return Video(
+        id: json[MediaFields.id] as int?,
+        title: json[MediaFields.title] as String?,
+        description: json[MediaFields.description] as String?,
+        tags: (json[MediaFields.tags] as String?)?.split(','),
+        timestamp: DateTime.fromMillisecondsSinceEpoch(
+          (json[MediaFields.timestamp] as int),
+          isUtc: true,
+        ),
+        storageSize: json[MediaFields.storageSize] as int,
+        isFavorited: json[MediaFields.isFavorited] == 1,
+        videoFileName: json[VideoFields.videoFileName] as String,
+        thumbnailFileName: json[VideoFields.thumbnailFileName] as String?,
+        duration: json[VideoFields.duration] as String,
+      );
+    } catch (e) {
+      throw FormatException('Error parsing JSON for Video: $e');
+    }
   }
 
   Future<void> _loadThumbnail() async {

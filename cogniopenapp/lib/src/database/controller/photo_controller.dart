@@ -79,6 +79,7 @@ class PhotoController {
     required int id,
     String? title,
     String? description,
+    bool? isFavorited,
     List<String>? tags,
   }) async {
     try {
@@ -86,6 +87,7 @@ class PhotoController {
       final updatedPhoto = existingPhoto.copy(
         title: title ?? existingPhoto.title,
         description: description ?? existingPhoto.description,
+        isFavorited: isFavorited ?? existingPhoto.isFavorited,
         tags: tags ?? existingPhoto.tags,
       );
       await PhotoRepository.instance.update(updatedPhoto);
