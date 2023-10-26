@@ -27,8 +27,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
         //   setState(() {
         //   firstbuttontext = 'saving in progress...';
         //  });
-        GallerySaver.saveImage(recordedimage.path,
-                albumName: 'SignificantObjects')
+        GallerySaver.saveImage(recordedimage.path)
             .then((path) {
           setState(() {
             //   firstbuttontext = 'image saved!';
@@ -47,8 +46,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
         // setState(() {
         //    firstbuttontext = 'saving in progress...';
         //});
-        GallerySaver.saveImage(recordedimage.path,
-                albumName: 'SignificantObjects')
+        GallerySaver.saveImage(recordedimage.path)
             .then((path) {
           setState(() {
             // firstbuttontext = 'image saved!';
@@ -122,7 +120,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
             ),
           ),
           child: ListView(
-            children: [
+            children: <Widget>[
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -207,7 +205,6 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
                     var dir = Directory(snapshot.data);
-                    print('permission status: $_permissionStatus');
                     if (_permissionStatus) _fetchFiles(dir);
                     return Text("");
                   } else {
@@ -215,16 +212,17 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                   }
                 },
               ),
+              const Divider(
+                color: Colors.black54,
+                height: 25,
+                thickness: 2,
+                indent: 15,
+                endIndent: 15,
+              ),
               const Row
                 (mainAxisAlignment:MainAxisAlignment.center,
               children: <Widget>[
-                Divider(
-                  color: Colors.black54,
-                  height: 25,
-                  thickness: 2,
-                  indent: 15,
-                  endIndent: 15,
-                ),
+
                 Text(
                   "Significant Objects",
                   style: TextStyle(
@@ -233,15 +231,15 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                         .black87, // Slightly transparent white for subheading
                   ),
                 ),
-                Divider(
-                  color: Colors.black54,
-                  height: 25,
-                  thickness: 2,
-                  indent: 15,
-                  endIndent: 15,
-                ),
-              ]),
 
+              ]),
+              Divider(
+                color: Colors.black54,
+                height: 25,
+                thickness: 2,
+                indent: 15,
+                endIndent: 15,
+              ),
               /*  SizedBox(
               height: 788,
               child: GridView.builder(
