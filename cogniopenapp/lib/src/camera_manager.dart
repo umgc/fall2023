@@ -24,7 +24,9 @@ class CameraManager {
   Future<void> initializeCamera() async {
     print("GETTING CAMERAS");
     _cameras = await availableCameras();
+    print(_cameras.length);
     controller = CameraController(_cameras.first, ResolutionPreset.high);
+    controller = CameraController(_cameras[1], ResolutionPreset.high);
     await controller.initialize();
     print("Camera has been initialized");
   }
@@ -64,7 +66,7 @@ class CameraManager {
     // Record for 5 minutes (300 seconds)
     await Future.delayed(Duration(seconds: 20));
 
-    //TODO add ability to pause/resume
+    //TODO add ability to STOP the video early (manually)
 
     await stopRecording();
 
