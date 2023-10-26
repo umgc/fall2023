@@ -123,9 +123,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     });
   }
 
-  void _toggleFavoriteStatus(Media media) {
+  void _toggleFavoriteStatus(Media media) async {
+    //TODO: Update persistence
+    //await DataService.instance
+    //    .updateMediaIsFavorited(media, !media.isFavorited);
     setState(() {
-      //media.isFavorited = !media.isFavorited; // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
+      media.isFavorited = !media.isFavorited;
     });
   }
 
@@ -242,7 +245,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       Text('Title: ${media.title}',
                           style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                        'Time Stamp: ${FormatUtils.getDateString(media.timestamp)}', // TODO: Confirm logic / output correctness
+                        'Timestamp: ${FormatUtils.getDateString(media.timestamp)}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     if (media is Photo && media.photo != null)
                       Image(
