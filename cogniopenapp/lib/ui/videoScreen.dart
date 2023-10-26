@@ -6,7 +6,6 @@ import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:cogniopenapp/src/address.dart';
 import '../src/data_service.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
