@@ -63,18 +63,23 @@ class Audio extends Media {
 
   @override
   static Audio fromJson(Map<String, Object?> json) {
-    return Audio(
-      id: json[MediaFields.id] as int?,
-      title: json[MediaFields.title] as String?,
-      description: json[MediaFields.description] as String?,
-      tags: (json[MediaFields.tags] as String?)?.split(','),
-      timestamp: DateTime.fromMillisecondsSinceEpoch(
+    try {
+      return Audio(
+        id: json[MediaFields.id] as int?,
+        title: json[MediaFields.title] as String?,
+        description: json[MediaFields.description] as String?,
+        tags: (json[MediaFields.tags] as String?)?.split(','),
+        timestamp: DateTime.fromMillisecondsSinceEpoch(
           (json[MediaFields.timestamp] as int),
-          isUtc: true),
-      storageSize: json[MediaFields.storageSize] as int,
-      isFavorited: json[MediaFields.isFavorited] == 1,
-      audioFileName: json[AudioFields.audioFileName] as String,
-      summary: json[AudioFields.summary] as String?,
-    );
+          isUtc: true,
+        ),
+        storageSize: json[MediaFields.storageSize] as int,
+        isFavorited: json[MediaFields.isFavorited] == 1,
+        audioFileName: json[AudioFields.audioFileName] as String,
+        summary: json[AudioFields.summary] as String?,
+      );
+    } catch (e) {
+      throw FormatException('Error parsing JSON: $e');
+    }
   }
 }
