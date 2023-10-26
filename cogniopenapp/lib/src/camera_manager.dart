@@ -4,8 +4,11 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/address.dart';
+import 'package:cogniopenapp/src/database/model/video.dart';
 import '../src/data_service.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import "package:flutter/material.dart";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Camera manager class to handle camera functionality.
 class CameraManager {
@@ -15,6 +18,10 @@ class CameraManager {
 
   static final CameraManager _instance = CameraManager._internal();
 
+  bool isAutoRecording = false;
+  int autoRecordingInterval = 60;
+
+  late Image recentThumbnail;
   CameraManager._internal() {}
 
   factory CameraManager() {
@@ -25,16 +32,44 @@ class CameraManager {
     print("GETTING CAMERAS");
     _cameras = await availableCameras();
     print(_cameras.length);
-    controller = CameraController(_cameras.first, ResolutionPreset.high);
-    controller = CameraController(_cameras[1], ResolutionPreset.high);
+    controller = CameraController(
+        _cameras[(_cameras.length - 1)], ResolutionPreset.high);
+    //controller = CameraController(_cameras[1], ResolutionPreset.high);
     await controller.initialize();
     print("Camera has been initialized");
+    parseEnviromentSettings();
+  }
+
+  void parseEnviromentSettings() async {
+    await dotenv.load(fileName: ".env");
+    autoRecordingInterval =
+        int.parse(dotenv.get('autoRecordInterval', fallback: "60"));
+    isAutoRecording =
+        dotenv.get('autoRecordEnabled', fallback: "false") == "true";
+    String cameraUsed = (_cameras.length > 1) ? "front" : "rear";
+
+    if (isAutoRecording) {
+      print(
+          "|-----------------------------------------------------------------------------------------|");
+      print(
+          "|------------------------------------- AUTO VIDEO RECORDING IS ENABLED -------------------------------------|");
+      print(
+          "|-----------------------------------------------------------------------------------------|");
+    } else {
+      print(
+          "|-----------------------------------------------------------------------------------------|");
+      print(
+          "|------------------------------------- AUTO VIDEO RECORDING IS DISABLED -------------------------------------|");
+      print(
+          "|-----------------------------------------------------------------------------------------|");
+    }
+
+    print("The camera that is being automatically used is the ${cameraUsed}");
   }
 
   void startAutoRecording() async {
-    print("RECORDING IS TRYING TO START");
     // Delay for camera initialization
-    Future.delayed(Duration(milliseconds: 5000), () {
+    Future.delayed(Duration(milliseconds: 3000), () {
       if (controller != null) {
         startRecordingInBackground();
       }
@@ -53,14 +88,29 @@ class CameraManager {
     }
   }
 
+  Future<void> manuallyStopRecording() async {
+    isAutoRecording = false;
+    stopRecording();
+  }
+
+  Future<void> manuallyStartRecording() async {
+    isAutoRecording = true;
+    startRecordingInBackground();
+  }
+
   void startRecordingInBackground() async {
     if (controller == null || !controller.value.isInitialized) {
       print('Error: Camera is not initialized.');
+      print('Auto recording ahs been canceeled.');
       return;
     }
 
-    print("RECORDING IS STARTING");
     // Start recording in the background
+
+    if (!isAutoRecording) {
+      return;
+    }
+
     controller.startVideoRecording();
 
     // Record for 5 minutes (300 seconds)
@@ -68,12 +118,15 @@ class CameraManager {
 
     //TODO add ability to STOP the video early (manually)
 
+    if (!isAutoRecording) {
+      return;
+    }
+
     await stopRecording();
 
-    print('Recording finished.');
-
-    // Close the camera controller
-    //await controller.dispose();
+    await Future.delayed(Duration(seconds: 2));
+    // Start the next loop of the recording
+    startRecordingInBackground();
   }
 
   Future<void> saveMediaLocally(XFile mediaFile) async {
@@ -101,7 +154,10 @@ class CameraManager {
     // Copy the media to the local directory
     await localFile.writeAsBytes(await mediaFile.readAsBytes());
 
-    await DataService.instance.addVideo(videoFile: localFile);
+    Video? vid = await DataService.instance.addVideo(videoFile: localFile);
+    if (vid != null) {
+      recentThumbnail = Image(image: vid.thumbnail!.image);
+    }
 
     // Check if the media file has been successfully saved
     if (localFile.existsSync()) {

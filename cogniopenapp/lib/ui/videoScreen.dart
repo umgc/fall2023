@@ -1,13 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:video_player/video_player.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:cogniopenapp/src/address.dart';
 import 'package:cogniopenapp/src/camera_manager.dart';
 
 /// Camera home widget.
@@ -44,16 +38,9 @@ void _logError(String code, String? message) {
 
 class _CameraHomeState extends State<VideoScreen>
     with WidgetsBindingObserver, TickerProviderStateMixin {
-  late CameraManager man;
-  late CameraController controller;
-  XFile? imageFile;
-  XFile? videoFile;
-  VideoPlayerController? videoController;
-  VoidCallback? videoPlayerListener;
+  late CameraManager cameraManager;
+  late CameraController cameraController;
   bool enableAudio = true;
-  bool isRecording = false;
-  int recordedSeconds = 0;
-  Timer? recordTimer;
 
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
@@ -66,14 +53,9 @@ class _CameraHomeState extends State<VideoScreen>
   @override
   void initState() {
     super.initState();
-    man = CameraManager();
-    controller = man.controller;
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
+    //WidgetsBinding.instance.addObserver(this);
+    cameraManager = CameraManager();
+    cameraController = cameraManager.controller;
   }
 
   @override
@@ -89,10 +71,9 @@ class _CameraHomeState extends State<VideoScreen>
               decoration: BoxDecoration(
                 color: Colors.black,
                 border: Border.all(
-                  color:
-                      controller != null && controller!.value.isRecordingVideo
-                          ? Colors.redAccent
-                          : Colors.grey,
+                  color: cameraController.value.isRecordingVideo
+                      ? Colors.redAccent
+                      : Colors.grey,
                   width: 3.0,
                 ),
               ),
@@ -116,8 +97,7 @@ class _CameraHomeState extends State<VideoScreen>
             padding: const EdgeInsets.all(5.0),
             child: Row(
               children: <Widget>[
-                //_cameraTogglesRowWidget(),
-                _thumbnailWidget(),
+                //_thumbnailWidget(),
               ],
             ),
           ),
@@ -128,8 +108,6 @@ class _CameraHomeState extends State<VideoScreen>
 
   /// Display the preview from the camera (or a message if the preview is not available).
   Widget _cameraPreviewWidget() {
-    final CameraController? cameraController = controller;
-
     if (cameraController == null || !cameraController.value.isInitialized) {
       return Container();
     } else {
@@ -137,7 +115,7 @@ class _CameraHomeState extends State<VideoScreen>
         onPointerDown: (_) => _pointers++,
         onPointerUp: (_) => _pointers--,
         child: CameraPreview(
-          controller!,
+          cameraController!,
           child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             return GestureDetector(
@@ -157,88 +135,70 @@ class _CameraHomeState extends State<VideoScreen>
 
   Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
     // When there are not exactly two fingers on screen don't scale
-    if (controller == null || _pointers != 2) {
+    if (cameraController == null || _pointers != 2) {
       return;
     }
 
     _currentScale = (_baseScale * details.scale)
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
-    await controller!.setZoomLevel(_currentScale);
+    await cameraController!.setZoomLevel(_currentScale);
   }
 
+  /*
   /// Display the thumbnail of the captured image or video.
   Widget _thumbnailWidget() {
-    final VideoPlayerController? localVideoController = videoController;
-
     return Expanded(
       child: Align(
         alignment: Alignment.centerRight,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            if (localVideoController == null && imageFile == null)
+            if (cameraManager.recentThumbnail == null)
               Container()
             else
               SizedBox(
                 width: 64.0,
                 height: 64.0,
-                child: (localVideoController == null)
-                    ? (
-                        // The captured image on the web contains a network-accessible URL
-                        // pointing to a location within the browser. It may be displayed
-                        // either with Image.network or Image.memory after loading the image
-                        // bytes to memory.
-                        kIsWeb
-                            ? Image.network(imageFile!.path)
-                            : Image.file(File(imageFile!.path)))
-                    : Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.pink)),
-                        child: Center(
-                          child: AspectRatio(
-                              aspectRatio:
-                                  localVideoController.value.aspectRatio,
-                              child: VideoPlayer(localVideoController)),
-                        ),
-                      ),
+                child: Image(image: cameraManager.recentThumbnail.image),
               ),
           ],
         ),
       ),
     );
   }
+  */
 
   /// Display the control bar with buttons to take pictures and record videos.
   Widget _captureControlRowWidget() {
-    final CameraController? cameraController = controller;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         IconButton(
           icon: cameraController != null &&
-                  cameraController.value.isRecordingPaused
-              ? const Icon(Icons.play_arrow)
+                  !cameraController.value.isRecordingVideo
+              ? const Icon(Icons.circle)
               : const Icon(Icons.pause),
-          color: Colors.blue,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  cameraController.value.isRecordingVideo
-              ? (cameraController.value.isRecordingPaused)
+          color: Colors.redAccent,
+          onPressed: cameraController != null
+              ? (!cameraController.value.isRecordingVideo)
                   ? onResumeButtonPressed
                   : onPauseButtonPressed
               : null,
-        )
+        ),
       ],
     );
   }
 
   void onResumeButtonPressed() {
-    print(" MAKE THE VIDEO RESUME");
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Recording resumed")));
+    cameraManager.manuallyStartRecording();
   }
 
   void onPauseButtonPressed() {
-    print(" MAKE THE VIDEO STOP");
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Recording stopped")));
+    cameraManager.manuallyStopRecording();
   }
 }
