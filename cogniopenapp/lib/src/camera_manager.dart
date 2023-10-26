@@ -2,105 +2,111 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/address.dart';
+import '../src/data_service.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 /// Camera manager class to handle camera functionality.
 class CameraManager {
-  static CameraManager? _instance;
-  late CameraController _controller;
-  CameraDescription? selectedCamera;
-  bool isRecordingVideo = false;
-  bool isRecordingPaused = false;
+  CameraManager? cameraManager;
+  List<CameraDescription> _cameras = <CameraDescription>[];
+  late CameraController controller;
 
-  CameraController get controller => _controller;
+  static final CameraManager _instance = CameraManager._internal();
 
-  CameraManager._();
+  CameraManager._internal() {}
 
-  /*factory CameraManager() {
-    _instance ??= CameraManager._();
-    return _instance!;
-  }*/
-  CameraManager() {
-    initializeCamera();
+  factory CameraManager() {
+    return _instance;
   }
-
-  void dispose() {
-    _controller.dispose();
-  }
-
-  bool get isRecording => isRecordingVideo; // Getter for isRecording
 
   Future<void> initializeCamera() async {
-    final cameras = await availableCameras(); // Access availableCameras from the camera package
-    var selectedCamera = cameras.first; // Set a default camera
-    _controller = CameraController(selectedCamera, ResolutionPreset.medium); // Use the selectedCamera
-    await _controller.initialize();
-    selectedCamera = selectedCamera;
+    print("GETTING CAMERAS");
+    _cameras = await availableCameras();
+    controller = CameraController(_cameras.first, ResolutionPreset.high);
+    await controller.initialize();
+    print("Camera has been initialized");
   }
 
-  Future<void> switchCamera(CameraDescription? description) async {
-    if (description == null) {
-      return;
-    }
-
-    await _controller.dispose();
-    _controller = CameraController(description, ResolutionPreset.medium);
-    await _controller.initialize();
-    selectedCamera = description; // Update the selected camera
+  void startAutoRecording() async {
+    print("RECORDING IS TRYING TO START");
+    // Delay for camera initialization
+    Future.delayed(Duration(milliseconds: 5000), () {
+      if (controller != null) {
+        startRecordingInBackground();
+      }
+    });
   }
 
-  Future<XFile?> takePicture() async {
-    if (!_controller.value.isInitialized) {
-      return null;
-    }
-
-    final file = await _controller.takePicture();
-    return file;
-  }
-
-  Future<void> startVideoRecording() async {
-    if (!_controller.value.isInitialized || _controller.value.isRecordingVideo) {
-      return;
-    }
-
-    await _controller.startVideoRecording();
-    isRecordingVideo = true;
-    isRecordingPaused = false;
-  }
-
-  Future<XFile?> stopVideoRecording() async {
-    if (!_controller.value.isInitialized || !_controller.value.isRecordingVideo) {
-      return null;
-    }
-
-    XFile? file;
+  Future<void> stopRecording() async {
     try {
-      file = await _controller.stopVideoRecording();
-    } catch (e) {
-      // Handle any errors that might occur during video recording.
-      print('Error stopping video recording: $e');
+      controller?.stopVideoRecording().then((XFile? file) {
+        if (file != null) {
+          saveMediaLocally(file); // Call the saveMediaLocally function
+        }
+      });
+    } catch (Exc) {
+      print(Exc);
     }
-
-    isRecordingVideo = false;
-    isRecordingPaused = false;
-
-    return file;
   }
 
-  Future<void> pauseVideoRecording() async {
-    if (!_controller.value.isInitialized || !_controller.value.isRecordingVideo) {
+  void startRecordingInBackground() async {
+    if (controller == null || !controller.value.isInitialized) {
+      print('Error: Camera is not initialized.');
       return;
     }
 
-    await _controller.pauseVideoRecording();
-    isRecordingPaused = true;
+    print("RECORDING IS STARTING");
+    // Start recording in the background
+    controller.startVideoRecording();
+
+    // Record for 5 minutes (300 seconds)
+    await Future.delayed(Duration(seconds: 20));
+
+    //TODO add ability to pause/resume
+
+    await stopRecording();
+
+    print('Recording finished.');
+
+    // Close the camera controller
+    //await controller.dispose();
   }
 
-  Future<void> resumeVideoRecording() async {
-    if (!_controller.value.isInitialized || !_controller.value.isRecordingVideo) {
-      return;
-    }
+  Future<void> saveMediaLocally(XFile mediaFile) async {
+    // Get the local directory
 
-    await _controller.resumeVideoRecording();
-    isRecordingPaused = false;
+    // Define a file name for the saved media, you can use a timestamp or any unique name
+    final String fileExtension = 'mp4';
+
+    final String timestamp = DateTime.now().toString();
+    final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
+    final String fileName =
+        '$sanitizedTimestamp.$fileExtension'; // Use the determined file extension
+
+    // Obtain the current physical address
+    var physicalAddress = "";
+    await Address.whereIAm().then((String address) {
+      physicalAddress = address;
+    });
+    print('The street address is: $physicalAddress');
+
+    // Create a new file by copying the media file to the local directory
+    final File localFile =
+        File('${DirectoryManager.instance.videosDirectory.path}/$fileName');
+
+    // Copy the media to the local directory
+    await localFile.writeAsBytes(await mediaFile.readAsBytes());
+
+    await DataService.instance.addVideo(videoFile: localFile);
+
+    // Check if the media file has been successfully saved
+    if (localFile.existsSync()) {
+      print('Media saved locally: ${localFile.path}');
+      FileManager.getMostRecentVideo();
+    } else {
+      print('Failed to save media locally.');
+    }
   }
 }
