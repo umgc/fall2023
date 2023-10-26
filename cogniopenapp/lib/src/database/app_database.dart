@@ -3,6 +3,7 @@ import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -33,6 +34,7 @@ class AppDatabase {
     const boolType = 'BOOLEAN NOT NULL';
     const integerType = 'INTEGER NOT NULL';
     const textNullableType = 'TEXT';
+    const floatType = 'FLOAT';
 
     final mediaColumns = [
       '${MediaFields.id} $idType',
@@ -67,6 +69,20 @@ class AppDatabase {
         ${VideoFields.duration} $textType
       )
     ''');
+
+    await db.execute('''
+    CREATE TABLE $tableVideoResponses (
+      ${VideoResponseFields.id} $idType,
+      ${VideoResponseFields.title} $textType,
+      ${VideoResponseFields.timestamp} $integerType,
+      ${VideoResponseFields.imageFileName} $textType,
+      ${VideoResponseFields.confidence} $floatType,
+      ${VideoResponseFields.left} $floatType,
+      ${VideoResponseFields.top} $floatType,
+      ${VideoResponseFields.width} $floatType,
+      ${VideoResponseFields.height} $floatType
+    )
+  ''');
 
     final appSeedData = AppSeedData();
     appSeedData.loadAppSeedData();
