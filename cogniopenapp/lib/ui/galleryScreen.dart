@@ -243,7 +243,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       Text('Title: ${media.title}',
                           style: TextStyle(fontSize: _defaultFontSize)),
                     Text(
-                        'Time Stamp: ${FormatUtils.getDateString(media.timestamp)}', // TODO: Confirm logic / output correctness
+                        'Timestamp: ${FormatUtils.getDateString(media.timestamp)}',
                         style: TextStyle(fontSize: _defaultFontSize)),
                     if (media is Photo && media.photo != null)
                       Image(
