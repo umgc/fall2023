@@ -1,7 +1,9 @@
 // Imported libraries and packages
 import 'package:cogniopenapp/ui/s3_screen.dart';
+import 'package:cogniopenapp/ui/test_rekognition_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/ui/helpScreen.dart';
+import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:flutter/material.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
@@ -14,8 +16,16 @@ import 'settingsScreen.dart';
 
 // Main HomeScreen widget which is a stateless widget.
 class HomeScreen extends StatelessWidget {
+  bool hasBeenInitialized = false;
+
   @override
   Widget build(BuildContext context) {
+    if (!hasBeenInitialized) {
+      CameraManager cm = CameraManager();
+      cm.startAutoRecording();
+      hasBeenInitialized = true;
+    }
+
     return Scaffold(
         // Set the background color for the entire screen
         extendBodyBehindAppBar: true,
@@ -213,6 +223,11 @@ class HomeScreen extends StatelessWidget {
             onTap: (int index) {
               // Handle navigation bar item taps
               if (index == 0) {
+                // Navigate to Gallery screen
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RekognitionScreen()));
               } else if (index == 1) {
                 // Navigate to Search screen
                 Navigator.push(context,

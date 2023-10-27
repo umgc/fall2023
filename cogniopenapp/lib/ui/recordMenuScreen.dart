@@ -6,18 +6,17 @@ import 'galleryScreen.dart';
 import 'assistantScreen.dart';
 import 'videoScreen.dart';
 import 'homeScreen.dart';
+
 class RecordMenuScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
       appBar: AppBar(
         backgroundColor: const Color(0x00440000),
         elevation: 0,
-        leading: const BackButton(
-            color: Colors.black54
-        ),
+        leading: const BackButton(color: Colors.black54),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -30,7 +29,6 @@ class RecordMenuScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -38,7 +36,6 @@ class RecordMenuScreen extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(bottom: 30),
                   child: ElevatedButton(
-
                     onPressed: () {
                       // Navigate to Gallery screen
                       Navigator.push(
@@ -47,16 +44,14 @@ class RecordMenuScreen extends StatelessWidget {
                               builder: (context) => AudioScreen()));
                     },
                     style: ElevatedButton.styleFrom(
-
                       foregroundColor: Colors.black,
                       elevation: 0.0,
                       shadowColor: Colors.transparent,
-                      backgroundColor:
-                      const Color(0xFFFFFFFF).withOpacity(0.30), // Button text color
+                      backgroundColor: const Color(0xFFFFFFFF)
+                          .withOpacity(0.30), // Button text color
                       shape: RoundedRectangleBorder(
-
                         borderRadius:
-                        BorderRadius.circular(10.0), // Square border
+                            BorderRadius.circular(10.0), // Square border
                       ),
                     ),
                     child: Row(
@@ -69,7 +64,7 @@ class RecordMenuScreen extends StatelessWidget {
                         ),
                         const SizedBox(
                           height:
-                          8.0, // Add some spacing between the image and text
+                              8.0, // Add some spacing between the image and text
                         ),
                         const Text(
                           'Start Audio Recording', // This is the subheading text
@@ -82,61 +77,55 @@ class RecordMenuScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate to Gallery screen
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VideoScreen()));
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  elevation: 0.0,
-                  shadowColor: Colors.transparent,
-                  backgroundColor:
-                  const Color(0xFFFFFFFF).withOpacity(0.30), // Button text color
-                  shape: RoundedRectangleBorder(
-
-                    borderRadius:
-                    BorderRadius.circular(10.0), // Square border
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to Gallery screen
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => VideoScreen()));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    elevation: 0.0,
+                    shadowColor: Colors.transparent,
+                    backgroundColor: const Color(0xFFFFFFFF)
+                        .withOpacity(0.30), // Button text color
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(10.0), // Square border
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/icons/camera_on.png',
+                        width: 45.0, // You can adjust the width and height
+                        height: 45.0, // as per your requirement
+                      ),
+                      const SizedBox(
+                        height:
+                            8.0, // Add some spacing between the image and text
+                      ),
+                      const Text(
+                        'Start Video Recording', // This is the subheading text
+                        style: TextStyle(
+                          fontSize: 13.0, // Adjust font size as needed
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/icons/camera_on.png',
-                      width: 45.0, // You can adjust the width and height
-                      height: 45.0, // as per your requirement
-                    ),
-                    const SizedBox(
-                      height:
-                      8.0, // Add some spacing between the image and text
-                    ),
-                    const Text(
-                      'Start Video Recording', // This is the subheading text
-                      style: TextStyle(
-                        fontSize: 13.0, // Adjust font size as needed
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
               ],
             )
-        ],
+          ],
         ),
-        ) /* add child content here */,
+      ) /* add child content here */,
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0.0,
-
         items: const [
           BottomNavigationBarItem(
             backgroundColor: Color(0x00ffffff),
-
             icon: Icon(Icons.home),
             label: 'Home',
           ),
@@ -156,8 +145,8 @@ class RecordMenuScreen extends StatelessWidget {
         onTap: (int index) {
           // Handle navigation bar item taps
           if (index == 0) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => HomeScreen()));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomeScreen()));
           } else if (index == 1) {
             // Navigate to Search screen
             Navigator.push(context,
