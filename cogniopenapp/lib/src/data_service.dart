@@ -35,9 +35,9 @@ class DataService {
 
     mediaList = [...audios, ...photos, ...videos];
 
-    final videoResponses = await VideoResponseRepository.instance.readAll();
+    responseList = await VideoResponseRepository.instance.readAll();
 
-    for (var videoResponse in videoResponses) {
+    for (var videoResponse in responseList) {
       print(videoResponse.toJson());
     }
   }

@@ -18,8 +18,8 @@ import 'settingsScreen.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    VideoProcessor vp = VideoProcessor();
-    vp.automaticallySendToRekognition();
+    //VideoProcessor vp = VideoProcessor();
+    //vp.automaticallySendToRekognition();
     return Scaffold(
         // Set the background color for the entire screen
         extendBodyBehindAppBar: true,

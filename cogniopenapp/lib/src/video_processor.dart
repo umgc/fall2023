@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/aws_video_response.dart';
+import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/data_service.dart';
 
 class VideoProcessor {
@@ -27,6 +28,16 @@ class VideoProcessor {
 
   factory VideoProcessor() {
     return _instance;
+  }
+
+  VideoResponse? getRequestedResponse(String searchTitle) {
+    print("LOOKING FOR REQUESTED RESPONSE");
+    for (int i = DataService.instance.responseList.length - 1; i >= 0; i--) {
+      if (DataService.instance.responseList[i].title == searchTitle) {
+        return DataService.instance.responseList[i];
+      }
+    }
+    return null;
   }
 
   Future<void> startService() async {

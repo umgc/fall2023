@@ -1,10 +1,11 @@
 //import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
-import 'package:cogniopenapp/ui/testVideoScreen.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:cogniopenapp/src/database/model/video_response.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 //import '../src/galleryData.dart';
 //import 'dart:io';
 
@@ -76,40 +77,13 @@ class RekognitionScreenState extends State<RekognitionScreen> {
       curve: Curves.bounceIn,
       children: [
         // FAB 1
-        SpeedDialChild(
-            child: const Icon(Icons.search),
-            backgroundColor: const Color(0XFFE91E63),
-            onTap: () {
-              //creates a bucket; not needed since we are doing this on app load
-              s3.createBucket();
-            },
-            label: 'Create bucket',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63)),
-        // FAB 2
+
         SpeedDialChild(
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
-              vp.uploadVideoToS3();
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TestVideoScreen()));
-            },
-            label: 'Add video',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63)),
-        SpeedDialChild(
-            child: const Icon(Icons.interests),
-            backgroundColor: const Color(0XFFE91E63),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TestVideoScreen()));
+              print(" PUT THE FINDING OB STUF FHERE");
+              displayFullObjectView();
             },
             label: 'PARSE HARDCODED JOB',
             labelStyle: const TextStyle(
@@ -118,6 +92,87 @@ class RekognitionScreenState extends State<RekognitionScreen> {
                 fontSize: 16.0),
             labelBackgroundColor: const Color(0XFFE91E63))
       ],
+    );
+  }
+
+  void displayFullObjectView() async {
+    VideoProcessor vp = VideoProcessor();
+    VideoResponse? response = vp.getRequestedResponse("Person");
+    if (response == null) {
+      return;
+    }
+    Image stillImage = await FileManager.getThumbnail(
+        response.referenceVideoFilePath, response.timestamp);
+
+    double imageWidth = 320;
+    double imageHeight = 240;
+
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Full Screen Response and Details'),
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Stack(
+                    children: [
+                      Image(image: stillImage.image),
+                      //if (_isRectangleVisible)
+                      Positioned(
+                        //TODO: hardcoded video frame width and height; these need replaced with whatever actually comes in as the image
+                        left: imageWidth * response.left,
+                        top: imageHeight * response.top,
+                        child: Opacity(
+                          opacity: 0.35,
+                          child: Material(
+                            child: InkWell(
+                              child: Container(
+                                width: imageWidth * response.width,
+                                height: imageHeight * response.height,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 2,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Container(
+                                    color: Colors.black,
+                                    child: Text(
+                                      '${response.title} ${((response.confidence * 100).truncateToDouble()) / 100}%',
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text('Timestamp: ${response.timestamp}',
+                      style: const TextStyle(fontSize: 18)),
+                  Text('Name: ${response.title}',
+                      style: const TextStyle(fontSize: 18)),
+                  //Text('Confidence: ${response.confidence}'),
+                  //Text('Timestamp: ${response.timestamp}'),
+                  //Text(
+                  //  'BoundingBox: ${response.boundingBox?.toString() ?? "N/A"}'),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
