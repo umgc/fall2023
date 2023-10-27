@@ -1,7 +1,7 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:flutter/material.dart';
 
-import '../src/video_response.dart';
+import 'package:cogniopenapp/src/video_response.dart';
 
 List<VideoResponse> createTestResponseList() {
   return [

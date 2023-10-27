@@ -1,22 +1,16 @@
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
-
-const String tableVideos = 'videos';
-
-class VideoFields extends MediaFields {
-  static final List<String> values = [
-    ...MediaFields.values,
-    duration,
-    thumbnail,
-  ];
-
-  static const String duration = 'duration';
-  static const String thumbnail = 'thumbnail';
-}
+import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:flutter/widgets.dart';
 
 class Video extends Media {
+  final String videoFileName;
+  final String? thumbnailFileName;
   final String duration;
-  final String? thumbnail;
+
+  late Image? thumbnail;
 
   Video({
     int? id,
@@ -24,22 +18,24 @@ class Video extends Media {
     String? description,
     List<String>? tags,
     required DateTime timestamp,
-    required String fileName,
     required int storageSize,
     required bool isFavorited,
+    required this.videoFileName,
+    this.thumbnailFileName,
     required this.duration,
-    this.thumbnail,
   }) : super(
           id: id,
           mediaType: MediaType.video,
-          title: title,
+          title:
+              title ?? videoFileName, // TODO: Decide on default video file name
           description: description,
           tags: tags,
           timestamp: timestamp,
-          fileName: fileName,
           storageSize: storageSize,
           isFavorited: isFavorited,
-        );
+        ) {
+    _loadThumbnail();
+  }
 
   @override
   Video copy({
@@ -48,11 +44,11 @@ class Video extends Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
-    String? fileName,
     int? storageSize,
     bool? isFavorited,
+    String? videoFileName,
+    String? thumbnailFileName,
     String? duration,
-    String? thumbnail,
   }) =>
       Video(
         id: id ?? this.id,
@@ -60,37 +56,52 @@ class Video extends Media {
         description: description ?? this.description,
         tags: tags ?? this.tags,
         timestamp: timestamp ?? this.timestamp,
-        fileName: fileName ?? this.fileName,
         storageSize: storageSize ?? this.storageSize,
         isFavorited: isFavorited ?? this.isFavorited,
+        videoFileName: videoFileName ?? this.videoFileName,
+        thumbnailFileName: thumbnailFileName ?? this.thumbnailFileName,
         duration: duration ?? this.duration,
-        thumbnail: thumbnail ?? this.thumbnail,
       );
 
   @override
   Map<String, Object?> toJson() {
     return {
       ...super.toJson(),
+      VideoFields.videoFileName: videoFileName,
+      VideoFields.thumbnailFileName: thumbnailFileName,
       VideoFields.duration: duration,
-      VideoFields.thumbnail: thumbnail,
     };
   }
 
   @override
   static Video fromJson(Map<String, Object?> json) {
-    return Video(
-      id: json[MediaFields.id] as int?,
-      title: json[MediaFields.title] as String?,
-      description: json[MediaFields.description] as String?,
-      tags: (json[MediaFields.tags] as String?)?.split(','),
-      timestamp: DateTime.fromMillisecondsSinceEpoch(
-        json[MediaFields.timestamp] as int,
-      ),
-      fileName: json[MediaFields.fileName] as String,
-      storageSize: json[MediaFields.storageSize] as int,
-      isFavorited: json[MediaFields.isFavorited] == 1,
-      duration: json[VideoFields.duration] as String,
-      thumbnail: json[VideoFields.thumbnail] as String?,
-    );
+    try {
+      return Video(
+        id: json[MediaFields.id] as int?,
+        title: json[MediaFields.title] as String?,
+        description: json[MediaFields.description] as String?,
+        tags: (json[MediaFields.tags] as String?)?.split(','),
+        timestamp: DateTime.fromMillisecondsSinceEpoch(
+          (json[MediaFields.timestamp] as int),
+          isUtc: true,
+        ),
+        storageSize: json[MediaFields.storageSize] as int,
+        isFavorited: json[MediaFields.isFavorited] == 1,
+        videoFileName: json[VideoFields.videoFileName] as String,
+        thumbnailFileName: json[VideoFields.thumbnailFileName] as String?,
+        duration: json[VideoFields.duration] as String,
+      );
+    } catch (e) {
+      throw FormatException('Error parsing JSON for Video: $e');
+    }
+  }
+
+  Future<void> _loadThumbnail() async {
+    if (thumbnailFileName != null && thumbnailFileName!.isNotEmpty) {
+      thumbnail = FileManager.loadImage(
+        DirectoryManager.instance.videoThumbnailsDirectory.path,
+        thumbnailFileName!,
+      );
+    }
   }
 }
