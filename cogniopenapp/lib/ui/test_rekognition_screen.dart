@@ -28,6 +28,7 @@ class RekognitionScreen extends StatefulWidget {
 class RekognitionScreenState extends State<RekognitionScreen> {
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
+  String userInput = '';
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +36,12 @@ class RekognitionScreenState extends State<RekognitionScreen> {
       appBar: AppBar(
         title: const Text('S3 Buckets'),
       ),
-      body: const Column(children: [
-        Padding(
+      body: Column(children: [
+        const Padding(
           padding: EdgeInsets.fromLTRB(
               16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
           child: Text(
-            'Welcome!', // This is the header text
+            'Looking for an object?', // This is the header text
             style: TextStyle(
               fontSize: 24.0, // Adjust font size as needed
               fontWeight: FontWeight.bold,
@@ -49,12 +50,12 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             textAlign: TextAlign.center,
           ),
         ),
-        Padding(
+        const Padding(
           // New subheading section starts here
           padding: EdgeInsets.fromLTRB(
               16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
           child: Text(
-            "Click the buttons to do the thing.", // This is the subheading text
+            "CogniOpen assistant will search for a selected object in recent video recordings.", // This is the subheading text
             style: TextStyle(
               fontSize: 16.0, // Adjust font size as needed
               //color:
@@ -63,6 +64,50 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             textAlign: TextAlign.center,
           ),
         ), // New subheading section ends here
+        Center(
+          child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextField(
+                    onChanged: (text) {
+                      setState(() {
+                        userInput = text;
+                      });
+                    },
+                    decoration:
+                        InputDecoration(labelText: 'Enter search object.'),
+                  ),
+                  //SizedBox(height: 20),
+                  //Text('User Input: $userInput',
+                  //    style: TextStyle(fontSize: 20)),
+                ],
+              )),
+        ),
+        //SizedBox(height: 20),
+        //Text('User Input: $userInput', style: TextStyle(fontSize: 20)),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            // Perform an action when the button is pressed, e.g., display the user's input.
+            /*ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('User input: $userInput'),
+              ),
+            );*/
+            if (userInput.isNotEmpty) {
+              displayFullObjectView(userInput);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Please enter a valid search object'),
+                ),
+              );
+            }
+          },
+          child: Text('Submit'),
+        ),
       ]),
       floatingActionButton: _getFAB(s3),
     );
@@ -84,7 +129,7 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
               print(" PUT THE FINDING OB STUF FHERE");
-              displayFullObjectView();
+              displayFullObjectView("Person");
             },
             label: 'PARSE HARDCODED JOB',
             labelStyle: const TextStyle(
@@ -96,9 +141,9 @@ class RekognitionScreenState extends State<RekognitionScreen> {
     );
   }
 
-  void displayFullObjectView() async {
+  void displayFullObjectView(String userQuery) async {
     VideoProcessor vp = VideoProcessor();
-    VideoResponse? response = vp.getRequestedResponse("Person");
+    VideoResponse? response = vp.getRequestedResponse("userQuery");
     if (response == null) {
       return;
     }
