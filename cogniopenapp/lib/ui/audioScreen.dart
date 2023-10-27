@@ -309,8 +309,9 @@ Future<void> _saveTranscriptionSummaryToFile(String transcriptionSummaryName) as
 
     File file = File(filePath);
     await file.writeAsString(transcriptionSummary);
-
+    
     print("Transcription Summary saved at $filePath");
+    _sendToDatabase();  
   } catch (e) {
     print("Error saving transcription");
   }
@@ -380,11 +381,11 @@ Future<void> _sendToDatabase() async {
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
     String filePath = '${appDocDirectory.path}/files/audios/transcripts/$key2.txt';
        await DataService.instance.addAudio(
-          title: 'Bird2',
+          title: key2,
           description: transcription,
           tags: [],
           audioFile: File(filePath),
-          summary: '$transcriptionSummary');
+          summary: transcriptionSummary);
 }
 
 
