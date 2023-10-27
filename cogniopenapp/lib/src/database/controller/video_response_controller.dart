@@ -5,6 +5,8 @@ import 'package:cogniopenapp/src/database/repository/video_response_repository.d
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 
+import 'package:path/path.dart' as path;
+
 const String videoResponseType = 'video_response';
 
 class VideoResponseController {
@@ -24,10 +26,12 @@ class VideoResponseController {
           "THIS IS THE FILE BEING ADDED TO THE TIMESTAMP ${referenceVideoFilePath}");
       DateTime timestamp =
           DateTime.parse(FileManager.getFileTimestamp(referenceVideoFilePath));
+      String referenceVideo =
+          FileManager.getFileName(path.basename(referenceVideoFilePath));
       print("TTHIS IS TIMESTAM PARSED ${timestamp}");
       VideoResponse newResponse = VideoResponse(
         title: title,
-        referenceVideoFilePath: referenceVideoFilePath,
+        referenceVideoFilePath: referenceVideo,
         timestamp: timestamp,
         confidence: confidence,
         left: left,

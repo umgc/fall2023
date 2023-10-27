@@ -21,7 +21,7 @@ List<AWS_VideoResponse> createTestResponseList() {
             top: 0.7510809302330017,
             width: 0.05737469345331192,
             height: 0.055630747228860855),
-        "fake file"),
+        "2023-10-27_12:19:21.819024.mp4"),
     // Add more test objects for other URLs as needed
   ];
 }
@@ -93,8 +93,8 @@ class AWS_VideoResponseScreenState extends State<AWS_VideoResponseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //List<AWS_VideoResponse> realResponse = createTestResponseList();
-    List<AWS_VideoResponse> realResponse = createResponseList(awsResponses);
+    List<AWS_VideoResponse> realResponse = createTestResponseList();
+    //List<AWS_VideoResponse> realResponse = createResponseList(awsResponses);
     DataService.instance.addVideoResponses(realResponse);
 
     //doResponseSTuff(awsResponses);
