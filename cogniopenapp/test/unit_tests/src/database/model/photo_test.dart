@@ -27,7 +27,7 @@ Future<void> main() async {
     // Photo constructor tests:
 
     test(
-        'Photo constructor (with all parameters provided) should create a Photo object and initialize values correctly',
+        'U-5-1: Photo constructor (with all parameters provided) should create a Photo object and initialize values correctly',
         () {
       final Photo photo = Photo(
         id: id,
@@ -53,7 +53,7 @@ Future<void> main() async {
     });
 
     test(
-        'Photo constructor (with only required parameters provided) should create a Photo object and initialize values correctly',
+        'U-5-2: Photo constructor (with only required parameters provided) should create a Photo object and initialize values correctly',
         () {
       final Photo photo = Photo(
         id: id,
@@ -79,7 +79,7 @@ Future<void> main() async {
     // Photo.fromJson() tests:
 
     test(
-        'Photo.fromJson should correctly create a Photo object from JSON (with all field values)',
+        'U-5-3: Photo.fromJson should correctly create a Photo object from JSON (with all field values)',
         () {
       final Map<String, Object?> json = {
         MediaFields.id: id,
@@ -111,7 +111,7 @@ Future<void> main() async {
     });
 
     test(
-      'Photo.fromJson should correctly create a Photo object from JSON (with non-nullable field values only)',
+      'U-5-4: Photo.fromJson should correctly create a Photo object from JSON (with non-nullable field values only)',
       () {
         final Map<String, Object?> json = {
           MediaFields.id: id,
@@ -142,7 +142,7 @@ Future<void> main() async {
     );
 
     test(
-      'Photo.fromJson should throw a FormatException when given invalid JSON',
+      'U-5-5: Photo.fromJson should throw a FormatException when given invalid JSON',
       () {
         final Map<String, Object?> json = {};
 
@@ -154,7 +154,7 @@ Future<void> main() async {
   // Photo.toJson() tests:
 
   test(
-    'Photo.toJson should correctly serialize a Photo object (with all field values) to JSON',
+    'U-5-6: Photo.toJson should correctly serialize a Photo object (with all field values) to JSON',
     () {
       final Photo photo = Photo(
         id: id,
@@ -183,7 +183,7 @@ Future<void> main() async {
   );
 
   test(
-    'Photo.toJson should correctly serialize a Photo object (with non-nullable field values only) to JSON',
+    'U-5-7: Photo.toJson should correctly serialize a Photo object (with non-nullable field values only) to JSON',
     () {
       final Photo photo = Photo(
         id: id,
