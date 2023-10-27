@@ -13,7 +13,7 @@ class VideoResponseFields {
     top,
     width,
     height,
-    imageFileName,
+    referenceVideoFilePath,
   ];
 
   static const String id = '_id';
@@ -24,7 +24,7 @@ class VideoResponseFields {
   static const String top = 'top';
   static const String width = 'width';
   static const String height = 'height';
-  static const String imageFileName = 'image_file_name';
+  static const String referenceVideoFilePath = 'referenceVideoFilePath';
 }
 
 class VideoResponseRepository {

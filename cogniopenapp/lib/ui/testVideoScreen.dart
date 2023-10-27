@@ -102,7 +102,7 @@ class TestVideoScreenState extends State<TestVideoScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => VideoResponseScreen(value)));
+                        builder: (context) => AWS_VideoResponseScreen(value)));
               });
             },
             label: 'Show Results',

@@ -1,46 +1,33 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:flutter/material.dart';
+import 'package:cogniopenapp/src/data_service.dart';
 
-import 'package:cogniopenapp/src/video_response.dart';
+import 'package:cogniopenapp/src/aws_video_response.dart';
 
-List<VideoResponse> createTestResponseList() {
+List<AWS_VideoResponse> createTestResponseList() {
   return [
-    VideoResponse(
-      'Water',
-      100,
-      52852,
-    ),
-    VideoResponse(
-      'Aerial View',
-      96.13745880126953,
-      53353,
-    ),
-    VideoResponse(
-      'Animal',
-      86.5937728881836,
-      53353,
-    ),
-    VideoResponse(
-      'Coast',
-      99.99983215332031,
-      53353,
-    ),
-    VideoResponse.overloaded(
-      'Fish',
-      90.63278198242188,
-      53353,
-      ResponseBoundingBox(
-          left: 0.11934830248355865,
-          top: 0.7510809302330017,
-          width: 0.05737469345331192,
-          height: 0.055630747228860855),
-    ),
+    /* 
+    AWS_VideoResponse('Water', 100, 52852, "fake file"),
+    AWS_VideoResponse('Aerial View', 96.13745880126953, 53353, "fake file"),
+    AWS_VideoResponse('Animal', 86.5937728881836, 53353, "fake file"),
+    AWS_VideoResponse('Coast', 99.99983215332031, 53353, "fake file"), */
+    AWS_VideoResponse.overloaded(
+        'Fish',
+        90.63278198242188,
+        53353,
+        ResponseBoundingBox(
+            left: 0.11934830248355865,
+            top: 0.7510809302330017,
+            width: 0.05737469345331192,
+            height: 0.055630747228860855),
+        "fake file"),
     // Add more test objects for other URLs as needed
   ];
 }
 
-List<VideoResponse> createResponseList(rek.GetLabelDetectionResponse response) {
-  List<VideoResponse> responseList = [];
+List<AWS_VideoResponse> createResponseList(
+    rek.GetLabelDetectionResponse response) {
+  List<AWS_VideoResponse> responseList = [];
   List<String?> recognizedItems = [];
 
   Iterator<rek.LabelDetection> iter = response.labels!.iterator;
@@ -52,53 +39,56 @@ List<VideoResponse> createResponseList(rek.GetLabelDetectionResponse response) {
       } else {
         recognizedItems.add(name);
       }
-      VideoResponse newResponse = VideoResponse.overloaded(
-        iter.current.label!.name ?? "default value",
-        iter.current.label!.confidence ?? 80,
-        iter.current.timestamp ?? 0,
-        ResponseBoundingBox(
-            left: inst.boundingBox!.left ?? 0,
-            top: inst.boundingBox!.top ?? 0,
-            width: inst.boundingBox!.width ?? 0,
-            height: inst.boundingBox!.height ?? 0),
-      );
+      AWS_VideoResponse newResponse = AWS_VideoResponse.overloaded(
+          iter.current.label!.name ?? "default value",
+          iter.current.label!.confidence ?? 80,
+          iter.current.timestamp ?? 0,
+          ResponseBoundingBox(
+              left: inst.boundingBox!.left ?? 0,
+              top: inst.boundingBox!.top ?? 0,
+              width: inst.boundingBox!.width ?? 0,
+              height: inst.boundingBox!.height ?? 0),
+          "fake file");
       responseList.add(newResponse);
     }
   }
   return responseList;
 }
 
-class VideoResponseScreen extends StatefulWidget {
+class AWS_VideoResponseScreen extends StatefulWidget {
   final rek.GetLabelDetectionResponse awsResponses;
-  const VideoResponseScreen(this.awsResponses, {super.key});
+  const AWS_VideoResponseScreen(this.awsResponses, {super.key});
 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Query Responses', style: TextStyle(color: Colors.black54)),
+        title: const Text('Query Responses',
+            style: TextStyle(color: Colors.black54)),
       ),
     );
   }
 
   @override
-  VideoResponseScreenState createState() =>
+  AWS_VideoResponseScreenState createState() =>
       // ignore: no_logic_in_create_state
-      VideoResponseScreenState(awsResponses);
+      AWS_VideoResponseScreenState(awsResponses);
 }
 
-class VideoResponseScreenState extends State<VideoResponseScreen> {
+class AWS_VideoResponseScreenState extends State<AWS_VideoResponseScreen> {
   rek.GetLabelDetectionResponse awsResponses;
-  VideoResponseScreenState(this.awsResponses);
+  AWS_VideoResponseScreenState(this.awsResponses);
 
   @override
   Widget build(BuildContext context) {
-    //List<VideoResponse> realResponse = createTestResponseList();
-    List<VideoResponse> realResponse = createResponseList(awsResponses);
+    //List<AWS_VideoResponse> realResponse = createTestResponseList();
+    List<AWS_VideoResponse> realResponse = createResponseList(awsResponses);
+    DataService.instance.addVideoResponses(realResponse);
     double imageWidth = 320;
     double imageHeight = 240;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Query Responses', style: TextStyle(color: Colors.black54)),
+        title: const Text('Query Responses',
+            style: TextStyle(color: Colors.black54)),
       ),
       body: Column(children: [
         const Padding(
@@ -121,7 +111,7 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
             ),
             itemCount: realResponse.length,
             itemBuilder: (BuildContext context, int index) {
-              VideoResponse response = realResponse[index];
+              AWS_VideoResponse response = realResponse[index];
               response.setImage(response.timestamp);
               return GestureDetector(
                 onTap: () async {

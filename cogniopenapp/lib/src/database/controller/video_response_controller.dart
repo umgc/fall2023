@@ -12,7 +12,7 @@ class VideoResponseController {
 
   static Future<VideoResponse?> addVideoResponse({
     required String title,
-    required File imageFile,
+    required String referenceVideoFilePath,
     required double confidence,
     required double left,
     required double top,
@@ -20,17 +20,11 @@ class VideoResponseController {
     required double height,
   }) async {
     try {
-      DateTime timestamp = DateTime.now();
-      String imageFileExtension =
-          FileManager().getFileExtensionFromFile(imageFile);
-      String imageFileName = FileManager().generateFileName(
-        videoResponseType,
-        timestamp,
-        imageFileExtension,
-      );
+      DateTime timestamp =
+          DateTime.parse(FileManager.getFileTimestamp(referenceVideoFilePath));
       VideoResponse newResponse = VideoResponse(
         title: title,
-        imageFileName: imageFileName,
+        referenceVideoFilePath: referenceVideoFilePath,
         timestamp: timestamp,
         confidence: confidence,
         left: left,
@@ -40,11 +34,7 @@ class VideoResponseController {
       );
       VideoResponse createdResponse =
           await VideoResponseRepository.instance.create(newResponse);
-      await FileManager.addFileToFilesystem(
-        imageFile,
-        DirectoryManager.instance.videoStillsDirectory.path,
-        imageFileName,
-      );
+
       return createdResponse;
     } catch (e) {
       print('VideoResponse Controller -- Error adding response: $e');
@@ -84,7 +74,7 @@ class VideoResponseController {
       final existingResponse = await VideoResponseRepository.instance.read(id);
       await VideoResponseRepository.instance.delete(id);
       final imageFilePath =
-          '${DirectoryManager.instance.videoStillsDirectory.path}/${existingResponse.imageFileName}';
+          '${DirectoryManager.instance.videoStillsDirectory.path}/${existingResponse.referenceVideoFilePath}';
       await FileManager.removeFileFromFilesystem(imageFilePath);
       return existingResponse;
     } catch (e) {

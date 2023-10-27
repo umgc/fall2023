@@ -76,7 +76,7 @@ class AppDatabase {
       ${VideoResponseFields.id} $idType,
       ${VideoResponseFields.title} $textType,
       ${VideoResponseFields.timestamp} $integerType,
-      ${VideoResponseFields.imageFileName} $textType,
+      ${VideoResponseFields.referenceVideoFilePath} $textType,
       ${VideoResponseFields.confidence} $floatType,
       ${VideoResponseFields.left} $floatType,
       ${VideoResponseFields.top} $floatType,

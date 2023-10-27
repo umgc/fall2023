@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 class VideoResponse {
   final int? id;
   final String title;
-  final String imageFileName;
+  final String referenceVideoFilePath;
   final DateTime timestamp;
   final double confidence;
   final double left;
@@ -24,10 +24,8 @@ class VideoResponse {
     required this.top,
     required this.width,
     required this.height,
-    required this.imageFileName,
-  }) {
-    _loadImage();
-  }
+    required this.referenceVideoFilePath,
+  });
 
   VideoResponse copy({
     int? id,
@@ -38,7 +36,7 @@ class VideoResponse {
     double? top,
     double? width,
     double? height,
-    String? imageFileName,
+    String? referenceVideoFilePath,
   }) =>
       VideoResponse(
         id: id ?? this.id,
@@ -49,7 +47,8 @@ class VideoResponse {
         top: top ?? this.top,
         width: width ?? this.width,
         height: height ?? this.height,
-        imageFileName: imageFileName ?? this.imageFileName,
+        referenceVideoFilePath:
+            referenceVideoFilePath ?? this.referenceVideoFilePath,
       );
 
   Map<String, Object?> toJson() {
@@ -62,7 +61,7 @@ class VideoResponse {
       'top': top,
       'width': width,
       'height': height,
-      'imageFileName': imageFileName,
+      'referenceVideoFilePath': referenceVideoFilePath,
     };
   }
 
@@ -80,17 +79,10 @@ class VideoResponse {
         top: json['top'] as double,
         width: json['width'] as double,
         height: json['height'] as double,
-        imageFileName: json['imageFileName'] as String,
+        referenceVideoFilePath: json['referenceVideoFilePath'] as String,
       );
     } catch (e) {
       throw FormatException('Error parsing JSON for VideoResponse: $e');
     }
-  }
-
-  Future<void> _loadImage() async {
-    image = FileManager.loadImage(
-      DirectoryManager.instance.videoResponsesDirectory.path,
-      imageFileName,
-    );
   }
 }
