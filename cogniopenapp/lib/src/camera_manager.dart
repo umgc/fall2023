@@ -66,15 +66,16 @@ class CameraManager {
   }
 
   void startAutoRecording() async {
-    // Delay for camera initialization
-    Future.delayed(Duration(milliseconds: 3000), () {
-      if (controller != null) {
-        if (isAutoRecording) {
+    if (isAutoRecording) {
+      // Delay for camera initialization
+      Future.delayed(Duration(milliseconds: 3000), () {
+        if (controller != null) {
           FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
+
+          startRecordingInBackground();
         }
-        startRecordingInBackground();
-      }
-    });
+      });
+    }
   }
 
   Future<void> stopRecording() async {
