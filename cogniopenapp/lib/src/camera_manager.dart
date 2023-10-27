@@ -7,6 +7,7 @@ import 'package:cogniopenapp/src/address.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import '../src/data_service.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/video_processor.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -18,7 +19,10 @@ class CameraManager {
 
   static final CameraManager _instance = CameraManager._internal();
 
+  VideoProcessor vp = VideoProcessor();
+
   bool isAutoRecording = false;
+  bool uploadToRekognition = false;
   int autoRecordingInterval = 60;
 
   late Image recentThumbnail;
@@ -46,6 +50,9 @@ class CameraManager {
         int.parse(dotenv.get('autoRecordInterval', fallback: "60"));
     isAutoRecording =
         dotenv.get('autoRecordEnabled', fallback: "false") == "true";
+    uploadToRekognition =
+        dotenv.get('autoUploadToRekognitionEnabled', fallback: "false") ==
+            "true";
     String cameraUsed = (_cameras.length > 1) ? "front" : "rear";
 
     if (isAutoRecording) {
@@ -71,6 +78,12 @@ class CameraManager {
     // Delay for camera initialization
     Future.delayed(Duration(milliseconds: 3000), () {
       if (controller != null) {
+        print(
+            "|-----------------------------------------------------------------------------------------|");
+        print(
+            "|------------------------------------- AUTO VIDEO RECORDING HAS STARTED -------------------------------------|");
+        print(
+            "|-----------------------------------------------------------------------------------------|");
         startRecordingInBackground();
       }
     });
@@ -81,6 +94,9 @@ class CameraManager {
       controller?.stopVideoRecording().then((XFile? file) {
         if (file != null) {
           saveMediaLocally(file); // Call the saveMediaLocally function
+          if (uploadToRekognition) {
+            vp.automaticallySendToRekognition();
+          }
         }
       });
     } catch (Exc) {
@@ -101,7 +117,7 @@ class CameraManager {
   void startRecordingInBackground() async {
     if (controller == null || !controller.value.isInitialized) {
       print('Error: Camera is not initialized.');
-      print('Auto recording ahs been canceeled.');
+      print('Auto recording has been canceeled.');
       return;
     }
 
@@ -114,7 +130,7 @@ class CameraManager {
     controller.startVideoRecording();
 
     // Record for 5 minutes (300 seconds)
-    await Future.delayed(Duration(seconds: 20));
+    await Future.delayed(Duration(seconds: autoRecordingInterval));
 
     //TODO add ability to STOP the video early (manually)
 
