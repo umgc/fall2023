@@ -103,7 +103,6 @@ class VideoProcessor {
     print(
         "|-----------------------------------------------------------------------------------------|");
     List<AWS_VideoResponse> responseList = [];
-    List<String?> recognizedItems = [];
 
     FileManager.getMostRecentVideo();
     String responseVideo = FileManager.mostRecentVideoPath;
@@ -114,11 +113,7 @@ class VideoProcessor {
       for (Instance inst in iter.current.label!.instances!) {
         String? name = iter.current.label!.name;
         print("RESPONSE{n}");
-        if (recognizedItems.contains(name)) {
-          continue;
-        } else {
-          recognizedItems.add(name);
-        }
+
         AWS_VideoResponse newResponse = AWS_VideoResponse.overloaded(
             iter.current.label!.name ?? "default value",
             iter.current.label!.confidence ?? 80,

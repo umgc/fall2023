@@ -30,7 +30,7 @@ class VideoResponse {
   VideoResponse copy({
     int? id,
     String? title,
-    DateTime? timestamp,
+    int? timestamp,
     double? confidence,
     double? left,
     double? top,
