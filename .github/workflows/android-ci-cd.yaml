@@ -26,6 +26,9 @@ jobs:
     - name: Create .env file
       run: touch .env
       working-directory: ./cogniopenapp
+    - name: Populate .env file
+      run: echo "# comment" > .env
+      working-directory: ./cogniopenapp
     - name: "Setup Flutter"
       uses: subosito/flutter-action@v2
       with:
