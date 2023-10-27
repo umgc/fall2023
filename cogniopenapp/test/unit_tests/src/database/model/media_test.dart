@@ -6,7 +6,8 @@ void main() {
 
     // MediaFields values tests:
 
-    test('MediaFields.values should contain the correct field names', () {
+    test('U-4-1: MediaFields.values should contain the correct field names',
+        () {
       expect(MediaFields.values, isA<List<String>>());
       expect(MediaFields.values, hasLength(7));
       expect(MediaFields.values, contains(MediaFields.id));
@@ -18,7 +19,7 @@ void main() {
       expect(MediaFields.values, contains(MediaFields.isFavorited));
     });
 
-    test('MediaFields values should be the correct field names', () {
+    test('U-4-2: MediaFields values should be the correct field names', () {
       expect(MediaFields.id, '_id');
       expect(MediaFields.title, 'title');
       expect(MediaFields.description, 'description');
