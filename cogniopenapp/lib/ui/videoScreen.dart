@@ -47,6 +47,9 @@ class _CameraHomeState extends State<VideoScreen>
   double _currentScale = 1.0;
   double _baseScale = 1.0;
 
+  bool isRecording = false;
+
+
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
 
@@ -56,6 +59,7 @@ class _CameraHomeState extends State<VideoScreen>
     //WidgetsBinding.instance.addObserver(this);
     cameraManager = CameraManager();
     cameraController = cameraManager.controller;
+    isRecording = true;
   }
 
   @override
@@ -72,8 +76,8 @@ class _CameraHomeState extends State<VideoScreen>
                 color: Colors.black,
                 border: Border.all(
                   color: cameraController.value.isRecordingVideo
-                      ? Colors.redAccent
-                      : Colors.grey,
+                      ? Colors.grey
+                      : Colors.redAccent,
                   width: 3.0,
                 ),
               ),
@@ -177,18 +181,30 @@ class _CameraHomeState extends State<VideoScreen>
         IconButton(
           icon: cameraController != null &&
                   !cameraController.value.isRecordingVideo
-              ? const Icon(Icons.circle)
-              : const Icon(Icons.pause),
+              ? const Icon(Icons.pause)
+              : const Icon(Icons.circle),
           color: Colors.redAccent,
           onPressed: cameraController != null
-              ? (!cameraController.value.isRecordingVideo)
-                  ? onResumeButtonPressed
-                  : onPauseButtonPressed
-              : null,
-        ),
-      ],
-    );
-  }
+              ? () {
+                if (!cameraController.value.isRecordingVideo) {
+                  onResumeButtonPressed();
+                  setState(() {
+                    isRecording = true;
+                    const Icon(Icons.pause);
+                  });
+                } else {
+                  onPauseButtonPressed();
+                  setState(() {
+                    isRecording = false;
+                    const Icon(Icons.circle);
+                  });
+                }
+              }
+            : null,
+      ),
+    ],
+  );
+}
 
   void onResumeButtonPressed() {
     ScaffoldMessenger.of(context)
