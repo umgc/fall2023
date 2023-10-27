@@ -9,6 +9,7 @@ import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import '../../../resources/fake_path_provider_platform.dart';
 import '../utils/directory_manager_test.dart';
 
 const unitTestAudioTitle = "Unit Test Audio";
