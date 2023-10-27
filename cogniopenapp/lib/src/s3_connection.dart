@@ -36,10 +36,9 @@ class S3Bucket {
 
     connection = S3(
         //this region is hard-coded because the 'us-east-2' region would not run/load.
-        region: dotenv.get('region'),
-        credentials: AwsClientCredentials(
-            accessKey: dotenv.get('accessKey'),
-            secretKey: dotenv.get('secretKey')));
+        region: region,
+        credentials:
+            AwsClientCredentials(accessKey: access, secretKey: secret));
     //TODO:debug/testing statements
     print("S3 is connected...");
   }

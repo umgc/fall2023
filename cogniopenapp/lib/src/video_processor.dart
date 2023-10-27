@@ -52,11 +52,19 @@ class VideoProcessor {
 
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
+
+    String region = (dotenv.get('region', fallback: "none"));
+    String access = (dotenv.get('accessKey', fallback: "none"));
+    String secret = (dotenv.get('secretKey', fallback: "none"));
+
+    if (region == "none" || access == "none" || secret == "none") {
+      print("S3 needs to be initialized");
+      return;
+    }
     service = Rekognition(
-        region: dotenv.get('region'),
-        credentials: AwsClientCredentials(
-            accessKey: dotenv.get('accessKey'),
-            secretKey: dotenv.get('secretKey')));
+        region: region,
+        credentials:
+            AwsClientCredentials(accessKey: access, secretKey: secret));
     //TODO:debug/testing statements
     print("Rekognition is up...");
   }
