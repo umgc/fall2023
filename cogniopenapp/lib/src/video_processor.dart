@@ -31,9 +31,7 @@ class VideoProcessor {
   static final VideoProcessor _instance = VideoProcessor._internal();
 
   VideoProcessor._internal() {
-    startService().then((value) {
-      createProject();
-    });
+    startService();
   }
 
   factory VideoProcessor() {
@@ -65,6 +63,8 @@ class VideoProcessor {
         region: region,
         credentials:
             AwsClientCredentials(accessKey: access, secretKey: secret));
+
+    createProject();
     //TODO:debug/testing statements
     print("Rekognition is up...");
   }
