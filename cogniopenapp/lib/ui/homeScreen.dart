@@ -171,7 +171,7 @@ class HomeScreen extends StatelessWidget {
                       context: context,
                       iconPath: 'assets/icons/significant_object.png',
                       text: 'Significant Objects',
-                      screen: SignificantObjectsScreen(),
+                      screen: SignificantObjectScreen(),
                       keyName: "SignificantObjectButtonKey",
                     ),
                     _buildElevatedButton(
