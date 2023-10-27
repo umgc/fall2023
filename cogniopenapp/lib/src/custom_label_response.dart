@@ -20,10 +20,11 @@ class CustomLabelResponse {
         FileManager.mostRecentVideoPath, timestamp);
   }*/
 
+/*
   void setImage(int timeStampNew) async {
     exampleImage = await FileManager.getThumbnail(
         FileManager.mostRecentVideoPath, timeStampNew);
-  }
+  }*/
 }
 
 class ResponseBoundingBox {

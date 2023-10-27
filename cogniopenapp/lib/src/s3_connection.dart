@@ -25,17 +25,31 @@ class S3Bucket {
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
 
+    String region = (dotenv.get('region', fallback: "none"));
+    String access = (dotenv.get('accessKey', fallback: "none"));
+    String secret = (dotenv.get('secretKey', fallback: "none"));
+
+    if (region == "none" || access == "none" || secret == "none") {
+      print("S3 needs to be initialized");
+      return;
+    }
+
     connection = S3(
         //this region is hard-coded because the 'us-east-2' region would not run/load.
-        region: dotenv.get('region'),
-        credentials: AwsClientCredentials(
-            accessKey: dotenv.get('accessKey'),
-            secretKey: dotenv.get('secretKey')));
+        region: region,
+        credentials:
+            AwsClientCredentials(accessKey: access, secretKey: secret));
     //TODO:debug/testing statements
     print("S3 is connected...");
   }
 
   void createBucket() {
+    String bucket = (dotenv.get('videoS3Bucket', fallback: "none"));
+
+    if (bucket == "none") {
+      print("S3 needs to be initialized");
+      return;
+    }
     //impotent method that creates bucket if it is not already present.
     Future<CreateBucketOutput> creating =
         connection!.createBucket(bucket: dotenv.get('videoS3Bucket'));
@@ -54,6 +68,7 @@ class S3Bucket {
   // Adds the file to the S3 bucket
   Future<String> addVideoToS3(String title, String localPath) {
     // TODO Specify folder structure
+    print("ADDINF THIS TO S3 ${title}");
     Uint8List bytes = File(localPath).readAsBytesSync();
     return _addToS3(title, bytes);
   }
@@ -78,7 +93,8 @@ class S3Bucket {
   // Delete file from S3
   Future<bool> deleteFileFromS3(String key) async {
     try {
-      await connection!.deleteObject(bucket: dotenv.get('videoS3Bucket'), key: key);
+      await connection!
+          .deleteObject(bucket: dotenv.get('videoS3Bucket'), key: key);
       return true;
     } catch (e) {
       print('Failed to delete the file from S3: $e');
