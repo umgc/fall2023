@@ -27,8 +27,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
         //   setState(() {
         //   firstbuttontext = 'saving in progress...';
         //  });
-        GallerySaver.saveImage(recordedimage.path)
-            .then((path) {
+        GallerySaver.saveImage(recordedimage.path).then((path) {
           setState(() {
             //   firstbuttontext = 'image saved!';
           });
@@ -46,8 +45,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
         // setState(() {
         //    firstbuttontext = 'saving in progress...';
         //});
-        GallerySaver.saveImage(recordedimage.path)
-            .then((path) {
+        GallerySaver.saveImage(recordedimage.path).then((path) {
           setState(() {
             // firstbuttontext = 'image saved!';
           });
@@ -140,7 +138,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.black,
                             backgroundColor:
-                                const Color(0XFFC6FF00), // Button text color
+                                const Color(0XFFCCFFFF), // Button text color
                             shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.circular(10.0), // Square border
@@ -171,7 +169,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.black,
                             backgroundColor:
-                                const Color(0XFFC6FF00), // Button text color
+                                const Color(0XFFCCFFFF), // Button text color
                             shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.circular(10.0), // Square border
@@ -219,20 +217,18 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                 indent: 15,
                 endIndent: 15,
               ),
-              const Row
-                (mainAxisAlignment:MainAxisAlignment.center,
-              children: <Widget>[
-
-                Text(
-                  "Significant Objects",
-                  style: TextStyle(
-                    fontSize: 20.0, // Adjust font size as needed
-                    color: Colors
-                        .black87, // Slightly transparent white for subheading
-                  ),
-                ),
-
-              ]),
+              const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Significant Objects",
+                      style: TextStyle(
+                        fontSize: 20.0, // Adjust font size as needed
+                        color: Colors
+                            .black87, // Slightly transparent white for subheading
+                      ),
+                    ),
+                  ]),
               Divider(
                 color: Colors.black54,
                 height: 25,
