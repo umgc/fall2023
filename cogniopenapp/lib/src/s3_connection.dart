@@ -25,6 +25,15 @@ class S3Bucket {
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
 
+    String region = (dotenv.get('region', fallback: "none"));
+    String access = (dotenv.get('accessKey', fallback: "none"));
+    String secret = (dotenv.get('secretKey', fallback: "none"));
+
+    if (region == "none" || access == "none" || secret == "none") {
+      print("S3 needs to be initialized");
+      return;
+    }
+
     connection = S3(
         //this region is hard-coded because the 'us-east-2' region would not run/load.
         region: dotenv.get('region'),

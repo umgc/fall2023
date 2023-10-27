@@ -16,10 +16,16 @@ import 'settingsScreen.dart';
 
 // Main HomeScreen widget which is a stateless widget.
 class HomeScreen extends StatelessWidget {
+  bool hasBeenInitialized = false;
+
   @override
   Widget build(BuildContext context) {
-    CameraManager cm = CameraManager();
-    cm.startAutoRecording();
+    if (!hasBeenInitialized) {
+      CameraManager cm = CameraManager();
+      cm.startAutoRecording();
+      hasBeenInitialized = true;
+    }
+
     return Scaffold(
         // Set the background color for the entire screen
         extendBodyBehindAppBar: true,
