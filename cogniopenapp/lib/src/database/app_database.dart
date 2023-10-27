@@ -51,6 +51,7 @@ class AppDatabase {
       CREATE TABLE $tableAudios (
         ${mediaColumns.join(',\n')},
         ${AudioFields.audioFileName} $textType,
+        ${AudioFields.transcriptFileName} $textNullableType,
         ${AudioFields.summary} $textNullableType
       )
     ''');

@@ -35,11 +35,23 @@ class DataService {
 
     mediaList = [...audios, ...photos, ...videos];
 
+    // *** For development debug purposes only. TODO: Remove
+    for (var audio in audios) {
+      print('Audio #${audio.id}: ${audio.toJson()}');
+    }
+    for (var photo in photos) {
+      print('Photo #${photo.id}: ${photo.toJson()}');
+    }
+    for (var video in videos) {
+      print('Video #${video.id}: ${video.toJson()}');
+    }
+
     responseList = await VideoResponseRepository.instance.readAll();
 
     for (var videoResponse in responseList) {
       print(videoResponse.toJson());
     }
+    // ***
   }
 
   Future<void> unloadMedia() async {
@@ -104,6 +116,7 @@ class DataService {
     String? description,
     List<String>? tags,
     required File audioFile,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
@@ -112,6 +125,7 @@ class DataService {
         description: description,
         tags: tags,
         audioFile: audioFile,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -129,14 +143,16 @@ class DataService {
     String? description,
     List<String>? tags,
     required File audioFile,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
-      final audio = await AudioController.addSeedAudio(
+      final audio = await AudioController.addAudio(
         title: title,
         description: description,
         tags: tags,
         audioFile: audioFile,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -155,6 +171,7 @@ class DataService {
     String? description,
     List<String>? tags,
     bool? isFavorited,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
@@ -164,6 +181,7 @@ class DataService {
         description: description,
         isFavorited: isFavorited,
         tags: tags,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {

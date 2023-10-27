@@ -55,7 +55,7 @@ class FormatUtils {
       return 'Date Unknown';
     }
 
-    return Moment(timeStamp).format('yyyy-MM-dd HH:mm:ss');
+    return Moment(timeStamp).format('y-MM-DD HH:mm:ss');
   }
 
   /// Returns the difference (in full days) between the provided date and today.
