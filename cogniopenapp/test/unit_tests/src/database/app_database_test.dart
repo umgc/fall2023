@@ -1,3 +1,4 @@
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/database/app_database.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -7,6 +8,9 @@ import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import '../../../resources/fake_path_provider_platform.dart';
+import '../utils/directory_manager_test.dart';
 
 const unitTestAudioTitle = "Unit Test Audio";
 const unitTestPhotoTitle = "Unit Test Photo";
@@ -51,11 +55,14 @@ void sqfliteTestInit() {
 }
 
 void main() async {
-  /*
+  TestWidgetsFlutterBinding.ensureInitialized();
   sqfliteTestInit();
+  PathProviderPlatform.instance = FakePathProviderPlatform();
+  await DirectoryManager.instance.initializeDirectories();
+  final db = await AppDatabase.instance.database;
+
   group('adding to database (db)', () {
     test('U-13-1: adding audio to db', () async {
-      final db = await AppDatabase.instance.database;
       await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
       var audioTableQueryResult = await db.query(tableAudios, groupBy: "title", where: "title in ('$unitTestAudioTitle')");
       expect(audioTableQueryResult.length, 0);
@@ -65,7 +72,6 @@ void main() async {
       await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
     });
     test('U-13-2: adding photo to db', () async {
-      final db = await AppDatabase.instance.database;
       await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
       var photoTableQueryResult = await db.query(tablePhotos, groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
       expect(photoTableQueryResult.length, 0);
@@ -74,8 +80,8 @@ void main() async {
       expect(photoTableQueryResult.length, 1);
       await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
     });
+
     test('U-13-3: adding video to db', () async {
-      final db = await AppDatabase.instance.database;
       await db.execute("DELETE FROM $tableVideos WHERE title='$unitTestVideoTitle'");
       var videoTableQueryResult = await db.query(tableVideos, groupBy: "title", where: "title in ('$unitTestVideoTitle')");
       expect(videoTableQueryResult.length, 0);
@@ -85,5 +91,4 @@ void main() async {
       await db.execute("DELETE FROM $tableVideos WHERE title='$unitTestVideoTitle'");
     });
   });
-   */
 }
