@@ -40,6 +40,7 @@ class VideoProcessor {
 
   Future<StartLabelDetectionResponse> sendRequestToProcessVideo(
       String title) async {
+    print("sending rekognition request for ${title}");
     //grab Video
     Video video = Video(
         s3Object: S3Object(bucket: dotenv.get('videoS3Bucket'), name: title));
@@ -59,6 +60,7 @@ class VideoProcessor {
   Future<String> pollForCompletedRequest() async {
     //keep polling the getLabelDetection until either failed or succeeded.
     bool inProgress = true;
+    jobId = "43842f1617dfa32ac8fb7b21becabacd8736556c195630711b4b901ca8b9e08f";
     while (inProgress) {
       //print("start loop");
       GetLabelDetectionResponse labelsResponse =

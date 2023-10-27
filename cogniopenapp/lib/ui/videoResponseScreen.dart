@@ -1,4 +1,5 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:cogniopenapp/src/data_service.dart';
 
@@ -30,10 +31,14 @@ List<AWS_VideoResponse> createResponseList(
   List<AWS_VideoResponse> responseList = [];
   List<String?> recognizedItems = [];
 
+  String responseVideo = FileManager.mostRecentVideoPath;
+
   Iterator<rek.LabelDetection> iter = response.labels!.iterator;
+  print("ABOUT TO START PARSING RESPONSES");
   while (iter.moveNext()) {
     for (rek.Instance inst in iter.current.label!.instances!) {
       String? name = iter.current.label!.name;
+      print("RESPONSE{n}");
       if (recognizedItems.contains(name)) {
         continue;
       } else {
@@ -48,9 +53,9 @@ List<AWS_VideoResponse> createResponseList(
               top: inst.boundingBox!.top ?? 0,
               width: inst.boundingBox!.width ?? 0,
               height: inst.boundingBox!.height ?? 0),
-          "fake file");
-      responseList.add(newResponse);
+          responseVideo);
       print("ADDING RESPONSE ${newResponse}");
+      responseList.add(newResponse);
     }
   }
   return responseList;
@@ -88,6 +93,7 @@ class AWS_VideoResponseScreenState extends State<AWS_VideoResponseScreen> {
   Widget build(BuildContext context) {
     //List<AWS_VideoResponse> realResponse = createTestResponseList();
     List<AWS_VideoResponse> realResponse = createResponseList(awsResponses);
+    DataService.instance.addVideoResponses(realResponse);
 
     //doResponseSTuff(awsResponses);
 

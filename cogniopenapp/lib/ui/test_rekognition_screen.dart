@@ -103,6 +103,19 @@ class RekognitionScreenState extends State<RekognitionScreen> {
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
                 fontSize: 16.0),
+            labelBackgroundColor: const Color(0XFFE91E63)),
+        SpeedDialChild(
+            child: const Icon(Icons.interests),
+            backgroundColor: const Color(0XFFE91E63),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TestVideoScreen()));
+            },
+            label: 'PARSE HARDCODED JOB',
+            labelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+                fontSize: 16.0),
             labelBackgroundColor: const Color(0XFFE91E63))
       ],
     );
