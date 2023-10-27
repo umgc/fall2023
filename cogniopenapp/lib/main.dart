@@ -43,5 +43,4 @@ void initializeData() async {
   VideoProcessor vp = VideoProcessor();
   CameraManager cm = CameraManager();
   await cm.initializeCamera();
-  cm.startAutoRecording();
 }

@@ -18,6 +18,15 @@ class VideoProcessor {
   String projectArn = 'No project found';
   String currentProjectVersionArn = 'Model not started';
 
+  List<String> excludedResponses = [
+    "Male",
+    "Adult",
+    "Man",
+    "Female",
+    "Woman",
+    "Person"
+  ];
+
   static final VideoProcessor _instance = VideoProcessor._internal();
 
   VideoProcessor._internal() {
@@ -123,7 +132,10 @@ class VideoProcessor {
     while (iter.moveNext()) {
       for (Instance inst in iter.current.label!.instances!) {
         String? name = iter.current.label!.name;
-        print("RESPONSE{n}");
+
+        if (excludedResponses.contains(name)) {
+          continue;
+        }
 
         AWS_VideoResponse newResponse = AWS_VideoResponse.overloaded(
             iter.current.label!.name ?? "default value",

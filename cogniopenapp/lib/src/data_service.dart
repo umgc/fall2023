@@ -23,6 +23,7 @@ class DataService {
 
   late List<Media> mediaList;
   late List<VideoResponse> responseList;
+  bool hasBeenInitialized = false;
 
   Future<void> initializeData() async {
     await loadMedia();
@@ -35,22 +36,25 @@ class DataService {
 
     mediaList = [...audios, ...photos, ...videos];
 
-    // *** For development debug purposes only. TODO: Remove
-    for (var audio in audios) {
-      print('Audio #${audio.id}: ${audio.toJson()}');
-    }
-    for (var photo in photos) {
-      print('Photo #${photo.id}: ${photo.toJson()}');
-    }
-    for (var video in videos) {
-      print('Video #${video.id}: ${video.toJson()}');
+    if (!hasBeenInitialized) {
+      // *** For development debug purposes only. TODO: Remove
+      for (var audio in audios) {
+        print('Audio #${audio.id}: ${audio.toJson()}');
+      }
+      for (var photo in photos) {
+        print('Photo #${photo.id}: ${photo.toJson()}');
+      }
+      for (var video in videos) {
+        print('Video #${video.id}: ${video.toJson()}');
+      }
+      responseList = await VideoResponseRepository.instance.readAll();
+
+      for (var videoResponse in responseList) {
+        print(videoResponse.toJson());
+      }
+      hasBeenInitialized = true;
     }
 
-    responseList = await VideoResponseRepository.instance.readAll();
-
-    for (var videoResponse in responseList) {
-      print(videoResponse.toJson());
-    }
     // ***
   }
 
