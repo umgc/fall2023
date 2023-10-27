@@ -16,7 +16,7 @@ class AWS_VideoResponse {
 
   AWS_VideoResponse.overloaded(this.name, this.confidence, this.timestamp,
       this.boundingBox, this.referenceVideoFilePath) {
-    setImage(timestamp);
+    //setImage(timestamp);
   }
 
   Future<Image> getImage() async {
