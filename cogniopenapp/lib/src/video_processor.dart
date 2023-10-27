@@ -8,6 +8,7 @@ import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/aws_video_response.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/data_service.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
 
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
@@ -116,12 +117,7 @@ class VideoProcessor {
 
   List<AWS_VideoResponse> createResponseList(
       GetLabelDetectionResponse response) {
-    print(
-        "|-----------------------------------------------------------------------------------------|");
-    print(
-        "|------------------------------------- CREATING RESPONSE LIST -------------------------------------|");
-    print(
-        "|-----------------------------------------------------------------------------------------|");
+    FormatUtils.printBigMessage("CREATING RESPONSE LIST");
     List<AWS_VideoResponse> responseList = [];
 
     FileManager.getMostRecentVideo();
@@ -152,23 +148,13 @@ class VideoProcessor {
         responseList.add(newResponse);
       }
     }
-    print(
-        "|-----------------------------------------------------------------------------------------|");
-    print(
-        "|------------------------------------- CREATING RESPONSE LIST WAS CREATED -------------------------------------|");
-    print(
-        "|-----------------------------------------------------------------------------------------|");
+    FormatUtils.printBigMessage("CREATING RESPONSE LIST WAS CREATED");
 
     return responseList;
   }
 
   Future<String> pollForCompletedRequest() async {
-    print(
-        "|-----------------------------------------------------------------------------------------|");
-    print(
-        "|------------------------------------- POLLING FOR COMPLETED REQUEST -------------------------------------|");
-    print(
-        "|-----------------------------------------------------------------------------------------|");
+    FormatUtils.printBigMessage("POLLING FOR COMPLETED REQUEST");
     //keep polling the getLabelDetection until either failed or succeeded.
     bool inProgress = true;
     //jobId = "43842f1617dfa32ac8fb7b21becabacd8736556c195630711b4b901ca8b9e08f";
@@ -188,43 +174,23 @@ class VideoProcessor {
         print(labelsResponse.statusMessage);
       }
     }
-    print(
-        "|-----------------------------------------------------------------------------------------|");
-    print(
-        "|------------------------------------- POLLING WAS COMPLETED JOB ID ${jobId} -------------------------------------|");
-    print(
-        "|-----------------------------------------------------------------------------------------|");
+    FormatUtils.printBigMessage("POLLING WAS COMPLETED JOB ID ${jobId}");
     return jobId;
   }
 
   Future<GetLabelDetectionResponse> grabResults(jobId) async {
-    print(
-        "|-----------------------------------------------------------------------------------------|");
-    print(
-        "|------------------------------------- GRABBING RESULTS -------------------------------------|");
-    print(
-        "|-----------------------------------------------------------------------------------------|");
+    FormatUtils.printBigMessage("GRABBING RESULTS");
 
     //get a specific job in debuggin
     Future<GetLabelDetectionResponse> labelsResponse =
         service!.getLabelDetection(jobId: jobId);
 
-    print(
-        "|-----------------------------------------------------------------------------------------|");
-    print(
-        "|------------------------------------- RESULTS GRABBED -------------------------------------|");
-    print(
-        "|-----------------------------------------------------------------------------------------|");
+    FormatUtils.printBigMessage("RESULTS GRABBED");
     return labelsResponse;
   }
 
   Future<void> uploadVideoToS3() async {
-    print(
-        "|-----------------------------------------------------------------------------------------|");
-    print(
-        "|------------------------------------- UPLOADING VIDEO TO S3 -------------------------------------|");
-    print(
-        "|-----------------------------------------------------------------------------------------|");
+    FormatUtils.printBigMessage("UPLOADING VIDEO TO S3");
     S3Bucket s3 = S3Bucket();
     // Set the name for the file to be added to the bucket based on the file name
     FileManager.getMostRecentVideo();
@@ -238,12 +204,7 @@ class VideoProcessor {
 
     await sendRequestToProcessVideo(uploadedVideo);
 
-    print(
-        "|-----------------------------------------------------------------------------------------|");
-    print(
-        "|------------------------------------- VIDEO WAS UPLOADED -------------------------------------|");
-    print(
-        "|-----------------------------------------------------------------------------------------|");
+    FormatUtils.printBigMessage("VIDEO WAS UPLOADED");
   }
 
   //create a new Amazon Rekognition Custom Labels project

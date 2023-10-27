@@ -10,6 +10,7 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
 
 /// Camera manager class to handle camera functionality.
 class CameraManager {
@@ -56,19 +57,9 @@ class CameraManager {
     String cameraUsed = (_cameras.length > 1) ? "front" : "rear";
 
     if (isAutoRecording) {
-      print(
-          "|-----------------------------------------------------------------------------------------|");
-      print(
-          "|------------------------------------- AUTO VIDEO RECORDING IS ENABLED -------------------------------------|");
-      print(
-          "|-----------------------------------------------------------------------------------------|");
+      FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS ENABLED");
     } else {
-      print(
-          "|-----------------------------------------------------------------------------------------|");
-      print(
-          "|------------------------------------- AUTO VIDEO RECORDING IS DISABLED -------------------------------------|");
-      print(
-          "|-----------------------------------------------------------------------------------------|");
+      FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS DISABLED");
     }
 
     print("The camera that is being automatically used is the ${cameraUsed}");
@@ -78,12 +69,9 @@ class CameraManager {
     // Delay for camera initialization
     Future.delayed(Duration(milliseconds: 3000), () {
       if (controller != null) {
-        print(
-            "|-----------------------------------------------------------------------------------------|");
-        print(
-            "|------------------------------------- AUTO VIDEO RECORDING HAS STARTED -------------------------------------|");
-        print(
-            "|-----------------------------------------------------------------------------------------|");
+        if (isAutoRecording) {
+          FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
+        }
         startRecordingInBackground();
       }
     });

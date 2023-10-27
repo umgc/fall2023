@@ -45,6 +45,12 @@ class S3Bucket {
   }
 
   void createBucket() {
+    String bucket = (dotenv.get('videoS3Bucket', fallback: "none"));
+
+    if (bucket == "none") {
+      print("S3 needs to be initialized");
+      return;
+    }
     //impotent method that creates bucket if it is not already present.
     Future<CreateBucketOutput> creating =
         connection!.createBucket(bucket: dotenv.get('videoS3Bucket'));
