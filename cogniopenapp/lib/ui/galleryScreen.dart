@@ -250,8 +250,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     if (media is Audio)
-                      IconButton(
+                      ElevatedButton.icon(
                         icon: virtualAssistantIcon,
+                        label: const Text("Ask the Assistant"),
                         onPressed: () {
                           // String transcript = await getTranscriptPath(media
                           //     .timestamp.millisecondsSinceEpoch
