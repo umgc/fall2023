@@ -88,9 +88,11 @@ class VideoProcessor {
   void uploadVideoToS3() {
     S3Bucket s3 = S3Bucket();
     // Set the name for the file to be added to the bucket based on the file name
+    FileManager.getMostRecentVideo();
     String title = FileManager.mostRecentVideoName;
     //TODO:debug/testing statements
     print("Video to S3: $title");
+    print("Video path to S3: $FileManager.mostRecentVideoPath");
 
     Future<String> uploadedVideo =
         s3.addVideoToS3(title, FileManager.mostRecentVideoPath);
