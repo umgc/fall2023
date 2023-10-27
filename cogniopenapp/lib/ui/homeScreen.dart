@@ -1,6 +1,5 @@
 // Imported libraries and packages
 import 'package:cogniopenapp/ui/s3_screen.dart';
-import 'package:cogniopenapp/ui/test_rekognition_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/ui/helpScreen.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
@@ -217,11 +216,6 @@ class HomeScreen extends StatelessWidget {
             onTap: (int index) {
               // Handle navigation bar item taps
               if (index == 0) {
-                // Navigate to Gallery screen
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RekognitionScreen()));
               } else if (index == 1) {
                 // Navigate to Search screen
                 Navigator.push(context,
