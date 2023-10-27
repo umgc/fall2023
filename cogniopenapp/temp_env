@@ -16,7 +16,6 @@ secretKey = ""
 
 
 region = "us-east-1"
-snsTopicName = "cogniopen-notifications"
 
 #!!!!!!!!!!!!!!!!!!!!
 # RENAME BUCKET VAR
