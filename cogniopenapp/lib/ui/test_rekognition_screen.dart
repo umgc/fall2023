@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
 //import '../src/galleryData.dart';
 //import 'dart:io';
 
@@ -101,11 +102,20 @@ class RekognitionScreenState extends State<RekognitionScreen> {
     if (response == null) {
       return;
     }
-    Image stillImage = await FileManager.getThumbnail(
-        response.referenceVideoFilePath, response.timestamp);
+    String fullPath =
+        "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
+    print("${fullPath}");
+    Image stillImage =
+        await FileManager.getThumbnail(fullPath, response.timestamp);
 
-    double imageWidth = 320;
-    double imageHeight = 240;
+    double imageWidth = 720;
+    double imageHeight = 1280;
+
+    if (stillImage.width != null && stillImage.height != null) {
+      print("Not null");
+      imageWidth = stillImage.width!;
+      imageHeight = stillImage.height!;
+    }
 
     Navigator.of(context).push(
       MaterialPageRoute<void>(
