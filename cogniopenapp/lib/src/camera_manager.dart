@@ -65,21 +65,16 @@ class CameraManager {
     print("The camera that is being automatically used is the ${cameraUsed}");
   }
 
-  void disposeOfCamera() {
-    controller.dispose();
-  }
-
   void startAutoRecording() async {
     // Delay for camera initialization
-    if (isAutoRecording) {
-      initializeCamera();
-      Future.delayed(Duration(milliseconds: 3000), () {
-        if (controller != null) {
+    Future.delayed(Duration(milliseconds: 3000), () {
+      if (controller != null) {
+        if (isAutoRecording) {
           FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
-          startRecordingInBackground();
         }
-      });
-    }
+        startRecordingInBackground();
+      }
+    });
   }
 
   Future<void> stopRecording() async {

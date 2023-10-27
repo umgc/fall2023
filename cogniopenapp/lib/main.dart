@@ -41,4 +41,6 @@ void initializeData() async {
   //initialize backend services
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
+  CameraManager cm = CameraManager();
+  await cm.initializeCamera();
 }

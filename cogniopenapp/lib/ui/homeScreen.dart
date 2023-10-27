@@ -19,12 +19,6 @@ class HomeScreen extends StatelessWidget {
   bool hasBeenInitialized = false;
 
   @override
-  void dispose() {
-    CameraManager cm = CameraManager();
-    cm.disposeOfCamera();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (!hasBeenInitialized) {
       CameraManager cm = CameraManager();
