@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/aws_video_response.dart';
+import 'package:cogniopenapp/src/data_service.dart';
 
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
@@ -44,11 +45,12 @@ class VideoProcessor {
 
     await pollForCompletedRequest();
 
-    Future<GetLabelDetectionResponse> responses = grabResults(jobId);
+    GetLabelDetectionResponse labelResponses = await grabResults(jobId);
 
-    responses.then((value) {
-      createResponseList(value);
-    });
+    List<AWS_VideoResponse> responses =
+        await createResponseList(labelResponses);
+
+    DataService.instance.addVideoResponses(responses);
   }
 
   Future<StartLabelDetectionResponse> sendRequestToProcessVideo(
@@ -177,7 +179,7 @@ class VideoProcessor {
     return jobId;
   }
 
-  Future<GetLabelDetectionResponse> grabResults(jobId) {
+  Future<GetLabelDetectionResponse> grabResults(jobId) async {
     print(
         "|-----------------------------------------------------------------------------------------|");
     print(

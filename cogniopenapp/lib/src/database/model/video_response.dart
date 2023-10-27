@@ -6,7 +6,7 @@ class VideoResponse {
   final int? id;
   final String title;
   final String referenceVideoFilePath;
-  final DateTime timestamp;
+  final int timestamp;
   final double confidence;
   final double left;
   final double top;
@@ -55,7 +55,7 @@ class VideoResponse {
     return {
       'id': id,
       'title': title,
-      'timestamp': timestamp.toUtc().millisecondsSinceEpoch,
+      'timestamp': timestamp,
       'confidence': confidence,
       'left': left,
       'top': top,
@@ -70,10 +70,7 @@ class VideoResponse {
       return VideoResponse(
         id: json['id'] as int?,
         title: json['title'] as String,
-        timestamp: DateTime.fromMillisecondsSinceEpoch(
-          json['timestamp'] as int,
-          isUtc: true,
-        ),
+        timestamp: json['timestamp'] as int,
         confidence: json['confidence'] as double,
         left: json['left'] as double,
         top: json['top'] as double,

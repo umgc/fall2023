@@ -34,6 +34,12 @@ class DataService {
     final videos = await VideoRepository.instance.readAll();
 
     mediaList = [...audios, ...photos, ...videos];
+
+    final videoResponses = await VideoResponseRepository.instance.readAll();
+
+    for (var videoResponse in videoResponses) {
+      print(videoResponse.toJson());
+    }
   }
 
   Future<void> unloadMedia() async {
@@ -71,7 +77,8 @@ class DataService {
             left: rekResponse.boundingBox.left,
             top: rekResponse.boundingBox.top,
             width: rekResponse.boundingBox.width,
-            height: rekResponse.boundingBox.height);
+            height: rekResponse.boundingBox.height,
+            timestamp: rekResponse.timestamp);
         if (response != null) {
           print(
               "ADDED RESPONSE: title ${response.title} timestamp ${response.timestamp}");
