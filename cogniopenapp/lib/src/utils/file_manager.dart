@@ -123,6 +123,19 @@ class FileManager {
     }
   }
 
+  static File? loadFile(String filePath, String fileName) {
+    try {
+      final File file = File('$filePath/$fileName');
+      if (!file.existsSync()) {
+        return null;
+      }
+      return file;
+    } catch (e) {
+      print('Error loading file: $e');
+      return null;
+    }
+  }
+
   static String getFileName(String filePath) {
     return path.basename(filePath);
   }
