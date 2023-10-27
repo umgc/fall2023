@@ -145,7 +145,6 @@ class _AssistantScreenState extends State<AssistantScreen> {
       _isTyping = true;
     });
 
-    print(prompt);
     var messages = [
       OpenAIChatCompletionChoiceMessageModel(
         content: prompt,
@@ -153,7 +152,6 @@ class _AssistantScreenState extends State<AssistantScreen> {
       ),
     ];
     for (ChatMessage chat in _chatMessages) {
-      print(chat.messageText);
       messages.add(
         OpenAIChatCompletionChoiceMessageModel(
           content: chat.messageText,
@@ -165,6 +163,8 @@ class _AssistantScreenState extends State<AssistantScreen> {
       content: userMessage,
       role: OpenAIChatMessageRole.user,
     ));
+
+    print(messages);
 
     String response;
     try {
@@ -335,7 +335,8 @@ class _AssistantScreenState extends State<AssistantScreen> {
       }
     }
     _showAlert("Missing Transcript", "Transcript file not found.");
-    return "";
+
+    return widget.conversation!.description ?? "";
   }
 }
 
