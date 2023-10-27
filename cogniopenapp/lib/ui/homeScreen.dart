@@ -3,6 +3,7 @@ import 'package:cogniopenapp/ui/s3_screen.dart';
 import 'package:cogniopenapp/ui/test_rekognition_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/ui/helpScreen.dart';
+import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:flutter/material.dart';
 import 'assistantScreen.dart';
 import 'audioScreen.dart';
@@ -17,6 +18,8 @@ import 'settingsScreen.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    VideoProcessor vp = VideoProcessor();
+    vp.automaticallySendToRekognition();
     return Scaffold(
         // Set the background color for the entire screen
         extendBodyBehindAppBar: true,

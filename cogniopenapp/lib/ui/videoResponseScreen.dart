@@ -93,8 +93,8 @@ class AWS_VideoResponseScreenState extends State<AWS_VideoResponseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<AWS_VideoResponse> realResponse = createTestResponseList();
-    //List<AWS_VideoResponse> realResponse = createResponseList(awsResponses);
+    //List<AWS_VideoResponse> realResponse = createTestResponseList();
+    List<AWS_VideoResponse> realResponse = createResponseList(awsResponses);
     DataService.instance.addVideoResponses(realResponse);
 
     //doResponseSTuff(awsResponses);

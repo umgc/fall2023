@@ -16,7 +16,7 @@ class VideoResponseFields {
     referenceVideoFilePath,
   ];
 
-  static const String id = '_id';
+  static const String id = 'id';
   static const String title = 'title';
   static const String timestamp = 'timestamp';
   static const String confidence = 'confidence';

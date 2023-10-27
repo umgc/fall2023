@@ -54,6 +54,7 @@ class S3Bucket {
   // Adds the file to the S3 bucket
   Future<String> addVideoToS3(String title, String localPath) {
     // TODO Specify folder structure
+    print("ADDINF THIS TO S3 ${title}");
     Uint8List bytes = File(localPath).readAsBytesSync();
     return _addToS3(title, bytes);
   }
@@ -78,7 +79,8 @@ class S3Bucket {
   // Delete file from S3
   Future<bool> deleteFileFromS3(String key) async {
     try {
-      await connection!.deleteObject(bucket: dotenv.get('videoS3Bucket'), key: key);
+      await connection!
+          .deleteObject(bucket: dotenv.get('videoS3Bucket'), key: key);
       return true;
     } catch (e) {
       print('Failed to delete the file from S3: $e');

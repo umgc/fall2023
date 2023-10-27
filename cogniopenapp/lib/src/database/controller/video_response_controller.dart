@@ -22,16 +22,17 @@ class VideoResponseController {
     required double height,
   }) async {
     try {
+      referenceVideoFilePath = "2023-10-27_12:19:21.819024.mp4";
       print(
           "THIS IS THE FILE BEING ADDED TO THE TIMESTAMP ${referenceVideoFilePath}");
       DateTime timestamp =
           DateTime.parse(FileManager.getFileTimestamp(referenceVideoFilePath));
-      String referenceVideo =
-          FileManager.getFileName(path.basename(referenceVideoFilePath));
-      print("TTHIS IS TIMESTAM PARSED ${timestamp}");
+      //String referenceVideo =
+      //FileManager.getFileName(path.basename(referenceVideoFilePath));
+      print("TTHIS IS TIMESTAMP PARSED ${timestamp}");
       VideoResponse newResponse = VideoResponse(
         title: title,
-        referenceVideoFilePath: referenceVideo,
+        referenceVideoFilePath: referenceVideoFilePath,
         timestamp: timestamp,
         confidence: confidence,
         left: left,
