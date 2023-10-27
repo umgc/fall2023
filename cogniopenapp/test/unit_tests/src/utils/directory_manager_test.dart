@@ -13,7 +13,7 @@ void main() {
     DirectoryManager.instance.initializeDirectories();
   });
 
-  test('verify all directores were created', () {
+  test('U-15-1: verify all directores were created', () {
     expect(DirectoryManager.instance.rootDirectory, isNot(null));
     expect(DirectoryManager.instance.photosDirectory, isNot(null));
     expect(DirectoryManager.instance.videosDirectory, isNot(null));
