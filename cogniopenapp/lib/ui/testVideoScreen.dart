@@ -82,6 +82,8 @@ class TestVideoScreenState extends State<TestVideoScreen> {
               setState(() {
                 text =
                     "Job ID: ${vp.jobId}\n\n Open bottom-right menu, and select \"Show Results\".";
+                print(
+                    "Job ID: ${vp.jobId}\n\n Open bottom-right menu, and select \"Show Results\".");
               });
             },
             label: 'Grab Job',

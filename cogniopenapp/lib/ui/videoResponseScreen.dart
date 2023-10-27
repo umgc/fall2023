@@ -50,6 +50,7 @@ List<AWS_VideoResponse> createResponseList(
               height: inst.boundingBox!.height ?? 0),
           "fake file");
       responseList.add(newResponse);
+      print("ADDING RESPONSE ${newResponse}");
     }
   }
   return responseList;
@@ -74,6 +75,11 @@ class AWS_VideoResponseScreen extends StatefulWidget {
       AWS_VideoResponseScreenState(awsResponses);
 }
 
+void doResponseSTuff(rek.GetLabelDetectionResponse aws) {
+  List<AWS_VideoResponse> realResponse = createResponseList(aws);
+  DataService.instance.addVideoResponses(realResponse);
+}
+
 class AWS_VideoResponseScreenState extends State<AWS_VideoResponseScreen> {
   rek.GetLabelDetectionResponse awsResponses;
   AWS_VideoResponseScreenState(this.awsResponses);
@@ -82,7 +88,9 @@ class AWS_VideoResponseScreenState extends State<AWS_VideoResponseScreen> {
   Widget build(BuildContext context) {
     //List<AWS_VideoResponse> realResponse = createTestResponseList();
     List<AWS_VideoResponse> realResponse = createResponseList(awsResponses);
-    DataService.instance.addVideoResponses(realResponse);
+
+    //doResponseSTuff(awsResponses);
+
     double imageWidth = 320;
     double imageHeight = 240;
     return Scaffold(

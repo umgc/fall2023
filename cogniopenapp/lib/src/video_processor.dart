@@ -92,7 +92,7 @@ class VideoProcessor {
     String title = FileManager.mostRecentVideoName;
     //TODO:debug/testing statements
     print("Video to S3: $title");
-    print("Video path to S3: $FileManager.mostRecentVideoPath");
+    print("Video path to S3: ${FileManager.mostRecentVideoPath}");
 
     Future<String> uploadedVideo =
         s3.addVideoToS3(title, FileManager.mostRecentVideoPath);
