@@ -43,6 +43,8 @@ dependencies:
   # A Flutter plugin for iOS, Android and Web for playing back video on a Widget surface.
   video_player: ^2.7.2
 
+  quiver: ^3.0.0
+
   # A Flutter plugin for finding commonly used locations on the filesystem. Supports Android, iOS, Linux, macOS and Windows. Not all methods are supported on all platforms.
   #path_provider: ^2.1.1
 
@@ -77,8 +79,12 @@ dependencies:
   mockito: ^5.4.2
   plugin_platform_interface: ^2.1.6
   path_provider_platform_interface: ^2.1.1
-  path_provider_android: ^2.2.0
   moment_dart: ^1.1.0
+  external_path: ^1.0.3
+  gallery_saver: ^2.3.2
+  image_picker: ^1.0.4
+  timeago: ^3.5.0
+  path_provider_foundation: ^2.3.1
 
 dev_dependencies:
   flutter_test:

@@ -16,8 +16,8 @@ abstract class MediaFields {
   static const String description = 'description';
   static const String tags = 'tags';
   static const String timestamp = 'timestamp';
-  static const String storageSize = 'storageSize';
-  static const String isFavorited = 'isFavorited';
+  static const String storageSize = 'storage_size';
+  static const String isFavorited = 'is_favorited';
 }
 
 abstract class Media {
@@ -28,7 +28,7 @@ abstract class Media {
   final List<String>? tags;
   final DateTime timestamp;
   final int storageSize;
-  final bool isFavorited;
+  bool isFavorited;
 
   Media({
     this.id,

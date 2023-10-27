@@ -1,9 +1,8 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
+import 'package:cogniopenapp/src/custom_label_response.dart';
 import 'package:flutter/material.dart';
 
-import 'package:cogniopenapp/src/video_response.dart';
-
-List<VideoResponse> createTestResponseList() {
+/*List<VideoResponse> createTestResponseList() {
   return [
     VideoResponse(
       'Water',
@@ -38,67 +37,71 @@ List<VideoResponse> createTestResponseList() {
     // Add more test objects for other URLs as needed
   ];
 }
+*/
 
-List<VideoResponse> createResponseList(rek.GetLabelDetectionResponse response) {
-  List<VideoResponse> responseList = [];
+List<CustomLabelResponse> createResponseList(
+    rek.DetectCustomLabelsResponse response) {
+  List<CustomLabelResponse> responseList = [];
   List<String?> recognizedItems = [];
 
-  Iterator<rek.LabelDetection> iter = response.labels!.iterator;
+  Iterator<rek.CustomLabel> iter = response.customLabels!.iterator;
   while (iter.moveNext()) {
-    for (rek.Instance inst in iter.current.label!.instances!) {
-      String? name = iter.current.label!.name;
-      if (recognizedItems.contains(name)) {
-        continue;
-      } else {
-        recognizedItems.add(name);
-      }
-      VideoResponse newResponse = VideoResponse.overloaded(
-        iter.current.label!.name ?? "default value",
-        iter.current.label!.confidence ?? 80,
-        iter.current.timestamp ?? 0,
-        ResponseBoundingBox(
-            left: inst.boundingBox!.left ?? 0,
-            top: inst.boundingBox!.top ?? 0,
-            width: inst.boundingBox!.width ?? 0,
-            height: inst.boundingBox!.height ?? 0),
-      );
-      responseList.add(newResponse);
+    //for (rek.Instance inst in iter.current.customLabels!.instances!) {
+    String? name = iter.current.name;
+    if (recognizedItems.contains(name)) {
+      continue;
+    } else {
+      recognizedItems.add(name);
     }
+    CustomLabelResponse newResponse = CustomLabelResponse.overloaded(
+      iter.current.name ?? "default value",
+      iter.current.confidence ?? 80,
+      //iter.current.timestamp ?? 0,
+      ResponseBoundingBox(
+          left: iter.current.geometry!.boundingBox!.left ?? 0,
+          top: iter.current.geometry!.boundingBox!.top ?? 0,
+          width: iter.current.geometry!.boundingBox!.width ?? 0,
+          height: iter.current.geometry!.boundingBox!.height ?? 0),
+    );
+    responseList.add(newResponse);
+    //}
   }
   return responseList;
 }
 
-class VideoResponseScreen extends StatefulWidget {
-  final rek.GetLabelDetectionResponse awsResponses;
-  const VideoResponseScreen(this.awsResponses, {super.key});
+class CustomResponseScreen extends StatefulWidget {
+  final rek.DetectCustomLabelsResponse awsResponses;
+  const CustomResponseScreen(this.awsResponses, {super.key});
 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Query Responses', style: TextStyle(color: Colors.black54)),
+        title: const Text('Query Responses',
+            style: TextStyle(color: Colors.black54)),
       ),
     );
   }
 
   @override
-  VideoResponseScreenState createState() =>
+  CustomResponseScreenState createState() =>
       // ignore: no_logic_in_create_state
-      VideoResponseScreenState(awsResponses);
+      CustomResponseScreenState(awsResponses);
 }
 
-class VideoResponseScreenState extends State<VideoResponseScreen> {
-  rek.GetLabelDetectionResponse awsResponses;
-  VideoResponseScreenState(this.awsResponses);
+class CustomResponseScreenState extends State<CustomResponseScreen> {
+  rek.DetectCustomLabelsResponse awsResponses;
+  CustomResponseScreenState(this.awsResponses);
 
   @override
   Widget build(BuildContext context) {
     //List<VideoResponse> realResponse = createTestResponseList();
-    List<VideoResponse> realResponse = createResponseList(awsResponses);
-    double imageWidth = 320;
-    double imageHeight = 240;
+    List<CustomLabelResponse> realResponse = createResponseList(awsResponses);
+    double imageWidth = 225;
+    double imageHeight = 225;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Query Responses', style: TextStyle(color: Colors.black54)),
+        title: const Text('Query Responses',
+            style: TextStyle(color: Colors.black54)),
       ),
       body: Column(children: [
         const Padding(
@@ -121,8 +124,8 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
             ),
             itemCount: realResponse.length,
             itemBuilder: (BuildContext context, int index) {
-              VideoResponse response = realResponse[index];
-              response.setImage(response.timestamp);
+              CustomLabelResponse response = realResponse[index];
+              //response.setImage(response.timestamp);
               return GestureDetector(
                 onTap: () async {
                   //response.setImage(response.timestamp);
@@ -185,8 +188,8 @@ class VideoResponseScreenState extends State<VideoResponseScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 16),
-                                Text('Timestamp: ${response.timestamp}',
-                                    style: const TextStyle(fontSize: 18)),
+                                //Text('Timestamp: ${response.timestamp}',
+                                //style: const TextStyle(fontSize: 18)),
                                 Text('Name: ${response.name}',
                                     style: const TextStyle(fontSize: 18)),
                                 //Text('Confidence: ${response.confidence}'),

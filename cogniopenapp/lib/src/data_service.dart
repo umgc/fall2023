@@ -100,6 +100,7 @@ class DataService {
     String? title,
     String? description,
     List<String>? tags,
+    bool? isFavorited,
     String? summary,
   }) async {
     try {
@@ -107,6 +108,7 @@ class DataService {
         id: id,
         title: title,
         description: description,
+        isFavorited: isFavorited,
         tags: tags,
         summary: summary,
       );
@@ -188,6 +190,7 @@ class DataService {
     required int id,
     String? title,
     String? description,
+    bool? isFavorited,
     List<String>? tags,
   }) async {
     try {
@@ -195,6 +198,7 @@ class DataService {
         id: id,
         title: title,
         description: description,
+        isFavorited: isFavorited,
         tags: tags,
       );
       if (photo != null) {
@@ -283,6 +287,7 @@ class DataService {
     required int id,
     String? title,
     String? description,
+    bool? isFavorited,
     List<String>? tags,
   }) async {
     try {
@@ -290,6 +295,7 @@ class DataService {
         id: id,
         title: title,
         description: description,
+        isFavorited: isFavorited,
         tags: tags,
       );
       if (video != null) {
@@ -311,6 +317,62 @@ class DataService {
       return video;
     } catch (e) {
       print('Data Service -- Error removing video: $e');
+      return null;
+    }
+  }
+
+// |--------------------------------------------------------------------------|
+// |---------------------------- OTHER OPERATIONS ----------------------------|
+// |--------------------------------------------------------------------------|
+
+  Future<Media?> updateMediaIsFavorited(Media media, bool isFavorited) async {
+    try {
+      Media? updatedMedia;
+      if (media is Audio) {
+        updatedMedia = await updateAudio(
+          id: media.id!,
+          isFavorited: isFavorited,
+        );
+      } else if (media is Photo) {
+        updatedMedia = await updatePhoto(
+          id: media.id!,
+          isFavorited: isFavorited,
+        );
+      } else if (media is Video) {
+        updatedMedia = await updateVideo(
+          id: media.id!,
+          isFavorited: isFavorited,
+        );
+      }
+      return updatedMedia;
+    } catch (e) {
+      print('Data Service -- Error updating media isFavorited: $e');
+      return null;
+    }
+  }
+
+  Future<Media?> updateMediaTags(Media media, List<String>? tags) async {
+    try {
+      Media? updatedMedia;
+      if (media is Audio) {
+        updatedMedia = await updateAudio(
+          id: media.id!,
+          tags: tags,
+        );
+      } else if (media is Photo) {
+        updatedMedia = await updatePhoto(
+          id: media.id!,
+          tags: tags,
+        );
+      } else if (media is Video) {
+        updatedMedia = await updateVideo(
+          id: media.id!,
+          tags: tags,
+        );
+      }
+      return updatedMedia;
+    } catch (e) {
+      print('Data Service -- Error updating media tags: $e');
       return null;
     }
   }
