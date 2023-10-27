@@ -29,6 +29,18 @@ class DataService {
     final videos = await VideoRepository.instance.readAll();
 
     mediaList = [...audios, ...photos, ...videos];
+
+    // *** For development debug purposes only. TODO: Remove
+    for (var audio in audios) {
+      print('Audio #${audio.id}: ${audio.toJson()}');
+    }
+    for (var photo in photos) {
+      print('Photo #${photo.id}: ${photo.toJson()}');
+    }
+    for (var video in videos) {
+      print('Video #${video.id}: ${video.toJson()}');
+    }
+    // ***
   }
 
   Future<void> unloadMedia() async {
