@@ -50,6 +50,7 @@ class DataService {
     String? description,
     List<String>? tags,
     required File audioFile,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
@@ -58,6 +59,7 @@ class DataService {
         description: description,
         tags: tags,
         audioFile: audioFile,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -75,14 +77,16 @@ class DataService {
     String? description,
     List<String>? tags,
     required File audioFile,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
-      final audio = await AudioController.addSeedAudio(
+      final audio = await AudioController.addAudio(
         title: title,
         description: description,
         tags: tags,
         audioFile: audioFile,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -101,6 +105,7 @@ class DataService {
     String? description,
     List<String>? tags,
     bool? isFavorited,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
@@ -110,6 +115,7 @@ class DataService {
         description: description,
         isFavorited: isFavorited,
         tags: tags,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {

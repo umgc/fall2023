@@ -13,6 +13,7 @@ void main() {
   const int storageSize = 1000;
   const bool isFavorited = true;
   const String audioFileName = 'test_audio.mp3';
+  const String transcriptFileName = 'test_transcript.txt';
   const String summary = 'Test Summary';
 
   group('Audio', () {
@@ -30,6 +31,7 @@ void main() {
         storageSize: storageSize,
         isFavorited: isFavorited,
         audioFileName: audioFileName,
+        transcriptFileName: transcriptFileName,
         summary: summary,
       );
 
@@ -42,6 +44,7 @@ void main() {
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, transcriptFileName);
       expect(audio.summary, summary);
     });
 
@@ -66,6 +69,7 @@ void main() {
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, isNull);
       expect(audio.summary, isNull);
     });
 
@@ -83,6 +87,7 @@ void main() {
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: transcriptFileName,
         AudioFields.summary: summary,
       };
 
@@ -101,6 +106,7 @@ void main() {
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, transcriptFileName);
       expect(audio.summary, summary);
     });
 
@@ -131,6 +137,7 @@ void main() {
         expect(audio.storageSize, storageSize);
         expect(audio.isFavorited, isFavorited);
         expect(audio.audioFileName, audioFileName);
+        expect(audio.transcriptFileName, isNull);
         expect(audio.summary, isNull);
       },
     );
@@ -159,6 +166,7 @@ void main() {
         storageSize: storageSize,
         isFavorited: isFavorited,
         audioFileName: audioFileName,
+        transcriptFileName: transcriptFileName,
         summary: summary,
       );
 
@@ -173,6 +181,7 @@ void main() {
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: transcriptFileName,
         AudioFields.summary: summary,
       });
     },
@@ -201,6 +210,7 @@ void main() {
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: null,
         AudioFields.summary: null,
       });
     },

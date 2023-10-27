@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class Audio extends Media {
   final String audioFileName;
+  final String? transcriptFileName;
   final String? summary;
 
   Audio({
@@ -15,6 +20,7 @@ class Audio extends Media {
     required int storageSize,
     required bool isFavorited,
     required this.audioFileName,
+    this.transcriptFileName,
     this.summary,
   }) : super(
           id: id,
@@ -38,6 +44,7 @@ class Audio extends Media {
     int? storageSize,
     bool? isFavorited,
     String? audioFileName,
+    String? transcriptFileName,
     String? summary,
   }) =>
       Audio(
@@ -49,6 +56,7 @@ class Audio extends Media {
         storageSize: storageSize ?? this.storageSize,
         isFavorited: isFavorited ?? this.isFavorited,
         audioFileName: audioFileName ?? this.audioFileName,
+        transcriptFileName: transcriptFileName ?? this.transcriptFileName,
         summary: summary ?? this.summary,
       );
 
@@ -57,6 +65,7 @@ class Audio extends Media {
     return {
       ...super.toJson(),
       AudioFields.audioFileName: audioFileName,
+      AudioFields.transcriptFileName: transcriptFileName,
       AudioFields.summary: summary,
     };
   }
@@ -76,10 +85,27 @@ class Audio extends Media {
         storageSize: json[MediaFields.storageSize] as int,
         isFavorited: json[MediaFields.isFavorited] == 1,
         audioFileName: json[AudioFields.audioFileName] as String,
+        transcriptFileName: json[AudioFields.transcriptFileName] as String?,
         summary: json[AudioFields.summary] as String?,
       );
     } catch (e) {
       throw FormatException('Error parsing JSON: $e');
+    }
+  }
+
+  Future<File?> loadTranscriptFile() async {
+    try {
+      if (transcriptFileName == null) {
+        print('transcriptFileName is null');
+        return null;
+      }
+      return FileManager.loadFile(
+        DirectoryManager.instance.transcriptsDirectory.path,
+        transcriptFileName!,
+      );
+    } catch (e) {
+      print('Error loading transcript file: $e');
+      return null;
     }
   }
 }
