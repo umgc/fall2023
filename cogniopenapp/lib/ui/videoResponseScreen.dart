@@ -31,6 +31,7 @@ List<AWS_VideoResponse> createResponseList(
   List<AWS_VideoResponse> responseList = [];
   List<String?> recognizedItems = [];
 
+  FileManager.getMostRecentVideo();
   String responseVideo = FileManager.mostRecentVideoPath;
 
   Iterator<rek.LabelDetection> iter = response.labels!.iterator;
@@ -54,7 +55,8 @@ List<AWS_VideoResponse> createResponseList(
               width: inst.boundingBox!.width ?? 0,
               height: inst.boundingBox!.height ?? 0),
           responseVideo);
-      print("ADDING RESPONSE ${newResponse}");
+      print("ADDING RESPONSE ${newResponse.name}");
+      print("ADDING RESPONSE PATH ${responseVideo}");
       responseList.add(newResponse);
     }
   }
