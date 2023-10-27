@@ -110,6 +110,7 @@ class VideoController {
     required int id,
     String? title,
     String? description,
+    bool? isFavorited,
     List<String>? tags,
   }) async {
     try {
@@ -117,6 +118,7 @@ class VideoController {
       final updatedVideo = existingVideo.copy(
         title: title ?? existingVideo.title,
         description: description ?? existingVideo.description,
+        isFavorited: isFavorited ?? existingVideo.isFavorited,
         tags: tags ?? existingVideo.tags,
       );
       await VideoRepository.instance.update(updatedVideo);

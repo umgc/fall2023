@@ -1,4 +1,8 @@
 #!!!!!!!!!!!!!!!!!!!!
+#AUTO RECORD FOR VIDEO
+autoRecordInterval = "20" # Must be an integer
+autoRecordEnabled = "false" # To have it enabled, string must be "true"
+#!!!!!!!!!!!!!!!!!!!!
 
 # RENAME the temp_env FILE TO .env
 #!!!!!!!!!!!!!!!!!!!!
@@ -23,3 +27,7 @@ videoS3Bucket = "cogniopen-videos-test-yournamehere"
 # Enter OpenAI API Key
 OPEN_AI_API_KEY = xyz
 #!!!!!!!!!!!!!!!!!!!!
+
+
+autoRecordInterval = "20"
+autoRecordEnabled = "false"

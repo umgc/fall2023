@@ -1,4 +1,5 @@
 import 'package:moment_dart/moment_dart.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class FormatUtils {
   static const int bytesInKB = 1024;
@@ -36,7 +37,17 @@ class FormatUtils {
       return 'N/A';
     }
 
-    return Moment(timeStamp).format('MMMM Do, YYYY');
+    // If the photo is from today, show how long ago it was instead of the date and time
+    if (calculateDifference(timeStamp) == 0) {
+      return timeago.format(timeStamp);
+    }
+
+    String formattedTime =
+        Moment(timeStamp).format('h:mm A'); // Format the time
+    String formattedDate =
+        Moment(timeStamp).format('MMMM Do, YYYY'); // Format the date
+
+    return '$formattedDate $formattedTime';
   }
 
   static String getDateTimeString(DateTime? timeStamp) {
@@ -44,6 +55,14 @@ class FormatUtils {
       return 'Date Unknown';
     }
 
-    return Moment(timeStamp).format('yyyy-MM-dd HH:mm:ss');
+    return Moment(timeStamp).format('y-MM-DD HH:mm:ss');
+  }
+
+  /// Returns the difference (in full days) between the provided date and today.
+  static int calculateDifference(DateTime date) {
+    DateTime now = DateTime.now();
+    return DateTime(date.year, date.month, date.day)
+        .difference(DateTime(now.year, now.month, now.day))
+        .inDays;
   }
 }
