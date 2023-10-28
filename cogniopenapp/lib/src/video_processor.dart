@@ -28,7 +28,8 @@ class VideoProcessor {
     "Man",
     "Female",
     "Woman",
-    "Person"
+    "Person",
+    "Baby"
   ];
 
   VideoProcessor() {

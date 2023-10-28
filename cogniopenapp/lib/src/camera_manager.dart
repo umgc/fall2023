@@ -63,6 +63,12 @@ class CameraManager {
       FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS DISABLED");
     }
 
+    if (isAutoRecording) {
+      FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS ENABLED");
+    } else {
+      FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS DISABLED");
+    }
+
     print("The camera that is being automatically used is the ${cameraUsed}");
   }
 
