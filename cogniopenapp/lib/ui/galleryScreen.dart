@@ -296,9 +296,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       //TODO: ADD VIDEO PLAYER HERE
                       videoDisplay(media),
                     if (media is Audio) Icon(Icons.chat, size: 100),
-                    Image(
-                      image: media.thumbnail!.image,
-                    ),
                     if (media is Audio) audioPlayer(media),
                     SizedBox(height: 16),
                     if (media.description != null && media.description != "")
@@ -307,7 +304,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         style: TextStyle(fontSize: _defaultFontSize),
                         textAlign: TextAlign.center,
                       ),
-                    if (media.tags != null && media.tags!.isNotEmpty)
+                    if (media.tags != null &&
+                        media.tags!.isNotEmpty &&
+                        !media.tags!.every((tag) => tag.isEmpty))
                       Text('Tags: ${media.tags?.join(", ")}',
                           style: TextStyle(fontSize: _defaultFontSize)),
                     /* Text(
