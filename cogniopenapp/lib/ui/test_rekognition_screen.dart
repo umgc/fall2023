@@ -153,8 +153,8 @@ class RekognitionScreenState extends State<RekognitionScreen> {
     Image stillImage =
         await FileManager.getThumbnail(fullPath, response.timestamp);
 
-    double imageWidth = 720;
-    double imageHeight = 1280;
+    double imageWidth = 412;
+    double imageHeight = 892;
 
     if (stillImage.width != null && stillImage.height != null) {
       print("Not null");

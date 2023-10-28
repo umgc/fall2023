@@ -20,8 +20,6 @@ class CameraManager {
 
   static final CameraManager _instance = CameraManager._internal();
 
-  VideoProcessor vp = VideoProcessor();
-
   bool isAutoRecording = false;
   bool uploadToRekognition = false;
   int autoRecordingInterval = 60;
@@ -87,6 +85,7 @@ class CameraManager {
         if (file != null) {
           saveMediaLocally(file); // Call the saveMediaLocally function
           if (uploadToRekognition) {
+            VideoProcessor vp = VideoProcessor();
             vp.automaticallySendToRekognition();
           }
         }

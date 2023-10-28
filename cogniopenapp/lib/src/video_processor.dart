@@ -172,11 +172,11 @@ class VideoProcessor {
     bool inProgress = true;
     //jobId = "43842f1617dfa32ac8fb7b21becabacd8736556c195630711b4b901ca8b9e08f";
     while (inProgress) {
-      FormatUtils.printBigMessage("STILL POLLING");
+      FormatUtils.printBigMessage("STILL POLLING ${getElapsedTimeInSeconds()}");
       GetLabelDetectionResponse labelsResponse =
           await service!.getLabelDetection(jobId: jobId);
       //a little sleep thrown in here to limit the number of requests.
-      sleep(const Duration(milliseconds: 2500));
+      sleep(const Duration(milliseconds: 5000));
       if (labelsResponse.jobStatus == VideoJobStatus.succeeded) {
         //stop looping
         inProgress = false;
