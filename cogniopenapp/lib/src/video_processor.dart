@@ -9,6 +9,7 @@ import 'package:cogniopenapp/src/aws_video_response.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'dart:core';
 
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
@@ -19,6 +20,8 @@ class VideoProcessor {
   String projectArn = 'No project found';
   String currentProjectVersionArn = 'Model not started';
 
+  Stopwatch stopwatch = Stopwatch();
+
   List<String> excludedResponses = [
     "Male",
     "Adult",
@@ -28,14 +31,13 @@ class VideoProcessor {
     "Person"
   ];
 
-  static final VideoProcessor _instance = VideoProcessor._internal();
-
-  VideoProcessor._internal() {
-    startService();
+  VideoProcessor() {
+    FormatUtils.printBigMessage("Starting to process another video");
   }
 
-  factory VideoProcessor() {
-    return _instance;
+  String getElapsedTimeInSeconds() {
+    final seconds = stopwatch.elapsedMilliseconds / 1000.0;
+    return 'Elapsed time: ${seconds.toStringAsFixed(2)} seconds';
   }
 
   VideoResponse? getRequestedResponse(String searchTitle) {
@@ -69,6 +71,10 @@ class VideoProcessor {
   }
 
   Future<void> automaticallySendToRekognition() async {
+    await startService();
+
+    stopwatch.reset();
+    stopwatch.start();
     await uploadVideoToS3();
 
     await pollForCompletedRequest();
@@ -78,7 +84,9 @@ class VideoProcessor {
     List<AWS_VideoResponse> responses =
         await createResponseList(labelResponses);
 
-    DataService.instance.addVideoResponses(responses);
+    await DataService.instance.addVideoResponses(responses);
+    FormatUtils.printBigMessage("Rekognition results saved locally.");
+    FormatUtils.printBigMessage(" Time elapsed ${getElapsedTimeInSeconds()}");
   }
 
   Future<StartLabelDetectionResponse> sendRequestToProcessVideo(
@@ -150,12 +158,10 @@ class VideoProcessor {
                 width: inst.boundingBox!.width ?? 0,
                 height: inst.boundingBox!.height ?? 0),
             responseVideo);
-        print("ADDING RESPONSE ${newResponse.name}");
-        print("ADDING RESPONSE PATH ${responseVideo}");
         responseList.add(newResponse);
       }
     }
-    FormatUtils.printBigMessage("CREATING RESPONSE LIST WAS CREATED");
+    FormatUtils.printBigMessage("RESPONSE LIST WAS CREATED");
 
     return responseList;
   }
@@ -170,7 +176,7 @@ class VideoProcessor {
       GetLabelDetectionResponse labelsResponse =
           await service!.getLabelDetection(jobId: jobId);
       //a little sleep thrown in here to limit the number of requests.
-      sleep(const Duration(milliseconds: 1000));
+      sleep(const Duration(milliseconds: 2500));
       if (labelsResponse.jobStatus == VideoJobStatus.succeeded) {
         //stop looping
         inProgress = false;
