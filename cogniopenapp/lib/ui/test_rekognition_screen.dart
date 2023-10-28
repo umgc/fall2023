@@ -153,8 +153,8 @@ class RekognitionScreenState extends State<RekognitionScreen> {
     Image stillImage =
         await FileManager.getThumbnail(fullPath, response.timestamp);
 
-    double imageWidth = 720;
-    double imageHeight = 1280;
+    double imageWidth = 412;
+    double imageHeight = 892;
 
     if (stillImage.width != null && stillImage.height != null) {
       print("Not null");
@@ -183,7 +183,7 @@ class RekognitionScreenState extends State<RekognitionScreen> {
                           style: const TextStyle(fontSize: 18)),
                       Text('Timestamp: ${response.timestamp}',
                           style: const TextStyle(fontSize: 18)),
-                      Text('Confidence: ${response.timestamp}',
+                      Text('Confidence: ${response.confidence}',
                           style: const TextStyle(fontSize: 18)),
                     ],
                   ),
