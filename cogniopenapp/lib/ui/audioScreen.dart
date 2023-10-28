@@ -384,7 +384,6 @@ Future<void> _sendToDatabase() async {
        await DataService.instance.addAudio(
           title: key2,
           description: "",
-          tags: [],
           audioFile: File(audioFilePath),
           transcriptFile: File(transcriptFilePath),
           summary: transcriptionSummary);
