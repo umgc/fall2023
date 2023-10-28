@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/database/model/video.dart';
 
 class VideoDisplay extends StatefulWidget {
-  final String videoUrl;
+  final String fullFilePath = "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
+  //final DataSourceType dataSourceType;
 
-  VideoDisplay({required this.videoUrl, Key? key}) : super(key: key);
+  VideoDisplay({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _VideoDisplayState createState() => _VideoDisplayState();
 }
 
@@ -17,8 +23,8 @@ class _VideoDisplayState extends State<VideoDisplay> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-      widget.videoUrl,
+    _controller = VideoPlayerController.file(File(
+      widget.fullFilePath),
     );
     _video = _controller.initialize();
   }
@@ -42,7 +48,7 @@ class _VideoDisplayState extends State<VideoDisplay> {
                 child: VideoPlayer(_controller),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(24.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
