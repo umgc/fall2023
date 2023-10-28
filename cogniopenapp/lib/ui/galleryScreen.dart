@@ -10,6 +10,7 @@ import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
+import 'package:cogniopenapp/src/video_display.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:flutter/material.dart';
@@ -292,9 +293,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         image: media.photo!.image,
                       ),
                     if (media is Video && media.thumbnail != null)
-                      Image(
-                        image: media.thumbnail!.image,
-                      ),
+                      //TODO: ADD VIDEO PLAYER HERE
+                      videoDisplay(media),
+                    if (media is Audio) Icon(Icons.chat, size: 100),
                     if (media is Audio) audioPlayer(media),
                     SizedBox(height: 16),
                     if (media.description != null && media.description != "")
@@ -303,7 +304,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         style: TextStyle(fontSize: _defaultFontSize),
                         textAlign: TextAlign.center,
                       ),
-                    if (media.tags != null && media.tags!.isNotEmpty)
+                    if (media.tags != null &&
+                        media.tags!.isNotEmpty &&
+                        !media.tags!.every((tag) => tag.isEmpty))
                       Text('Tags: ${media.tags?.join(", ")}',
                           style: TextStyle(fontSize: _defaultFontSize)),
                     /* Text(
@@ -341,6 +344,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
         },
       ),
     );
+  }
+
+  // TODO: MAKE THIS LOAD THE VIDEO
+  VideoDisplay videoDisplay(Video video) {
+    String fullFilePath =
+        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
+    print("THE PATH IS: ${fullFilePath}");
+    return VideoDisplay(fullFilePath: fullFilePath);
   }
 
   Future<String> readFileAsString(Audio audio) async {
