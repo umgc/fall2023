@@ -183,7 +183,7 @@ class RekognitionScreenState extends State<RekognitionScreen> {
                           style: const TextStyle(fontSize: 18)),
                       Text('Timestamp: ${response.timestamp}',
                           style: const TextStyle(fontSize: 18)),
-                      Text('Confidence: ${response.timestamp}',
+                      Text('Confidence: ${response.confidence}',
                           style: const TextStyle(fontSize: 18)),
                     ],
                   ),

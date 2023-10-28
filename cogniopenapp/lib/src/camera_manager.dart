@@ -39,6 +39,9 @@ class CameraManager {
     print("GETTING CAMERAS");
     _cameras = await availableCameras();
     print(_cameras.length);
+    // Make sure that there are available cameras if trying to use the front
+    // 0 equals rear, 1 = front
+    if (_cameras.length == 1) cameraToUse = 0;
     controller = CameraController(_cameras[cameraToUse], ResolutionPreset.high);
     await controller.initialize();
     print("Camera has been initialized");
