@@ -3,6 +3,7 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/address.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
@@ -14,6 +15,10 @@ Future<void> main() async {
   const String description = 'Test Description';
   const List<String> tags = ['Tag1', 'Tag2'];
   final DateTime timestamp = DateTime.now();
+  String physicalAddress = '';
+  await Address.whereIAm().then((String address) {
+    physicalAddress = address;
+  });
   const int storageSize = 1000;
   const bool isFavorited = true;
   const String videoFileName = 'test_video.mp4';
@@ -28,15 +33,14 @@ Future<void> main() async {
   group('Video', () {
     // Video constructor tests:
 
-    test(
-        'U-9-1: Video constructor (with all parameters provided) should create a Video object and initialize values correctly',
-        () {
+    test('U-9-1: Video constructor (with all parameters provided) should create a Video object and initialize values correctly', () {
       final Video video = Video(
         id: id,
         title: title,
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         videoFileName: videoFileName,
@@ -50,6 +54,7 @@ Future<void> main() async {
       expect(video.description, description);
       expect(video.tags, tags);
       expect(video.timestamp, timestamp);
+      expect(video.physicalAddress, physicalAddress);
       expect(video.storageSize, storageSize);
       expect(video.isFavorited, isFavorited);
       expect(video.videoFileName, videoFileName);
@@ -57,13 +62,12 @@ Future<void> main() async {
       expect(video.duration, duration);
     });
 
-    test(
-        'U-9-2: Video constructor (with only required parameters provided) should create a Video object and initialize values correctly',
-        () {
+    test('U-9-2: Video constructor (with only required parameters provided) should create a Video object and initialize values correctly', () {
       final Video video = Video(
         id: id,
         title: title,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         videoFileName: videoFileName,
@@ -76,6 +80,7 @@ Future<void> main() async {
       expect(video.description, isNull);
       expect(video.tags, isNull);
       expect(video.timestamp, timestamp);
+      expect(video.physicalAddress, physicalAddress);
       expect(video.storageSize, storageSize);
       expect(video.isFavorited, isFavorited);
       expect(video.videoFileName, videoFileName);
@@ -85,15 +90,14 @@ Future<void> main() async {
 
     // Video.fromJson() tests:
 
-    test(
-        'U-9-3: Video.fromJson should correctly create a Video object from JSON (with all field values)',
-        () {
+    test('U-9-3: Video.fromJson should correctly create a Video object from JSON (with all field values)', () {
       final Map<String, Object?> json = {
         MediaFields.id: id,
         MediaFields.title: title,
         MediaFields.description: description,
         MediaFields.tags: tags.join(','),
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         VideoFields.videoFileName: videoFileName,
@@ -108,11 +112,8 @@ Future<void> main() async {
       expect(video.title, title);
       expect(video.description, description);
       expect(video.tags, tags);
-      expect(
-          video.timestamp,
-          DateTime.fromMillisecondsSinceEpoch(
-              timestamp.toUtc().millisecondsSinceEpoch,
-              isUtc: true));
+      expect(video.timestamp, DateTime.fromMillisecondsSinceEpoch(timestamp.toUtc().millisecondsSinceEpoch, isUtc: true));
+      expect(video.physicalAddress, physicalAddress);
       expect(video.storageSize, storageSize);
       expect(video.isFavorited, isFavorited);
       expect(video.videoFileName, videoFileName);
@@ -127,6 +128,7 @@ Future<void> main() async {
           MediaFields.id: id,
           MediaFields.title: title,
           MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+          MediaFields.physicalAddress: physicalAddress,
           MediaFields.storageSize: storageSize,
           MediaFields.isFavorited: 1,
           VideoFields.videoFileName: videoFileName,
@@ -140,11 +142,8 @@ Future<void> main() async {
         expect(video.title, title);
         expect(video.description, isNull);
         expect(video.tags, isNull);
-        expect(
-            video.timestamp,
-            DateTime.fromMillisecondsSinceEpoch(
-                timestamp.toUtc().millisecondsSinceEpoch,
-                isUtc: true));
+        expect(video.timestamp, DateTime.fromMillisecondsSinceEpoch(timestamp.toUtc().millisecondsSinceEpoch, isUtc: true));
+        expect(video.physicalAddress, physicalAddress);
         expect(video.storageSize, storageSize);
         expect(video.isFavorited, isFavorited);
         expect(video.videoFileName, videoFileName);
@@ -174,6 +173,7 @@ Future<void> main() async {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         videoFileName: videoFileName,
@@ -189,6 +189,7 @@ Future<void> main() async {
         MediaFields.description: description,
         MediaFields.tags: tags.join(','),
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         VideoFields.videoFileName: videoFileName,
@@ -205,6 +206,7 @@ Future<void> main() async {
         id: id,
         title: title,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         videoFileName: videoFileName,
@@ -219,6 +221,7 @@ Future<void> main() async {
         MediaFields.description: null,
         MediaFields.tags: null,
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         VideoFields.videoFileName: videoFileName,

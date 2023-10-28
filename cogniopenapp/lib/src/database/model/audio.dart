@@ -17,6 +17,7 @@ class Audio extends Media {
     String? description,
     List<String>? tags,
     required DateTime timestamp,
+    String? physicalAddress,
     required int storageSize,
     required bool isFavorited,
     required this.audioFileName,
@@ -25,11 +26,11 @@ class Audio extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.audio,
-          title:
-              title ?? audioFileName, // TODO: Decide on default photo file name
+          title: title ?? audioFileName, // TODO: Decide on default photo file name
           description: description,
           tags: tags,
           timestamp: timestamp,
+          physicalAddress: physicalAddress,
           storageSize: storageSize,
           isFavorited: isFavorited,
         );
@@ -41,6 +42,7 @@ class Audio extends Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
+    String? physicalAddress,
     int? storageSize,
     bool? isFavorited,
     String? audioFileName,
@@ -53,6 +55,7 @@ class Audio extends Media {
         description: description ?? this.description,
         tags: tags ?? this.tags,
         timestamp: timestamp ?? this.timestamp,
+        physicalAddress: physicalAddress ?? this.physicalAddress,
         storageSize: storageSize ?? this.storageSize,
         isFavorited: isFavorited ?? this.isFavorited,
         audioFileName: audioFileName ?? this.audioFileName,
@@ -82,6 +85,7 @@ class Audio extends Media {
           (json[MediaFields.timestamp] as int),
           isUtc: true,
         ),
+        physicalAddress: json[MediaFields.physicalAddress] as String?,
         storageSize: json[MediaFields.storageSize] as int,
         isFavorited: json[MediaFields.isFavorited] == 1,
         audioFileName: json[AudioFields.audioFileName] as String,

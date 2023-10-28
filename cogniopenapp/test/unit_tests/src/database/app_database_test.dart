@@ -21,6 +21,7 @@ final unitTestAudio = Audio(
     description: 'Unit Test Audio Description',
     tags: ['almond', 'cashew', 'raisin'],
     timestamp: DateTime(2023, 10, 20, 8, 26),
+    physicalAddress: "",
     audioFileName: 'unit_test_audio.mp4',
     storageSize: 1000000,
     isFavorited: false,
@@ -31,6 +32,7 @@ final unitTestPhoto = Photo(
     description: 'Unit Test Photo Description',
     tags: ['sun', 'moon', 'star'],
     timestamp: DateTime(2023, 10, 20, 8, 26),
+    physicalAddress: "",
     photoFileName: 'unit_test_photo.png',
     storageSize: 1000000,
     isFavorited: false);
@@ -40,6 +42,7 @@ final unitTestVideo = Video(
     description: 'Unit Test Video Description',
     tags: ['orange', 'banana', 'bear'],
     timestamp: DateTime(2023, 10, 20, 8, 26),
+    physicalAddress: "",
     videoFileName: 'unit_test_video.mp4',
     storageSize: 1000000,
     isFavorited: false,

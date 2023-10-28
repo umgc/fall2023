@@ -43,6 +43,7 @@ class AppDatabase {
       '${MediaFields.description} $textNullableType',
       '${MediaFields.tags} $textNullableType',
       '${MediaFields.timestamp} $integerType',
+      '${MediaFields.physicalAddress} $textNullableType',
       '${MediaFields.storageSize} $integerType',
       '${MediaFields.isFavorited} $boolType',
     ];
