@@ -75,9 +75,9 @@ class _CameraHomeState extends State<VideoScreen>
               decoration: BoxDecoration(
                 color: Colors.black,
                 border: Border.all(
-                  color: cameraController.value.isRecordingVideo
-                      ? Colors.grey
-                      : Colors.redAccent,
+                  color: isRecording 
+                  ? Colors.redAccent 
+                  : Colors.grey,
                   width: 3.0,
                 ),
               ),
@@ -179,8 +179,7 @@ class _CameraHomeState extends State<VideoScreen>
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         IconButton(
-          icon: cameraController != null &&
-                  !cameraController.value.isRecordingVideo
+          icon: isRecording
               ? const Icon(Icons.pause)
               : const Icon(Icons.circle),
           color: Colors.redAccent,
