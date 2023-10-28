@@ -383,8 +383,7 @@ Future<void> _sendToDatabase() async {
     String transcriptFilePath = '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
        await DataService.instance.addAudio(
           title: key2,
-          description: transcription,
-          tags: [],
+          description: "",
           audioFile: File(audioFilePath),
           transcriptFile: File(transcriptFilePath),
           summary: transcriptionSummary);

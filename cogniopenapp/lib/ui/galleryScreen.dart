@@ -11,6 +11,7 @@ import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:cogniopenapp/src/video_display.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -58,8 +59,20 @@ class _GalleryScreenState extends State<GalleryScreen> {
   SortingCriteria? _selectedSortingCriteria;
   bool _isSortAscending = true;
 
+  FlutterSoundPlayer? _player;
+  bool _isPlaying = false;
+
+  late Audio activeAudio;
+
   _GalleryScreenState() {
     _populateMedia();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _player = FlutterSoundPlayer();
   }
 
   void _populateMedia() async {
@@ -283,6 +296,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       //TODO: ADD VIDEO PLAYER HERE
                       videoDisplay(media),
                     if (media is Audio) Icon(Icons.chat, size: 100),
+                    Image(
+                      image: media.thumbnail!.image,
+                    ),
+                    if (media is Audio) audioPlayer(media),
                     SizedBox(height: 16),
                     if (media.description != null && media.description != "")
                       Text(
@@ -293,10 +310,33 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     if (media.tags != null && media.tags!.isNotEmpty)
                       Text('Tags: ${media.tags?.join(", ")}',
                           style: TextStyle(fontSize: _defaultFontSize)),
-                    Text(
+                    /* Text(
                       'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
                       style: TextStyle(fontSize: _defaultFontSize),
-                    ),
+                    ), */
+                    SizedBox(height: 25),
+                    if (media is Audio)
+                      Text('Summary: ${media.summary}',
+                          style: TextStyle(fontSize: _defaultFontSize)),
+                    SizedBox(height: 25),
+                    if (media is Audio)
+                      FutureBuilder<String>(
+                        future: readFileAsString(media),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            // While the future is still running, you can show a loading indicator.
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            // If an error occurs, you can display an error message.
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            // If the future is complete, display the summary.
+                            return Text('Transcript: ${snapshot.data}',
+                                style: TextStyle(fontSize: _defaultFontSize));
+                          }
+                        },
+                      ),
                   ],
                 ),
               ),
@@ -313,6 +353,57 @@ class _GalleryScreenState extends State<GalleryScreen> {
         "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
     print("THE PATH IS: ${fullFilePath}");
     return VideoDisplay(fullFilePath: fullFilePath);
+  }
+
+  Future<String> readFileAsString(Audio audio) async {
+    String path =
+        "${DirectoryManager.instance.transcriptsDirectory.path}/${activeAudio.transcriptFileName}";
+    try {
+      File file = File(path);
+      String fileContent = await file.readAsString();
+      print("TARNSRCIPT");
+      print(fileContent);
+      return fileContent;
+    } catch (e) {
+      print("Error reading the file: $e");
+      return ""; // Handle the error as needed
+    }
+  }
+
+  ElevatedButton audioPlayer(Audio audio) {
+    activeAudio = audio;
+    return ElevatedButton(
+      onPressed: _isPlaying ? _stopPlayback : _startPlayback,
+      child: Text(_isPlaying ? 'Stop Preview' : 'Play Preview'),
+    );
+  }
+
+  /// Function to handle starting the playback of the recorded audio.
+  Future<void> _startPlayback() async {
+    String path =
+        "${DirectoryManager.instance.audiosDirectory.path}/${activeAudio.audioFileName}";
+    debugPrint(path);
+    await _player!.openPlayer();
+    await _player!.startPlayer(
+        fromURI: path,
+        whenFinished: () {
+          setState(() {
+            _isPlaying = false;
+          });
+          _player!.closePlayer();
+        });
+    setState(() {
+      _isPlaying = true;
+    });
+  }
+
+  /// Function to handle stopping the playback of the recorded audio.
+  Future<void> _stopPlayback() async {
+    await _player!.stopPlayer();
+    setState(() {
+      _isPlaying = false;
+    });
+    _player!.closePlayer();
   }
 
   Future<Media?> displayEditPopup(BuildContext context, Media media) async {
