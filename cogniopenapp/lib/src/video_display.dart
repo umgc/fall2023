@@ -6,13 +6,11 @@ import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 
 class VideoDisplay extends StatefulWidget {
-  final String fullFilePath = "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
-  //final DataSourceType dataSourceType;
+  final String fullFilePath;
 
-  VideoDisplay({Key? key}) : super(key: key);
+  VideoDisplay({Key? key, required this.fullFilePath}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
   _VideoDisplayState createState() => _VideoDisplayState();
 }
 
@@ -23,8 +21,8 @@ class _VideoDisplayState extends State<VideoDisplay> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.file(File(
-      widget.fullFilePath),
+    _controller = VideoPlayerController.file(
+      File(widget.fullFilePath),
     );
     _video = _controller.initialize();
   }
