@@ -169,61 +169,57 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             appBar: AppBar(
               title: const Text('Full Screen Response and Details'),
             ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Stack(
+            body: Stack(
+              children: [
+                Image(image: stillImage.image),
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  right: 0,
+                  child: Column(
                     children: [
-                      Image(image: stillImage.image),
-                      //if (_isRectangleVisible)
-                      Positioned(
-                        //TODO: hardcoded video frame width and height; these need replaced with whatever actually comes in as the image
-                        left: imageWidth * response.left,
-                        top: imageHeight * response.top,
-                        child: Opacity(
-                          opacity: 0.35,
-                          child: Material(
-                            child: InkWell(
-                              child: Container(
-                                width: imageWidth * response.width,
-                                height: imageHeight * response.height,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 2,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Container(
-                                    color: Colors.black,
-                                    child: Text(
-                                      '${response.title} ${((response.confidence * 100).truncateToDouble()) / 100}%',
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
+                      SizedBox(height: 16),
+                      Text('Name: ${response.title}',
+                          style: const TextStyle(fontSize: 18)),
+                      Text('Timestamp: ${response.timestamp}',
+                          style: const TextStyle(fontSize: 18)),
+                      Text('Confidence: ${response.timestamp}',
+                          style: const TextStyle(fontSize: 18)),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  left: imageWidth * response.left,
+                  top: imageHeight * response.top,
+                  child: Opacity(
+                    opacity: 0.35,
+                    child: Material(
+                      child: InkWell(
+                        child: Container(
+                          width: imageWidth * response.width,
+                          height: imageHeight * response.height,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 2,
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              color: Colors.black,
+                              child: Text(
+                                '${response.title} ${((response.confidence * 100).truncateToDouble()) / 100}%',
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Text('Timestamp: ${response.timestamp}',
-                      style: const TextStyle(fontSize: 18)),
-                  Text('Name: ${response.title}',
-                      style: const TextStyle(fontSize: 18)),
-                  //Text('Confidence: ${response.confidence}'),
-                  //Text('Timestamp: ${response.timestamp}'),
-                  //Text(
-                  //  'BoundingBox: ${response.boundingBox?.toString() ?? "N/A"}'),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
