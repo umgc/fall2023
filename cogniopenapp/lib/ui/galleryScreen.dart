@@ -10,7 +10,6 @@ import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
-import 'package:cogniopenapp/src/video_display.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:flutter/material.dart';
@@ -241,7 +240,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
         builder: (BuildContext context) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Full Screen Image and Details'),
+              backgroundColor: const Color(0x440000), // Set appbar background color
+              elevation: 0.0,
+              centerTitle: true,
+              leading: const BackButton(color: Colors.black54),
+              title: const Text('Full Screen Image and Details', style: TextStyle(color: Colors.black54)),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.edit),
@@ -269,17 +272,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         icon: virtualAssistantIcon,
                         label: const Text("Ask the Assistant"),
                         onPressed: () {
-                          // String transcript = await getTranscriptPath(media
-                          //     .timestamp.millisecondsSinceEpoch
-                          //     .toString());
-                          // print("transcript: $transcript");
-                          // Send transcript to chatbot
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
                                       AssistantScreen(conversation: media)));
-                          // "/files/audios/transcripts/${media.timestamp.millisecondsSinceEpoch.toString()}transcript.txt")));
                         },
                       ),
                     if (!media.title.isEmpty)
@@ -293,9 +290,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         image: media.photo!.image,
                       ),
                     if (media is Video && media.thumbnail != null)
-                      //TODO: ADD VIDEO PLAYER HERE
-                      videoDisplay(media),
-                    if (media is Audio) Icon(Icons.chat, size: 100),
+                      Image(
+                        image: media.thumbnail!.image,
+                      ),
                     if (media is Audio) audioPlayer(media),
                     SizedBox(height: 16),
                     if (media.description != null && media.description != "")
@@ -304,38 +301,19 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         style: TextStyle(fontSize: _defaultFontSize),
                         textAlign: TextAlign.center,
                       ),
-                    if (media.tags != null &&
-                        media.tags!.isNotEmpty &&
-                        !media.tags!.every((tag) => tag.isEmpty))
+                    if (media.tags != null && media.tags!.isNotEmpty)
                       Text('Tags: ${media.tags?.join(", ")}',
                           style: TextStyle(fontSize: _defaultFontSize)),
-                    /* Text(
+                    Text(
                       'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
                       style: TextStyle(fontSize: _defaultFontSize),
-                    ), */
-                    SizedBox(height: 25),
+                    ),
                     if (media is Audio)
                       Text('Summary: ${media.summary}',
                           style: TextStyle(fontSize: _defaultFontSize)),
-                    SizedBox(height: 25),
                     if (media is Audio)
-                      FutureBuilder<String>(
-                        future: readFileAsString(media),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            // While the future is still running, you can show a loading indicator.
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            // If an error occurs, you can display an error message.
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            // If the future is complete, display the summary.
-                            return Text('Transcript: ${snapshot.data}',
-                                style: TextStyle(fontSize: _defaultFontSize));
-                          }
-                        },
-                      ),
+                      Text('Summary: ${readFileAsString(media)}',
+                          style: TextStyle(fontSize: _defaultFontSize)),
                   ],
                 ),
               ),
@@ -344,14 +322,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
         },
       ),
     );
-  }
-
-  // TODO: MAKE THIS LOAD THE VIDEO
-  VideoDisplay videoDisplay(Video video) {
-    String fullFilePath =
-        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
-    print("THE PATH IS: ${fullFilePath}");
-    return VideoDisplay(fullFilePath: fullFilePath);
   }
 
   Future<String> readFileAsString(Audio audio) async {
@@ -537,6 +507,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
     return Scaffold(
         backgroundColor: const Color(0xFFB3E5FC),
+        extendBodyBehindAppBar: true,
+        extendBody: true,
         appBar: _buildAppBar(),
         body: Container(
           decoration: const BoxDecoration(
@@ -561,13 +533,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return AppBar(
       backgroundColor: const Color(0x440000),
       elevation: 0.0,
+      iconTheme: IconThemeData(
+        color: Colors.black54, //change your color here
+      ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '', // Gallery view title
-            style: TextStyle(fontSize: 20),
-          ),
           SizedBox(height: 4),
         ],
       ),
@@ -578,6 +549,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             IconButton(
               key: const Key('searchIcon'),
               icon: Icon(Icons.search),
+              color: Colors.black54,
               onPressed: _toggleSearchBarVisibility,
             ),
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -594,12 +566,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
               icon: _showPhotos
                   ? const Icon(Icons.photo)
                   : const Icon(Icons.photo_outlined),
-              color: _showPhotos ? Colors.white : Colors.grey,
+              color: _showPhotos ? Colors.blueAccent : Colors.grey,
               onPressed: _toggleShowPhotos,
             ),
             IconButton(
               key: const Key('filterVideoIcon'),
-              color: _showVideos ? Colors.white : Colors.grey,
+              color: _showVideos ? Colors.blueAccent : Colors.grey,
               icon: _showVideos
                   ? const Icon(Icons.videocam)
                   : const Icon(Icons.videocam_outlined),
@@ -607,7 +579,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             ),
             IconButton(
               key: const Key('filterConversationIcon'),
-              color: _showConversations ? Colors.white : Colors.grey,
+              color: _showConversations ? Colors.blueAccent : Colors.grey,
               icon: _showConversations
                   ? const Icon(Icons.chat)
                   : const Icon(Icons.chat_outlined),
