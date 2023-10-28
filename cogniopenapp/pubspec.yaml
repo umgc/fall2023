@@ -100,6 +100,7 @@ flutter:
     - assets/icons/
     - assets/test_images/
     - assets/icons/app_icon.png
+    - assets/icons/virtual_assistant.png
     - .env
 
 

@@ -24,6 +24,24 @@
       <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/local_auth_windows/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/local_auth_windows/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/local_auth_windows/build" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/audioplayers_windows/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/audioplayers_windows/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/audioplayers_windows/build" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/permission_handler_windows/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/permission_handler_windows/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/permission_handler_windows/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/build" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/permission_handler_windows/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/permission_handler_windows/build" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/permission_handler_windows/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/build" />
+      <excludeFolder url="file://$MODULE_DIR$/cogniopenapp/windows/flutter/ephemeral/.plugin_symlinks/geolocator_windows/.pub" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
