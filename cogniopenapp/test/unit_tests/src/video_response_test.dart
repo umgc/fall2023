@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cogniopenapp/src/video_response.dart';
+import 'package:cogniopenapp/src/aws_video_response.dart';
 
 void main() {
   /*

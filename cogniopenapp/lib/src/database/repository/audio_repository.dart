@@ -3,15 +3,18 @@ import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 
 const String tableAudios = 'audios';
+const String transcriptType = 'transcript';
 
 class AudioFields extends MediaFields {
   static final List<String> values = [
     ...MediaFields.values,
     audioFileName,
+    transcriptFileName,
     summary,
   ];
 
   static const String audioFileName = 'audio_file_name';
+  static const String transcriptFileName = 'transcript_file_name';
   static const String summary = 'summary';
 }
 
