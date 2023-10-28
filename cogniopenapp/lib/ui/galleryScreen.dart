@@ -306,13 +306,15 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     if (media.tags != null && media.tags!.isNotEmpty)
                       Text('Tags: ${media.tags?.join(", ")}',
                           style: TextStyle(fontSize: _defaultFontSize)),
-                    Text(
+                    /* Text(
                       'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
                       style: TextStyle(fontSize: _defaultFontSize),
-                    ),
+                    ), */
+                    SizedBox(height: 25),
                     if (media is Audio)
                       Text('Summary: ${media.summary}',
                           style: TextStyle(fontSize: _defaultFontSize)),
+                    SizedBox(height: 25),
                     if (media is Audio)
                       FutureBuilder<String>(
                         future: readFileAsString(media),
