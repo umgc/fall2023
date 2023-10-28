@@ -20,11 +20,10 @@ class CameraManager {
 
   static final CameraManager _instance = CameraManager._internal();
 
-  VideoProcessor vp = VideoProcessor();
-
   bool isAutoRecording = false;
   bool uploadToRekognition = false;
   int autoRecordingInterval = 60;
+  int cameraToUse = 1;
 
   late Image recentThumbnail;
   CameraManager._internal() {}
@@ -34,19 +33,21 @@ class CameraManager {
   }
 
   Future<void> initializeCamera() async {
+    parseEnviromentSettings();
     print("GETTING CAMERAS");
     _cameras = await availableCameras();
     print(_cameras.length);
-    controller = CameraController(
-        _cameras[(_cameras.length - 1)], ResolutionPreset.high);
-    //controller = CameraController(_cameras[1], ResolutionPreset.high);
+    // Make sure that there are available cameras if trying to use the front
+    // 0 equals rear, 1 = front
+    if (_cameras.length == 1) cameraToUse = 0;
+    controller = CameraController(_cameras[cameraToUse], ResolutionPreset.high);
     await controller.initialize();
     print("Camera has been initialized");
-    parseEnviromentSettings();
   }
 
   void parseEnviromentSettings() async {
     await dotenv.load(fileName: ".env");
+    cameraToUse = int.parse(dotenv.get('cameraToUse', fallback: "1"));
     autoRecordingInterval =
         int.parse(dotenv.get('autoRecordInterval', fallback: "60"));
     isAutoRecording =
@@ -60,6 +61,12 @@ class CameraManager {
       FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS ENABLED");
     } else {
       FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS DISABLED");
+    }
+
+    if (isAutoRecording) {
+      FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS ENABLED");
+    } else {
+      FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS DISABLED");
     }
 
     print("The camera that is being automatically used is the ${cameraUsed}");
@@ -84,6 +91,7 @@ class CameraManager {
         if (file != null) {
           saveMediaLocally(file); // Call the saveMediaLocally function
           if (uploadToRekognition) {
+            VideoProcessor vp = VideoProcessor();
             vp.automaticallySendToRekognition();
           }
         }

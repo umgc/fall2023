@@ -4,6 +4,7 @@ import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:cogniopenapp/src/typingIndicator.dart';
 /// FlutterSound provides functionality for recording and playing audio.
 import 'package:flutter_sound/flutter_sound.dart';
 
@@ -45,6 +46,8 @@ class _AudioScreenState extends State<AudioScreen> {
   /// Flags to track if recording or playback is currently in progress.
   bool _isRecording = false;
   bool _isPlaying = false;
+  // Flag to track if transcription is loading
+  bool _isTranscribing = false;
 
   /// Variable to track the duration of the current recording.
   Duration _duration = const Duration(seconds: 0);
@@ -206,7 +209,9 @@ class _AudioScreenState extends State<AudioScreen> {
           maxSpeakerLabels: 2, // specify the number of speakers you expect, adjust as needed
         ),
       );
-
+      setState(() {
+        _isTranscribing = true;
+      });
       print('Transcription job started with status: ${response.transcriptionJob?.transcriptionJobStatus}');
 
       // Poll for the transcription job's status
@@ -242,14 +247,17 @@ class _AudioScreenState extends State<AudioScreen> {
           }
             setState(() {
               transcription = fullTranscription.trim();
+              _isTranscribing = false;
             });
             } else {
               print('Failed to fetch transcript: ${transcriptResponse.statusCode}');
+              _isTranscribing = false;
             }
             break;
           }
         } else if (jobResponse.transcriptionJob?.transcriptionJobStatus.toString() == 'TranscriptionJobStatus.failed') {
           print('Transcription job failed');
+          _isTranscribing = false;
           break;
         }
         // Wait for a short interval before polling again
@@ -279,6 +287,9 @@ String _getCustomSpeakerLabel(String awsSpeakerLabel) {
 Future _saveTranscriptionToFile(String transcriptionJobName) async {
   if (transcription.isEmpty) {
     print("Transcription is empty. Nothing to save.");
+    setState(() {
+        _isTranscribing = false;
+    });
     return;
   }
 
@@ -383,8 +394,7 @@ Future<void> _sendToDatabase() async {
     String transcriptFilePath = '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
        await DataService.instance.addAudio(
           title: key2,
-          description: transcription,
-          tags: [],
+          description: "",
           audioFile: File(audioFilePath),
           transcriptFile: File(transcriptFilePath),
           summary: transcriptionSummary);
@@ -550,7 +560,7 @@ Future<void> _sendToDatabase() async {
                         ),
 
                       ),
-                    
+                      if (_isTranscribing) TypingIndicator(),
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Text(

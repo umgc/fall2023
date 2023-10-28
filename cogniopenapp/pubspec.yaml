@@ -42,6 +42,7 @@ dependencies:
   
   # A Flutter plugin for iOS, Android and Web for playing back video on a Widget surface.
   video_player: ^2.7.2
+  chewie: ^1.7.1
 
   quiver: ^3.0.0
 
@@ -85,6 +86,7 @@ dependencies:
   image_picker: ^1.0.4
   timeago: ^3.5.0
   path_provider_foundation: ^2.3.1
+
 
 dev_dependencies:
   flutter_test:

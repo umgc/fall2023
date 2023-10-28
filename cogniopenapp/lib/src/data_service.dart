@@ -96,8 +96,8 @@ class DataService {
             height: rekResponse.boundingBox.height,
             timestamp: rekResponse.timestamp);
         if (response != null) {
-          print(
-              "ADDED RESPONSE: title ${response.title} timestamp ${response.timestamp}");
+          //print(
+          //"ADDED RESPONSE: title ${response.title} timestamp ${response.timestamp}");
         }
       }
 
