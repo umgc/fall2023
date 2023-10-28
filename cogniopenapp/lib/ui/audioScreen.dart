@@ -379,12 +379,13 @@ Future<String> summarizeFileContent(String fileName) async {
 Future<void> _sendToDatabase() async {
    // call add method to db
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    String filePath = '${appDocDirectory.path}/files/audios/transcripts/$key2.txt';
+    String audioFilePath = '${appDocDirectory.path}/files/audios/$key2.wav';
+    String transcriptFilePath = '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
        await DataService.instance.addAudio(
           title: key2,
-          description: transcription,
-          tags: [],
-          audioFile: File(filePath),
+          description: "",
+          audioFile: File(audioFilePath),
+          transcriptFile: File(transcriptFilePath),
           summary: transcriptionSummary);
 }
 
