@@ -129,9 +129,9 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
               print(" PUT THE FINDING OB STUF FHERE");
-              displayFullObjectView("Person");
+              displayFullObjectView("Cup");
             },
-            label: 'PARSE HARDCODED JOB',
+            label: 'Search for cup',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
@@ -143,7 +143,7 @@ class RekognitionScreenState extends State<RekognitionScreen> {
 
   void displayFullObjectView(String userQuery) async {
     VideoProcessor vp = VideoProcessor();
-    VideoResponse? response = vp.getRequestedResponse("userQuery");
+    VideoResponse? response = vp.getRequestedResponse(userQuery);
     if (response == null) {
       return;
     }

@@ -37,9 +37,9 @@ class CameraManager {
     print("GETTING CAMERAS");
     _cameras = await availableCameras();
     print(_cameras.length);
-    controller = CameraController(
-        _cameras[(_cameras.length - 1)], ResolutionPreset.high);
-    //controller = CameraController(_cameras[1], ResolutionPreset.high);
+    //controller = CameraController(
+    // _cameras[(_cameras.length - 1)], ResolutionPreset.high);
+    controller = CameraController(_cameras.first, ResolutionPreset.high);
     await controller.initialize();
     print("Camera has been initialized");
     parseEnviromentSettings();
