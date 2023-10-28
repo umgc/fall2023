@@ -85,7 +85,6 @@ dependencies:
   image_picker: ^1.0.4
   timeago: ^3.5.0
   path_provider_foundation: ^2.3.1
-  image_picker: ^1.0.4
 
 
 dev_dependencies:
