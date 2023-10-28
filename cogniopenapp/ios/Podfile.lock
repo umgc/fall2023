@@ -1,0 +1,82 @@
+PODS:
+  - assets_audio_player (0.0.1):
+    - Flutter
+  - assets_audio_player_web (0.0.1):
+    - Flutter
+  - audio_waveforms (0.0.1):
+    - Flutter
+  - audioplayers_darwin (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - flutter_sound (9.2.13):
+    - Flutter
+    - flutter_sound_core (= 9.2.13)
+  - flutter_sound_core (9.2.13)
+  - local_auth_ios (0.0.1):
+    - Flutter
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - permission_handler_apple (9.1.1):
+    - Flutter
+  - speech_to_text (0.0.1):
+    - Flutter
+    - Try
+  - Try (2.1.1)
+
+DEPENDENCIES:
+  - assets_audio_player (from `.symlinks/plugins/assets_audio_player/ios`)
+  - assets_audio_player_web (from `.symlinks/plugins/assets_audio_player_web/ios`)
+  - audio_waveforms (from `.symlinks/plugins/audio_waveforms/ios`)
+  - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
+  - Flutter (from `Flutter`)
+  - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
+  - local_auth_ios (from `.symlinks/plugins/local_auth_ios/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - speech_to_text (from `.symlinks/plugins/speech_to_text/ios`)
+
+SPEC REPOS:
+  trunk:
+    - flutter_sound_core
+    - Try
+
+EXTERNAL SOURCES:
+  assets_audio_player:
+    :path: ".symlinks/plugins/assets_audio_player/ios"
+  assets_audio_player_web:
+    :path: ".symlinks/plugins/assets_audio_player_web/ios"
+  audio_waveforms:
+    :path: ".symlinks/plugins/audio_waveforms/ios"
+  audioplayers_darwin:
+    :path: ".symlinks/plugins/audioplayers_darwin/ios"
+  Flutter:
+    :path: Flutter
+  flutter_sound:
+    :path: ".symlinks/plugins/flutter_sound/ios"
+  local_auth_ios:
+    :path: ".symlinks/plugins/local_auth_ios/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
+  speech_to_text:
+    :path: ".symlinks/plugins/speech_to_text/ios"
+
+SPEC CHECKSUMS:
+  assets_audio_player: edee322b9cb625571b830b35872ead1a295fd917
+  assets_audio_player_web: 19826380c44375761aa0b9053665c1e3fbc3b86b
+  audio_waveforms: cd736909ebc6b6a164eb74701d8c705ce3241e1c
+  audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_sound: c60effa2a350fb977885f0db2fbc4c1ad5160900
+  flutter_sound_core: 26c10e5832e76aaacfae252d8925232281c486ae
+  local_auth_ios: c6cf091ded637a88f24f86a8875d8b0f526e2605
+  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
+  speech_to_text: b43a7d99aef037bd758ed8e45d79bbac035d2dfe
+  Try: 5ef669ae832617b3cee58cb2c6f99fb767a4ff96
+
+PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+
+COCOAPODS: 1.13.0

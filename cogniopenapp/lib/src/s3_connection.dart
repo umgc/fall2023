@@ -5,7 +5,7 @@ import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
-import 'galleryData.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class S3Bucket {
   S3? connection;
@@ -25,17 +25,31 @@ class S3Bucket {
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
 
+    String region = (dotenv.get('region', fallback: "none"));
+    String access = (dotenv.get('accessKey', fallback: "none"));
+    String secret = (dotenv.get('secretKey', fallback: "none"));
+
+    if (region == "none" || access == "none" || secret == "none") {
+      print("S3 needs to be initialized");
+      return;
+    }
+
     connection = S3(
         //this region is hard-coded because the 'us-east-2' region would not run/load.
-        region: dotenv.get('region'),
-        credentials: AwsClientCredentials(
-            accessKey: dotenv.get('accessKey'),
-            secretKey: dotenv.get('secretKey')));
+        region: region,
+        credentials:
+            AwsClientCredentials(accessKey: access, secretKey: secret));
     //TODO:debug/testing statements
     print("S3 is connected...");
   }
 
   void createBucket() {
+    String bucket = (dotenv.get('videoS3Bucket', fallback: "none"));
+
+    if (bucket == "none") {
+      print("S3 needs to be initialized");
+      return;
+    }
     //impotent method that creates bucket if it is not already present.
     Future<CreateBucketOutput> creating =
         connection!.createBucket(bucket: dotenv.get('videoS3Bucket'));
@@ -54,6 +68,7 @@ class S3Bucket {
   // Adds the file to the S3 bucket
   Future<String> addVideoToS3(String title, String localPath) {
     // TODO Specify folder structure
+    print("ADDINF THIS TO S3 ${title}");
     Uint8List bytes = File(localPath).readAsBytesSync();
     return _addToS3(title, bytes);
   }
@@ -64,7 +79,7 @@ class S3Bucket {
   Future<String> _addToS3(String title, Uint8List content) async {
     // TODO: Add logic to detect file type and create a folder
     // .mp3 files go to bucket/audio, .mp4 files go to bucket/audio
-    String formattedTitle = GalleryData.getFileNameForAWS(title);
+    String formattedTitle = FileManager.getFileNameForAWS(title);
     await connection!.putObject(
       bucket: dotenv.get('videoS3Bucket'),
       key: formattedTitle,
@@ -73,5 +88,17 @@ class S3Bucket {
     //TODO:debug/testing statements
     print("content added to bucket.");
     return title;
+  }
+
+  // Delete file from S3
+  Future<bool> deleteFileFromS3(String key) async {
+    try {
+      await connection!
+          .deleteObject(bucket: dotenv.get('videoS3Bucket'), key: key);
+      return true;
+    } catch (e) {
+      print('Failed to delete the file from S3: $e');
+      return false;
+    }
   }
 }

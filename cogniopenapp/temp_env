@@ -1,8 +1,14 @@
 #!!!!!!!!!!!!!!!!!!!!
-
-#RENAME the temp_env FILE TO .env
+#AUTO RECORD FOR VIDEO
+autoRecordInterval = "20" # Must be an integer
+autoRecordEnabled = "false" # To have it enabled, string must be "true"
+autoUploadToRekognitionEnabled = "false" # To have it enabled, string must be "true"
+cameraToUse = "1" # 1 = front, 0 = rear. Defaults to front if not set
 #!!!!!!!!!!!!!!!!!!!!
-#FILL IN THESE WITH AWS USER ACCOUNT keys
+
+# RENAME the temp_env FILE TO .env
+#!!!!!!!!!!!!!!!!!!!!
+# FILL IN THESE WITH AWS USER ACCOUNT keys
 #!!!!!!!!!!!!!!!!!!!!
 accessKey = ""
 secretKey = ""
@@ -12,9 +18,17 @@ secretKey = ""
 
 
 region = "us-east-1"
-snsTopicName = "cogniopen-notifications"
 
 #!!!!!!!!!!!!!!!!!!!!
-#RENAME BUCKET VAR
+# RENAME BUCKET VAR
 videoS3Bucket = "cogniopen-videos-test-yournamehere"
 #!!!!!!!!!!!!!!!!!!!!
+
+#!!!!!!!!!!!!!!!!!!!!
+# Enter OpenAI API Key
+OPEN_AI_API_KEY = xyz
+#!!!!!!!!!!!!!!!!!!!!
+
+
+autoRecordInterval = "20"
+autoRecordEnabled = "false"
