@@ -314,8 +314,23 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       Text('Summary: ${media.summary}',
                           style: TextStyle(fontSize: _defaultFontSize)),
                     if (media is Audio)
-                      Text('Summary: ${readFileAsString(media)}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
+                      FutureBuilder<String>(
+                        future: readFileAsString(media),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            // While the future is still running, you can show a loading indicator.
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            // If an error occurs, you can display an error message.
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            // If the future is complete, display the summary.
+                            return Text('Transcript: ${snapshot.data}',
+                                style: TextStyle(fontSize: _defaultFontSize));
+                          }
+                        },
+                      ),
                   ],
                 ),
               ),
