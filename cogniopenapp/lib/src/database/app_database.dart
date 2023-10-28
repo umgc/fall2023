@@ -2,7 +2,9 @@ import 'package:cogniopenapp/src/database/app_seed_data.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/significant_object_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -33,6 +35,7 @@ class AppDatabase {
     const boolType = 'BOOLEAN NOT NULL';
     const integerType = 'INTEGER NOT NULL';
     const textNullableType = 'TEXT';
+    const floatType = 'FLOAT';
 
     final mediaColumns = [
       '${MediaFields.id} $idType',
@@ -48,6 +51,7 @@ class AppDatabase {
       CREATE TABLE $tableAudios (
         ${mediaColumns.join(',\n')},
         ${AudioFields.audioFileName} $textType,
+        ${AudioFields.transcriptFileName} $textNullableType,
         ${AudioFields.summary} $textNullableType
       )
     ''');
@@ -67,6 +71,28 @@ class AppDatabase {
         ${VideoFields.duration} $textType
       )
     ''');
+
+    await db.execute('''
+    CREATE TABLE $tableVideoResponses (
+      ${VideoResponseFields.id} $idType,
+      ${VideoResponseFields.title} $textType,
+      ${VideoResponseFields.timestamp} $integerType,
+      ${VideoResponseFields.referenceVideoFilePath} $textType,
+      ${VideoResponseFields.confidence} $floatType,
+      ${VideoResponseFields.left} $floatType,
+      ${VideoResponseFields.top} $floatType,
+      ${VideoResponseFields.width} $floatType,
+      ${VideoResponseFields.height} $floatType
+    )
+  ''');
+
+    await db.execute('''
+    CREATE TABLE $tableSignificantObjects (
+      ${SignificantObjectFields.id} $idType,
+      ${SignificantObjectFields.label} $textType,
+      ${SignificantObjectFields.imageFileName} $textType
+    )
+  ''');
 
     final appSeedData = AppSeedData();
     appSeedData.loadAppSeedData();
