@@ -25,6 +25,7 @@ class CameraManager {
   bool isAutoRecording = false;
   bool uploadToRekognition = false;
   int autoRecordingInterval = 60;
+  int cameraToUse = 1;
 
   late Image recentThumbnail;
   CameraManager._internal() {}
@@ -34,19 +35,18 @@ class CameraManager {
   }
 
   Future<void> initializeCamera() async {
+    parseEnviromentSettings();
     print("GETTING CAMERAS");
     _cameras = await availableCameras();
     print(_cameras.length);
-    controller = CameraController(
-        _cameras[(_cameras.length - 1)], ResolutionPreset.high);
-    //controller = CameraController(_cameras[1], ResolutionPreset.high);
+    controller = CameraController(_cameras[cameraToUse], ResolutionPreset.high);
     await controller.initialize();
     print("Camera has been initialized");
-    parseEnviromentSettings();
   }
 
   void parseEnviromentSettings() async {
     await dotenv.load(fileName: ".env");
+    cameraToUse = int.parse(dotenv.get('cameraToUse', fallback: "1"));
     autoRecordingInterval =
         int.parse(dotenv.get('autoRecordInterval', fallback: "60"));
     isAutoRecording =

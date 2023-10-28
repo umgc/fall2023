@@ -39,7 +39,6 @@ class VideoProcessor {
   }
 
   VideoResponse? getRequestedResponse(String searchTitle) {
-    print("LOOKING FOR REQUESTED RESPONSE");
     for (int i = DataService.instance.responseList.length - 1; i >= 0; i--) {
       if (DataService.instance.responseList[i].title == searchTitle) {
         return DataService.instance.responseList[i];

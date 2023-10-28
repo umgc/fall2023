@@ -28,6 +28,7 @@ class RekognitionScreen extends StatefulWidget {
 class RekognitionScreenState extends State<RekognitionScreen> {
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
+  String userInput = '';
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +36,12 @@ class RekognitionScreenState extends State<RekognitionScreen> {
       appBar: AppBar(
         title: const Text('S3 Buckets'),
       ),
-      body: const Column(children: [
-        Padding(
+      body: Column(children: [
+        const Padding(
           padding: EdgeInsets.fromLTRB(
               16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
           child: Text(
-            'Welcome!', // This is the header text
+            'Looking for an object?', // This is the header text
             style: TextStyle(
               fontSize: 24.0, // Adjust font size as needed
               fontWeight: FontWeight.bold,
@@ -49,12 +50,12 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             textAlign: TextAlign.center,
           ),
         ),
-        Padding(
+        const Padding(
           // New subheading section starts here
           padding: EdgeInsets.fromLTRB(
               16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
           child: Text(
-            "Click the buttons to do the thing.", // This is the subheading text
+            "CogniOpen assistant will search for a selected object in recent video recordings.", // This is the subheading text
             style: TextStyle(
               fontSize: 16.0, // Adjust font size as needed
               //color:
@@ -63,6 +64,50 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             textAlign: TextAlign.center,
           ),
         ), // New subheading section ends here
+        Center(
+          child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextField(
+                    onChanged: (text) {
+                      setState(() {
+                        userInput = text;
+                      });
+                    },
+                    decoration:
+                        InputDecoration(labelText: 'Enter search object.'),
+                  ),
+                  //SizedBox(height: 20),
+                  //Text('User Input: $userInput',
+                  //    style: TextStyle(fontSize: 20)),
+                ],
+              )),
+        ),
+        //SizedBox(height: 20),
+        //Text('User Input: $userInput', style: TextStyle(fontSize: 20)),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            // Perform an action when the button is pressed, e.g., display the user's input.
+            /*ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('User input: $userInput'),
+              ),
+            );*/
+            if (userInput.isNotEmpty) {
+              displayFullObjectView(userInput);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Please enter a valid search object'),
+                ),
+              );
+            }
+          },
+          child: Text('Submit'),
+        ),
       ]),
       floatingActionButton: _getFAB(s3),
     );
@@ -84,9 +129,9 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             backgroundColor: const Color(0XFFE91E63),
             onTap: () {
               print(" PUT THE FINDING OB STUF FHERE");
-              displayFullObjectView();
+              displayFullObjectView("Cup");
             },
-            label: 'PARSE HARDCODED JOB',
+            label: 'Search for cup',
             labelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
@@ -96,9 +141,9 @@ class RekognitionScreenState extends State<RekognitionScreen> {
     );
   }
 
-  void displayFullObjectView() async {
+  void displayFullObjectView(String userQuery) async {
     VideoProcessor vp = VideoProcessor();
-    VideoResponse? response = vp.getRequestedResponse("Person");
+    VideoResponse? response = vp.getRequestedResponse(userQuery);
     if (response == null) {
       return;
     }
@@ -124,61 +169,57 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             appBar: AppBar(
               title: const Text('Full Screen Response and Details'),
             ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Stack(
+            body: Stack(
+              children: [
+                Image(image: stillImage.image),
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  right: 0,
+                  child: Column(
                     children: [
-                      Image(image: stillImage.image),
-                      //if (_isRectangleVisible)
-                      Positioned(
-                        //TODO: hardcoded video frame width and height; these need replaced with whatever actually comes in as the image
-                        left: imageWidth * response.left,
-                        top: imageHeight * response.top,
-                        child: Opacity(
-                          opacity: 0.35,
-                          child: Material(
-                            child: InkWell(
-                              child: Container(
-                                width: imageWidth * response.width,
-                                height: imageHeight * response.height,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 2,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Container(
-                                    color: Colors.black,
-                                    child: Text(
-                                      '${response.title} ${((response.confidence * 100).truncateToDouble()) / 100}%',
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
+                      SizedBox(height: 16),
+                      Text('Name: ${response.title}',
+                          style: const TextStyle(fontSize: 18)),
+                      Text('Timestamp: ${response.timestamp}',
+                          style: const TextStyle(fontSize: 18)),
+                      Text('Confidence: ${response.timestamp}',
+                          style: const TextStyle(fontSize: 18)),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  left: imageWidth * response.left,
+                  top: imageHeight * response.top,
+                  child: Opacity(
+                    opacity: 0.35,
+                    child: Material(
+                      child: InkWell(
+                        child: Container(
+                          width: imageWidth * response.width,
+                          height: imageHeight * response.height,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 2,
+                              color: Colors.black,
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              color: Colors.black,
+                              child: Text(
+                                '${response.title} ${((response.confidence * 100).truncateToDouble()) / 100}%',
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Text('Timestamp: ${response.timestamp}',
-                      style: const TextStyle(fontSize: 18)),
-                  Text('Name: ${response.title}',
-                      style: const TextStyle(fontSize: 18)),
-                  //Text('Confidence: ${response.confidence}'),
-                  //Text('Timestamp: ${response.timestamp}'),
-                  //Text(
-                  //  'BoundingBox: ${response.boundingBox?.toString() ?? "N/A"}'),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
