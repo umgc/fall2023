@@ -2,6 +2,7 @@
 #AUTO RECORD FOR VIDEO
 autoRecordInterval = "20" # Must be an integer
 autoRecordEnabled = "false" # To have it enabled, string must be "true"
+autoUploadToRekognitionEnabled = "false" # To have it enabled, string must be "true"
 #!!!!!!!!!!!!!!!!!!!!
 
 # RENAME the temp_env FILE TO .env
@@ -16,7 +17,6 @@ secretKey = ""
 
 
 region = "us-east-1"
-snsTopicName = "cogniopen-notifications"
 
 #!!!!!!!!!!!!!!!!!!!!
 # RENAME BUCKET VAR

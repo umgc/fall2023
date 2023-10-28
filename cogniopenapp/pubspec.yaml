@@ -80,6 +80,9 @@ dependencies:
   plugin_platform_interface: ^2.1.6
   path_provider_platform_interface: ^2.1.1
   moment_dart: ^1.1.0
+  external_path: ^1.0.3
+  gallery_saver: ^2.3.2
+  image_picker: ^1.0.4
   timeago: ^3.5.0
   path_provider_foundation: ^2.3.1
   image_picker: ^1.0.4

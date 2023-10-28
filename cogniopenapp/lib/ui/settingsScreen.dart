@@ -1,7 +1,9 @@
+import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:flutter/material.dart';
 import 'homeScreen.dart';
 import 'galleryScreen.dart';
 import 'assistantScreen.dart';
+import 'searchScreen.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -28,22 +30,52 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Container(
-                    margin: const EdgeInsets.only(top: 225.0),
+                    margin: const EdgeInsets.only(top: 225, left: 25),
                     child: Row(
+                      //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/icons/mic_on.png',
-                          width: 75.0, // You can adjust the width and height
+                          'assets/icons/camera.png',
+                          width: 35.0, // You can adjust the width and height
                         ),
-                        const Text("Passive Audio Recording",
+                        const Text("    Significant Objects",
                             textAlign: TextAlign.left,
                             style: TextStyle(
                                 color: Colors.black87,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0)),
-                        const SwitchExample(),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        SignificantObjectScreen()));
+                          },
+                          icon: const Icon(
+                            Icons.arrow_forward_outlined,
+                            size: 35,
+                            color: Colors.blue,
+                          ),
+                        )
                       ],
                     )),
+                Container(
+                    child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/icons/mic_on.png',
+                      width: 75.0, // You can adjust the width and height
+                    ),
+                    const Text("Passive Audio Recording",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0)),
+                    const SwitchExample(),
+                  ],
+                )),
                 Container(
                     child: Row(
                   children: [

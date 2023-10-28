@@ -1,15 +1,19 @@
 import 'dart:io';
 
 import 'package:cogniopenapp/src/database/controller/audio_controller.dart';
+import 'package:cogniopenapp/src/aws_video_response.dart';
 import 'package:cogniopenapp/src/database/controller/photo_controller.dart';
 import 'package:cogniopenapp/src/database/controller/video_controller.dart';
+import 'package:cogniopenapp/src/database/controller/video_response_controller.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 
 class DataService {
   DataService._internal();
@@ -18,6 +22,8 @@ class DataService {
   static DataService get instance => _instance;
 
   late List<Media> mediaList;
+  late List<VideoResponse> responseList;
+  bool hasBeenInitialized = false;
 
   Future<void> initializeData() async {
     await loadMedia();
@@ -29,6 +35,27 @@ class DataService {
     final videos = await VideoRepository.instance.readAll();
 
     mediaList = [...audios, ...photos, ...videos];
+
+    if (!hasBeenInitialized) {
+      // *** For development debug purposes only. TODO: Remove
+      for (var audio in audios) {
+        print('Audio #${audio.id}: ${audio.toJson()}');
+      }
+      for (var photo in photos) {
+        print('Photo #${photo.id}: ${photo.toJson()}');
+      }
+      for (var video in videos) {
+        print('Video #${video.id}: ${video.toJson()}');
+      }
+      responseList = await VideoResponseRepository.instance.readAll();
+
+      for (var videoResponse in responseList) {
+        print(videoResponse.toJson());
+      }
+      hasBeenInitialized = true;
+    }
+
+    // ***
   }
 
   Future<void> unloadMedia() async {
@@ -40,8 +67,51 @@ class DataService {
     await loadMedia();
   }
 
+  Future<void> loadResponses() async {
+    responseList = await VideoResponseRepository.instance.readAll();
+  }
+
+  Future<void> unloadResponses() async {
+    responseList.clear();
+  }
+
+  Future<void> refreshResponses() async {
+    await unloadResponses();
+    await loadResponses();
+  }
+
   // |-----------------------------------------------------------------------------------------|
-  // |------------------------------------- AUDIO OPERATIONS -------------------------------------|
+  // |---------------------------- VIDEO RESPONSE OPERATIONS ----------------------------------|
+  // |-----------------------------------------------------------------------------------------|
+  Future<void> addVideoResponses(List<AWS_VideoResponse> rekogResponses) async {
+    try {
+      for (AWS_VideoResponse rekResponse in rekogResponses) {
+        final response = await VideoResponseController.addVideoResponse(
+            title: rekResponse.name,
+            referenceVideoFilePath: rekResponse.referenceVideoFilePath,
+            confidence: rekResponse.confidence,
+            left: rekResponse.boundingBox.left,
+            top: rekResponse.boundingBox.top,
+            width: rekResponse.boundingBox.width,
+            height: rekResponse.boundingBox.height,
+            timestamp: rekResponse.timestamp);
+        if (response != null) {
+          print(
+              "ADDED RESPONSE: title ${response.title} timestamp ${response.timestamp}");
+        }
+      }
+
+      await refreshResponses();
+
+      //return response;
+    } catch (e) {
+      print('Data Service -- Error adding video response: $e');
+      //return null;
+    }
+  }
+
+  // |-----------------------------------------------------------------------------------------|
+  // |---------------------------------- AUDIO OPERATIONS -------------------------------------|
   // |-----------------------------------------------------------------------------------------|
 
   // TODO, refactor seed data to just use addAudio();
@@ -50,6 +120,7 @@ class DataService {
     String? description,
     List<String>? tags,
     required File audioFile,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
@@ -58,6 +129,7 @@ class DataService {
         description: description,
         tags: tags,
         audioFile: audioFile,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -75,14 +147,16 @@ class DataService {
     String? description,
     List<String>? tags,
     required File audioFile,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
-      final audio = await AudioController.addSeedAudio(
+      final audio = await AudioController.addAudio(
         title: title,
         description: description,
         tags: tags,
         audioFile: audioFile,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -101,6 +175,7 @@ class DataService {
     String? description,
     List<String>? tags,
     bool? isFavorited,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
@@ -110,6 +185,7 @@ class DataService {
         description: description,
         isFavorited: isFavorited,
         tags: tags,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -136,7 +212,7 @@ class DataService {
   }
 
   // |-----------------------------------------------------------------------------------------|
-  // |-------------------------------------- PHOTO OPERATIONS --------------------------------------|
+  // |--------------------------------- PHOTO OPERATIONS --------------------------------------|
   // |-----------------------------------------------------------------------------------------|
 
 // TODO, refactor seed data to just use addPhoto();
@@ -225,7 +301,7 @@ class DataService {
   }
 
   // |-----------------------------------------------------------------------------------------|
-  // |------------------------------------- VIDEO OPERATIONS -------------------------------------|
+  // |---------------------------------- VIDEO OPERATIONS -------------------------------------|
   // |-----------------------------------------------------------------------------------------|
 
   // TODO, refactor seed data to just use addVideo();

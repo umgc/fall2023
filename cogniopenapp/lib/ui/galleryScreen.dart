@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:aws_client/lex_models_v2_2020_08_07.dart';
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
@@ -8,6 +11,7 @@ import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:cogniopenapp/src/video_display.dart';
+import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:flutter/material.dart';
 
 // Define an enumeration for sorting criteria
@@ -213,6 +217,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
   };
 
   void displayFullObjectView(BuildContext context, Media media) async {
+    var virtualAssistantIcon = Image.asset(
+      'assets/icons/virtual_assistant.png',
+      width: 25.0, // You can adjust the width and height
+      height: 25.0, // as per your requirement
+    );
+
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
@@ -241,6 +251,24 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    if (media is Audio)
+                      ElevatedButton.icon(
+                        icon: virtualAssistantIcon,
+                        label: const Text("Ask the Assistant"),
+                        onPressed: () {
+                          // String transcript = await getTranscriptPath(media
+                          //     .timestamp.millisecondsSinceEpoch
+                          //     .toString());
+                          // print("transcript: $transcript");
+                          // Send transcript to chatbot
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AssistantScreen(conversation: media)));
+                          // "/files/audios/transcripts/${media.timestamp.millisecondsSinceEpoch.toString()}transcript.txt")));
+                        },
+                      ),
                     if (!media.title.isEmpty)
                       Text('Title: ${media.title}',
                           style: TextStyle(fontSize: _defaultFontSize)),
@@ -262,7 +290,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         style: TextStyle(fontSize: _defaultFontSize),
                         textAlign: TextAlign.center,
                       ),
-                    if (media.tags != null && media.tags!.length < 1)
+                    if (media.tags != null && media.tags!.isNotEmpty)
                       Text('Tags: ${media.tags?.join(", ")}',
                           style: TextStyle(fontSize: _defaultFontSize)),
                     Text(

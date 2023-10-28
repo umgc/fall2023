@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 
-class VideoResponse {
+class AWS_VideoResponse {
   String name;
   double confidence;
   int timestamp;
-  ResponseBoundingBox? boundingBox;
+  ResponseBoundingBox boundingBox;
+  String referenceVideoFilePath;
+
   Image exampleImage = Image.network(
       "https://cdn.pixabay.com/photo/2014/06/03/19/38/road-sign-361514_1280.png");
 
-  VideoResponse(this.name, this.confidence, this.timestamp);
+  AWS_VideoResponse(this.name, this.confidence, this.timestamp,
+      this.referenceVideoFilePath, this.boundingBox);
 
-  VideoResponse.overloaded(
-      this.name, this.confidence, this.timestamp, this.boundingBox) {
-    setImage(timestamp);
+  AWS_VideoResponse.overloaded(this.name, this.confidence, this.timestamp,
+      this.boundingBox, this.referenceVideoFilePath) {
+    //setImage(timestamp);
   }
 
   Future<Image> getImage() async {

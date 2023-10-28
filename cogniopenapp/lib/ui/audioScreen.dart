@@ -1,5 +1,6 @@
 /// Importing required packages and screens.
 import 'package:aws_s3_api/s3-2006-03-01.dart' as s3API;
+import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -15,7 +16,8 @@ import 'package:path_provider/path_provider.dart';
 /// Importing AWS Transcribe API and s3 bucket
 import 'package:aws_transcribe_api/transcribe-2017-10-26.dart' as trans;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:dart_openai/dart_openai.dart';
 
 // Record button glow effect
 import 'package:avatar_glow/avatar_glow.dart';
@@ -26,7 +28,8 @@ import 'assistantScreen.dart';
 import 'searchScreen.dart';
 import 'galleryScreen.dart';
 import 'settingsScreen.dart';
-
+const API_URL = 'https://api.openai.com/v1/completions';
+final API_KEY = dotenv.env['OPEN_AI_API_KEY']; // Replace with your API key
 /// AudioScreen widget provides the main interface for audio recording.
 class AudioScreen extends StatefulWidget {
   @override
@@ -67,7 +70,8 @@ class _AudioScreenState extends State<AudioScreen> {
   S3Bucket s3Connection = S3Bucket();
 
   String transcription = '';
-
+  String transcriptionSummary = '';
+  
   @override
   void initState() {
     super.initState();
@@ -213,7 +217,7 @@ class _AudioScreenState extends State<AudioScreen> {
         if (jobResponse.transcriptionJob?.transcriptionJobStatus.toString() == 'TranscriptionJobStatus.completed') {
           final transcriptUri = jobResponse.transcriptionJob?.transcript?.transcriptFileUri;
           if (transcriptUri != null) {
-            final transcriptResponse = await get(Uri.parse(transcriptUri));
+            final transcriptResponse = await http.get(Uri.parse(transcriptUri));
             if (transcriptResponse.statusCode == 200) {
               var jsonResponse = jsonDecode(transcriptResponse.body);
               var items = jsonResponse['results']['items'];
@@ -255,6 +259,7 @@ class _AudioScreenState extends State<AudioScreen> {
       print('Error starting transcription: $e');
     }
     _saveTranscriptionToFile('${key2}transcript');
+   
 }
 
 String _getCustomSpeakerLabel(String awsSpeakerLabel) {
@@ -271,7 +276,7 @@ String _getCustomSpeakerLabel(String awsSpeakerLabel) {
   }
 }
 
-Future<void> _saveTranscriptionToFile(String transcriptionJobName) async {
+Future _saveTranscriptionToFile(String transcriptionJobName) async {
   if (transcription.isEmpty) {
     print("Transcription is empty. Nothing to save.");
     return;
@@ -285,11 +290,32 @@ Future<void> _saveTranscriptionToFile(String transcriptionJobName) async {
     await file.writeAsString(transcription);
 
     print("Transcription saved at $filePath");
+    transcriptionSummary = await summarizeFileContent(transcriptionJobName);
+    _saveTranscriptionSummaryToFile(transcriptionJobName);
   } catch (e) {
     print("Error saving transcription");
   }
 }
+// save transcription summary
+Future<void> _saveTranscriptionSummaryToFile(String transcriptionSummaryName) async {
+  if (transcriptionSummary.isEmpty) {
+    print("Transcription summary is empty. Nothing to save");
+    return;
+  }
 
+  try {
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    String filePath = '${appDocDirectory.path}/files/audios/transcripts/${transcriptionSummaryName}summary.txt';
+
+    File file = File(filePath);
+    await file.writeAsString(transcriptionSummary);
+    
+    print("Transcription Summary saved at $filePath");
+    _sendToDatabase();  
+  } catch (e) {
+    print("Error saving transcription");
+  }
+}
 // create a function to delete object
 Future<void> _deleteAudioRecording() async {
   await s3Connection.deleteFileFromS3(key2);
@@ -316,7 +342,53 @@ Future<bool> deleteFileFromDevice(String path) async {
   }
 }
 
+Future<String> summarizeFileContent(String fileName) async {
+  try {
+    // Read file content
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/files/audios/transcripts/$fileName.txt');
+    String content = await file.readAsString();
 
+    // Send to OpenAI for Summarization
+    final response = await http.post(
+      Uri.parse(API_URL),
+      headers: {
+        'Authorization': 'Bearer $API_KEY',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'prompt': 'Summarize: $content',
+        'max_tokens': 150, // Adjust this as we need to
+        'model': 'text-davinci-003',
+      }),
+    );
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body);
+      print(jsonResponse['choices'][0]['text'].trim());
+      return jsonResponse['choices'][0]['text'].trim();
+    } else {
+      print('Failed to summarize. Response code: ${response.statusCode}');
+      return '';
+    }
+  } catch (e) {
+    print('Error during summarization: $e');
+    return '';
+  }
+}
+
+Future<void> _sendToDatabase() async {
+   // call add method to db
+    Directory appDocDirectory = await getApplicationDocumentsDirectory();
+    String audioFilePath = '${appDocDirectory.path}/files/audios/$key2.wav';
+    String transcriptFilePath = '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
+       await DataService.instance.addAudio(
+          title: key2,
+          description: transcription,
+          tags: [],
+          audioFile: File(audioFilePath),
+          transcriptFile: File(transcriptFilePath),
+          summary: transcriptionSummary);
+}
 
 
   @override

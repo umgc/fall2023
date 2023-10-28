@@ -13,13 +13,14 @@ void main() {
   const int storageSize = 1000;
   const bool isFavorited = true;
   const String audioFileName = 'test_audio.mp3';
+  const String transcriptFileName = 'test_transcript.txt';
   const String summary = 'Test Summary';
 
   group('Audio', () {
     // Audio constructor tests:
 
     test(
-        'Audio constructor (with all parameters provided) should create an Audio object and initialize values correctly',
+        'U-2-1: Audio constructor (with all parameters provided) should create an Audio object and initialize values correctly',
         () {
       final Audio audio = Audio(
         id: id,
@@ -30,6 +31,7 @@ void main() {
         storageSize: storageSize,
         isFavorited: isFavorited,
         audioFileName: audioFileName,
+        transcriptFileName: transcriptFileName,
         summary: summary,
       );
 
@@ -42,11 +44,12 @@ void main() {
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, transcriptFileName);
       expect(audio.summary, summary);
     });
 
     test(
-        'Audio constructor (with only required parameters provided) should create an Audio object and initialize values correctly',
+        'U-2-2: Audio constructor (with only required parameters provided) should create an Audio object and initialize values correctly',
         () {
       final Audio audio = Audio(
         id: id,
@@ -66,13 +69,14 @@ void main() {
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, isNull);
       expect(audio.summary, isNull);
     });
 
     // Audio.fromJson() tests:
 
     test(
-        'Audio.fromJson should correctly create an Audio object from JSON (with all field values)',
+        'U-2-3: Audio.fromJson should correctly create an Audio object from JSON (with all field values)',
         () {
       final Map<String, Object?> json = {
         MediaFields.id: id,
@@ -83,6 +87,7 @@ void main() {
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: transcriptFileName,
         AudioFields.summary: summary,
       };
 
@@ -101,11 +106,12 @@ void main() {
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, transcriptFileName);
       expect(audio.summary, summary);
     });
 
     test(
-      'Audio.fromJson should correctly create an Audio object from JSON (with non-nullable field values only)',
+      'U-2-4: Audio.fromJson should correctly create an Audio object from JSON (with non-nullable field values only)',
       () {
         final Map<String, Object?> json = {
           MediaFields.id: id,
@@ -131,12 +137,13 @@ void main() {
         expect(audio.storageSize, storageSize);
         expect(audio.isFavorited, isFavorited);
         expect(audio.audioFileName, audioFileName);
+        expect(audio.transcriptFileName, isNull);
         expect(audio.summary, isNull);
       },
     );
 
     test(
-      'Audio.fromJson should throw a FormatException when given invalid JSON',
+      'U-2-5: Audio.fromJson should throw a FormatException when given invalid JSON',
       () {
         final Map<String, Object?> json = {};
 
@@ -148,7 +155,7 @@ void main() {
   // Audio.toJson() tests:
 
   test(
-    'Audio.toJson should correctly serialize an Audio object (with all field values) to JSON',
+    'U-2-6: Audio.toJson should correctly serialize an Audio object (with all field values) to JSON',
     () {
       final Audio audio = Audio(
         id: id,
@@ -159,6 +166,7 @@ void main() {
         storageSize: storageSize,
         isFavorited: isFavorited,
         audioFileName: audioFileName,
+        transcriptFileName: transcriptFileName,
         summary: summary,
       );
 
@@ -173,13 +181,14 @@ void main() {
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: transcriptFileName,
         AudioFields.summary: summary,
       });
     },
   );
 
   test(
-    'Audio.toJson should correctly serialize an Audio object (with non-nullable field values only) to JSON',
+    'U-2-7: Audio.toJson should correctly serialize an Audio object (with non-nullable field values only) to JSON',
     () {
       final Audio audio = Audio(
         id: id,
@@ -201,6 +210,7 @@ void main() {
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: null,
         AudioFields.summary: null,
       });
     },
