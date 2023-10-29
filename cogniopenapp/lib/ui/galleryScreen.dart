@@ -239,6 +239,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return Scaffold(
+            backgroundColor: const Color(0x440000),
+            extendBodyBehindAppBar: true,
+            extendBody: true,
             appBar: AppBar(
               backgroundColor: const Color(0x440000), // Set appbar background color
               elevation: 0.0,
@@ -262,59 +265,68 @@ class _GalleryScreenState extends State<GalleryScreen> {
               ],
             ),
             body: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (media is Audio)
-                      ElevatedButton.icon(
-                        icon: virtualAssistantIcon,
-                        label: const Text("Ask the Assistant"),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      AssistantScreen(conversation: media)));
-                        },
-                      ),
-                    if (!media.title.isEmpty)
-                      Text('Title: ${media.title}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
-                    Text(
-                        'Timestamp: ${FormatUtils.getDateString(media.timestamp)}',
-                        style: TextStyle(fontSize: _defaultFontSize)),
-                    if (media is Photo && media.photo != null)
-                      Image(
-                        image: media.photo!.image,
-                      ),
-                    if (media is Video && media.thumbnail != null)
-                      Image(
-                        image: media.thumbnail!.image,
-                      ),
-                    if (media is Audio) audioPlayer(media),
-                    SizedBox(height: 16),
-                    if (media.description != null && media.description != "")
-                      Text(
-                        'Description: ${media.description}',
-                        style: TextStyle(fontSize: _defaultFontSize),
-                        textAlign: TextAlign.center,
-                      ),
-                    if (media.tags != null && media.tags!.isNotEmpty)
-                      Text('Tags: ${media.tags?.join(", ")}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
-                    Text(
-                      'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
-                      style: TextStyle(fontSize: _defaultFontSize),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/background.jpg"),
+                    fit: BoxFit.cover,
                     ),
-                    if (media is Audio)
-                      Text('Summary: ${media.summary}',
+                  ),
+                  child: Column (
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (media is Audio)
+                        ElevatedButton.icon(
+                          icon: virtualAssistantIcon,
+                          label: const Text("Ask the Assistant"),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AssistantScreen(conversation: media)));
+                          },
+                        ),
+                      if (!media.title.isEmpty)
+                        Text('Title: ${media.title}',
+                            style: TextStyle(fontSize: _defaultFontSize)),
+                      Text(
+                          'Timestamp: ${FormatUtils.getDateString(media.timestamp)}',
                           style: TextStyle(fontSize: _defaultFontSize)),
-                    if (media is Audio)
-                      Text('Summary: ${readFileAsString(media)}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
-                  ],
+                      if (media is Photo && media.photo != null)
+                        Image(
+                          image: media.photo!.image,
+                        ),
+                      if (media is Video && media.thumbnail != null)
+                        Image(
+                          image: media.thumbnail!.image,
+                        ),
+                      if (media is Audio) audioPlayer(media),
+                      SizedBox(height: 16),
+                      if (media.description != null && media.description != "")
+                        Text(
+                          'Description: ${media.description}',
+                          style: TextStyle(fontSize: _defaultFontSize),
+                          textAlign: TextAlign.center,
+                        ),
+                      if (media.tags != null && media.tags!.isNotEmpty)
+                        Text('Tags: ${media.tags?.join(", ")}',
+                            style: TextStyle(fontSize: _defaultFontSize)),
+                      Text(
+                        'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
+                        style: TextStyle(fontSize: _defaultFontSize),
+                      ),
+                      if (media is Audio)
+                        Text('Summary: ${media.summary}',
+                            style: TextStyle(fontSize: _defaultFontSize)),
+                      if (media is Audio)
+                        Text('Summary: ${readFileAsString(media)}',
+                            style: TextStyle(fontSize: _defaultFontSize)),
+                    ],
+                  ),
                 ),
               ),
             ),
