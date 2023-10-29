@@ -2,13 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:chewie/chewie.dart';
 
 class VideoDisplay extends StatefulWidget {
   final String fullFilePath;
 
-  VideoDisplay({Key? key, required this.fullFilePath}) : super(key: key);
+  const VideoDisplay({Key? key, required this.fullFilePath}) : super(key: key);
 
   @override
   _VideoDisplayState createState() => _VideoDisplayState();
@@ -16,6 +15,7 @@ class VideoDisplay extends StatefulWidget {
 
 class _VideoDisplayState extends State<VideoDisplay> {
   late VideoPlayerController _controller;
+  late ChewieController _chewieController;
   late Future<void> _video;
 
   @override
@@ -24,12 +24,17 @@ class _VideoDisplayState extends State<VideoDisplay> {
     _controller = VideoPlayerController.file(
       File(widget.fullFilePath),
     );
+    _chewieController = ChewieController(
+      videoPlayerController: _controller,
+      aspectRatio: 9 / 16,
+    );
     _video = _controller.initialize();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _chewieController.dispose();
     super.dispose();
   }
 
@@ -43,32 +48,12 @@ class _VideoDisplayState extends State<VideoDisplay> {
             children: [
               AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
+                child: Chewie(controller: _chewieController),
               ),
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FloatingActionButton(
-                      onPressed: () {
-                        if (_controller.value.isPlaying) {
-                          setState(() {
-                            _controller.pause();
-                          });
-                        } else {
-                          setState(() {
-                            _controller.play();
-                          });
-                        }
-                      },
-                      child: Icon(
-                        _controller.value.isPlaying
-                            ? Icons.pause
-                            : Icons.play_arrow,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ],
