@@ -19,16 +19,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Onboarding")),
-      backgroundColor: Colors.lightBlue[100],
+      backgroundColor: const Color(0x440000),
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: AppBar(
+        backgroundColor: const Color(0x440000), // Set appbar background color
+        elevation: 0.0,
+        centerTitle: true,
+        leading: const BackButton(color: Colors.black54),
+        title: const Text('Onboarding', style: TextStyle(color: Colors.black54)),
+      ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
           child: Container(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.only(top: 40.0),
             decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/background.jpg"),
+                fit: BoxFit.cover,
+              ),
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: BorderRadius.circular(10.0),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
@@ -78,7 +90,7 @@ class _OnboardingUIState extends State<OnboardingUI> {
                 ),
                 Text(
                   index == 0
-                      ? "Hello and welcome to CogniOpen! My name is Sam your Virtual Assistance. As a new user, I'll guide you through the onboarding process to get you started. Firstly, may I know your name please?"
+                      ? "Hello and welcome to CogniOpen! My name is Cora your Virtual Assistance. As a new user, I'll guide you through the onboarding process to get you started. Firstly, may I know your name please?"
                       : "",
                   style: TextStyle(fontSize: 18),
                 ),
@@ -126,6 +138,7 @@ class _OnboardingUIState extends State<OnboardingUI> {
 
                     FloatingActionButton(
                       onPressed: widget.functionality.startListening,
+                      mini: true,
                       child: widget.functionality.isListening
                           ? Icon(Icons.mic_off)
                           : Icon(Icons.mic),
