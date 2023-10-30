@@ -63,7 +63,7 @@ class CameraManager {
       FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS DISABLED");
     }
 
-    if (isAutoRecording) {
+    if (uploadToRekognition) {
       FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS ENABLED");
     } else {
       FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS DISABLED");
