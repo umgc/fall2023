@@ -687,9 +687,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 if (media is Video && media.thumbnail != null)
                   _buildVideoImage(media),
                 if (media is Audio) _buildConversationIcon(),
-                _buildGridItemTitle(media.title),
               ],
             ),
+            _buildGridItemTitle(media.title),
             _buildFavoriteIcon(media),
             _buildMediaTypeIcon(media.mediaType),
           ],
@@ -704,6 +704,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
         child: Image(
           key: const Key('photoItem'),
           image: media.photo!.image,
+          width: 110.0,
+          height: 115.0,
         ),
       ),
     );
@@ -714,8 +716,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
       key: const Key('videoItem'),
       image: media.thumbnail!.image,
       // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-      width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
-      height: 100.0 + (2.0 - _crossAxisCount) * 25.0,
+      width: 110.0 + (2.0 - _crossAxisCount) * 25.0,
+      height: 110.0 + (2.0 - _crossAxisCount) * 25.0,
     );
   }
 
@@ -728,11 +730,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Widget _buildGridItemTitle(String title) {
-    return Text(
+    return Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+    Text(
       title,
       style: TextStyle(fontSize: _fontSize),
       textAlign: TextAlign.center,
-    );
+    )
+    ],);
   }
 
   List<Media> _filterDisplayedMedia() {
