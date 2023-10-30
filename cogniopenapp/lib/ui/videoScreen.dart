@@ -58,7 +58,7 @@ class _CameraHomeState extends State<VideoScreen>
     //WidgetsBinding.instance.addObserver(this);
     cameraManager = CameraManager();
     cameraController = cameraManager.controller;
-    isRecording = true;
+    isRecording = cameraManager.isAutoRecording;
   }
 
   @override
@@ -86,7 +86,7 @@ class _CameraHomeState extends State<VideoScreen>
                 color: Colors.black,
                 border: Border.all(
                   color: isRecording ? Colors.redAccent : Colors.grey,
-                  width: 4.0,
+                  width: 5.0,
                 ),
               ),
               child: Padding(
