@@ -86,11 +86,11 @@ class _CameraHomeState extends State<VideoScreen>
                 color: Colors.black,
                 border: Border.all(
                   color: isRecording ? Colors.redAccent : Colors.grey,
-                  width: 3.0,
+                  width: 4.0,
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 7.0),
+                padding: const EdgeInsets.only(bottom: 1.0),
                 child: Center(
                   child: _cameraPreviewWidget(),
                 ),
@@ -155,12 +155,6 @@ class _CameraHomeState extends State<VideoScreen>
                 fit: BoxFit.cover,
               ),
               color: Colors.black,
-              border: Border.all(
-                color: cameraController.value.isRecordingVideo
-                    ? Colors.redAccent
-                    : Colors.grey,
-                // width: 3.0,
-              ),
             ),
             child: IconButton(
               icon: isRecording
