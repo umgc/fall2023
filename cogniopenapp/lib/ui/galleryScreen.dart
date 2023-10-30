@@ -13,6 +13,7 @@ import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:cogniopenapp/src/video_display.dart';
 
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
@@ -243,11 +244,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
             extendBodyBehindAppBar: true,
             extendBody: true,
             appBar: AppBar(
-              backgroundColor: const Color(0x440000), // Set appbar background color
+              backgroundColor:
+                  const Color(0x440000), // Set appbar background color
               elevation: 0.0,
               centerTitle: true,
               leading: const BackButton(color: Colors.black54),
-              title: const Text('Full Screen Image and Details', style: TextStyle(color: Colors.black54)),
+              title: const Text('Full Screen Image and Details',
+                  style: TextStyle(color: Colors.black54)),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.edit),
@@ -266,15 +269,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
             ),
             body: Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
                 child: Container(
                   decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/images/background.jpg"),
-                    fit: BoxFit.cover,
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/background.jpg"),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  child: Column (
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -301,9 +305,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           image: media.photo!.image,
                         ),
                       if (media is Video && media.thumbnail != null)
-                        Image(
-                          image: media.thumbnail!.image,
-                        ),
+                        videoDisplay(media),
                       if (media is Audio) audioPlayer(media),
                       SizedBox(height: 16),
                       if (media.description != null && media.description != "")
@@ -312,7 +314,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           style: TextStyle(fontSize: _defaultFontSize),
                           textAlign: TextAlign.center,
                         ),
-                      if (media.tags != null && media.tags!.isNotEmpty)
+                      if (media.tags != null &&
+                          media.tags!.isNotEmpty &&
+                          !media.tags!.every((tag) => tag.isEmpty))
                         Text('Tags: ${media.tags?.join(", ")}',
                             style: TextStyle(fontSize: _defaultFontSize)),
                       if (media is Audio)
@@ -369,6 +373,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
       onPressed: _isPlaying ? _stopPlayback : _startPlayback,
       child: Text(_isPlaying ? 'Stop Preview' : 'Play Preview'),
     );
+  }
+
+  VideoDisplay videoDisplay(Video video) {
+    String fullFilePath =
+        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
+    print("THE PATH IS: ${fullFilePath}");
+    return VideoDisplay(fullFilePath: fullFilePath);
   }
 
   /// Function to handle starting the playback of the recorded audio.
