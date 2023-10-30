@@ -700,13 +700,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
         child: Image(
           key: const Key('photoItem'),
           image: media.photo!.image,
-          body: const AspectRatio(
-            aspectRatio: 16/9
-          //width: 110.0,
-          //height: 110.0
+          fit: BoxFit.fill,
+          width: double.infinity,
+          height: double.infinity
         ),
       ),
-    );
+    ); 
   }
 
   Widget _buildVideoImage(Video media) {
@@ -714,8 +713,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
       key: const Key('videoItem'),
       image: media.thumbnail!.image,
       // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-      width: 110.0 + (2.0 - _crossAxisCount) * 25.0,
-      height: 110.0 + (2.0 - _crossAxisCount) * 25.0,
+      //width: 110.0 + (2.0 - _crossAxisCount) * 25.0,
+      //height: 110.0 + (2.0 - _crossAxisCount) * 25.0,
+      fit: BoxFit.fill,
+      width: double.infinity,
+      height: double.infinity
     );
   }
 
