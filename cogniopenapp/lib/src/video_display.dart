@@ -26,7 +26,7 @@ class _VideoDisplayState extends State<VideoDisplay> {
     );
     _chewieController = ChewieController(
       videoPlayerController: _controller,
-      aspectRatio: 16/9,
+      aspectRatio: 9 / 16,
     );
     _video = _controller.initialize();
   }
