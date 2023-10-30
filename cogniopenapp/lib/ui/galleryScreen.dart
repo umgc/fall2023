@@ -10,7 +10,6 @@ import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
-import 'package:cogniopenapp/src/video_display.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:flutter/material.dart';
@@ -240,8 +239,15 @@ class _GalleryScreenState extends State<GalleryScreen> {
       MaterialPageRoute<void>(
         builder: (BuildContext context) {
           return Scaffold(
+            backgroundColor: const Color(0x440000),
+            extendBodyBehindAppBar: true,
+            extendBody: true,
             appBar: AppBar(
-              title: Text('Full Screen Image and Details'),
+              backgroundColor: const Color(0x440000), // Set appbar background color
+              elevation: 0.0,
+              centerTitle: true,
+              leading: const BackButton(color: Colors.black54),
+              title: const Text('Full Screen Image and Details', style: TextStyle(color: Colors.black54)),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.edit),
@@ -259,84 +265,80 @@ class _GalleryScreenState extends State<GalleryScreen> {
               ],
             ),
             body: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (media is Audio)
-                      ElevatedButton.icon(
-                        icon: virtualAssistantIcon,
-                        label: const Text("Ask the Assistant"),
-                        onPressed: () {
-                          // String transcript = await getTranscriptPath(media
-                          //     .timestamp.millisecondsSinceEpoch
-                          //     .toString());
-                          // print("transcript: $transcript");
-                          // Send transcript to chatbot
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      AssistantScreen(conversation: media)));
-                          // "/files/audios/transcripts/${media.timestamp.millisecondsSinceEpoch.toString()}transcript.txt")));
-                        },
-                      ),
-                    if (!media.title.isEmpty)
-                      Text('Title: ${media.title}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
-                    Text(
-                        'Timestamp: ${FormatUtils.getDateString(media.timestamp)}',
-                        style: TextStyle(fontSize: _defaultFontSize)),
-                    if (media is Photo && media.photo != null)
-                      Image(
-                        image: media.photo!.image,
-                      ),
-                    if (media is Video && media.thumbnail != null)
-                      //TODO: ADD VIDEO PLAYER HERE
-                      videoDisplay(media),
-                    if (media is Audio) Icon(Icons.chat, size: 100),
-                    if (media is Audio) audioPlayer(media),
-                    SizedBox(height: 16),
-                    if (media.description != null && media.description != "")
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/background.jpg"),
+                    fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Column (
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (media is Audio)
+                        ElevatedButton.icon(
+                          icon: virtualAssistantIcon,
+                          label: const Text("Ask the Assistant"),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AssistantScreen(conversation: media)));
+                          },
+                        ),
+                      if (!media.title.isEmpty)
+                        Text('Title: ${media.title}',
+                            style: TextStyle(fontSize: _defaultFontSize)),
                       Text(
-                        'Description: ${media.description}',
-                        style: TextStyle(fontSize: _defaultFontSize),
-                        textAlign: TextAlign.center,
-                      ),
-                    if (media.tags != null &&
-                        media.tags!.isNotEmpty &&
-                        !media.tags!.every((tag) => tag.isEmpty))
-                      Text('Tags: ${media.tags?.join(", ")}',
+                          'Timestamp: ${FormatUtils.getDateString(media.timestamp)}',
                           style: TextStyle(fontSize: _defaultFontSize)),
-                    /* Text(
-                      'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
-                      style: TextStyle(fontSize: _defaultFontSize),
-                    ), */
-                    SizedBox(height: 25),
-                    if (media is Audio)
-                      Text('Summary: ${media.summary}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
-                    SizedBox(height: 25),
-                    if (media is Audio)
-                      FutureBuilder<String>(
-                        future: readFileAsString(media),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            // While the future is still running, you can show a loading indicator.
-                            return CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            // If an error occurs, you can display an error message.
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            // If the future is complete, display the summary.
-                            return Text('Transcript: ${snapshot.data}',
-                                style: TextStyle(fontSize: _defaultFontSize));
-                          }
-                        },
-                      ),
-                  ],
+                      if (media is Photo && media.photo != null)
+                        Image(
+                          image: media.photo!.image,
+                        ),
+                      if (media is Video && media.thumbnail != null)
+                        Image(
+                          image: media.thumbnail!.image,
+                        ),
+                      if (media is Audio) audioPlayer(media),
+                      SizedBox(height: 16),
+                      if (media.description != null && media.description != "")
+                        Text(
+                          'Description: ${media.description}',
+                          style: TextStyle(fontSize: _defaultFontSize),
+                          textAlign: TextAlign.center,
+                        ),
+                      if (media.tags != null && media.tags!.isNotEmpty)
+                        Text('Tags: ${media.tags?.join(", ")}',
+                            style: TextStyle(fontSize: _defaultFontSize)),
+                      if (media is Audio)
+                        Text('Summary: ${media.summary}',
+                            style: TextStyle(fontSize: _defaultFontSize)),
+                      SizedBox(height: 16),
+                      if (media is Audio)
+                        FutureBuilder<String>(
+                          future: readFileAsString(media),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              // While the future is still running, you can show a loading indicator.
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              // If an error occurs, you can display an error message.
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              // If the future is complete, display the summary.
+                              return Text('Transcription: ${snapshot.data}',
+                                  style: TextStyle(fontSize: _defaultFontSize));
+                            }
+                          },
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -346,21 +348,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  // TODO: MAKE THIS LOAD THE VIDEO
-  VideoDisplay videoDisplay(Video video) {
-    String fullFilePath =
-        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
-    print("THE PATH IS: ${fullFilePath}");
-    return VideoDisplay(fullFilePath: fullFilePath);
-  }
-
   Future<String> readFileAsString(Audio audio) async {
     String path =
         "${DirectoryManager.instance.transcriptsDirectory.path}/${activeAudio.transcriptFileName}";
     try {
       File file = File(path);
       String fileContent = await file.readAsString();
-      print("TARNSRCIPT");
+      print("TRANSCRIPT");
       print(fileContent);
       return fileContent;
     } catch (e) {
@@ -537,6 +531,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
     return Scaffold(
         backgroundColor: const Color(0xFFB3E5FC),
+        extendBodyBehindAppBar: true,
+        extendBody: true,
         appBar: _buildAppBar(),
         body: Container(
           decoration: const BoxDecoration(
@@ -561,13 +557,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return AppBar(
       backgroundColor: const Color(0x440000),
       elevation: 0.0,
+      iconTheme: IconThemeData(
+        color: Colors.black54, //change your color here
+      ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '', // Gallery view title
-            style: TextStyle(fontSize: 20),
-          ),
           SizedBox(height: 4),
         ],
       ),
@@ -578,6 +573,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             IconButton(
               key: const Key('searchIcon'),
               icon: Icon(Icons.search),
+              color: Colors.black54,
               onPressed: _toggleSearchBarVisibility,
             ),
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -594,12 +590,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
               icon: _showPhotos
                   ? const Icon(Icons.photo)
                   : const Icon(Icons.photo_outlined),
-              color: _showPhotos ? Colors.white : Colors.grey,
+              color: _showPhotos ? Colors.blueAccent : Colors.grey,
               onPressed: _toggleShowPhotos,
             ),
             IconButton(
               key: const Key('filterVideoIcon'),
-              color: _showVideos ? Colors.white : Colors.grey,
+              color: _showVideos ? Colors.blueAccent : Colors.grey,
               icon: _showVideos
                   ? const Icon(Icons.videocam)
                   : const Icon(Icons.videocam_outlined),
@@ -607,7 +603,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             ),
             IconButton(
               key: const Key('filterConversationIcon'),
-              color: _showConversations ? Colors.white : Colors.grey,
+              color: _showConversations ? Colors.blueAccent : Colors.grey,
               icon: _showConversations
                   ? const Icon(Icons.chat)
                   : const Icon(Icons.chat_outlined),
