@@ -285,7 +285,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                       if (media is Audio)
                         ElevatedButton.icon(
                           icon: virtualAssistantIcon,
-                          label: const Text("Ask the Assistant"),
+                          label: const Text("Ask Cora"),
                           onPressed: () {
                             Navigator.push(
                                 context,
