@@ -70,8 +70,10 @@ class HomeScreen extends StatelessWidget {
                             builder: (context) => ProfileScreen()));
                     break;
                   case 'Help Center':
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => TestScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HelpCenterScreen()));
                     break;
                   case 'Settings':
                     Navigator.push(

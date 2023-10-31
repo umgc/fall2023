@@ -1,6 +1,7 @@
 //import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
+import 'package:cogniopenapp/ui/s3_screen.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -99,6 +100,80 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             );*/
               if (userInput.isNotEmpty) {
                 displayFullObjectView(userInput);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter a valid search object'),
+                  ),
+                );
+              }
+            },
+            child: const Text('Submit'),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(
+                16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
+            child: Text(
+              'Looking for a significant object?', // This is the header text
+              style: TextStyle(
+                fontSize: 24.0, // Adjust font size as needed
+                fontWeight: FontWeight.bold,
+                //color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const Padding(
+            // New subheading section starts here
+            padding: EdgeInsets.fromLTRB(
+                16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
+            child: Text(
+              "CogniOpen assistant will search for a selected object from the significant objects in recent video recordings.", // This is the subheading text
+              style: TextStyle(
+                fontSize: 16.0, // Adjust font size as needed
+                //color:
+                //Colors.white70, // Slightly transparent white for subheading
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ), // New subheading section ends here
+          //TODO: is it possible to make this a drop-down of available models/SigObjs that are trained?
+          Center(
+            child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextField(
+                      onChanged: (text) {
+                        setState(() {
+                          userInput = text;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                          labelText: 'Enter search object.'),
+                    ),
+                  ],
+                )),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              if (userInput.isNotEmpty) {
+                //TODO: create a method that takes the specified model, searches for like objects, and then applies the customlabel search on those images.
+                //searchForCustomObject(userInput);
+                //the below might be useful for displaying the custom label search results.
+                /*onTap: () async {
+                  DetectCustomLabelsResponse? response =
+                  await vp.findMatchingModel("green-glasses");
+
+                  // ignore: use_build_context_synchronously
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CustomResponseScreen(response!)));
+                }
+                */
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -250,6 +325,16 @@ class RekognitionScreenState extends State<RekognitionScreen> {
                       ),
                     ),
                   ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    //pass along the image data
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TestScreen(response)));
+                  },
+                  child: const Text('Remember this?'),
                 ),
               ],
             ),
