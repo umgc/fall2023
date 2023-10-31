@@ -36,79 +36,81 @@ class RekognitionScreenState extends State<RekognitionScreen> {
       appBar: AppBar(
         title: const Text('S3 Buckets'),
       ),
-      body: Column(children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(
-              16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
-          child: Text(
-            'Looking for an object?', // This is the header text
-            style: TextStyle(
-              fontSize: 24.0, // Adjust font size as needed
-              fontWeight: FontWeight.bold,
-              //color: Colors.white,
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(
+                16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
+            child: Text(
+              'Looking for an object?', // This is the header text
+              style: TextStyle(
+                fontSize: 24.0, // Adjust font size as needed
+                fontWeight: FontWeight.bold,
+                //color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
-        ),
-        const Padding(
-          // New subheading section starts here
-          padding: EdgeInsets.fromLTRB(
-              16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
-          child: Text(
-            "CogniOpen assistant will search for a selected object in recent video recordings.", // This is the subheading text
-            style: TextStyle(
-              fontSize: 16.0, // Adjust font size as needed
-              //color:
-              //Colors.white70, // Slightly transparent white for subheading
+          const Padding(
+            // New subheading section starts here
+            padding: EdgeInsets.fromLTRB(
+                16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
+            child: Text(
+              "CogniOpen assistant will search for a selected object in recent video recordings.", // This is the subheading text
+              style: TextStyle(
+                fontSize: 16.0, // Adjust font size as needed
+                //color:
+                //Colors.white70, // Slightly transparent white for subheading
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
+          ), // New subheading section ends here
+          Center(
+            child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextField(
+                      onChanged: (text) {
+                        setState(() {
+                          userInput = text;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                          labelText: 'Enter search object.'),
+                    ),
+                    //SizedBox(height: 20),
+                    //Text('User Input: $userInput',
+                    //    style: TextStyle(fontSize: 20)),
+                  ],
+                )),
           ),
-        ), // New subheading section ends here
-        Center(
-          child: Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  TextField(
-                    onChanged: (text) {
-                      setState(() {
-                        userInput = text;
-                      });
-                    },
-                    decoration:
-                        InputDecoration(labelText: 'Enter search object.'),
-                  ),
-                  //SizedBox(height: 20),
-                  //Text('User Input: $userInput',
-                  //    style: TextStyle(fontSize: 20)),
-                ],
-              )),
-        ),
-        //SizedBox(height: 20),
-        //Text('User Input: $userInput', style: TextStyle(fontSize: 20)),
-        SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            // Perform an action when the button is pressed, e.g., display the user's input.
-            /*ScaffoldMessenger.of(context).showSnackBar(
+          //SizedBox(height: 20),
+          //Text('User Input: $userInput', style: TextStyle(fontSize: 20)),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              // Perform an action when the button is pressed, e.g., display the user's input.
+              /*ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('User input: $userInput'),
               ),
             );*/
-            if (userInput.isNotEmpty) {
-              displayFullObjectView(userInput);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Please enter a valid search object'),
-                ),
-              );
-            }
-          },
-          child: Text('Submit'),
-        ),
-      ]),
+              if (userInput.isNotEmpty) {
+                displayFullObjectView(userInput);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter a valid search object'),
+                  ),
+                );
+              }
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      ),
       floatingActionButton: _getFAB(s3),
     );
   }
@@ -125,18 +127,17 @@ class RekognitionScreenState extends State<RekognitionScreen> {
         // FAB 1
 
         SpeedDialChild(
-            child: const Icon(Icons.interests),
-            backgroundColor: const Color(0XFFE91E63),
-            onTap: () {
-              print(" PUT THE FINDING OB STUF FHERE");
-              displayFullObjectView("Cup");
-            },
-            label: 'Search for cup',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63))
+          child: const Icon(Icons.interests),
+          backgroundColor: const Color(0XFFE91E63),
+          onTap: () {
+            print(" PUT THE FINDING OBJ STUFF HERE");
+            displayFullObjectView("Cup");
+          },
+          label: 'Search for cup',
+          labelStyle: const TextStyle(
+              fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
+          labelBackgroundColor: const Color(0XFFE91E63),
+        )
       ],
     );
   }
@@ -145,10 +146,41 @@ class RekognitionScreenState extends State<RekognitionScreen> {
     VideoProcessor vp = VideoProcessor();
     VideoResponse? response = vp.getRequestedResponse(userQuery);
     if (response == null) {
-      return;
+      //return;
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Object Not Found'),
+              ),
+              body: Column(
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                          16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
+                      child: Text(
+                        "This object '$userQuery' could not be found.", // This is the header text
+                        style: const TextStyle(
+                          fontSize: 24.0, // Adjust font size as needed
+                          fontWeight: FontWeight.bold,
+                          //color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+      );
     }
+
     String fullPath =
-        "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
+        "${DirectoryManager.instance.videosDirectory.path}/${response!.referenceVideoFilePath}";
     print("${fullPath}");
     Image stillImage =
         await FileManager.getThumbnail(fullPath, response.timestamp);

@@ -382,7 +382,8 @@ class VideoProcessor {
             image: Image(
                 s3Object: S3Object(
                     bucket: dotenv.get('videoS3Bucket'),
-                    name: "eyeglass-green.jpg")),
+                    //name: "eyeglass-green.jpg")),
+                    name: "glasses-test.jpg")),
             projectVersionArn: currentProjectVersionArn);
       }
     }
