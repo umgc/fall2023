@@ -313,7 +313,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           image: media.photo!.image,
                         ),
                       if (media is Video && media.thumbnail != null)
-                        videoDisplay(media),
+                      videoDisplay(media),
                       SizedBox(height: 5),
                       if (media.description != null && media.description != "")
                         Container(
