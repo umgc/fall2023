@@ -552,12 +552,6 @@ class _FullObjectViewState extends State<FullObjectView> {
 
   @override
   Widget build(BuildContext context) {
-    var virtualAssistantIcon = Image.asset(
-      'assets/icons/virtual_assistant.png',
-      width: 25.0,
-      height: 25.0,
-    );
-
     // Get the screen height
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -614,162 +608,30 @@ class _FullObjectViewState extends State<FullObjectView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(
+                      height: 80,
+                    ), // Used to provide an invisible barrier for the objects
                     Column(
                       children: [
-                        if (widget.activeMedia is Audio)
-                          Container(
-                            padding: const EdgeInsets.all(10.0),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.0),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: ElevatedButton.icon(
-                              icon: virtualAssistantIcon,
-                              label: const Text("Ask Cora"),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AssistantScreen(
-                                        conversation:
-                                            widget.activeMedia as Audio),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        SizedBox(
-                          height: 8,
-                        ),
+                        if (widget.activeMedia is Audio) createCoraButton(),
                       ],
                     ),
                     SizedBox(
                       height: 8,
                     ),
                     if (!widget.activeMedia.title.isEmpty)
-                      Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10.0),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Title',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: _sizedBoxSpacing,
-                                ),
-                                Text(
-                                  '${widget.activeMedia.title}',
-                                  style: TextStyle(fontSize: _defaultFontSize),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                        ],
-                      ),
+                      returnTextBox("Title", '${widget.activeMedia.title}'),
                     SizedBox(
                       height: 8,
                     ),
                     const SizedBox(
                       height: 5,
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(10.0),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Timestamp',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: _sizedBoxSpacing,
-                          ),
-                          Text(
-                            '${FormatUtils.getDateString(widget.activeMedia.timestamp)}',
-                            style: TextStyle(fontSize: _defaultFontSize),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    if (widget.activeMedia is Audio)
-                      Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10.0),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(10.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 5,
-                                  blurRadius: 7,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: audioPlayer(widget.activeMedia as Audio),
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                        ],
-                      ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    returnTextBox("Timestamp",
+                        '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia is Audio) createAudioPlayer(),
+                    addSpacingSizedBox(),
                     if (widget.activeMedia is Photo &&
                         (widget.activeMedia as Photo).photo != null)
                       Image(
@@ -778,124 +640,19 @@ class _FullObjectViewState extends State<FullObjectView> {
                     if (widget.activeMedia is Video &&
                         (widget.activeMedia as Video).thumbnail != null)
                       videoDisplay(widget.activeMedia as Video),
-                    SizedBox(height: 5),
+                    addSpacingSizedBox(),
                     if (widget.activeMedia.description != null &&
                         widget.activeMedia.description != "")
-                      Container(
-                        padding: const EdgeInsets.all(10.0),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Description',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(
-                              height: _sizedBoxSpacing,
-                            ),
-                            Text(
-                              '${widget.activeMedia.description}',
-                              style: TextStyle(fontSize: _defaultFontSize),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    if (widget.activeMedia.tags != null &&
-                        widget.activeMedia.tags!.isNotEmpty &&
-                        !widget.activeMedia.tags!.every((tag) => tag.isEmpty))
-                      Container(
-                        padding: const EdgeInsets.all(10.0),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Tags',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(
-                              height: _sizedBoxSpacing,
-                            ),
-                            Text(
-                              '${widget.activeMedia.tags?.join(", ")}',
-                              style: TextStyle(fontSize: _defaultFontSize),
-                            ),
-                          ],
-                        ),
-                      ),
-                    const SizedBox(
-                      height: 8,
-                    ),
+                      returnTextBox(
+                          "Description", '${widget.activeMedia.description}'),
+
+                    addSpacingSizedBox(),
+
                     if (widget.activeMedia is Audio)
-                      Container(
-                        padding: const EdgeInsets.all(10.0),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Summary',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(
-                              height: _sizedBoxSpacing,
-                            ),
-                            Text(
-                              '${(widget.activeMedia as Audio).summary}',
-                              style: TextStyle(fontSize: _defaultFontSize),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    SizedBox(height: 8),
+                      returnTextBox("Summary",
+                          '${(widget.activeMedia as Audio).summary}'),
+
+                    addSpacingSizedBox(),
                     if (widget.activeMedia is Audio)
                       FutureBuilder<String>(
                         future: readFileAsString(widget.activeMedia as Audio),
@@ -906,42 +663,8 @@ class _FullObjectViewState extends State<FullObjectView> {
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
-                            return Container(
-                              padding: const EdgeInsets.all(10.0),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 5,
-                                    blurRadius: 7,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Transcription',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 16,
-                                  ),
-                                  Text(
-                                    '${snapshot.data}',
-                                    style:
-                                        TextStyle(fontSize: _defaultFontSize),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            );
+                            return returnTextBox(
+                                "Transcription", '${snapshot.data}');
                           }
                         },
                       ),
@@ -951,6 +674,110 @@ class _FullObjectViewState extends State<FullObjectView> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Column createAudioPlayer() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: audioPlayer(widget.activeMedia as Audio),
+        ),
+        SizedBox(
+          height: 8,
+        ),
+      ],
+    );
+  }
+
+  SizedBox addSpacingSizedBox() {
+    return SizedBox(
+      height: 8,
+    );
+  }
+
+  Container createCoraButton() {
+    var virtualAssistantIcon = Image.asset(
+      'assets/icons/virtual_assistant.png',
+      width: 25.0,
+      height: 25.0,
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(10.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ElevatedButton.icon(
+        icon: virtualAssistantIcon,
+        label: const Text("Ask Cora"),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  AssistantScreen(conversation: widget.activeMedia as Audio),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Container returnTextBox(String title, String contents) {
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: Colors.black,
+          width: 2.0,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            height: _sizedBoxSpacing,
+          ),
+          Text(
+            contents,
+            style: TextStyle(fontSize: _defaultFontSize),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
