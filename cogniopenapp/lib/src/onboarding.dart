@@ -220,3 +220,4 @@ class ConversationBubble {
 
   ConversationBubble(this.text, {this.isUser = false});
 }
+

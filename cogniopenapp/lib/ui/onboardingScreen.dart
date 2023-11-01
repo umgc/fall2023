@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../src/onboarding.dart';
 import 'homeScreen.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+
+
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -9,6 +12,7 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final Onboarding _functionality = Onboarding();
+  final FlutterTts flutterTts = FlutterTts(); // Initialize FlutterTts
 
   @override
   void initState() {
@@ -30,11 +34,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: const Text('Onboarding', style: TextStyle(color: Colors.black54)),
       ),
       body: Center(
+
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
           child: Container(
-            padding: const EdgeInsets.only(top: 40.0),
-            decoration: BoxDecoration(
+           padding: const EdgeInsets.only(top: 40.0),
+          decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/images/background.jpg"),
                 fit: BoxFit.cover,
@@ -50,7 +55,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ],
             ),
-            child: OnboardingUI(functionality: _functionality),
+            child: OnboardingUI(
+              functionality: _functionality,
+              flutterTts: flutterTts, // Pass the FlutterTts instance here
+            ),
           ),
         ),
       ),
@@ -60,8 +68,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
 class OnboardingUI extends StatefulWidget {
   final Onboarding functionality;
-
-  OnboardingUI({required this.functionality});
+  final FlutterTts flutterTts; // Define the parameter here
+  OnboardingUI({
+    required this.functionality,
+    required this.flutterTts, // Add this parameter
+  });
 
   @override
   _OnboardingUIState createState() => _OnboardingUIState();
@@ -69,9 +80,39 @@ class OnboardingUI extends StatefulWidget {
 
 class _OnboardingUIState extends State<OnboardingUI> {
   final ScrollController _scrollController = ScrollController();
+  final FlutterTts flutterTts = FlutterTts();
+  bool isMuted = false;
 
+  void toggleMute() {
+    setState(() {
+      isMuted = !isMuted;
+    });
+
+    // Adjust TTS volume based on the mute state
+    if (isMuted) {
+      widget.flutterTts.setVolume(0.0); // Mute TTS
+    } else {
+      widget.flutterTts.setVolume(1.0); // Unmute TTS
+    }
+  }
+  Future<void> _speakMessage(String message) async {
+    await widget.flutterTts.setVolume(1.0); // Set volume (0.0 to 1.0)
+    await widget.flutterTts.setSpeechRate(0.5); // Set speech rate (0.0 to 1.0)
+    await widget.flutterTts.setPitch(1.0); // Set pitch (0.0 to 2.0)
+
+    await widget.flutterTts.speak(message);
+  }
   @override
   Widget build(BuildContext context) {
+    final currentPage = widget.functionality.pages[widget.functionality.currentPageIndex];
+
+    // Determine whether to show the text input and microphone icon
+    final showTextInputAndMic =
+        widget.functionality.currentPageIndex < widget.functionality.pages.length - 3;
+    if (widget.functionality.currentPageIndex == 0) {
+      _speakMessage("Welcome to our App! Hello and welcome to CogniOpen! My name is Cora your Virtual Assistance. As a new user, I'll guide you through the onboarding process to get you started. Firstly, may I know your name please?");
+    }
+
     return PageView.builder(
       controller: widget.functionality.controller,
       itemCount: widget.functionality.pages.length,
@@ -94,60 +135,86 @@ class _OnboardingUIState extends State<OnboardingUI> {
                       : "",
                   style: TextStyle(fontSize: 18),
                 ),
+
                 SizedBox(height: 14),
                 Container(
                   height: 200,
                   child: ConversationView(
-                    conversation:
-                        widget.functionality.pages[index].conversation,
+                    conversation: currentPage.conversation,
                     scrollController: _scrollController,
+                    flutterTts: flutterTts,
                   ),
                 ),
+
                 SizedBox(height: 7),
-                TextFormField(
-                  controller: widget.functionality.userInputController,
-                  decoration: InputDecoration(labelText: 'Your Response'),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        print(
-                            "Before processing, current page: ${widget.functionality.currentPage}");
+                if (showTextInputAndMic) // Conditionally show text input and microphone
+                  TextFormField(
+                    controller: widget.functionality.userInputController,
+                    decoration: InputDecoration(labelText: 'Your Response'),
+                  ),
+                if (!showTextInputAndMic) //
+                  // Conditionally show the "Next" button
+                  ElevatedButton(
+                    onPressed: () {
+                      print(
+                          "Before processing, current page: ${widget.functionality.currentPage}");
 
-                        if (widget.functionality.currentPage ==
-                            widget.functionality.pages.length - 1) {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomeScreen()));
-                        } else {
-                          widget.functionality.handleUserInput(context);
-                          widget.functionality.nextPage(context);
-                          setState(() {});
-                        }
+                      if (widget.functionality.currentPageIndex ==
+                          widget.functionality.pages.length - 1) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()));
+                      } else {
+                        widget.functionality.nextPage(context);
+                        setState(() {});
+                      }
 
-                        print(
-                            "After processing, current page: ${widget.functionality.currentPage}");
-                      },
-                      child: Text("Next"),
+                      print(
+                          "After processing, current page: ${widget.functionality.currentPage}");
+                    },
+                    child: Text("Next"),
+                  ),
 
-                    ),
-                    SizedBox(height: 10),
+                if (showTextInputAndMic) // Conditionally show text input and microphone
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          print(
+                              "Before processing, current page: ${widget.functionality.currentPage}");
 
-                    FloatingActionButton(
-                      onPressed: widget.functionality.startListening,
-                      mini: true,
-                      child: widget.functionality.isListening
-                          ? Icon(Icons.mic_off)
-                          : Icon(Icons.mic),
-                      backgroundColor: widget.functionality.isListening
-                          ? Colors.red
-                          : Theme.of(context).primaryColor,
-                    ),
-                  ],
-                ),
+                          if (widget.functionality.currentPageIndex ==
+                              widget.functionality.pages.length - 1) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()));
+                          } else {
+                            widget.functionality.handleUserInput(context);
+                            widget.functionality.nextPage(context);
+                            setState(() {});
+                          }
+
+                          print(
+                              "After processing, current page: ${widget.functionality.currentPage}");
+                        },
+                        child: Text("Next"),
+                      ),
+                      SizedBox(height: 10),
+                      FloatingActionButton(
+                        onPressed: widget.functionality.startListening,
+                        mini: true,
+                        child: widget.functionality.isListening
+                            ? Icon(Icons.mic_off)
+                            : Icon(Icons.mic),
+                        backgroundColor: widget.functionality.isListening
+                            ? Colors.red
+                            : Theme.of(context).primaryColor,
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -157,20 +224,38 @@ class _OnboardingUIState extends State<OnboardingUI> {
   }
 }
 
-class ConversationView extends StatelessWidget {
+
+
+class ConversationView extends StatefulWidget {
   final List<ConversationBubble> conversation;
   final ScrollController scrollController;
+  final FlutterTts flutterTts; // Pass the FlutterTts instance as a parameter
 
-  ConversationView(
-      {required this.conversation, required this.scrollController});
+  ConversationView({
+    required this.conversation,
+    required this.scrollController,
+    required this.flutterTts, // Add this parameter
+  });
 
+  @override
+  _ConversationViewState createState() => _ConversationViewState();
+}
+
+class _ConversationViewState extends State<ConversationView> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      controller: scrollController,
-      itemCount: conversation.length,
+      controller: widget.scrollController,
+      itemCount: widget.conversation.length,
       itemBuilder: (context, index) {
-        final bubble = conversation[index];
+        final bubble = widget.conversation[index];
+        final isVA = !bubble.isUser; // Check if the bubble is from the VA
+
+        // Play TTS for VA responses
+        if (isVA) {
+          _speakMessage(bubble.text);
+        }
+
         return ListTile(
           title: Text(
             bubble.text,
@@ -178,12 +263,21 @@ class ConversationView extends StatelessWidget {
               color: bubble.isUser ? Colors.blue : Colors.black,
             ),
           ),
-          trailing: bubble.isUser ? Icon(Icons.person) : null,
+          trailing: isVA ? Icon(Icons.volume_up) : null, // Show speaker icon for VA responses
         );
       },
     );
   }
+
+  void _speakMessage(String message) async {
+    await widget.flutterTts.setVolume(1.0); // Set volume (0.0 to 1.0)
+    await widget.flutterTts.setSpeechRate(0.5); // Set speech rate (0.0 to 1.0)
+    await widget.flutterTts.setPitch(1.0); // Set pitch (0.0 to 2.0)
+
+    await widget.flutterTts.speak(message);
+  }
 }
+
 
 class NextOnboardingScreen extends StatelessWidget {
   @override
