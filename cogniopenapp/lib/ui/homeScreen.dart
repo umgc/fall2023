@@ -1,19 +1,19 @@
 // Imported libraries and packages
 import 'package:cogniopenapp/ui/s3_screen.dart';
-import 'package:cogniopenapp/ui/test_rekognition_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/ui/response_screen.dart';
 import 'package:cogniopenapp/ui/helpScreen.dart';
+import 'package:cogniopenapp/ui/assistantScreen.dart';
+import 'package:cogniopenapp/ui/audioScreen.dart';
+import 'package:cogniopenapp/ui/galleryScreen.dart';
+import 'package:cogniopenapp/ui/profileScreen.dart';
+import 'package:cogniopenapp/ui/loginScreen.dart';
+import 'package:cogniopenapp/ui/tourScreen.dart';
+import 'package:cogniopenapp/ui/settingsScreen.dart';
+
 import 'package:cogniopenapp/src/camera_manager.dart';
+import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
-import 'assistantScreen.dart';
-import 'audioScreen.dart';
-import 'galleryScreen.dart';
-import 'profileScreen.dart';
-import 'videoScreen.dart';
-import 'loginScreen.dart';
-import 'tourScreen.dart';
-import 'settingsScreen.dart';
 
 // Main HomeScreen widget which is a stateless widget.
 class HomeScreen extends StatelessWidget {
@@ -200,57 +200,7 @@ class HomeScreen extends StatelessWidget {
         ),
 
         // Bottom navigation bar with multiple options for quick navigation
-        bottomNavigationBar: BottomNavigationBar(
-            elevation: 0.0,
-            items: const [
-              BottomNavigationBarItem(
-                backgroundColor: Color(0x00ffffff),
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.back_hand_rounded),
-                label: 'Virtual Assistant',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.video_camera_front),
-                label: 'Video',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.photo),
-                label: 'Gallery',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Settings',
-              ),
-            ],
-            onTap: (int index) {
-              // Handle navigation bar item taps
-              if (index == 0) {
-                // Navigate to Gallery screen
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RekognitionScreen()));
-              } else if (index == 1) {
-                // Navigate to Search screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AssistantScreen()));
-              } else if (index == 2) {
-                // Navigate to Search screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => VideoScreen()));
-              } else if (index == 3) {
-                // Navigate to Gallery screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => GalleryScreen()));
-              } else if (index == 4) {
-                // Navigate to Gallery screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SettingsScreen()));
-              }
-            }));
+        bottomNavigationBar: UiUtils.createBottomNavigationBar(context));
   }
 
   // Helper function to create each button for the GridView
