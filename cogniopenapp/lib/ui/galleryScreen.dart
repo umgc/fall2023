@@ -48,6 +48,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   double _crossAxisCount = 2.0; // Default options for grid columns
   double _fontSize = 16.0;
   double _iconSize = 40.0;
+  final double _sizedBoxSpacing = 8;
 
   // Variables used to toggle what is being viewed
   bool _showFavoritedOnly = false;
@@ -311,17 +312,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              ElevatedButton.icon(
-                                icon: virtualAssistantIcon,
-                                label: const Text("Ask the Assistant"),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => AssistantScreen(
-                                              conversation: media)));
-                                },
-                              ),
                               const SizedBox(
                                 width: 15,
                               ),
@@ -363,7 +353,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 16,
+                                  height: _sizedBoxSpacing,
                                 ),
                                 Text(
                                   '${media.description}',
@@ -403,7 +393,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 16,
+                                  height: _sizedBoxSpacing,
                                 ),
                                 Text(
                                   '${media.tags?.join(", ")}',
@@ -440,7 +430,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 16,
+                                  height: _sizedBoxSpacing,
                                 ),
                                 Text(
                                   '${media.summary}',

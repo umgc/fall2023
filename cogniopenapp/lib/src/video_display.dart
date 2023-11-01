@@ -47,7 +47,7 @@ class _VideoDisplayState extends State<VideoDisplay> {
           return Column(
             children: [
               AspectRatio(
-                aspectRatio: 16 / 9,
+                aspectRatio: _controller.value.aspectRatio,
                 child: Chewie(controller: _chewieController),
               ),
               Padding(
