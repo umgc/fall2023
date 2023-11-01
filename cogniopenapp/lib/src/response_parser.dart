@@ -17,6 +17,16 @@ class ResponseParser {
     return null;
   }
 
+  static List<VideoResponse> getRequestedResponseList(String searchTitle) {
+    List<VideoResponse> responses = [];
+    for (int i = DataService.instance.responseList.length - 1; i >= 0; i--) {
+      if (DataService.instance.responseList[i].title == searchTitle) {
+        responses.add(DataService.instance.responseList[i]);
+      }
+    }
+    return responses;
+  }
+
   static List<VideoResponse> getListOfResponses() {
     List<String> trackedTitles = [];
     List<VideoResponse> responses = [];

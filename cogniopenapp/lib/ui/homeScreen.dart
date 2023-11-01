@@ -2,6 +2,7 @@
 import 'package:cogniopenapp/ui/s3_screen.dart';
 import 'package:cogniopenapp/ui/test_rekognition_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
+import 'package:cogniopenapp/ui/response_screen.dart';
 import 'package:cogniopenapp/ui/helpScreen.dart';
 import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:flutter/material.dart';
@@ -231,7 +232,7 @@ class HomeScreen extends StatelessWidget {
               } else if (index == 1) {
                 // Navigate to Search screen
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AssistantScreen()));
+                    MaterialPageRoute(builder: (context) => ResponseScreen()));
               } else if (index == 2) {
                 // Navigate to Gallery screen
                 Navigator.push(context,

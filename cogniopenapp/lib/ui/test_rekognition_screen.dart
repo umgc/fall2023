@@ -169,22 +169,6 @@ class RekognitionScreenState extends State<RekognitionScreen> {
               children: [
                 Image(image: stillImage.image),
                 Positioned(
-                  left: 0,
-                  top: 0,
-                  right: 0,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 16),
-                      Text('Name: ${response.title}',
-                          style: const TextStyle(fontSize: 18)),
-                      Text('Timestamp: ${response.timestamp}',
-                          style: const TextStyle(fontSize: 18)),
-                      Text('Confidence: ${response.confidence}',
-                          style: const TextStyle(fontSize: 18)),
-                    ],
-                  ),
-                ),
-                Positioned(
                   left: imageWidth * response.left,
                   top: imageHeight * response.top,
                   child: Opacity(
@@ -213,6 +197,22 @@ class RekognitionScreenState extends State<RekognitionScreen> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 16),
+                      Text('Name: ${response.title}',
+                          style: const TextStyle(fontSize: 18)),
+                      Text('Timestamp: ${response.timestamp}',
+                          style: const TextStyle(fontSize: 18)),
+                      Text('Confidence: ${response.confidence}',
+                          style: const TextStyle(fontSize: 18)),
+                    ],
                   ),
                 ),
               ],
