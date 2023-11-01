@@ -314,8 +314,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         ),
                       if (media is Video && media.thumbnail != null)
                         videoDisplay(media),
-                      if (media is Audio) audioPlayer(media),
-                      SizedBox(height: 16),
+                      SizedBox(height: 5),
                       if (media.description != null && media.description != "")
                         Container(
                           padding: const EdgeInsets.all(10.0),
@@ -348,13 +347,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                   ],
                           )
                         ),
+                      SizedBox(height: 8,),
                       if (media.tags != null &&
                           media.tags!.isNotEmpty &&
                           !media.tags!.every((tag) => tag.isEmpty))
-                        Text('Tags: ${media.tags?.join(", ")}',
-                            style: TextStyle(fontSize: _defaultFontSize)),
-                      SizedBox(height: 8,),
-                      if (media.tags != null && media.tags!.isNotEmpty)
                         Container(
                             padding: const EdgeInsets.all(10.0),
                             width: double.infinity,
