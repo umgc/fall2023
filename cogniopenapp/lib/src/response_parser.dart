@@ -5,6 +5,7 @@ import 'package:cogniopenapp/src/data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'dart:core';
 
 class ResponseParser {
@@ -46,5 +47,25 @@ class ResponseParser {
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
     print("${fullPath}");
     return await FileManager.getThumbnail(fullPath, response.timestamp);
+  }
+
+  static String getTimeStampFromResponse(VideoResponse response) {
+    String fullPath =
+        "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
+    String time = FileManager.getFileTimestamp(fullPath);
+    print("TIME IS ${time}");
+    DateTime parsedDate = DateTime.parse(time);
+    return FormatUtils.getDateString(
+        parsedDate.add(Duration(milliseconds: response.timestamp)));
+  }
+
+  static String getHoursFromResponse(VideoResponse response) {
+    String fullPath =
+        "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
+    String time = FileManager.getFileTimestamp(fullPath);
+    print("TIME IS ${time}");
+    DateTime parsedDate = DateTime.parse(time);
+    return FormatUtils.getTimeString(
+        parsedDate.add(Duration(milliseconds: response.timestamp)));
   }
 }

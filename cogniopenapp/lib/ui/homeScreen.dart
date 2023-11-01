@@ -166,9 +166,9 @@ class HomeScreen extends StatelessWidget {
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/camera_on.png',
-                      text: 'Record Video',
-                      screen: const VideoScreen(),
+                      iconPath: 'assets/icons/search-v2.png',
+                      text: 'Object Search',
+                      screen: ResponseScreen(),
                       keyName: "VideoRecordingButtonKey",
                     ),
                     _buildElevatedButton(
@@ -213,6 +213,10 @@ class HomeScreen extends StatelessWidget {
                 label: 'Virtual Assistant',
               ),
               BottomNavigationBarItem(
+                icon: Icon(Icons.video_camera_front),
+                label: 'Video',
+              ),
+              BottomNavigationBarItem(
                 icon: Icon(Icons.photo),
                 label: 'Gallery',
               ),
@@ -232,12 +236,16 @@ class HomeScreen extends StatelessWidget {
               } else if (index == 1) {
                 // Navigate to Search screen
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ResponseScreen()));
+                    MaterialPageRoute(builder: (context) => AssistantScreen()));
               } else if (index == 2) {
+                // Navigate to Search screen
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => VideoScreen()));
+              } else if (index == 3) {
                 // Navigate to Gallery screen
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => GalleryScreen()));
-              } else if (index == 3) {
+              } else if (index == 4) {
                 // Navigate to Gallery screen
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => SettingsScreen()));

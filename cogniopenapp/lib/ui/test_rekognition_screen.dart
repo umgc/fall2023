@@ -2,13 +2,8 @@
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
-import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:cogniopenapp/src/utils/directory_manager.dart';
-//import '../src/galleryData.dart';
-//import 'dart:io';
 
 class RekognitionScreen extends StatefulWidget {
   const RekognitionScreen({super.key});
