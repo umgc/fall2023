@@ -558,12 +558,16 @@ class _FullObjectViewState extends State<FullObjectView> {
       height: 25.0,
     );
 
+    // Get the screen height
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      backgroundColor: const Color(0x440000),
+      backgroundColor:
+          Colors.transparent, // Make the Scaffold's background transparent
       extendBodyBehindAppBar: true,
-      //extendBody: true,
       appBar: AppBar(
-        backgroundColor: const Color(0x440000),
+        backgroundColor:
+            Colors.transparent, // Make the AppBar's background transparent
         elevation: 0.0,
         centerTitle: true,
         leading: const BackButton(color: Colors.black54),
@@ -576,7 +580,6 @@ class _FullObjectViewState extends State<FullObjectView> {
               final updatedMedia =
                   await displayEditPopup(context, widget.activeMedia);
               if (updatedMedia != null) {
-                // Call a callback to update the parent view
                 Navigator.pop(context); // Close the current view
                 setState(() {
                   //displayFullObjectView(context, updatedMedia);
@@ -586,198 +589,76 @@ class _FullObjectViewState extends State<FullObjectView> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/background.jpg"),
-                  fit: BoxFit.cover,
+      body: Container(
+        height:
+            screenHeight, // Set the height of the Container to the screen height
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/background.jpg"),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  if (widget.activeMedia is Audio)
-                    ElevatedButton.icon(
-                      icon: virtualAssistantIcon,
-                      label: const Text("Ask Cora"),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AssistantScreen(
-                                conversation: widget.activeMedia as Audio),
-                          ),
-                        );
-                      },
-                    ),
-                  if (!widget.activeMedia.title.isEmpty)
-                    Text('Title: ${widget.activeMedia.title}',
-                        style: TextStyle(fontSize: _defaultFontSize)),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                      'Timestamp: ${FormatUtils.getDateString(widget.activeMedia.timestamp)}',
-                      style: TextStyle(fontSize: _defaultFontSize)),
-                  if (widget.activeMedia is Audio)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
                       children: [
-                        const SizedBox(
-                          width: 15,
+                        if (widget.activeMedia is Audio)
+                          Container(
+                            padding: const EdgeInsets.all(10.0),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.0),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton.icon(
+                              icon: virtualAssistantIcon,
+                              label: const Text("Ask Cora"),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AssistantScreen(
+                                        conversation:
+                                            widget.activeMedia as Audio),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        SizedBox(
+                          height: 8,
                         ),
-                        audioPlayer(widget.activeMedia as Audio),
                       ],
                     ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  if (widget.activeMedia is Photo &&
-                      (widget.activeMedia as Photo).photo != null)
-                    Image(
-                      image: (widget.activeMedia as Photo).photo!.image,
+                    SizedBox(
+                      height: 8,
                     ),
-                  if (widget.activeMedia is Video &&
-                      (widget.activeMedia as Video).thumbnail != null)
-                    videoDisplay(widget.activeMedia as Video),
-                  SizedBox(height: 5),
-                  if (widget.activeMedia.description != null &&
-                      widget.activeMedia.description != "")
-                    Container(
-                      padding: const EdgeInsets.all(10.0),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
+                    if (!widget.activeMedia.title.isEmpty)
+                      Column(
                         children: [
-                          Text(
-                            'Description',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: _sizedBoxSpacing,
-                          ),
-                          Text(
-                            '${widget.activeMedia.description}',
-                            style: TextStyle(fontSize: _defaultFontSize),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  if (widget.activeMedia.tags != null &&
-                      widget.activeMedia.tags!.isNotEmpty &&
-                      !widget.activeMedia.tags!.every((tag) => tag.isEmpty))
-                    Container(
-                      padding: const EdgeInsets.all(10.0),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Tags',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: _sizedBoxSpacing,
-                          ),
-                          Text(
-                            '${widget.activeMedia.tags?.join(", ")}',
-                            style: TextStyle(fontSize: _defaultFontSize),
-                          ),
-                        ],
-                      ),
-                    ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  if (widget.activeMedia is Audio)
-                    Container(
-                      padding: const EdgeInsets.all(10.0),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Summary',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(
-                            height: _sizedBoxSpacing,
-                          ),
-                          Text(
-                            '${(widget.activeMedia as Audio).summary}',
-                            style: TextStyle(fontSize: _defaultFontSize),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  SizedBox(height: 8),
-                  if (widget.activeMedia is Audio)
-                    FutureBuilder<String>(
-                      future: readFileAsString(widget.activeMedia as Audio),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else {
-                          return Container(
+                          Container(
                             padding: const EdgeInsets.all(10.0),
                             width: double.infinity,
                             decoration: BoxDecoration(
@@ -795,27 +676,277 @@ class _FullObjectViewState extends State<FullObjectView> {
                             child: Column(
                               children: [
                                 Text(
-                                  'Transcription',
+                                  'Title',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 16,
+                                  height: _sizedBoxSpacing,
                                 ),
                                 Text(
-                                  '${snapshot.data}',
+                                  '${widget.activeMedia.title}',
                                   style: TextStyle(fontSize: _defaultFontSize),
                                   textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
-                          );
-                        }
-                      },
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                        ],
+                      ),
+                    SizedBox(
+                      height: 8,
                     ),
-                ],
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10.0),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Timestamp',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            height: _sizedBoxSpacing,
+                          ),
+                          Text(
+                            '${FormatUtils.getDateString(widget.activeMedia.timestamp)}',
+                            style: TextStyle(fontSize: _defaultFontSize),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    if (widget.activeMedia is Audio)
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10.0),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: audioPlayer(widget.activeMedia as Audio),
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                        ],
+                      ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    if (widget.activeMedia is Photo &&
+                        (widget.activeMedia as Photo).photo != null)
+                      Image(
+                        image: (widget.activeMedia as Photo).photo!.image,
+                      ),
+                    if (widget.activeMedia is Video &&
+                        (widget.activeMedia as Video).thumbnail != null)
+                      videoDisplay(widget.activeMedia as Video),
+                    SizedBox(height: 5),
+                    if (widget.activeMedia.description != null &&
+                        widget.activeMedia.description != "")
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Description',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: _sizedBoxSpacing,
+                            ),
+                            Text(
+                              '${widget.activeMedia.description}',
+                              style: TextStyle(fontSize: _defaultFontSize),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    if (widget.activeMedia.tags != null &&
+                        widget.activeMedia.tags!.isNotEmpty &&
+                        !widget.activeMedia.tags!.every((tag) => tag.isEmpty))
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Tags',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: _sizedBoxSpacing,
+                            ),
+                            Text(
+                              '${widget.activeMedia.tags?.join(", ")}',
+                              style: TextStyle(fontSize: _defaultFontSize),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    if (widget.activeMedia is Audio)
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Summary',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: _sizedBoxSpacing,
+                            ),
+                            Text(
+                              '${(widget.activeMedia as Audio).summary}',
+                              style: TextStyle(fontSize: _defaultFontSize),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    SizedBox(height: 8),
+                    if (widget.activeMedia is Audio)
+                      FutureBuilder<String>(
+                        future: readFileAsString(widget.activeMedia as Audio),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return Container(
+                              padding: const EdgeInsets.all(10.0),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Transcription',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 16,
+                                  ),
+                                  Text(
+                                    '${snapshot.data}',
+                                    style:
+                                        TextStyle(fontSize: _defaultFontSize),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
