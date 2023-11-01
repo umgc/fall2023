@@ -152,42 +152,45 @@ class HomeScreen extends StatelessWidget {
                     // Using the helper function to build each button in the grid
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/ask_question.png',
+                      icon: Icon(Icons.handshake_outlined,
+                          size: 60, color: Colors.black54),
                       text: 'Virtual Assistant',
                       screen: AssistantScreen(),
                       keyName: "VirtualAssistantButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/gallery-v2.png',
+                      icon: Icon(Icons.photo, size: 60, color: Colors.black54),
                       text: 'Gallery',
                       screen: GalleryScreen(),
                       keyName: "GalleryButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/search-v2.png',
+                      icon: Icon(Icons.search, size: 60, color: Colors.black54),
                       text: 'Object Search',
                       screen: ResponseScreen(),
                       keyName: "VideoRecordingButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/mic_on.png',
+                      icon: Icon(Icons.mic_rounded,
+                          size: 60, color: Colors.black54),
                       text: 'Record Audio',
                       screen: AudioScreen(),
                       keyName: "AudioRecordingButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/significant_object.png',
-                      text: 'Significant Objects',
+                      icon: Icon(Icons.location_history,
+                          size: 60, color: Colors.black54),
+                      text: 'Location',
                       screen: SignificantObjectScreen(),
-                      keyName: "SignificantObjectButtonKey",
+                      keyName: "LocationObjectButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/tour.png',
+                      icon: Icon(Icons.flag, size: 60, color: Colors.black54),
                       text: 'Tour Guide',
                       screen: TourScreen(),
                       keyName: "TourGuideButtonKey",
@@ -206,7 +209,7 @@ class HomeScreen extends StatelessWidget {
   // Helper function to create each button for the GridView
   Widget _buildElevatedButton({
     required BuildContext context,
-    required String iconPath,
+    required Icon icon,
     required String text,
     required Widget screen,
     required String keyName,
@@ -232,11 +235,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
-            iconPath,
-            fit: BoxFit.contain,
-            height: 30,
-          ),
+          icon,
           const SizedBox(height: 22.0),
           Text(
             text,

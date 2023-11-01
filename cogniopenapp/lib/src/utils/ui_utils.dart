@@ -1,6 +1,5 @@
 import 'package:cogniopenapp/ui/test_rekognition_screen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
-import 'package:cogniopenapp/ui/galleryScreen.dart';
 import 'package:cogniopenapp/ui/videoScreen.dart';
 import 'package:cogniopenapp/ui/settingsScreen.dart';
 
@@ -31,16 +30,12 @@ class UiUtils {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.back_hand_rounded),
+            icon: Icon(Icons.handshake_outlined),
             label: 'Virtual Assistant',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.video_camera_back),
             label: 'Video',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo),
-            label: 'Gallery',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -62,10 +57,6 @@ class UiUtils {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => VideoScreen()));
           } else if (index == 3) {
-            // Navigate to Gallery screen
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => GalleryScreen()));
-          } else if (index == 4) {
             // Navigate to Gallery screen
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => SettingsScreen()));
