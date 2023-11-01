@@ -18,7 +18,7 @@ void main() {
     // Verify the task buttons are visible
     expect(find.widgetWithText(ElevatedButton, "Virtual Assistant", skipOffstage: false), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, "Gallery", skipOffstage: false), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, "Record Video", skipOffstage: false), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, "Object Search", skipOffstage: false), findsOneWidget);
     final audioRecordingButtonFinder = find.widgetWithText(ElevatedButton, "Record Audio", skipOffstage: false);
     expect(audioRecordingButtonFinder, findsOneWidget);
     await tester.ensureVisible(audioRecordingButtonFinder);
