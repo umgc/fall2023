@@ -18,6 +18,13 @@ import 'package:cogniopenapp/src/video_display.dart';
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
 
+// Default font size, icon size, and other layout values
+double _crossAxisCount = 2.0; // Default options for grid columns
+double _fontSize = 16.0;
+double _iconSize = 40.0;
+double _sizedBoxSpacing = 8;
+final double _defaultFontSize = 20.0;
+
 // Define a StatefulWidget for the GalleryScreen
 class GalleryScreen extends StatefulWidget {
   @override
@@ -40,14 +47,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
   List<Media> testMedia = DataService.instance.mediaList;
 
-  final double _defaultFontSize = 20.0;
   bool _searchBarVisible = false;
   String _searchText = '';
-
-  // Default font size, icon size, and other layout values
-  double _crossAxisCount = 2.0; // Default options for grid columns
-  double _fontSize = 16.0;
-  double _iconSize = 40.0;
 
   // Variables used to toggle what is being viewed
   bool _showFavoritedOnly = false;
@@ -59,11 +60,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
   SortingCriteria? _selectedSortingCriteria;
   bool _isSortAscending = true;
 
-  FlutterSoundPlayer? _player;
-  bool _isPlaying = false;
-
-  late Audio activeAudio;
-
   _GalleryScreenState() {
     _populateMedia();
   }
@@ -71,8 +67,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
   @override
   void initState() {
     super.initState();
-
-    _player = FlutterSoundPlayer();
   }
 
   void _populateMedia() async {
@@ -229,309 +223,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
     SortingCriteria.type: 'Sort by Type',
   };
 
-  void displayFullObjectView(BuildContext context, Media media) async {
-    var virtualAssistantIcon = Image.asset(
-      'assets/icons/virtual_assistant.png',
-      width: 25.0, // You can adjust the width and height
-      height: 25.0, // as per your requirement
-    );
-
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return Scaffold(
-            backgroundColor: const Color(0x440000),
-            extendBodyBehindAppBar: true,
-            extendBody: true,
-            appBar: AppBar(
-              backgroundColor:
-                  const Color(0x440000), // Set appbar background color
-              elevation: 0.0,
-              centerTitle: true,
-              leading: const BackButton(color: Colors.black54),
-              title: const Text('Full Screen Image and Details',
-                  style: TextStyle(color: Colors.black54)),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () async {
-                    final updatedMedia = await displayEditPopup(context, media);
-                    if (updatedMedia != null) {
-                      // Call a callback to update the parent view
-                      Navigator.pop(context); // Close the current view
-                      setState(() {
-                        displayFullObjectView(context, updatedMedia);
-                      });
-                    }
-                  },
-                ),
-              ],
-            ),
-            body: Center(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/background.jpg"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if (media is Audio)
-                        ElevatedButton.icon(
-                          icon: virtualAssistantIcon,
-                          label: const Text("Ask the Assistant"),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        AssistantScreen(conversation: media)));
-                          },
-                        ),
-                      if (!media.title.isEmpty)
-                        Text('Title: ${media.title}',
-                            style: TextStyle(fontSize: _defaultFontSize)),
-                      Text(
-                          'Timestamp: ${FormatUtils.getDateString(media.timestamp)}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
-                      if (media is Photo && media.photo != null)
-                        Image(
-                          image: media.photo!.image,
-                        ),
-                      if (media is Video && media.thumbnail != null)
-                        videoDisplay(media),
-                      if (media is Audio) audioPlayer(media),
-                      SizedBox(height: 16),
-                      if (media.description != null && media.description != "")
-                        Text(
-                          'Description: ${media.description}',
-                          style: TextStyle(fontSize: _defaultFontSize),
-                          textAlign: TextAlign.center,
-                        ),
-                      if (media.tags != null &&
-                          media.tags!.isNotEmpty &&
-                          !media.tags!.every((tag) => tag.isEmpty))
-                        Text('Tags: ${media.tags?.join(", ")}',
-                            style: TextStyle(fontSize: _defaultFontSize)),
-                      if (media is Audio)
-                        Text('Summary: ${media.summary}',
-                            style: TextStyle(fontSize: _defaultFontSize)),
-                      SizedBox(height: 16),
-                      if (media is Audio)
-                        FutureBuilder<String>(
-                          future: readFileAsString(media),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              // While the future is still running, you can show a loading indicator.
-                              return CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              // If an error occurs, you can display an error message.
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              // If the future is complete, display the summary.
-                              return Text('Transcription: ${snapshot.data}',
-                                  style: TextStyle(fontSize: _defaultFontSize));
-                            }
-                          },
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Future<String> readFileAsString(Audio audio) async {
-    String path =
-        "${DirectoryManager.instance.transcriptsDirectory.path}/${activeAudio.transcriptFileName}";
-    try {
-      File file = File(path);
-      String fileContent = await file.readAsString();
-      print("TRANSCRIPT");
-      print(fileContent);
-      return fileContent;
-    } catch (e) {
-      print("Error reading the file: $e");
-      return ""; // Handle the error as needed
-    }
-  }
-
-  ElevatedButton audioPlayer(Audio audio) {
-    activeAudio = audio;
-    return ElevatedButton(
-      onPressed: _isPlaying ? _stopPlayback : _startPlayback,
-      child: Text(_isPlaying ? 'Stop Preview' : 'Play Preview'),
-    );
-  }
-
-  VideoDisplay videoDisplay(Video video) {
-    String fullFilePath =
-        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
-    print("THE PATH IS: ${fullFilePath}");
-    return VideoDisplay(fullFilePath: fullFilePath);
-  }
-
-  /// Function to handle starting the playback of the recorded audio.
-  Future<void> _startPlayback() async {
-    String path =
-        "${DirectoryManager.instance.audiosDirectory.path}/${activeAudio.audioFileName}";
-    debugPrint(path);
-    await _player!.openPlayer();
-    await _player!.startPlayer(
-        fromURI: path,
-        whenFinished: () {
-          setState(() {
-            _isPlaying = false;
-          });
-          _player!.closePlayer();
-        });
-    setState(() {
-      _isPlaying = true;
-    });
-  }
-
-  /// Function to handle stopping the playback of the recorded audio.
-  Future<void> _stopPlayback() async {
-    await _player!.stopPlayer();
-    setState(() {
-      _isPlaying = false;
-    });
-    _player!.closePlayer();
-  }
-
-  Future<Media?> displayEditPopup(BuildContext context, Media media) async {
-    TextEditingController titleController =
-        TextEditingController(text: media.title);
-    TextEditingController descriptionController =
-        TextEditingController(text: media.description);
-    TextEditingController tagsController =
-        TextEditingController(text: media.tags?.join(', ') ?? '');
-
-    return showDialog<Media>(
-      context: context,
-      builder: (BuildContext context) {
-        Media? updatedMedia;
-        return AlertDialog(
-          title: Text('Edit Media'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  buildEditableField(titleController, 'Title', setState),
-                  buildEditableField(
-                      descriptionController, 'Description', setState),
-                  buildEditableField(
-                      tagsController, 'Tags (comma-separated)', setState),
-                ],
-              );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Save'),
-              onPressed: () {
-                List<String> tags = tagsController.text
-                    .split(',')
-                    .map((tag) => tag.trim())
-                    .toList();
-                // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
-                if (media is Photo) {
-                  DataService.instance.updatePhoto(
-                      id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Photo(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      photoFileName: media.photoFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-                } else if (media is Video) {
-                  DataService.instance.updateVideo(
-                      id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Video(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      videoFileName: media.videoFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags,
-                      duration: media.duration,
-                      thumbnailFileName: media.thumbnailFileName);
-                } else if (media is Audio) {
-                  DataService.instance.updateAudio(
-                      id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Audio(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      audioFileName: media.audioFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-                }
-                setState(() {});
-                Navigator.of(context)
-                    .pop(updatedMedia); // Return the updated media
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget buildEditableField(
-    TextEditingController controller,
-    String label,
-    StateSetter setState,
-  ) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(labelText: label),
-      enabled: true,
-      onChanged: (value) {
-        setState(() {
-          // You can add logic here if needed when the text changes.
-        });
-      },
-    );
-  }
-
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| BUILD METHODS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -666,7 +357,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     Media media = displayedMedia[index];
     return GestureDetector(
       onTap: () {
-        displayFullObjectView(context, media);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FullObjectView(media),
+          ),
+        );
       },
       child: _buildGridItemContent(media),
     );
@@ -825,5 +521,448 @@ class _GalleryScreenState extends State<GalleryScreen> {
         ),
       );
     }).toList();
+  }
+}
+
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FULL OBJECT WIDGET |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+class FullObjectView extends StatefulWidget {
+  Media activeMedia;
+
+  FullObjectView(this.activeMedia);
+
+  @override
+  _FullObjectViewState createState() => _FullObjectViewState();
+}
+
+class _FullObjectViewState extends State<FullObjectView> {
+  FlutterSoundPlayer? _player;
+  bool _isPlaying = false;
+
+  late Audio activeAudio;
+
+  @override
+  void initState() {
+    super.initState();
+    _player = FlutterSoundPlayer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Get the screen height
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      backgroundColor:
+          Colors.transparent, // Make the Scaffold's background transparent
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor:
+            Colors.transparent, // Make the AppBar's background transparent
+        elevation: 0.0,
+        centerTitle: true,
+        leading: const BackButton(color: Colors.black54),
+        title: const Text('Full Screen Image and Details',
+            style: TextStyle(color: Colors.black54)),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () async {
+              final updatedMedia =
+                  await displayEditPopup(context, widget.activeMedia);
+              if (updatedMedia != null) {
+                Navigator.pop(context); // Close the current view
+                setState(() {
+                  //displayFullObjectView(context, updatedMedia);
+                });
+              }
+            },
+          ),
+        ],
+      ),
+      body: Container(
+        height:
+            screenHeight, // Set the height of the Container to the screen height
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/background.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 80,
+                    ), // Used to provide an invisible barrier for the objects
+
+                    SizedBox(
+                      height: 8,
+                    ),
+                    if (!widget.activeMedia.title.isEmpty)
+                      returnTextBox("Title", '${widget.activeMedia.title}'),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    returnTextBox("Timestamp",
+                        '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia is Audio)
+                      createAudioControlButtons(),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia is Photo &&
+                        (widget.activeMedia as Photo).photo != null)
+                      Image(
+                        image: (widget.activeMedia as Photo).photo!.image,
+                      ),
+                    if (widget.activeMedia is Video &&
+                        (widget.activeMedia as Video).thumbnail != null)
+                      videoDisplay(widget.activeMedia as Video),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia.description != null &&
+                        widget.activeMedia.description != "")
+                      returnTextBox(
+                          "Description", '${widget.activeMedia.description}'),
+
+                    addSpacingSizedBox(),
+
+                    if (widget.activeMedia is Audio)
+                      returnTextBox("Summary",
+                          '${(widget.activeMedia as Audio).summary}'),
+
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia is Audio)
+                      FutureBuilder<String>(
+                        future: readFileAsString(widget.activeMedia as Audio),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return returnTextBox(
+                                "Transcription", '${snapshot.data}');
+                          }
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Column createAudioPlayer() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3),
+              )
+            ],
+          ),
+          child: audioPlayer(widget.activeMedia as Audio),
+        ),
+      ],
+    );
+  }
+
+  SizedBox addSpacingSizedBox() {
+    return SizedBox(
+      height: 8,
+    );
+  }
+
+  ElevatedButton coraButton() {
+    var virtualAssistantIcon = Image.asset(
+      'assets/icons/virtual_assistant.png',
+      width: 25.0,
+      height: 25.0,
+    );
+    return ElevatedButton.icon(
+      icon: virtualAssistantIcon,
+      label: const Text("Ask Cora"),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                AssistantScreen(conversation: widget.activeMedia as Audio),
+          ),
+        );
+      },
+    );
+  }
+
+  Container createAudioControlButtons() {
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+          color: Colors.black,
+          width: 2.0,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: createBoxDecoration(),
+              child: coraButton(),
+            ),
+          ),
+          SizedBox(width: 16), // Add space between the children
+          Expanded(
+            child: Container(
+              decoration: createBoxDecoration(),
+              child: audioPlayer(widget.activeMedia as Audio),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration createBoxDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(8.0),
+      border: Border.all(
+        color: Colors.black,
+        width: 2.0,
+      ),
+    );
+  }
+
+  Container returnTextBox(String title, String contents) {
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: Colors.black,
+          width: 2.0,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            height: _sizedBoxSpacing,
+          ),
+          Text(
+            contents,
+            style: TextStyle(fontSize: _defaultFontSize),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<Media?> displayEditPopup(BuildContext context, Media media) async {
+    TextEditingController titleController =
+        TextEditingController(text: media.title);
+    TextEditingController descriptionController =
+        TextEditingController(text: media.description);
+
+    return showDialog<Media>(
+      context: context,
+      builder: (BuildContext context) {
+        Media? updatedMedia;
+        return AlertDialog(
+          title: Text('Edit Media'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  buildEditableField(titleController, 'Title', setState),
+                  buildEditableField(
+                      descriptionController, 'Description', setState),
+                ],
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () {
+                if (media is Photo) {
+                  DataService.instance.updatePhoto(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
+
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Photo(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      photoFileName: media.photoFileName,
+                      title: titleController.text,
+                      description: descriptionController.text);
+                } else if (media is Video) {
+                  DataService.instance.updateVideo(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
+
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Video(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      videoFileName: media.videoFileName,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      duration: media.duration,
+                      thumbnailFileName: media.thumbnailFileName);
+                } else if (media is Audio) {
+                  DataService.instance.updateAudio(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
+
+                  // TODO: Find a better way to refresh
+                  updatedMedia = Audio(
+                      timestamp: media.timestamp,
+                      storageSize: media.storageSize,
+                      isFavorited: false,
+                      audioFileName: media.audioFileName,
+                      title: titleController.text,
+                      description: descriptionController.text);
+                }
+                setState(() {});
+                Navigator.of(context)
+                    .pop(updatedMedia); // Return the updated media
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<String> readFileAsString(Audio audio) async {
+    String path =
+        "${DirectoryManager.instance.transcriptsDirectory.path}/${activeAudio.transcriptFileName}";
+    try {
+      File file = File(path);
+      String fileContent = await file.readAsString();
+      print("TRANSCRIPT");
+      print(fileContent);
+      return fileContent;
+    } catch (e) {
+      print("Error reading the file: $e");
+      return ""; // Handle the error as needed
+    }
+  }
+
+  ElevatedButton audioPlayer(Audio audio) {
+    activeAudio = audio;
+    return ElevatedButton(
+      onPressed: _isPlaying ? _stopPlayback : _startPlayback,
+      child: Text(_isPlaying ? 'Stop Audio' : 'Play Audio'),
+    );
+  }
+
+  VideoDisplay videoDisplay(Video video) {
+    String fullFilePath =
+        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
+    print("THE PATH IS: ${fullFilePath}");
+    return VideoDisplay(fullFilePath: fullFilePath);
+  }
+
+  /// Function to handle starting the playback of the recorded audio.
+  Future<void> _startPlayback() async {
+    String path =
+        "${DirectoryManager.instance.audiosDirectory.path}/${activeAudio.audioFileName}";
+    debugPrint(path);
+    await _player!.openPlayer();
+    await _player!.startPlayer(
+        fromURI: path,
+        whenFinished: () {
+          setState(() {
+            _isPlaying = false;
+          });
+          _player!.closePlayer();
+        });
+    setState(() {
+      _isPlaying = true;
+    });
+  }
+
+  /// Function to handle stopping the playback of the recorded audio.
+  Future<void> _stopPlayback() async {
+    await _player!.stopPlayer();
+    setState(() {
+      _isPlaying = false;
+    });
+    _player!.closePlayer();
+  }
+
+  Widget buildEditableField(
+    TextEditingController controller,
+    String label,
+    StateSetter setState,
+  ) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label),
+      enabled: true,
+      onChanged: (value) {
+        setState(() {
+          // You can add logic here if needed when the text changes.
+        });
+      },
+    );
   }
 }
