@@ -806,8 +806,6 @@ class _FullObjectViewState extends State<FullObjectView> {
         TextEditingController(text: media.title);
     TextEditingController descriptionController =
         TextEditingController(text: media.description);
-    TextEditingController tagsController =
-        TextEditingController(text: media.tags?.join(', ') ?? '');
 
     return showDialog<Media>(
       context: context,
@@ -823,8 +821,6 @@ class _FullObjectViewState extends State<FullObjectView> {
                   buildEditableField(titleController, 'Title', setState),
                   buildEditableField(
                       descriptionController, 'Description', setState),
-                  buildEditableField(
-                      tagsController, 'Tags (comma-separated)', setState),
                 ],
               );
             },
@@ -839,17 +835,11 @@ class _FullObjectViewState extends State<FullObjectView> {
             TextButton(
               child: Text('Save'),
               onPressed: () {
-                List<String> tags = tagsController.text
-                    .split(',')
-                    .map((tag) => tag.trim())
-                    .toList();
-                // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
                 if (media is Photo) {
                   DataService.instance.updatePhoto(
                       id: media.id!,
                       title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
+                      description: descriptionController.text);
 
                   // TODO: Find a better way to refresh
                   updatedMedia = Photo(
@@ -858,14 +848,12 @@ class _FullObjectViewState extends State<FullObjectView> {
                       isFavorited: false,
                       photoFileName: media.photoFileName,
                       title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
+                      description: descriptionController.text);
                 } else if (media is Video) {
                   DataService.instance.updateVideo(
                       id: media.id!,
                       title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
+                      description: descriptionController.text);
 
                   // TODO: Find a better way to refresh
                   updatedMedia = Video(
@@ -875,15 +863,13 @@ class _FullObjectViewState extends State<FullObjectView> {
                       videoFileName: media.videoFileName,
                       title: titleController.text,
                       description: descriptionController.text,
-                      tags: tags,
                       duration: media.duration,
                       thumbnailFileName: media.thumbnailFileName);
                 } else if (media is Audio) {
                   DataService.instance.updateAudio(
                       id: media.id!,
                       title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
+                      description: descriptionController.text);
 
                   // TODO: Find a better way to refresh
                   updatedMedia = Audio(
@@ -892,8 +878,7 @@ class _FullObjectViewState extends State<FullObjectView> {
                       isFavorited: false,
                       audioFileName: media.audioFileName,
                       title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
+                      description: descriptionController.text);
                 }
                 setState(() {});
                 Navigator.of(context)
