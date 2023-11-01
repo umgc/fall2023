@@ -1,6 +1,9 @@
-import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
+import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
+import 'package:cogniopenapp/src/significantObject.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:cogniopenapp/ui/customResponseScreen.dart';
 import 'package:flutter/material.dart';
@@ -83,17 +86,18 @@ class TestScreenState extends State<TestScreen> {
         ),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             if (userDefinedModelName.isNotEmpty) {
               //TODO:save the passed through response Image data, boundingbox info, and the custom label name as a Significant Object.
+              SignificantObject sigObj = await addResponseAsSignificantObject(
+                  userDefinedModelName, response);
 
-              //TODO:load (related) Significant Object data
-
-              //TODO:generate a manifest
+              s3.addFileToS3("$userDefinedModelName.json",
+                  sigObj.generateRekognitionManifest());
               //TODO:upload new image to S3
 
-              //TODO:add the newModel
-              //vp.addNewModel("green-glasses", "eyeglasses-manifest.json");
+              vp.addNewModel(
+                  userDefinedModelName, "$userDefinedModelName.json");
 
               //TODO:create some polling method that checks if trained, then starts if trained; pass it the new model name.
               //TODO:inside that polling method, vp.startCustomDetection("green-glasses");
@@ -168,7 +172,7 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () async {
-              DetectCustomLabelsResponse? response =
+              rek.DetectCustomLabelsResponse? response =
                   await vp.findMatchingModel("green-glasses");
               //await vp.findMatchingModel("my-glasses");
 
@@ -200,5 +204,36 @@ class TestScreenState extends State<TestScreen> {
             labelBackgroundColor: const Color(0XFFE91E63)),
       ],
     );
+  }
+
+  Future<SignificantObject> addResponseAsSignificantObject(
+      String userDefinedModelName, VideoResponse response) async {
+    Image stillImage = await FileManager.getThumbnail(
+        "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}",
+        response.timestamp);
+    String name = response.title;
+    ResponseBoundingBox boundingBox = ResponseBoundingBox(
+        left: response.left,
+        top: response.top,
+        width: response.width,
+        height: response.height);
+
+    //if user already has a matching significant object, add this to that list.
+    //TODO: Get list of significant objects
+    //TODO: filter down to object that matches our user's model (userDefinedModelName)
+    //TODO: add to user significant object
+    //sigObj.updateSignificantObject(stillImage, name, boundingBox);
+
+    //if not, make one.
+    List<Image> images = [];
+    images.add(stillImage);
+    List<String> alternateNames = [];
+    alternateNames.add(name);
+    List<ResponseBoundingBox> boundingBoxes = [];
+    boundingBoxes.add(boundingBox);
+    SignificantObject sigObj = SignificantObject.overloaded(
+        userDefinedModelName, images, alternateNames, boundingBoxes);
+
+    return sigObj;
   }
 }
