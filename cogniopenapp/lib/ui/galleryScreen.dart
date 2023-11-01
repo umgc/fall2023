@@ -611,11 +611,7 @@ class _FullObjectViewState extends State<FullObjectView> {
                     SizedBox(
                       height: 80,
                     ), // Used to provide an invisible barrier for the objects
-                    Column(
-                      children: [
-                        if (widget.activeMedia is Audio) createCoraButton(),
-                      ],
-                    ),
+
                     SizedBox(
                       height: 8,
                     ),
@@ -630,7 +626,8 @@ class _FullObjectViewState extends State<FullObjectView> {
                     returnTextBox("Timestamp",
                         '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
                     addSpacingSizedBox(),
-                    if (widget.activeMedia is Audio) createAudioPlayer(),
+                    if (widget.activeMedia is Audio)
+                      createAudioControlButtons(),
                     addSpacingSizedBox(),
                     if (widget.activeMedia is Photo &&
                         (widget.activeMedia as Photo).photo != null)
@@ -693,13 +690,10 @@ class _FullObjectViewState extends State<FullObjectView> {
                 spreadRadius: 5,
                 blurRadius: 7,
                 offset: Offset(0, 3),
-              ),
+              )
             ],
           ),
           child: audioPlayer(widget.activeMedia as Audio),
-        ),
-        SizedBox(
-          height: 8,
         ),
       ],
     );
@@ -711,40 +705,65 @@ class _FullObjectViewState extends State<FullObjectView> {
     );
   }
 
-  Container createCoraButton() {
+  ElevatedButton coraButton() {
     var virtualAssistantIcon = Image.asset(
       'assets/icons/virtual_assistant.png',
       width: 25.0,
       height: 25.0,
     );
+    return ElevatedButton.icon(
+      icon: virtualAssistantIcon,
+      label: const Text("Ask Cora"),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                AssistantScreen(conversation: widget.activeMedia as Audio),
+          ),
+        );
+      },
+    );
+  }
 
+  Container createAudioControlButtons() {
     return Container(
       padding: const EdgeInsets.all(10.0),
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.blue,
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: Offset(0, 3),
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+          color: Colors.black,
+          width: 2.0,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: createBoxDecoration(),
+              child: coraButton(),
+            ),
+          ),
+          SizedBox(width: 16), // Add space between the children
+          Expanded(
+            child: Container(
+              decoration: createBoxDecoration(),
+              child: audioPlayer(widget.activeMedia as Audio),
+            ),
           ),
         ],
       ),
-      child: ElevatedButton.icon(
-        icon: virtualAssistantIcon,
-        label: const Text("Ask Cora"),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  AssistantScreen(conversation: widget.activeMedia as Audio),
-            ),
-          );
-        },
+    );
+  }
+
+  BoxDecoration createBoxDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(8.0),
+      border: Border.all(
+        color: Colors.black,
+        width: 2.0,
       ),
     );
   }
@@ -906,7 +925,7 @@ class _FullObjectViewState extends State<FullObjectView> {
     activeAudio = audio;
     return ElevatedButton(
       onPressed: _isPlaying ? _stopPlayback : _startPlayback,
-      child: Text(_isPlaying ? 'Stop Preview' : 'Play Preview'),
+      child: Text(_isPlaying ? 'Stop Audio' : 'Play Audio'),
     );
   }
 
