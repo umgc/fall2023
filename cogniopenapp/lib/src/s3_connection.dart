@@ -1,7 +1,10 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:aws_s3_api/s3-2006-03-01.dart';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
@@ -65,10 +68,25 @@ class S3Bucket {
     return _addToS3(title, bytes);
   }
 
+  Future<String> addImageToS3(String title, Image image) async {
+    // TODO Specify folder structure
+    final data = await image.toByteData();
+    final bytes = data!.buffer.asUint8List();
+    return _addToS3(title, bytes);
+  }
+
+  Future<String> addFileToS3(String title, String manifest) async {
+    // TODO Specify folder structure
+    List<int> list = utf8.encode(manifest);
+    Uint8List bytes = Uint8List.fromList(list);
+    //use utf8.decode(bytes) to bring back into String.
+    return _addToS3(title, bytes);
+  }
+
   // Adds the file to the S3 bucket
   Future<String> addVideoToS3(String title, String localPath) {
     // TODO Specify folder structure
-    print("ADDINF THIS TO S3 ${title}");
+    print("ADDING THIS TO S3 ${title}");
     Uint8List bytes = File(localPath).readAsBytesSync();
     return _addToS3(title, bytes);
   }
