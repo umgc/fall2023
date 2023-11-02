@@ -90,7 +90,8 @@ class _ResponseScreenState extends State<ResponseScreen> {
                             ),
                           );
                         },
-                        child: returnResponseBox(response),
+                        child: returnResponseBox(response,
+                            "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nADDRRESS"),
                       ),
                   ],
                 ),
@@ -102,83 +103,9 @@ class _ResponseScreenState extends State<ResponseScreen> {
     );
   }
 
-  Container returnResponseBox(VideoResponse response) {
-    return Container(
-      padding: const EdgeInsets.all(10.0),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(
-          color: Colors.black,
-          width: 2.0,
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nADDRRESS",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(
-            height: 8,
-          ),
-          Stack(
-            children: [
-              getFutureThumbnail(response),
-              getBoundingBox(response),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
   SizedBox addSpacingSizedBox() {
     return SizedBox(
       height: 8,
-    );
-  }
-
-  Positioned getBoundingBox(
-    VideoResponse response,
-    /* Image stillImage*/
-  ) {
-    double imageWidth = 400;
-    double imageHeight = 700;
-
-    return Positioned(
-      left: imageWidth * response.left,
-      top: imageHeight * response.top,
-      child: Opacity(
-        opacity: 0.35,
-        child: Material(
-          child: InkWell(
-            child: Container(
-              width: imageWidth * response.width,
-              height: imageHeight * response.height,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 2,
-                  color: Colors.black,
-                ),
-              ),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  color: Colors.black,
-                  child: Text(
-                    '${response.title} ${((response.confidence * 100).truncateToDouble()) / 100}%',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
@@ -234,11 +161,8 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen> {
                   SizedBox(
                     height: 60,
                   ),
-                  getFutureThumbnail(videoResponse),
-                  Text(
-                    "Timestamp: ${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)})",
-                    style: TextStyle(color: Colors.black),
-                  ),
+                  returnResponseBox(videoResponse,
+                      "${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)}) \nADDRRESS"),
                 ],
               ),
             );
@@ -274,5 +198,79 @@ FutureBuilder<Image> getFutureThumbnail(VideoResponse videoResponse) {
         return CircularProgressIndicator();
       }
     },
+  );
+}
+
+Container returnResponseBox(VideoResponse response, String title) {
+  return Container(
+    padding: const EdgeInsets.all(10.0),
+    width: double.infinity,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10.0),
+      border: Border.all(
+        color: Colors.black,
+        width: 2.0,
+      ),
+    ),
+    child: Column(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(
+          height: 8,
+        ),
+        Stack(
+          children: [
+            getFutureThumbnail(response),
+            getBoundingBox(response),
+          ],
+        )
+      ],
+    ),
+  );
+}
+
+Positioned getBoundingBox(
+  VideoResponse response,
+  /* Image stillImage*/
+) {
+  double imageWidth = 400;
+  double imageHeight = 700;
+
+  return Positioned(
+    left: imageWidth * response.left,
+    top: imageHeight * response.top,
+    child: Opacity(
+      opacity: 0.35,
+      child: Material(
+        child: InkWell(
+          child: Container(
+            width: imageWidth * response.width,
+            height: imageHeight * response.height,
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 2,
+                color: Colors.black,
+              ),
+            ),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                color: Colors.black,
+                child: Text(
+                  '${response.title} ${((response.confidence * 100).truncateToDouble()) / 100}%',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
   );
 }
