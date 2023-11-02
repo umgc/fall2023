@@ -29,7 +29,6 @@ import 'package:avatar_glow/avatar_glow.dart';
 /// Importing other application screens for navigation purposes.
 import 'homeScreen.dart';
 import 'assistantScreen.dart';
-import 'searchScreen.dart';
 import 'galleryScreen.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'settingsScreen.dart';
