@@ -13,7 +13,7 @@ void main() {
 
     // Declare local variables
     const questionToAsk = "Where is my fire extinguisher?";
-    const answerToExpect = "AI Assistant: $questionToAsk (Echo)";
+    const answerToExpect = "Cora: $questionToAsk (Echo)";
     if (questionToAsk == answerToExpect) {
       debugPrint(
           "Please make sure that the question and answer are not identical");
