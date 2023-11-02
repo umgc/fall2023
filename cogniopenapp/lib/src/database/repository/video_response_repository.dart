@@ -14,6 +14,8 @@ class VideoResponseFields {
     width,
     height,
     referenceVideoFilePath,
+    address,
+    parents,
   ];
 
   static const String id = 'id';
@@ -25,6 +27,8 @@ class VideoResponseFields {
   static const String width = 'width';
   static const String height = 'height';
   static const String referenceVideoFilePath = 'referenceVideoFilePath';
+  static const String address = 'address';
+  static const String parents = 'parents';
 }
 
 class VideoResponseRepository {

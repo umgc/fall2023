@@ -1,5 +1,3 @@
-import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:flutter/widgets.dart';
 
 class VideoResponse {
@@ -12,6 +10,8 @@ class VideoResponse {
   final double top;
   final double width;
   final double height;
+  final String? address;
+  final String? parents;
 
   late Image? image;
 
@@ -25,6 +25,8 @@ class VideoResponse {
     required this.width,
     required this.height,
     required this.referenceVideoFilePath,
+    this.address,
+    this.parents,
   });
 
   VideoResponse copy({
@@ -37,6 +39,8 @@ class VideoResponse {
     double? width,
     double? height,
     String? referenceVideoFilePath,
+    String? address,
+    String? parents,
   }) =>
       VideoResponse(
         id: id ?? this.id,
@@ -49,6 +53,8 @@ class VideoResponse {
         height: height ?? this.height,
         referenceVideoFilePath:
             referenceVideoFilePath ?? this.referenceVideoFilePath,
+        address: address ?? this.address,
+        parents: parents ?? this.parents,
       );
 
   Map<String, Object?> toJson() {
@@ -62,6 +68,8 @@ class VideoResponse {
       'width': width,
       'height': height,
       'referenceVideoFilePath': referenceVideoFilePath,
+      'address': address,
+      'parents': parents,
     };
   }
 
@@ -77,6 +85,8 @@ class VideoResponse {
         width: json['width'] as double,
         height: json['height'] as double,
         referenceVideoFilePath: json['referenceVideoFilePath'] as String,
+        address: json['address'] as String?,
+        parents: json['parents'] as String?,
       );
     } catch (e) {
       throw FormatException('Error parsing JSON for VideoResponse: $e');
