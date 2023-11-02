@@ -386,11 +386,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (media is Photo && media.photo != null)
-                  _buildPhotoImage(media),
+                  _buildGridImage(media.title, media.photo!),
                 if (media is Video && media.thumbnail != null)
-                  _buildVideoImage(media),
+                  _buildGridImage(media.title, media.thumbnail!),
                 if (media is Audio) _buildConversationIcon(media),
-                if (media is Audio) returnTextOverlay(media),
+                if (media is Audio) returnTextOverlay(media.title),
               ],
             ),
             _buildFavoriteIcon(media),
@@ -401,25 +401,25 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildPhotoImage(Photo media) {
+  Widget _buildGridImage(String title, Image image) {
     return Expanded(
       child: Center(
         child: Stack(
           children: [
             // Image widget
             Image(
-              key: const Key('photoItem'),
-              image: media.photo!.image,
+              key: const Key('videoItem'),
+              image: image.image,
               fit: BoxFit.fill,
               height: double.infinity,
               width: double.infinity,
             ),
             // Text overlay at the bottom
             Positioned(
-              bottom: 20, // Adjust the bottom position as needed
-              left: 20, // Adjust the left position as needed
-              right: 20, // Adjust the right position as needed
-              child: returnTextOverlay(media),
+              bottom: 0, // Adjust the bottom position as needed
+              left: 0, // Adjust the left position as needed
+              right: 0, // Adjust the right position as needed
+              child: returnTextOverlay(title),
             ),
           ],
         ),
@@ -427,34 +427,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildVideoImage(Video media) {
-    return Expanded(
-      child: Center(
-        child: Stack(
-          children: [
-            // Image widget
-            Image(
-              key: const Key('photoItem'),
-              image: media.thumbnail!.image,
-              fit: BoxFit.fill,
-              height: double.infinity,
-              width: double.infinity,
-            ),
-            // Text overlay at the bottom
-            Positioned(
-              bottom: 20, // Adjust the bottom position as needed
-              left: 20, // Adjust the left position as needed
-              right: 20, // Adjust the right position as needed
-              child: returnTextOverlay(media),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Container returnTextOverlay(Media media) {
-    if (media.title.isEmpty) {
+  Container returnTextOverlay(String title) {
+    if (title.isEmpty) {
       return Container();
     }
     return Container(
@@ -462,7 +436,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       color: Colors.black.withOpacity(0.5), // Adjust opacity and color
       child: Center(
         child: Text(
-          media.title,
+          title,
           style: TextStyle(
             color: Colors.white, // Text color
             fontSize: 18, // Text size
@@ -481,14 +455,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             const Icon(
               key: Key('conversationItem'),
               Icons.chat,
-              size: 50,
-            ),
-            // Text overlay at the bottom
-            Positioned(
-              bottom: 20, // Adjust the bottom position as needed
-              left: 20, // Adjust the left position as needed
-              right: 20, // Adjust the right position as needed
-              child: returnTextOverlay(media),
+              size: 75,
             ),
           ],
         ),
