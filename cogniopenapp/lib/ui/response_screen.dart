@@ -1,20 +1,26 @@
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
+import 'package:cogniopenapp/src/data_service.dart';
 
 import 'package:flutter/material.dart';
 
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| INITIAL SCREEN |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 class ResponseScreen extends StatefulWidget {
-  List<VideoResponse> responses = ResponseParser.getListOfResponses();
-
   ResponseScreen();
 
   @override
   _ResponseScreenState createState() => _ResponseScreenState();
 }
 
-class _ResponseScreenState extends State<ResponseScreen> {
+class _ResponseScreenState extends State<ResponseScreen>
+    with WidgetsBindingObserver {
   List<VideoResponse> displayedResponses = ResponseParser.getListOfResponses();
   TextEditingController searchController = TextEditingController();
+
+  List<VideoResponse> responses = ResponseParser.getListOfResponses();
 
   @override
   void initState() {
@@ -25,14 +31,20 @@ class _ResponseScreenState extends State<ResponseScreen> {
   void filterResponses() {
     final searchTerm = searchController.text.toLowerCase();
     setState(() {
-      displayedResponses = widget.responses.where((response) {
+      displayedResponses = responses.where((response) {
         return response.title.toLowerCase().contains(searchTerm);
       }).toList();
     });
   }
 
+  void refreshScreen() {
+    // You can do any necessary refresh logic here
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("BUILDING AGIAN");
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -86,7 +98,8 @@ class _ResponseScreenState extends State<ResponseScreen> {
                             MaterialPageRoute(
                               builder: (context) => ImageNavigatorScreen(
                                   ResponseParser.getRequestedResponseList(
-                                      response.title)),
+                                      response.title,
+                                      filterInterval: 3000)),
                             ),
                           );
                         },
@@ -110,6 +123,11 @@ class _ResponseScreenState extends State<ResponseScreen> {
   }
 }
 
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ENHANCED SEARCH |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
 class ImageNavigatorScreen extends StatefulWidget {
   final List<VideoResponse> videoResponses;
 
@@ -119,7 +137,8 @@ class ImageNavigatorScreen extends StatefulWidget {
   _ImageNavigatorScreenState createState() => _ImageNavigatorScreenState();
 }
 
-class _ImageNavigatorScreenState extends State<ImageNavigatorScreen> {
+class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
+    with WidgetsBindingObserver {
   int currentIndex = 0;
 
   @override
@@ -163,6 +182,19 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen> {
                   ),
                   returnResponseBox(videoResponse,
                       "${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)}) \nADDRRESS"),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showConfirmationDialog(videoResponse.title);
+                          },
+                          child: Text("This is the object I was looking for"),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             );
@@ -171,7 +203,66 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen> {
       ),
     );
   }
+
+  void showConfirmationDialog(String title) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Saved as a significant object (NOT REALLY YET THOUGH)"),
+          content: Text(
+            "Would you like to delete all previous spottings of this item to save space?",
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Pop one screen
+                    Navigator.of(context).pop(); // Pop the second screen
+                  },
+                  child: Text("No, keep them"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await deletePreviousResponses(title);
+                    Navigator.of(context).pop(); // Pop one screen
+                    Navigator.of(context).pop(); // Pop the second screen
+                    Navigator.of(context).pop(); // Pop the second screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ResponseScreen()),
+                    );
+                  },
+                  child: Text("Yes, please delete them"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deletePreviousResponses(String responsesToDelete) async {
+    List<VideoResponse> responses =
+        ResponseParser.getRequestedResponseList(responsesToDelete);
+    print("RESPONSE LENGTH: ${responses.length}");
+    for (VideoResponse response in responses) {
+      print("REMOVED ID: ${response.id!}");
+      await DataService.instance.removeVideoResponse(response.id!);
+    }
+  }
 }
+
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| COMMON FUNCTIONALITY |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 FutureBuilder<Image> getFutureThumbnail(VideoResponse videoResponse) {
   return FutureBuilder<Image>(
