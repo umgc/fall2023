@@ -18,6 +18,7 @@ class VideoProcessor {
   String jobId = '';
   String projectArn = 'No project found';
   String currentProjectVersionArn = 'Model not started';
+  List<String> activeModels = [];
 
   Stopwatch stopwatch = Stopwatch();
 
@@ -286,6 +287,24 @@ class VideoProcessor {
     });
   }
 
+  ProjectVersionStatus? pollForTrainedModel(String labelName) {
+    Future<DescribeProjectVersionsResponse> projectVersions =
+        service!.describeProjectVersions(projectArn: projectArn);
+    projectVersions.then((value) {
+      Iterator<ProjectVersionDescription> iter =
+          value.projectVersionDescriptions!.iterator;
+      while (iter.moveNext()) {
+        if (iter.current.projectVersionArn!.contains(labelName)) {
+          print("${iter.current.projectVersionArn} is ${iter.current.status}");
+          if (iter.current.status == ProjectVersionStatus.trainingCompleted) {
+            return iter.current.status;
+          }
+        }
+      }
+    });
+    return ProjectVersionStatus.trainingInProgress;
+  }
+
   //start the inference of custom labels
   //can return a null if no such label is found (or if it failed training)
   String? startCustomDetection(String labelName) {
@@ -311,6 +330,7 @@ class VideoProcessor {
             print(response.status);
             //returns the modelArn of the projectVersion being started
             //still need to poll the that the model has started
+            activeModels.add(labelName);
             return iter.current.projectVersionArn;
           }
         }

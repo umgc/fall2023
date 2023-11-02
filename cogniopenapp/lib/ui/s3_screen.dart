@@ -8,6 +8,7 @@ import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:cogniopenapp/ui/customResponseScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'dart:io';
 
 class TestScreen extends StatefulWidget {
   final VideoResponse response;
@@ -99,7 +100,17 @@ class TestScreenState extends State<TestScreen> {
                   userDefinedModelName, "$userDefinedModelName.json");
 
               //TODO:create some polling method that checks if trained, then starts if trained; pass it the new model name.
-              //TODO:inside that polling method, vp.startCustomDetection("green-glasses");
+              rek.ProjectVersionStatus? status;
+              do {
+                status = await vp.pollForTrainedModel(userDefinedModelName);
+                sleep(const Duration(milliseconds: 5000));
+                print(status);
+              } while (status == rek.ProjectVersionStatus.trainingInProgress);
+
+              //returns the modelArn of the projectVersion being started, but we really don't need it if we have the model name
+              //(see vp.activeModels)
+              vp.startCustomDetection(userDefinedModelName);
+              //TODO?: add a polling method to see when the model is started?
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
