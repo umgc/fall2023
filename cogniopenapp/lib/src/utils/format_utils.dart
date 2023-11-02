@@ -50,6 +50,13 @@ class FormatUtils {
     return '$formattedDate $formattedTime';
   }
 
+  static String getTimeString(DateTime? timeStamp) {
+    if (timeStamp == null) {
+      return 'N/A';
+    }
+    return Moment(timeStamp).format('h:mm:ss A');
+  }
+
   static String getDateTimeString(DateTime? timeStamp) {
     if (timeStamp == null) {
       return 'Date Unknown';

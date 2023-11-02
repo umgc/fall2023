@@ -6,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/aws_video_response.dart';
-import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'dart:core';
@@ -39,15 +38,6 @@ class VideoProcessor {
   String getElapsedTimeInSeconds() {
     final seconds = stopwatch.elapsedMilliseconds / 1000.0;
     return 'Elapsed time: ${seconds.toStringAsFixed(2)} seconds';
-  }
-
-  VideoResponse? getRequestedResponse(String searchTitle) {
-    for (int i = DataService.instance.responseList.length - 1; i >= 0; i--) {
-      if (DataService.instance.responseList[i].title == searchTitle) {
-        return DataService.instance.responseList[i];
-      }
-    }
-    return null;
   }
 
   Future<void> startService() async {
