@@ -389,11 +389,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
                   _buildPhotoImage(media),
                 if (media is Video && media.thumbnail != null)
                   _buildVideoImage(media),
-                if (media is Audio) _buildConversationIcon(),
+                if (media is Audio) _buildConversationIcon(media),
+                if (media is Audio) returnTextOverlay(media),
               ],
             ),
             _buildFavoriteIcon(media),
-            _buildGridItemTitle(media.title),
             _buildMediaTypeIcon(media.mediaType),
           ],
         ),
@@ -404,47 +404,95 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget _buildPhotoImage(Photo media) {
     return Expanded(
       child: Center(
-        child: Image(
-          key: const Key('photoItem'),
-          image: media.photo!.image,
-          fit: BoxFit.fill,
-          width: double.infinity,
-          height: double.infinity
+        child: Stack(
+          children: [
+            // Image widget
+            Image(
+              key: const Key('photoItem'),
+              image: media.photo!.image,
+              fit: BoxFit.fill,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+            // Text overlay at the bottom
+            Positioned(
+              bottom: 20, // Adjust the bottom position as needed
+              left: 20, // Adjust the left position as needed
+              right: 20, // Adjust the right position as needed
+              child: returnTextOverlay(media),
+            ),
+          ],
         ),
       ),
-    ); 
+    );
   }
 
   Widget _buildVideoImage(Video media) {
-    return Image(
-      key: const Key('videoItem'),
-      image: media.thumbnail!.image,
-      // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-      //width: 110.0 + (2.0 - _crossAxisCount) * 25.0,
-      //height: 110.0 + (2.0 - _crossAxisCount) * 25.0,
-      fit: BoxFit.fill,
-      width: double.infinity,
-      height: double.infinity
+    return Expanded(
+      child: Center(
+        child: Stack(
+          children: [
+            // Image widget
+            Image(
+              key: const Key('photoItem'),
+              image: media.thumbnail!.image,
+              fit: BoxFit.fill,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+            // Text overlay at the bottom
+            Positioned(
+              bottom: 20, // Adjust the bottom position as needed
+              left: 20, // Adjust the left position as needed
+              right: 20, // Adjust the right position as needed
+              child: returnTextOverlay(media),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildConversationIcon() {
-    return const Icon(
-      key: Key('conversationItem'),
-      Icons.chat,
-      size: 50,
+  Container returnTextOverlay(Media media) {
+    if (media.title.isEmpty) {
+      return Container();
+    }
+    return Container(
+      padding: EdgeInsets.all(10),
+      color: Colors.black.withOpacity(0.5), // Adjust opacity and color
+      child: Center(
+        child: Text(
+          media.title,
+          style: TextStyle(
+            color: Colors.white, // Text color
+            fontSize: 18, // Text size
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildGridItemTitle(String title) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end, children: [
-    Text(
-      title,
-      style: TextStyle(fontSize: _fontSize),
-      textAlign: TextAlign.center,
-    )
-    ]
+  Widget _buildConversationIcon(Media media) {
+    return Expanded(
+      child: Center(
+        child: Stack(
+          children: [
+            // Image widget
+            const Icon(
+              key: Key('conversationItem'),
+              Icons.chat,
+              size: 50,
+            ),
+            // Text overlay at the bottom
+            Positioned(
+              bottom: 20, // Adjust the bottom position as needed
+              left: 20, // Adjust the left position as needed
+              right: 20, // Adjust the right position as needed
+              child: returnTextOverlay(media),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
