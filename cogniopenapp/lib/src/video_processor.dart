@@ -18,6 +18,8 @@ class VideoProcessor {
   String jobId = '';
   String projectArn = 'No project found';
   String currentProjectVersionArn = 'Model not started';
+  String videoTitle = "";
+  String videoPath = "";
 
   Stopwatch stopwatch = Stopwatch();
 
@@ -126,9 +128,6 @@ class VideoProcessor {
     FormatUtils.printBigMessage("CREATING RESPONSE LIST");
     List<AWS_VideoResponse> responseList = [];
 
-    FileManager.getMostRecentVideo();
-    String responseVideo = FileManager.mostRecentVideoPath;
-
     Iterator<LabelDetection> iter = response.labels!.iterator;
     print("ABOUT TO START PARSING RESPONSES");
     while (iter.moveNext()) {
@@ -148,7 +147,7 @@ class VideoProcessor {
                 top: inst.boundingBox!.top ?? 0,
                 width: inst.boundingBox!.width ?? 0,
                 height: inst.boundingBox!.height ?? 0),
-            responseVideo);
+            videoPath);
         responseList.add(newResponse);
       }
     }
@@ -198,13 +197,13 @@ class VideoProcessor {
     S3Bucket s3 = S3Bucket();
     // Set the name for the file to be added to the bucket based on the file name
     FileManager.getMostRecentVideo();
-    String title = FileManager.mostRecentVideoName;
-    //TODO:debug/testing statements
-    print("Video to S3: $title");
-    print("Video path to S3: ${FileManager.mostRecentVideoPath}");
+    videoTitle = FileManager.mostRecentVideoName;
+    videoPath = FileManager.mostRecentVideoPath;
 
-    String uploadedVideo =
-        await s3.addVideoToS3(title, FileManager.mostRecentVideoPath);
+    print("Video title to S3: $videoTitle");
+    print("Video file path uploading to S3: ${videoPath}");
+
+    String uploadedVideo = await s3.addVideoToS3(videoTitle, videoPath);
 
     await sendRequestToProcessVideo(uploadedVideo);
 

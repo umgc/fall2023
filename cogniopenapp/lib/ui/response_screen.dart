@@ -84,7 +84,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => VideoResponseGridScreen(
+                              builder: (context) => ImageNavigatorScreen(
                                   ResponseParser.getRequestedResponseList(
                                       response.title)),
                             ),
@@ -125,8 +125,12 @@ class _ResponseScreenState extends State<ResponseScreen> {
           SizedBox(
             height: 8,
           ),
-          getFutureThumbnail(response),
-          //getBoundingBox(response),
+          Stack(
+            children: [
+              getFutureThumbnail(response),
+              getBoundingBox(response),
+            ],
+          )
         ],
       ),
     );
@@ -142,16 +146,9 @@ class _ResponseScreenState extends State<ResponseScreen> {
     VideoResponse response,
     /* Image stillImage*/
   ) {
-    double imageWidth = 412;
-    double imageHeight = 892;
+    double imageWidth = 400;
+    double imageHeight = 700;
 
-    /*
-    if (stillImage.width != null && stillImage.height != null) {
-      print("Not null");
-      imageWidth = stillImage.width!;
-      imageHeight = stillImage.height!;
-    }
-    */
     return Positioned(
       left: imageWidth * response.left,
       top: imageHeight * response.top,
@@ -186,44 +183,67 @@ class _ResponseScreenState extends State<ResponseScreen> {
   }
 }
 
-class VideoResponseGridScreen extends StatelessWidget {
+class ImageNavigatorScreen extends StatefulWidget {
   final List<VideoResponse> videoResponses;
 
-  VideoResponseGridScreen(this.videoResponses);
+  ImageNavigatorScreen(this.videoResponses);
+
+  @override
+  _ImageNavigatorScreenState createState() => _ImageNavigatorScreenState();
+}
+
+class _ImageNavigatorScreenState extends State<ImageNavigatorScreen> {
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Video Responses Grid Screen'),
+        backgroundColor: const Color(0x440000), // Set appbar background color
+        centerTitle: true,
+        title: Text('${widget.videoResponses[0].title}',
+            style: TextStyle(color: Colors.black54)),
+        elevation: 0,
+        leading: const BackButton(color: Colors.black54),
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Display two columns per row.
+      body: Container(
+        height: screenHeight,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
         ),
-        itemBuilder: (context, index) {
-          final videoResponse = videoResponses[index];
-          return GridTile(
-            child: Stack(
-              children: [
-                getFutureThumbnail(videoResponse),
-                Positioned(
-                  bottom: 8,
-                  left: 8,
-                  child: Container(
-                    color: Colors.black.withOpacity(0.7),
-                    padding: const EdgeInsets.all(4),
-                    child: Text(
-                      "Timestamp: ${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)})",
-                      style: TextStyle(color: Colors.white),
-                    ),
+        child: PageView.builder(
+          itemCount: widget.videoResponses.length,
+          controller: PageController(initialPage: currentIndex),
+          onPageChanged: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            final videoResponse = widget.videoResponses[index];
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 60,
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-        itemCount: videoResponses.length,
+                  getFutureThumbnail(videoResponse),
+                  Text(
+                    "Timestamp: ${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)})",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -234,11 +254,19 @@ FutureBuilder<Image> getFutureThumbnail(VideoResponse videoResponse) {
     future: ResponseParser.getThumbnail(videoResponse),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.done) {
+        Image? image = snapshot.data; // Get the Image widget from the snapshot
+
+        // Access the height and width of the Image widget with null-aware operators
+        double imageHeight = image?.height ?? 0.0;
+        double imageWidth = image?.width ?? 0.0;
+
         return Column(
           children: [
             Container(
-              child: snapshot.data, // Wrap Image in a Container
+              child: image, // Wrap Image in a Container
             ),
+            //Text(
+            //'Height: $imageHeight, Width: $imageWidth'), // Display height and width
           ],
         );
       } else {
