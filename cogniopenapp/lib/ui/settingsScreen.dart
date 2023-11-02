@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'homeScreen.dart';
 import 'galleryScreen.dart';
 import 'assistantScreen.dart';
-import 'searchScreen.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override

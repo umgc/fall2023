@@ -1,15 +1,11 @@
 // Imported libraries and packages
-import 'package:cogniopenapp/ui/s3_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/ui/response_screen.dart';
-import 'package:cogniopenapp/ui/helpScreen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:cogniopenapp/ui/audioScreen.dart';
 import 'package:cogniopenapp/ui/galleryScreen.dart';
 import 'package:cogniopenapp/ui/profileScreen.dart';
-import 'package:cogniopenapp/ui/loginScreen.dart';
 import 'package:cogniopenapp/ui/tourScreen.dart';
-import 'package:cogniopenapp/ui/settingsScreen.dart';
 
 import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
@@ -56,54 +52,18 @@ class HomeScreen extends StatelessWidget {
 
           // Widgets on the right side of the AppBar
           actions: [
-            // Vertical popup menu on the right side of the AppBar
-            PopupMenuButton<String>(
+            // First page icon to navigate back
+            IconButton(
               icon: const Icon(
                 Icons.more_vert,
                 color: Colors.black54,
               ),
-              onSelected: (String result) {
-                switch (result) {
-                  case 'Profile':
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileScreen()));
-                    break;
-                  case 'Help Center':
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => TestScreen()));
-                    break;
-                  case 'Settings':
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingsScreen()));
-                    break;
-                  case 'Logout':
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()));
-                    break;
-                }
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                );
               },
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
-                  value: 'Profile',
-                  child: Text('Profile'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Help Center',
-                  child: Text('Help Center'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Settings',
-                  child: Text('Settings'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Logout',
-                  child: Text('Logout'),
-                ),
-              ],
             ),
 
             // First page icon to navigate back
