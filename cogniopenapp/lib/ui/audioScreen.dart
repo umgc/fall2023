@@ -558,6 +558,11 @@ class _AudioScreenState extends State<AudioScreen> {
                                             await DataService.instance
                                                 .removeAudio(audioId!);
                                           }
+                                          setState(() {
+                                            _pathToSaveRecording = null;
+                                            _duration = const Duration(seconds: 0);
+                                            transcription = '';
+                                          });
                                           // Notify user that the recording has been deleted
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
