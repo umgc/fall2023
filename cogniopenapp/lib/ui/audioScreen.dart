@@ -1,10 +1,11 @@
 /// Importing required packages and screens.
-import 'package:aws_s3_api/s3-2006-03-01.dart' as s3API;
 import 'package:cogniopenapp/src/data_service.dart';
+import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:cogniopenapp/src/typingIndicator.dart';
+import 'package:cogniopenapp/src/utils/ui_utils.dart';
 
 /// FlutterSound provides functionality for recording and playing audio.
 import 'package:flutter_sound/flutter_sound.dart';
@@ -21,17 +22,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:aws_transcribe_api/transcribe-2017-10-26.dart' as trans;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:dart_openai/dart_openai.dart';
 
 // Record button glow effect
 import 'package:avatar_glow/avatar_glow.dart';
 
 /// Importing other application screens for navigation purposes.
-import 'homeScreen.dart';
-import 'assistantScreen.dart';
-import 'galleryScreen.dart';
-import 'package:cogniopenapp/src/utils/ui_utils.dart';
-import 'settingsScreen.dart';
+import 'package:cogniopenapp/ui/homeScreen.dart';
+import 'package:cogniopenapp/ui/assistantScreen.dart';
+import 'package:cogniopenapp/ui/galleryScreen.dart';
+import 'package:cogniopenapp/ui/settingsScreen.dart';
 
 const API_URL = 'https://api.openai.com/v1/completions';
 final API_KEY = dotenv.env['OPEN_AI_API_KEY']; // Replace with your API key
@@ -52,6 +51,7 @@ class _AudioScreenState extends State<AudioScreen> {
   /// Flags to track if recording or playback is currently in progress.
   bool _isRecording = false;
   bool _isPlaying = false;
+  bool _isPaused = false;
   // Flag to track if transcription is loading
   bool _isTranscribing = false;
 
@@ -79,6 +79,9 @@ class _AudioScreenState extends State<AudioScreen> {
 
   String transcription = '';
   String transcriptionSummary = '';
+
+  Audio? audio;
+  int? audioId;
 
   @override
   void initState() {
@@ -153,37 +156,52 @@ class _AudioScreenState extends State<AudioScreen> {
   }
 
   Future<void> _stopRecording() async {
-    final path = await _recorder!.stopRecorder();
+    await _recorder!.stopRecorder();
     setState(() {
       _isRecording = false;
     });
     _timer?.cancel();
-    final audioFile = File(_pathToSaveRecording!);
-    print('Recorded audio: $audioFile');
     // Call Transcription after stopping the recording
     final s3UploadUrl =
         await s3Connection.addAudioToS3(key2, _pathToSaveRecording!);
-    if (s3UploadUrl != null) {
-      print(s3UploadUrl);
-      _transcribeAudio(s3UploadUrl);
-    }
+    _transcribeAudio(s3UploadUrl);
   }
 
   /// Function to handle starting the playback of the recorded audio.
   Future<void> _startPlayback() async {
-    debugPrint('$_pathToSaveRecording');
-    await _player!.openPlayer();
-    await _player!.startPlayer(
-        fromURI: ('$_pathToSaveRecording'),
+    if (_player!.isPlaying) {
+      // If the player is currently playing, pause it
+      await _player!.pausePlayer();
+      setState(() {
+        _isPlaying = false;
+        _isPaused = true;
+      });
+    } else if (_isPaused) {
+      // If the player is paused, resume playback
+      await _player!.resumePlayer();
+      setState(() {
+        _isPlaying = true;
+        _isPaused = false;
+      });
+    } else {
+      // If the player is stopped, start playing
+      await _player!.openPlayer();
+      await _player!.startPlayer(
+        fromURI: _pathToSaveRecording,
         whenFinished: () {
           setState(() {
             _isPlaying = false;
+            _isPaused = false;
           });
           _player!.closePlayer();
-        });
-    setState(() {
-      _isPlaying = true;
-    });
+        },
+      );
+
+      setState(() {
+        _isPlaying = true;
+        _isPaused = false;
+      });
+    }
   }
 
   /// Function to handle stopping the playback of the recorded audio.
@@ -345,34 +363,6 @@ class _AudioScreenState extends State<AudioScreen> {
     }
   }
 
-// create a function to delete object
-  Future<void> _deleteAudioRecording() async {
-    await s3Connection.deleteFileFromS3(key2);
-    //await s3Connection.deleteFileFromS3('${key2}transcript');
-    // delete file from device
-    Directory appDocDirectory = await getApplicationDocumentsDirectory();
-    await deleteFileFromDevice(
-        '${appDocDirectory.path}/files/audios/$key2.wav');
-    await deleteFileFromDevice(
-        '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt');
-  }
-
-  Future<bool> deleteFileFromDevice(String path) async {
-    try {
-      final file = File(path);
-      if (await file.exists()) {
-        await file.delete();
-        return true;
-      } else {
-        print('File does not exist at path: $path');
-        return false;
-      }
-    } catch (e) {
-      print('Failed to delete the file from device: $e');
-      return false;
-    }
-  }
-
   Future<String> summarizeFileContent(String fileName) async {
     try {
       // Read file content
@@ -414,12 +404,14 @@ class _AudioScreenState extends State<AudioScreen> {
     String audioFilePath = '${appDocDirectory.path}/files/audios/$key2.wav';
     String transcriptFilePath =
         '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
-    await DataService.instance.addAudio(
+    audio = await DataService.instance.addAudio(
         title: key2,
         description: "",
         audioFile: File(audioFilePath),
         transcriptFile: File(transcriptFilePath),
         summary: transcriptionSummary);
+    audioId = audio?.id;
+    print(audioId);
   }
 
   @override
@@ -515,37 +507,93 @@ class _AudioScreenState extends State<AudioScreen> {
                           ],
                         )
                       else if (_pathToSaveRecording != null)
-                        Column(
-                          children: [
-                            ElevatedButton(
-                              onPressed:
-                                  _isPlaying ? _stopPlayback : _startPlayback,
-                              child: Text(
-                                  _isPlaying ? 'Stop Preview' : 'Play Preview'),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 200.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        icon: _isPlaying
+                                            ? Icon(Icons.pause,
+                                                size: 40, color: Colors.blue)
+                                            : Icon(Icons.play_arrow,
+                                                size: 40, color: Colors.blue),
+                                        onPressed: _isPlaying
+                                            ? _startPlayback
+                                            : _startPlayback,
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.stop,
+                                            size: 40, color: Colors.blue),
+                                        onPressed: _isPlaying || _isPaused
+                                            ? _stopPlayback
+                                            : null,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _pathToSaveRecording = null;
+                                            _duration =
+                                                const Duration(seconds: 0);
+                                            transcription = '';
+                                          });
+                                        },
+                                        child: const Text('New Recording'),
+                                      ),
+                                      SizedBox(width: 32),
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          // Your logic to remove audio
+                                          if (audioId != null) {
+                                            await DataService.instance
+                                                .removeAudio(audioId!);
+                                          }
+                                          setState(() {
+                                            _pathToSaveRecording = null;
+                                            _duration = const Duration(seconds: 0);
+                                            transcription = '';
+                                          });
+                                          // Notify user that the recording has been deleted
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content:
+                                                    Text('Recording Deleted!')),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors
+                                              .red, // background (button) color - adjust as needed
+                                          onPrimary: Colors
+                                              .white, // foreground (text/icon) color - adjust as needed
+                                        ),
+                                        child: Icon(Icons
+                                            .delete), // Use the `delete` icon
+                                      )
+                                    ],
+                                  ),
+                                  if (_isTranscribing) TypingIndicator(),
+                                  Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Text(
+                                      transcription,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await _deleteAudioRecording();
-
-                                /// Notify user that the recording has been deleted
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Recording Deleted!')),
-                                );
-                              },
-                              child: const Text('Delete'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  _pathToSaveRecording = null;
-                                  _duration = const Duration(seconds: 0);
-                                  transcription = '';
-                                });
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                          ],
+                          ),
                         )
                       else
                         AvatarGlow(
@@ -586,14 +634,6 @@ class _AudioScreenState extends State<AudioScreen> {
                             ),
                           ),
                         ),
-                      if (_isTranscribing) TypingIndicator(),
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Text(
-                          transcription,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -601,7 +641,6 @@ class _AudioScreenState extends State<AudioScreen> {
             ],
           ),
         ),
-        // Bottom navigation bar with multiple options for quick navigation
         bottomNavigationBar: UiUtils.createBottomNavigationBar(context));
   }
 }
