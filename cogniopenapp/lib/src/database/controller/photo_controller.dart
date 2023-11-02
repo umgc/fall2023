@@ -5,6 +5,7 @@ import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/address.dart';
 
 class PhotoController {
   PhotoController._();
@@ -17,8 +18,8 @@ class PhotoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String photoFileExtension =
-          FileManager().getFileExtensionFromFile(photoFile);
+      String physicalAddress = "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
+      String photoFileExtension = FileManager().getFileExtensionFromFile(photoFile);
       String photoFileName = FileManager().generateFileName(
         MediaType.photo.name,
         timestamp,
@@ -30,6 +31,7 @@ class PhotoController {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         photoFileName: photoFileName,
         storageSize: photoFileSize,
         isFavorited: false,
@@ -56,13 +58,17 @@ class PhotoController {
     try {
       String photoFileName = FileManager.getFileName(photoFile.path);
       int photoFileSize = FileManager.calculateFileSizeInBytes(photoFile);
-      DateTime timestamp =
-          DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
+      DateTime timestamp = DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
+      String physicalAddress = '';
+      await Address.whereIAm().then((String address) {
+        physicalAddress = address;
+      });
       Photo newPhoto = Photo(
         title: title ?? "",
         description: description ?? "",
         tags: tags ?? [],
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         photoFileName: photoFileName,
         storageSize: photoFileSize,
         isFavorited: false,
@@ -102,8 +108,7 @@ class PhotoController {
     try {
       final existingPhoto = await PhotoRepository.instance.read(id);
       await PhotoRepository.instance.delete(id);
-      final photoFilePath =
-          '${DirectoryManager.instance.photosDirectory.path}/${existingPhoto.photoFileName}';
+      final photoFilePath = '${DirectoryManager.instance.photosDirectory.path}/${existingPhoto.photoFileName}';
       await FileManager.removeFileFromFilesystem(photoFilePath);
       return existingPhoto;
     } catch (e) {

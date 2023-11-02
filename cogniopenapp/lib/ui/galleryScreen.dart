@@ -690,6 +690,8 @@ class _FullObjectViewState extends State<FullObjectView> {
                           }
                         },
                       ),
+                    returnTextBox(
+                        "Address", '${widget.activeMedia.physicalAddress}'),
                   ],
                 ),
               ),
