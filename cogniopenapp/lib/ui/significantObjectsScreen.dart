@@ -148,12 +148,8 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Image.asset(
-                                'assets/icons/camera.png',
-                                width:
-                                    75.0, // You can adjust the width and height
-                                height: 25.0, // as per your requirement
-                              ),
+                              Icon(Icons.camera,
+                                  size: 40, color: Colors.black54),
                               const SizedBox(
                                 height:
                                     8.0, // Add some spacing between the image and text
@@ -178,12 +174,8 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Image.asset(
-                                'assets/icons/gallery.png',
-                                width:
-                                    75.0, // You can adjust the width and height
-                                height: 25.0, // as per your requirement
-                              ),
+                              Icon(Icons.upload_file,
+                                  size: 40, color: Colors.black54),
                               const SizedBox(
                                 height:
                                     8.0, // Add some spacing between the image and text
