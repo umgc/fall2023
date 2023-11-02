@@ -110,6 +110,19 @@ class DataService {
     }
   }
 
+  Future<VideoResponse?> removeVideoResponse(int id) async {
+    try {
+      final audio = await VideoResponseController.removeVideoResponse(id);
+      if (audio != null) {
+        await refreshResponses();
+      }
+      return audio;
+    } catch (e) {
+      print('Data Service -- Error removing video response: $e');
+      return null;
+    }
+  }
+
   // |-----------------------------------------------------------------------------------------|
   // |---------------------------------- AUDIO OPERATIONS -------------------------------------|
   // |-----------------------------------------------------------------------------------------|

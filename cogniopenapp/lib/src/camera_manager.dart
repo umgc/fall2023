@@ -92,15 +92,14 @@ class CameraManager {
 
   Future<void> stopRecording() async {
     try {
-      controller?.stopVideoRecording().then((XFile? file) {
-        if (file != null) {
-          saveMediaLocally(file); // Call the saveMediaLocally function
-          if (uploadToRekognition) {
-            VideoProcessor vp = VideoProcessor();
-            vp.automaticallySendToRekognition();
-          }
+      XFile? file = await controller?.stopVideoRecording();
+      if (file != null) {
+        await saveMediaLocally(file);
+        if (uploadToRekognition) {
+          VideoProcessor vp = VideoProcessor();
+          vp.automaticallySendToRekognition();
         }
-      });
+      }
     } catch (Exc) {
       print(Exc);
     }
