@@ -1,14 +1,9 @@
 //import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
-import 'package:cogniopenapp/src/video_processor.dart';
+import 'package:cogniopenapp/src/response_parser.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
-import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:cogniopenapp/src/utils/directory_manager.dart';
-//import '../src/galleryData.dart';
-//import 'dart:io';
 
 class RekognitionScreen extends StatefulWidget {
   const RekognitionScreen({super.key});
@@ -27,7 +22,6 @@ class RekognitionScreen extends StatefulWidget {
 
 class RekognitionScreenState extends State<RekognitionScreen> {
   S3Bucket s3 = S3Bucket();
-  VideoProcessor vp = VideoProcessor();
   String userInput = '';
 
   @override
@@ -142,16 +136,13 @@ class RekognitionScreenState extends State<RekognitionScreen> {
   }
 
   void displayFullObjectView(String userQuery) async {
-    VideoProcessor vp = VideoProcessor();
-    VideoResponse? response = vp.getRequestedResponse(userQuery);
+    VideoResponse? response = ResponseParser.getRequestedResponse(userQuery);
+    ResponseParser.getListOfResponses();
     if (response == null) {
       return;
     }
-    String fullPath =
-        "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
-    print("${fullPath}");
-    Image stillImage =
-        await FileManager.getThumbnail(fullPath, response.timestamp);
+
+    Image stillImage = await ResponseParser.getThumbnail(response);
 
     double imageWidth = 412;
     double imageHeight = 892;
@@ -172,22 +163,6 @@ class RekognitionScreenState extends State<RekognitionScreen> {
             body: Stack(
               children: [
                 Image(image: stillImage.image),
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  right: 0,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 16),
-                      Text('Name: ${response.title}',
-                          style: const TextStyle(fontSize: 18)),
-                      Text('Timestamp: ${response.timestamp}',
-                          style: const TextStyle(fontSize: 18)),
-                      Text('Confidence: ${response.confidence}',
-                          style: const TextStyle(fontSize: 18)),
-                    ],
-                  ),
-                ),
                 Positioned(
                   left: imageWidth * response.left,
                   top: imageHeight * response.top,
@@ -217,6 +192,22 @@ class RekognitionScreenState extends State<RekognitionScreen> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  top: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 16),
+                      Text('Name: ${response.title}',
+                          style: const TextStyle(fontSize: 18)),
+                      Text('Timestamp: ${response.timestamp}',
+                          style: const TextStyle(fontSize: 18)),
+                      Text('Confidence: ${response.confidence}',
+                          style: const TextStyle(fontSize: 18)),
+                    ],
                   ),
                 ),
               ],
