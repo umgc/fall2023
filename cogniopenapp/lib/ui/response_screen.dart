@@ -104,7 +104,7 @@ class _ResponseScreenState extends State<ResponseScreen>
                             );
                           },
                           child: ResponseBox(response,
-                              "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nADDRRESS")),
+                              "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nADDRESS HERE")),
                   ],
                 ),
               ),
@@ -180,7 +180,7 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
                     height: 60,
                   ),
                   ResponseBox(videoResponse,
-                      "${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)}) \nADDRRESS"),
+                      "${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)}) \nADDRESS HERE"),
                 ],
               ),
             );
