@@ -94,7 +94,10 @@ class DataService {
             top: rekResponse.boundingBox.top,
             width: rekResponse.boundingBox.width,
             height: rekResponse.boundingBox.height,
-            timestamp: rekResponse.timestamp);
+            timestamp: rekResponse.timestamp,
+            address: rekResponse.address,
+            parents: rekResponse.parents,
+        );
         if (response != null) {
           //print(
           //"ADDED RESPONSE: title ${response.title} timestamp ${response.timestamp}");

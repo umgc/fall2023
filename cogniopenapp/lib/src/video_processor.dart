@@ -1,15 +1,16 @@
 // ignore_for_file: avoid_print
 
-import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:core';
 import 'dart:io';
-import 'package:cogniopenapp/src/s3_connection.dart';
+
+import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
 import 'package:cogniopenapp/src/aws_video_response.dart';
 import 'package:cogniopenapp/src/data_service.dart';
+import 'package:cogniopenapp/src/s3_connection.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:collection/collection.dart';
-import 'dart:core';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
@@ -20,6 +21,7 @@ class VideoProcessor {
   String projectArn = 'No project found';
   String currentProjectVersionArn = 'Model not started';
   String videoTitle = "";
+  String address = "";
   String videoPath = "";
 
   Stopwatch stopwatch = Stopwatch();
@@ -125,6 +127,7 @@ class VideoProcessor {
               width: 0.05737469345331192,
               height: 0.055630747228860855),
           "2023-10-27_12:19:21.819024.mp4",
+          "3501 University Boulevard East, Adelphi, Maryland, 20783, US",
           "People, Person"),
       // Add more test objects for other URLs as needed
     ];
@@ -184,6 +187,7 @@ class VideoProcessor {
                 top: inst.boundingBox!.top ?? 0,
                 width: inst.boundingBox!.width ?? 0,
                 height: inst.boundingBox!.height ?? 0),
+            address,
             videoPath,
             getParentStringRepresentation(iter.current.label!.parents ?? []));
         responseList.add(newResponse);

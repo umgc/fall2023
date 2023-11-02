@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:flutter/material.dart';
 
 class AWS_VideoResponse {
   String name;
@@ -7,13 +7,20 @@ class AWS_VideoResponse {
   int timestamp;
   ResponseBoundingBox boundingBox;
   String referenceVideoFilePath;
+  String address;
   String parents;
 
   Image exampleImage = Image.network(
       "https://cdn.pixabay.com/photo/2014/06/03/19/38/road-sign-361514_1280.png");
 
-  AWS_VideoResponse.overloaded(this.name, this.confidence, this.timestamp,
-      this.boundingBox, this.referenceVideoFilePath, this.parents) {
+  AWS_VideoResponse.overloaded(
+      this.name,
+      this.confidence,
+      this.timestamp,
+      this.boundingBox,
+      this.referenceVideoFilePath,
+      this.address,
+      this.parents) {
     //setImage(timestamp);
   }
 

@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
-
 import 'package:path/path.dart' as path;
 
 const String videoResponseType = 'video_response';
@@ -21,6 +18,8 @@ class VideoResponseController {
     required double top,
     required double width,
     required double height,
+    String? address,
+    String? parents,
   }) async {
     try {
       String referenceVideo =
@@ -34,6 +33,8 @@ class VideoResponseController {
         top: top,
         width: width,
         height: height,
+        address: address,
+        parents: parents,
       );
       VideoResponse createdResponse =
           await VideoResponseRepository.instance.create(newResponse);
@@ -53,6 +54,8 @@ class VideoResponseController {
     double? top,
     double? width,
     double? height,
+    String? address,
+    String? parents,
   }) async {
     try {
       final existingResponse = await VideoResponseRepository.instance.read(id);
@@ -63,6 +66,8 @@ class VideoResponseController {
         top: top ?? existingResponse.top,
         width: width ?? existingResponse.width,
         height: height ?? existingResponse.height,
+        address: address ?? existingResponse.address,
+        parents: parents ?? existingResponse.parents,
       );
       await VideoResponseRepository.instance.update(updatedResponse);
       return updatedResponse;
