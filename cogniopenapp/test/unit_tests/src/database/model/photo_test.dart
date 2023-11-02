@@ -3,7 +3,10 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:cogniopenapp/src/address.dart';
+import '../../../../resources/mocks/address_mock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
@@ -15,6 +18,8 @@ Future<void> main() async {
   const String description = 'Test Description';
   const List<String> tags = ['Tag1', 'Tag2'];
   final DateTime timestamp = DateTime.now();
+  GeolocatorPlatform.instance = MockGeolocatorPlatform();
+  GeocodingPlatform.instance = MockGeocodingPlatform();
   String physicalAddress = '';
   await Address.whereIAm().then((String address) {
     physicalAddress = address;

@@ -21,7 +21,7 @@ class VideoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String physicalAddress = "";
+      String physicalAddress = "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
       String videoFileExtension = FileManager().getFileExtensionFromFile(videoFile);
       String videoFileName = FileManager().generateFileName(
         MediaType.video.name,
@@ -79,7 +79,10 @@ class VideoController {
       String videoFileName = FileManager.getFileName(videoFile.path);
       int videoFileSize = FileManager.calculateFileSizeInBytes(videoFile);
       DateTime timestamp = DateTime.parse(FileManager.getFileTimestamp(videoFile.path));
-      String physicalAddress = '';
+      String physicalAddress = "";
+      await Address.whereIAm().then((String address) {
+        physicalAddress = address;
+      });
       String updatedPath = videoFile.path; // The method will update with the path (hopefully), when a video is added
       Image thumbnail = await FileManager.getThumbnail(updatedPath, 0, isThumbnail: true);
       String thumbnailFileName = FileManager.getThumbnailFileName(updatedPath, 0, isThumbnail: true);

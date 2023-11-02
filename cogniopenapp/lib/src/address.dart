@@ -56,7 +56,7 @@ class Address {
     try {
       List<Placemark> currentPlacemarks = await placemarkFromCoordinates(currentPosition.latitude, currentPosition.longitude);
       Placemark currentPlace = currentPlacemarks[0];
-      var address = "${currentPlace.street}, ${currentPlace.locality}, ${currentPlace.postalCode}, ${currentPlace.country}";
+      var address = "${currentPlace.street}, ${currentPlace.locality}, ${currentPlace.administrativeArea}, ${currentPlace.postalCode}, ${currentPlace.isoCountryCode}";
       return address;
     } catch (e) {
       print(e);

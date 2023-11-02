@@ -18,7 +18,7 @@ class PhotoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String physicalAddress = '';
+      String physicalAddress = "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
       String photoFileExtension = FileManager().getFileExtensionFromFile(photoFile);
       String photoFileName = FileManager().generateFileName(
         MediaType.photo.name,
@@ -59,7 +59,10 @@ class PhotoController {
       String photoFileName = FileManager.getFileName(photoFile.path);
       int photoFileSize = FileManager.calculateFileSizeInBytes(photoFile);
       DateTime timestamp = DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
-      String physicalAddress = "";
+      String physicalAddress = '';
+      await Address.whereIAm().then((String address) {
+        physicalAddress = address;
+      });
       Photo newPhoto = Photo(
         title: title ?? "",
         description: description ?? "",
