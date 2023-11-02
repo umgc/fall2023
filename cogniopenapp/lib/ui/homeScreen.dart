@@ -6,6 +6,7 @@ import 'package:cogniopenapp/ui/audioScreen.dart';
 import 'package:cogniopenapp/ui/galleryScreen.dart';
 import 'package:cogniopenapp/ui/profileScreen.dart';
 import 'package:cogniopenapp/ui/tourScreen.dart';
+import 'package:cogniopenapp/ui/locationHistoryScreen.dart';
 
 import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
@@ -149,7 +150,7 @@ class HomeScreen extends StatelessWidget {
                       icon: Icon(Icons.location_history,
                           size: iconSize, color: Colors.black54),
                       text: 'Location',
-                      screen: SignificantObjectScreen(),
+                      screen: LocationHistoryScreen(),
                       keyName: "LocationObjectButtonKey",
                     ),
                     _buildElevatedButton(
