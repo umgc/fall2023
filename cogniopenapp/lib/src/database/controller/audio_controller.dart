@@ -5,6 +5,7 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/address.dart';
 
 class AudioController {
   AudioController._();
@@ -19,8 +20,8 @@ class AudioController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String audioFileExtension =
-          FileManager().getFileExtensionFromFile(audioFile);
+      String physicalAddress = "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
+      String audioFileExtension = FileManager().getFileExtensionFromFile(audioFile);
       String audioFileName = FileManager().generateFileName(
         MediaType.audio.name,
         timestamp,
@@ -29,8 +30,7 @@ class AudioController {
       int audioFileSize = FileManager.calculateFileSizeInBytes(audioFile);
       String? transcriptFileName;
       if (transcriptFile != null) {
-        String transcriptFileExtension =
-            FileManager().getFileExtensionFromFile(transcriptFile);
+        String transcriptFileExtension = FileManager().getFileExtensionFromFile(transcriptFile);
         transcriptFileName = FileManager().generateFileName(
           transcriptType,
           timestamp,
@@ -48,6 +48,7 @@ class AudioController {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         audioFileName: audioFileName,
         storageSize: audioFileSize,
         isFavorited: false,
@@ -78,6 +79,10 @@ class AudioController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
+      String physicalAddress = "";
+      await Address.whereIAm().then((String address) {
+        physicalAddress = address;
+      });
       String audioFileName = FileManager.getFileName(audioFile.path);
       int audioFileSize = FileManager.calculateFileSizeInBytes(audioFile);
       String? transcriptFileName;
@@ -90,6 +95,7 @@ class AudioController {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         audioFileName: audioFileName,
         storageSize: audioFileSize,
         isFavorited: false,
@@ -141,12 +147,10 @@ class AudioController {
     try {
       final existingAudio = await AudioRepository.instance.read(id);
       await AudioRepository.instance.delete(id);
-      final audioFilePath =
-          '${DirectoryManager.instance.audiosDirectory.path}/${existingAudio.audioFileName}';
+      final audioFilePath = '${DirectoryManager.instance.audiosDirectory.path}/${existingAudio.audioFileName}';
       await FileManager.removeFileFromFilesystem(audioFilePath);
       if (existingAudio.transcriptFileName != null) {
-        final transcriptFilePath =
-            '${DirectoryManager.instance.transcriptsDirectory.path}/${existingAudio.transcriptFileName}';
+        final transcriptFilePath = '${DirectoryManager.instance.transcriptsDirectory.path}/${existingAudio.transcriptFileName}';
         await FileManager.removeFileFromFilesystem(transcriptFilePath);
       }
       return existingAudio;

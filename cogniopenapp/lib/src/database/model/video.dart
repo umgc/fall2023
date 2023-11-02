@@ -3,6 +3,7 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/address.dart';
 import 'package:flutter/widgets.dart';
 
 class Video extends Media {
@@ -18,6 +19,7 @@ class Video extends Media {
     String? description,
     List<String>? tags,
     required DateTime timestamp,
+    String? physicalAddress,
     required int storageSize,
     required bool isFavorited,
     required this.videoFileName,
@@ -26,11 +28,11 @@ class Video extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.video,
-          title:
-              title ?? videoFileName, // TODO: Decide on default video file name
+          title: title ?? videoFileName, // TODO: Decide on default video file name
           description: description,
           tags: tags,
           timestamp: timestamp,
+          physicalAddress: physicalAddress,
           storageSize: storageSize,
           isFavorited: isFavorited,
         ) {
@@ -44,6 +46,7 @@ class Video extends Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
+    String? physicalAddress,
     int? storageSize,
     bool? isFavorited,
     String? videoFileName,
@@ -56,6 +59,7 @@ class Video extends Media {
         description: description ?? this.description,
         tags: tags ?? this.tags,
         timestamp: timestamp ?? this.timestamp,
+        physicalAddress: physicalAddress ?? this.physicalAddress,
         storageSize: storageSize ?? this.storageSize,
         isFavorited: isFavorited ?? this.isFavorited,
         videoFileName: videoFileName ?? this.videoFileName,
@@ -85,6 +89,7 @@ class Video extends Media {
           (json[MediaFields.timestamp] as int),
           isUtc: true,
         ),
+        physicalAddress: json[MediaFields.physicalAddress] as String,
         storageSize: json[MediaFields.storageSize] as int,
         isFavorited: json[MediaFields.isFavorited] == 1,
         videoFileName: json[VideoFields.videoFileName] as String,
