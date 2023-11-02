@@ -1,28 +1,29 @@
-// Import the Geolocator package for location services
-import 'package:geolocator/geolocator.dart';
-
-// Import the custom Location data model
-import 'location.dart';
-
-// LocationService class provides a method to fetch the current device location
 class LocationService {
-
-  // Returns a Future of the LocationDataModel which contains details like latitude, longitude, and timestamp
   Future<LocationDataModel?> getLocation() async {
     try {
-      // Use Geolocator to fetch the current position of the device
       final position = await Geolocator.getCurrentPosition();
+      List<String> addressParts = [];
 
-      // Convert the fetched position to a LocationDataModel and return it
+      // Convert the fetched latitude and longitude to an address
+      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks[0];
+        if (placemark.street != null && placemark.street!.isNotEmpty) addressParts.add(placemark.street!);
+        if (placemark.subLocality != null && placemark.subLocality!.isNotEmpty) addressParts.add(placemark.subLocality!);
+        if (placemark.locality != null && placemark.locality!.isNotEmpty) addressParts.add(placemark.locality!);
+        if (placemark.postalCode != null && placemark.postalCode!.isNotEmpty) addressParts.add(placemark.postalCode!);
+        if (placemark.country != null && placemark.country!.isNotEmpty) addressParts.add(placemark.country!);
+      }
+
+      String locationAddress = addressParts.join(', ');
+
       return LocationDataModel(
         latitude: position.latitude,
         longitude: position.longitude,
-
-        // Convert the timestamp from the position to a DateTime object
+        address: locationAddress,
         timestamp: DateTime.fromMillisecondsSinceEpoch(position.timestamp!.millisecondsSinceEpoch),
       );
     } catch (e) {
-      // In case of any errors, print the error and return null
       print(e);
       return null;
     }
