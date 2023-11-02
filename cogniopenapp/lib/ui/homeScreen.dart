@@ -1,22 +1,21 @@
 // Imported libraries and packages
-import 'package:cogniopenapp/ui/s3_screen.dart';
-import 'package:cogniopenapp/ui/test_rekognition_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
-import 'package:cogniopenapp/ui/helpScreen.dart';
+import 'package:cogniopenapp/ui/response_screen.dart';
+import 'package:cogniopenapp/ui/assistantScreen.dart';
+import 'package:cogniopenapp/ui/audioScreen.dart';
+import 'package:cogniopenapp/ui/galleryScreen.dart';
+import 'package:cogniopenapp/ui/profileScreen.dart';
+import 'package:cogniopenapp/ui/tourScreen.dart';
+
 import 'package:cogniopenapp/src/camera_manager.dart';
+import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
-import 'assistantScreen.dart';
-import 'audioScreen.dart';
-import 'galleryScreen.dart';
-import 'profileScreen.dart';
-import 'videoScreen.dart';
-import 'loginScreen.dart';
-import 'tourScreen.dart';
-import 'settingsScreen.dart';
 
 // Main HomeScreen widget which is a stateless widget.
 class HomeScreen extends StatelessWidget {
   bool hasBeenInitialized = false;
+
+  double iconSize = 65;
 
   @override
   Widget build(BuildContext context) {
@@ -55,54 +54,18 @@ class HomeScreen extends StatelessWidget {
 
           // Widgets on the right side of the AppBar
           actions: [
-            // Vertical popup menu on the right side of the AppBar
-            PopupMenuButton<String>(
+            // First page icon to navigate back
+            IconButton(
               icon: const Icon(
                 Icons.more_vert,
                 color: Colors.black54,
               ),
-              onSelected: (String result) {
-                switch (result) {
-                  case 'Profile':
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileScreen()));
-                    break;
-                  case 'Help Center':
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => TestScreen()));
-                    break;
-                  case 'Settings':
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingsScreen()));
-                    break;
-                  case 'Logout':
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()));
-                    break;
-                }
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
+                );
               },
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                const PopupMenuItem<String>(
-                  value: 'Profile',
-                  child: Text('Profile'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Help Center',
-                  child: Text('Help Center'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Settings',
-                  child: Text('Settings'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Logout',
-                  child: Text('Logout'),
-                ),
-              ],
             ),
 
             // First page icon to navigate back
@@ -151,42 +114,48 @@ class HomeScreen extends StatelessWidget {
                     // Using the helper function to build each button in the grid
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/ask_question.png',
+                      icon: Icon(Icons.handshake_outlined,
+                          size: iconSize, color: Colors.black54),
                       text: 'Virtual Assistant',
                       screen: AssistantScreen(),
                       keyName: "VirtualAssistantButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/gallery-v2.png',
+                      icon: Icon(Icons.photo,
+                          size: iconSize, color: Colors.black54),
                       text: 'Gallery',
                       screen: GalleryScreen(),
                       keyName: "GalleryButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/camera_on.png',
-                      text: 'Record Video',
-                      screen: const VideoScreen(),
+                      icon: Icon(Icons.search,
+                          size: iconSize, color: Colors.black54),
+                      text: 'Object Search',
+                      screen: ResponseScreen(),
                       keyName: "VideoRecordingButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/mic_on.png',
+                      icon: Icon(Icons.mic_rounded,
+                          size: iconSize, color: Colors.black54),
                       text: 'Record Audio',
                       screen: AudioScreen(),
                       keyName: "AudioRecordingButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/significant_object.png',
-                      text: 'Significant Objects',
+                      icon: Icon(Icons.location_history,
+                          size: iconSize, color: Colors.black54),
+                      text: 'Location',
                       screen: SignificantObjectScreen(),
-                      keyName: "SignificantObjectButtonKey",
+                      keyName: "LocationObjectButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      iconPath: 'assets/icons/tour.png',
+                      icon: Icon(Icons.flag,
+                          size: iconSize, color: Colors.black54),
                       text: 'Tour Guide',
                       screen: TourScreen(),
                       keyName: "TourGuideButtonKey",
@@ -199,55 +168,13 @@ class HomeScreen extends StatelessWidget {
         ),
 
         // Bottom navigation bar with multiple options for quick navigation
-        bottomNavigationBar: BottomNavigationBar(
-            elevation: 0.0,
-            items: const [
-              BottomNavigationBarItem(
-                backgroundColor: Color(0x00ffffff),
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.back_hand_rounded),
-                label: 'Virtual Assistant',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.photo),
-                label: 'Gallery',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Settings',
-              ),
-            ],
-            onTap: (int index) {
-              // Handle navigation bar item taps
-              if (index == 0) {
-                // Navigate to Gallery screen
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RekognitionScreen()));
-              } else if (index == 1) {
-                // Navigate to Search screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AssistantScreen()));
-              } else if (index == 2) {
-                // Navigate to Gallery screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => GalleryScreen()));
-              } else if (index == 3) {
-                // Navigate to Gallery screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SettingsScreen()));
-              }
-            }));
+        bottomNavigationBar: UiUtils.createBottomNavigationBar(context));
   }
 
   // Helper function to create each button for the GridView
   Widget _buildElevatedButton({
     required BuildContext context,
-    required String iconPath,
+    required Icon icon,
     required String text,
     required Widget screen,
     required String keyName,
@@ -273,12 +200,8 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
-            iconPath,
-            fit: BoxFit.contain,
-            height: 30,
-          ),
-          const SizedBox(height: 22.0),
+          icon,
+          const SizedBox(height: 10.0),
           Text(
             text,
             style: const TextStyle(

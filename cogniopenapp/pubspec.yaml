@@ -119,7 +119,6 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-    - assets/test_images/
     - assets/icons/app_icon.png
     - assets/seed_data_files/
     - .env

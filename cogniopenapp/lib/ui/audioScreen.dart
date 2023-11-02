@@ -5,6 +5,7 @@ import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:cogniopenapp/src/typingIndicator.dart';
+import 'package:cogniopenapp/src/utils/ui_utils.dart';
 
 /// FlutterSound provides functionality for recording and playing audio.
 import 'package:flutter_sound/flutter_sound.dart';
@@ -22,16 +23,14 @@ import 'package:aws_transcribe_api/transcribe-2017-10-26.dart' as trans;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-
 // Record button glow effect
 import 'package:avatar_glow/avatar_glow.dart';
 
 /// Importing other application screens for navigation purposes.
-import 'homeScreen.dart';
-import 'assistantScreen.dart';
-import 'searchScreen.dart';
-import 'galleryScreen.dart';
-import 'settingsScreen.dart';
+import 'package:cogniopenapp/ui/homeScreen.dart';
+import 'package:cogniopenapp/ui/assistantScreen.dart';
+import 'package:cogniopenapp/ui/galleryScreen.dart';
+import 'package:cogniopenapp/ui/settingsScreen.dart';
 
 const API_URL = 'https://api.openai.com/v1/completions';
 final API_KEY = dotenv.env['OPEN_AI_API_KEY']; // Replace with your API key
@@ -166,7 +165,7 @@ class _AudioScreenState extends State<AudioScreen> {
     final s3UploadUrl =
         await s3Connection.addAudioToS3(key2, _pathToSaveRecording!);
     _transcribeAudio(s3UploadUrl);
-    }
+  }
 
   /// Function to handle starting the playback of the recorded audio.
   Future<void> _startPlayback() async {
@@ -637,45 +636,6 @@ class _AudioScreenState extends State<AudioScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-            elevation: 0.0,
-            items: const [
-              BottomNavigationBarItem(
-                backgroundColor: Color(0x00ffffff),
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.back_hand_rounded),
-                label: 'Virtual Assistant',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.photo),
-                label: 'Gallery',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Settings',
-              ),
-            ],
-            onTap: (int index) {
-              // Handle navigation bar item taps
-              if (index == 0) {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()));
-              } else if (index == 1) {
-                // Navigate to Search screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AssistantScreen()));
-              } else if (index == 2) {
-                // Navigate to Gallery screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => GalleryScreen()));
-              } else if (index == 3) {
-                // Navigate to Gallery screen
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SettingsScreen()));
-              }
-            }));
+        bottomNavigationBar: UiUtils.createBottomNavigationBar(context));
   }
 }
