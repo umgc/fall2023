@@ -22,6 +22,8 @@ class CameraManager {
 
   bool isAutoRecording = false;
   bool uploadToRekognition = false;
+  bool isInitialized = false;
+
   int autoRecordingInterval = 60;
   int cameraToUse = 1;
 
@@ -42,7 +44,10 @@ class CameraManager {
     if (_cameras.length == 1) cameraToUse = 0;
     controller = CameraController(_cameras[cameraToUse], ResolutionPreset.high);
     await controller.initialize();
-    print("Camera has been initialized");
+    if (controller.value.isInitialized) {
+      isInitialized = true;
+      FormatUtils.printBigMessage("CAMERA HAS BEEN INITIALIZED");
+    }
   }
 
   void parseEnviromentSettings() async {
@@ -63,7 +68,7 @@ class CameraManager {
       FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS DISABLED");
     }
 
-    if (isAutoRecording) {
+    if (uploadToRekognition) {
       FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS ENABLED");
     } else {
       FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS DISABLED");
@@ -75,7 +80,7 @@ class CameraManager {
   void startAutoRecording() async {
     if (isAutoRecording) {
       // Delay for camera initialization
-      Future.delayed(Duration(milliseconds: 3000), () {
+      Future.delayed(Duration(milliseconds: 1500), () {
         if (controller != null) {
           FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
 

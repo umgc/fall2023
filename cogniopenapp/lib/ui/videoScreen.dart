@@ -47,6 +47,8 @@ class _CameraHomeState extends State<VideoScreen>
   double _currentScale = 1.0;
   double _baseScale = 1.0;
 
+  bool isRecording = false;
+
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
 
@@ -56,6 +58,7 @@ class _CameraHomeState extends State<VideoScreen>
     //WidgetsBinding.instance.addObserver(this);
     cameraManager = CameraManager();
     cameraController = cameraManager.controller;
+    isRecording = cameraManager.isAutoRecording;
   }
 
   @override
@@ -79,16 +82,15 @@ class _CameraHomeState extends State<VideoScreen>
                 image: DecorationImage(
                   image: AssetImage("assets/images/background.jpg"),
                   fit: BoxFit.cover,
-                  ),
+                ),
                 color: Colors.black,
                 border: Border.all(
-                  color: cameraController.value.isRecordingVideo
-                      ? Colors.redAccent
-                      : Colors.grey,
+                  color: isRecording ? Colors.redAccent : Colors.grey,
+                  width: 5.0,
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 7.0),
+                padding: const EdgeInsets.only(bottom: 1.0),
                 child: Center(
                   child: _cameraPreviewWidget(),
                 ),
@@ -151,25 +153,30 @@ class _CameraHomeState extends State<VideoScreen>
               image: DecorationImage(
                 image: AssetImage("assets/images/background.jpg"),
                 fit: BoxFit.cover,
-                ),
-              color: Colors.black,
-              border: Border.all(
-                color: cameraController.value.isRecordingVideo
-                    ? Colors.redAccent
-                    : Colors.grey,
-                // width: 3.0,
               ),
+              color: Colors.black,
             ),
             child: IconButton(
-              icon: cameraController != null &&
-                      !cameraController.value.isRecordingVideo
-                  ? const Icon(Icons.circle)
-                  : const Icon(Icons.pause),
+              icon: isRecording
+                  ? const Icon(Icons.pause)
+                  : const Icon(Icons.circle),
               color: Colors.redAccent,
               onPressed: cameraController != null
-                  ? (!cameraController.value.isRecordingVideo)
-                      ? onResumeButtonPressed
-                      : onPauseButtonPressed
+                  ? () {
+                      if (!cameraController.value.isRecordingVideo) {
+                        onResumeButtonPressed();
+                        setState(() {
+                          isRecording = true;
+                          const Icon(Icons.pause);
+                        });
+                      } else {
+                        onPauseButtonPressed();
+                        setState(() {
+                          isRecording = false;
+                          const Icon(Icons.circle);
+                        });
+                      }
+                    }
                   : null,
             ),
           ),
