@@ -1,4 +1,5 @@
 import 'package:cogniopenapp/ui/homeScreen.dart';
+import 'package:cogniopenapp/ui/test_rekognition_screen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:cogniopenapp/ui/videoScreen.dart';
 import 'package:cogniopenapp/ui/settingsScreen.dart';
@@ -46,8 +47,8 @@ class UiUtils {
           // Handle navigation bar item taps
           if (index == 0) {
             // Navigate to Gallery screen
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomeScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => RekognitionScreen()));
           } else if (index == 1) {
             // Navigate to Search screen
             Navigator.push(context,
