@@ -73,7 +73,7 @@ class S3Bucket {
     // TODO Specify folder structure
     final data = const Base64Decoder().convert(image.toString());
     final bytes = data.buffer.asUint8List();
-    return _addToS3(title, bytes);
+    return _addToS3("/images/$title", bytes);
   }
 
   Future<String> addFileToS3(String title, String manifest) async {
