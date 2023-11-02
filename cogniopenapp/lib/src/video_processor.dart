@@ -353,7 +353,9 @@ class VideoProcessor {
   // Now only God knows.
   // run Rekognition custom label detection on a specified set of images
   Future<DetectCustomLabelsResponse?> findMatchingModel(
-      String labelName) async {
+      String labelName, String fileName) async {
+    //fileName: "eyeglass-green.jpg";
+    //fileName = "glasses-test.jpg";
     //look for a similar project version (model to match the label from the user)
     DescribeProjectVersionsResponse projectVersions =
         await service!.describeProjectVersions(projectArn: projectArn);
@@ -371,9 +373,7 @@ class VideoProcessor {
         return service!.detectCustomLabels(
             image: Image(
                 s3Object: S3Object(
-                    bucket: dotenv.get('videoS3Bucket'),
-                    //name: "eyeglass-green.jpg")),
-                    name: "glasses-test.jpg")),
+                    bucket: dotenv.get('videoS3Bucket'), name: fileName)),
             projectVersionArn: currentProjectVersionArn);
       }
     }

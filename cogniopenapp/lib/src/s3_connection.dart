@@ -2,8 +2,9 @@
 
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:aws_s3_api/s3-2006-03-01.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
@@ -70,8 +71,8 @@ class S3Bucket {
 
   Future<String> addImageToS3(String title, Image image) async {
     // TODO Specify folder structure
-    final data = await image.toByteData();
-    final bytes = data!.buffer.asUint8List();
+    final data = const Base64Decoder().convert(image.toString());
+    final bytes = data.buffer.asUint8List();
     return _addToS3(title, bytes);
   }
 

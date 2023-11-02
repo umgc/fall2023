@@ -94,7 +94,6 @@ class TestScreenState extends State<TestScreen> {
 
               s3.addFileToS3("$userDefinedModelName.json",
                   sigObj.generateRekognitionManifest());
-              //TODO:upload new image to S3
 
               vp.addNewModel(
                   userDefinedModelName, "$userDefinedModelName.json");
@@ -172,8 +171,8 @@ class TestScreenState extends State<TestScreen> {
             child: const Icon(Icons.interests),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () async {
-              rek.DetectCustomLabelsResponse? response =
-                  await vp.findMatchingModel("green-glasses");
+              rek.DetectCustomLabelsResponse? response = await vp
+                  .findMatchingModel("green-glasses", "glasses-test.jpg");
               //await vp.findMatchingModel("my-glasses");
 
               // ignore: use_build_context_synchronously
@@ -211,12 +210,16 @@ class TestScreenState extends State<TestScreen> {
     Image stillImage = await FileManager.getThumbnail(
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}",
         response.timestamp);
+    int i = 0;
     String name = response.title;
     ResponseBoundingBox boundingBox = ResponseBoundingBox(
         left: response.left,
         top: response.top,
         width: response.width,
         height: response.height);
+
+    //TODO:upload new image to S3
+    s3.addImageToS3("$name-$i.jpg", stillImage);
 
     //if user already has a matching significant object, add this to that list.
     //TODO: Get list of significant objects
