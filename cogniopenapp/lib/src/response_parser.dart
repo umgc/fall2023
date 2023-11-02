@@ -18,11 +18,29 @@ class ResponseParser {
     return null;
   }
 
-  static List<VideoResponse> getRequestedResponseList(String searchTitle) {
+  static List<VideoResponse> getRequestedResponseList(String searchTitle,
+      {int filterInterval = 0}) {
     List<VideoResponse> responses = [];
+    String previousFile = "";
+    int previousTimeStamp = 0;
+
     for (int i = DataService.instance.responseList.length - 1; i >= 0; i--) {
-      if (DataService.instance.responseList[i].title == searchTitle) {
+      VideoResponse response = DataService.instance.responseList[i];
+
+      if (response.title == searchTitle) {
+        if (filterInterval == 0) {
+          // Do nothing, but skip the next else if
+        } else if (previousFile == response.referenceVideoFilePath &&
+            response.timestamp - previousTimeStamp > -filterInterval) {
+          // Skip this response if the file is the same and the timestamp difference is less than the repeat interval.
+          continue;
+        }
+
         responses.add(DataService.instance.responseList[i]);
+
+        // Update previousFile and previousTimeStamp for the next iteration.
+        previousFile = response.referenceVideoFilePath;
+        previousTimeStamp = response.timestamp;
       }
     }
     return responses;

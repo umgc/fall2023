@@ -1,20 +1,26 @@
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
+import 'package:cogniopenapp/src/data_service.dart';
 
 import 'package:flutter/material.dart';
 
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| INITIAL SCREEN |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 class ResponseScreen extends StatefulWidget {
-  List<VideoResponse> responses = ResponseParser.getListOfResponses();
-
   ResponseScreen();
 
   @override
   _ResponseScreenState createState() => _ResponseScreenState();
 }
 
-class _ResponseScreenState extends State<ResponseScreen> {
+class _ResponseScreenState extends State<ResponseScreen>
+    with WidgetsBindingObserver {
   List<VideoResponse> displayedResponses = ResponseParser.getListOfResponses();
   TextEditingController searchController = TextEditingController();
+
+  List<VideoResponse> responses = ResponseParser.getListOfResponses();
 
   @override
   void initState() {
@@ -25,14 +31,20 @@ class _ResponseScreenState extends State<ResponseScreen> {
   void filterResponses() {
     final searchTerm = searchController.text.toLowerCase();
     setState(() {
-      displayedResponses = widget.responses.where((response) {
+      displayedResponses = responses.where((response) {
         return response.title.toLowerCase().contains(searchTerm);
       }).toList();
     });
   }
 
+  void refreshScreen() {
+    // You can do any necessary refresh logic here
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("BUILDING AGIAN");
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -79,19 +91,20 @@ class _ResponseScreenState extends State<ResponseScreen> {
                     ),
                     for (var response in displayedResponses)
                       GestureDetector(
-                        onTap: () {
-                          // Navigate to the VideoResponseGridScreen when a returnTextBox is tapped.
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => VideoResponseGridScreen(
-                                  ResponseParser.getRequestedResponseList(
-                                      response.title)),
-                            ),
-                          );
-                        },
-                        child: returnResponseBox(response),
-                      ),
+                          onTap: () {
+                            // Navigate to the VideoResponseGridScreen when a returnTextBox is tapped.
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ImageNavigatorScreen(
+                                    ResponseParser.getRequestedResponseList(
+                                        response.title,
+                                        filterInterval: 3000)),
+                              ),
+                            );
+                          },
+                          child: ResponseBox(response,
+                              "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nADDRESS HERE")),
                   ],
                 ),
               ),
@@ -102,7 +115,95 @@ class _ResponseScreenState extends State<ResponseScreen> {
     );
   }
 
-  Container returnResponseBox(VideoResponse response) {
+  SizedBox addSpacingSizedBox() {
+    return SizedBox(
+      height: 8,
+    );
+  }
+}
+
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ENHANCED SEARCH |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+class ImageNavigatorScreen extends StatefulWidget {
+  final List<VideoResponse> videoResponses;
+
+  ImageNavigatorScreen(this.videoResponses);
+
+  @override
+  _ImageNavigatorScreenState createState() => _ImageNavigatorScreenState();
+}
+
+class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
+    with WidgetsBindingObserver {
+  int currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: const Color(0x440000), // Set appbar background color
+        centerTitle: true,
+        title: Text('${widget.videoResponses[0].title}',
+            style: TextStyle(color: Colors.black54)),
+        elevation: 0,
+        leading: const BackButton(color: Colors.black54),
+      ),
+      body: Container(
+        height: screenHeight,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: PageView.builder(
+          itemCount: widget.videoResponses.length,
+          controller: PageController(initialPage: currentIndex),
+          onPageChanged: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            final videoResponse = widget.videoResponses[index];
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 60,
+                  ),
+                  ResponseBox(videoResponse,
+                      "${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)}) \nADDRESS HERE"),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| RESPONSE WIDGET |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+class ResponseBox extends StatelessWidget {
+  final VideoResponse response;
+  final String title;
+
+  ResponseBox(this.response, this.title);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10.0),
       width: double.infinity,
@@ -116,7 +217,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
       child: Column(
         children: [
           Text(
-            "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)})",
+            title,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -125,33 +226,106 @@ class _ResponseScreenState extends State<ResponseScreen> {
           SizedBox(
             height: 8,
           ),
-          getFutureThumbnail(response),
-          //getBoundingBox(response),
+          Stack(
+            children: [
+              FutureBuilder<Image>(
+                future: ResponseParser.getThumbnail(response),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Image? image = snapshot.data;
+                    double imageHeight = image?.height ?? 0.0;
+                    double imageWidth = image?.width ?? 0.0;
+
+                    return Container(
+                      child: image,
+                    );
+                  } else {
+                    return CircularProgressIndicator();
+                  }
+                },
+              ),
+              getBoundingBox(response),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showConfirmationDialog(context);
+                  },
+                  child: Text("This is the object I was looking for"),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  SizedBox addSpacingSizedBox() {
-    return SizedBox(
-      height: 8,
+  Future<void> deletePreviousResponses(String responsesToDelete) async {
+    List<VideoResponse> responses =
+        ResponseParser.getRequestedResponseList(responsesToDelete);
+    print("RESPONSE LENGTH: ${responses.length}");
+    for (VideoResponse response in responses) {
+      print("REMOVED ID: ${response.id!}");
+      await DataService.instance.removeVideoResponse(response.id!);
+    }
+  }
+
+  void showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Saved as a significant object (NOT REALLY YET THOUGH)"),
+          content: Text(
+            "Would you like to delete all previous spottings of this item to save space?",
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: Text("No, keep them"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await deletePreviousResponses(response.title);
+                    Navigator.of(context).pop(); // Close the dialog
+
+                    // Navigate back to the ResponseScreen
+                    Navigator.of(context).pop(); // Pop one screen
+                    Navigator.of(context).pop(); // Pop the second screen
+                    Navigator.of(context).pop(); // Pop the third screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ResponseScreen()),
+                    );
+                  },
+                  child: Text("Yes, please delete them"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Positioned getBoundingBox(
-    VideoResponse response,
-    /* Image stillImage*/
-  ) {
-    double imageWidth = 412;
-    double imageHeight = 892;
+  Positioned getBoundingBox(VideoResponse response) {
+    double imageWidth = 400;
+    double imageHeight = 700;
 
-    /*
-    if (stillImage.width != null && stillImage.height != null) {
-      print("Not null");
-      imageWidth = stillImage.width!;
-      imageHeight = stillImage.height!;
-    }
-    */
     return Positioned(
       left: imageWidth * response.left,
       top: imageHeight * response.top,
@@ -184,67 +358,4 @@ class _ResponseScreenState extends State<ResponseScreen> {
       ),
     );
   }
-}
-
-class VideoResponseGridScreen extends StatelessWidget {
-  final List<VideoResponse> videoResponses;
-
-  VideoResponseGridScreen(this.videoResponses);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Video Responses Grid Screen'),
-      ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Display two columns per row.
-        ),
-        itemBuilder: (context, index) {
-          final videoResponse = videoResponses[index];
-          return GridTile(
-            child: Stack(
-              children: [
-                getFutureThumbnail(videoResponse),
-                Positioned(
-                  bottom: 8,
-                  left: 8,
-                  child: Container(
-                    color: Colors.black.withOpacity(0.7),
-                    padding: const EdgeInsets.all(4),
-                    child: Text(
-                      "Timestamp: ${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)})",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-        itemCount: videoResponses.length,
-      ),
-    );
-  }
-}
-
-FutureBuilder<Image> getFutureThumbnail(VideoResponse videoResponse) {
-  return FutureBuilder<Image>(
-    future: ResponseParser.getThumbnail(videoResponse),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.done) {
-        return Column(
-          children: [
-            Container(
-              child: snapshot.data, // Wrap Image in a Container
-            ),
-          ],
-        );
-      } else {
-        // While loading the image, you can display a loading indicator or placeholder.
-        return CircularProgressIndicator();
-      }
-    },
-  );
 }
