@@ -8,6 +8,7 @@ import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/aws_video_response.dart';
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:collection/collection.dart';
 import 'dart:core';
 
 class VideoProcessor {
@@ -30,7 +31,12 @@ class VideoProcessor {
     "Female",
     "Woman",
     "Person",
-    "Baby"
+    "Baby",
+    "Bride",
+    "Groom",
+    "Girl",
+    "Boy",
+    "People",
   ];
 
   VideoProcessor() {
@@ -118,9 +124,29 @@ class VideoProcessor {
               top: 0.7510809302330017,
               width: 0.05737469345331192,
               height: 0.055630747228860855),
-          "2023-10-27_12:19:21.819024.mp4"),
+          "2023-10-27_12:19:21.819024.mp4",
+          "People, Person"),
       // Add more test objects for other URLs as needed
     ];
+  }
+
+  String getParentStringRepresentation(List<Parent> parents) {
+    if (parents.isEmpty) {
+      print("No parents to display.");
+      return "";
+    }
+
+    return parents.map((parent) => parent.name).join(', ');
+  }
+
+  List<String?> getParentNames(List<Parent> parents) {
+    // Use map to extract parent names into a list.
+    return parents.map((parent) => parent.name).toList();
+  }
+
+  bool stringListsHaveCommonElements(List<String> list1, List<String> list2) {
+    // Use the `any` method to check if any element in list1 is also in list2.
+    return list1.any((element) => list2.contains(element));
   }
 
   List<AWS_VideoResponse> createResponseList(
@@ -134,7 +160,18 @@ class VideoProcessor {
       for (Instance inst in iter.current.label!.instances!) {
         String? name = iter.current.label!.name;
 
+        // If a name is excluded, go to next loop
         if (excludedResponses.contains(name)) {
+          continue;
+        }
+
+        // Create a list from the parents (if there are any easily exclude them)
+        List<String> parents = getParentNames(iter.current.label!.parents ?? [])
+            .whereNotNull()
+            .toList();
+
+        // If a name was not excluded but it has excluded parents then go to next loop
+        if (stringListsHaveCommonElements(excludedResponses, parents)) {
           continue;
         }
 
@@ -147,7 +184,8 @@ class VideoProcessor {
                 top: inst.boundingBox!.top ?? 0,
                 width: inst.boundingBox!.width ?? 0,
                 height: inst.boundingBox!.height ?? 0),
-            videoPath);
+            videoPath,
+            getParentStringRepresentation(iter.current.label!.parents ?? []));
         responseList.add(newResponse);
       }
     }
