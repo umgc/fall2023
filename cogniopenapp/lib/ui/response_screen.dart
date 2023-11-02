@@ -116,7 +116,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
       child: Column(
         children: [
           Text(
-            "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)})",
+            "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nADDRRESS",
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

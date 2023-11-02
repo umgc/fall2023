@@ -170,24 +170,23 @@ class FileManager {
 
   static Future<Image> getThumbnail(String vidPath, int timesStamp,
       {bool isThumbnail = false}) async {
-    getMostRecentVideo();
     //print("Video path for frame is ${vidPath}");
     //print("timesStamp for frame is ${timesStamp}");
-    String outputPath = isThumbnail
-        ? DirectoryManager.instance.videoThumbnailsDirectory.path
-        : DirectoryManager.instance.videoStillsDirectory.path;
-    String newFile =
-        "${outputPath}/${path.basename(vidPath)}-${timesStamp}.png";
+    Directory directory = isThumbnail
+        ? DirectoryManager.instance.videoThumbnailsDirectory
+        : DirectoryManager.instance.videoStillsDirectory;
 
-    /* TODO: Try to fix to prevent redos
-    if (processedImages.contains(newFile)) {
+    String fileName = "${path.basename(vidPath)}-${timesStamp}.png";
+    String newFile = "${directory.path}/${fileName}";
+
+    List<String> existingFiles = await listFileNamesInDirectory(directory);
+
+    if (existingFiles.contains(fileName)) {
+      print("FILE ALREADY EXISTS ${fileName}");
       return Image.file(File(newFile));
-    }  
-
-    processedImages.add(newFile); // Add the image if not added already
-  */
+    }
     try {
-      String newPath = "${outputPath}/";
+      String newPath = "${directory.path}/";
       String? thumbPath = await VideoThumbnail.thumbnailFile(
         video: vidPath,
         thumbnailPath: newPath,
@@ -219,6 +218,29 @@ class FileManager {
       mostRecentVideoName = getFileNameForAWS(files.last.path);
       mostRecentVideoPath = files.last.path;
     }
+  }
+
+  static Future<List<String>> listFileNamesInDirectory(
+      Directory directory) async {
+    List<String> fileNames = [];
+
+    if (directory == null) {
+      // Handle the case where external storage is not available.
+      return fileNames;
+    }
+
+    // Get a list of files in the directory.
+    final dir = Directory(directory.path);
+    List<FileSystemEntity> files = dir.listSync();
+
+    // Extract the file names.
+    for (var file in files) {
+      if (file is File) {
+        fileNames.add(file.uri.pathSegments.last);
+      }
+    }
+
+    return fileNames;
   }
 
   // AWS doesn't like certain characters being used, so they must be fixed
