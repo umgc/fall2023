@@ -176,16 +176,24 @@ class _GalleryScreenState extends State<GalleryScreen> {
       case null:
         break;
       case SortingCriteria.storageSize:
-        testMedia.sort((a, b) => _isSortAscending ? a.storageSize.compareTo(b.storageSize) : b.storageSize.compareTo(a.storageSize));
+        testMedia.sort((a, b) => _isSortAscending
+            ? a.storageSize.compareTo(b.storageSize)
+            : b.storageSize.compareTo(a.storageSize));
         break;
       case SortingCriteria.timeStamp:
-        testMedia.sort((a, b) => _isSortAscending ? a.timestamp.compareTo(b.timestamp) : b.timestamp.compareTo(a.timestamp));
+        testMedia.sort((a, b) => _isSortAscending
+            ? a.timestamp.compareTo(b.timestamp)
+            : b.timestamp.compareTo(a.timestamp));
         break;
       case SortingCriteria.title:
-        testMedia.sort((a, b) => _isSortAscending ? a.title.compareTo(b.title) : b.title.compareTo(a.title));
+        testMedia.sort((a, b) => _isSortAscending
+            ? a.title.compareTo(b.title)
+            : b.title.compareTo(a.title));
         break;
       case SortingCriteria.type:
-        testMedia.sort((a, b) => _isSortAscending ? a.runtimeType.toString().compareTo(b.runtimeType.toString()) : b.runtimeType.toString().compareTo(a.runtimeType.toString()));
+        testMedia.sort((a, b) => _isSortAscending
+            ? a.runtimeType.toString().compareTo(b.runtimeType.toString())
+            : b.runtimeType.toString().compareTo(a.runtimeType.toString()));
         break;
     }
   }
@@ -195,7 +203,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     if (_searchText.isEmpty) {
       return testMedia;
     } else {
-      return testMedia.where((media) => media.title.toLowerCase().contains(_searchText.toLowerCase())).toList();
+      return testMedia
+          .where((media) =>
+              media.title.toLowerCase().contains(_searchText.toLowerCase()))
+          .toList();
     }
   }
 
@@ -271,25 +282,33 @@ class _GalleryScreenState extends State<GalleryScreen> {
             IconButton(
               key: const Key('favoriteIcon'),
               color: _showFavoritedOnly ? Colors.yellow : Colors.grey,
-              icon: _showFavoritedOnly ? Icon(Icons.star) : Icon(Icons.star_border),
+              icon: _showFavoritedOnly
+                  ? Icon(Icons.star)
+                  : Icon(Icons.star_border),
               onPressed: _toggleShowFavorited,
             ),
             IconButton(
               key: const Key('filterPhotoIcon'),
-              icon: _showPhotos ? const Icon(Icons.photo) : const Icon(Icons.photo_outlined),
+              icon: _showPhotos
+                  ? const Icon(Icons.photo)
+                  : const Icon(Icons.photo_outlined),
               color: _showPhotos ? Colors.blueAccent : Colors.grey,
               onPressed: _toggleShowPhotos,
             ),
             IconButton(
               key: const Key('filterVideoIcon'),
               color: _showVideos ? Colors.blueAccent : Colors.grey,
-              icon: _showVideos ? const Icon(Icons.videocam) : const Icon(Icons.videocam_outlined),
+              icon: _showVideos
+                  ? const Icon(Icons.videocam)
+                  : const Icon(Icons.videocam_outlined),
               onPressed: _toggleShowVideos,
             ),
             IconButton(
               key: const Key('filterConversationIcon'),
               color: _showConversations ? Colors.blueAccent : Colors.grey,
-              icon: _showConversations ? const Icon(Icons.chat) : const Icon(Icons.chat_outlined),
+              icon: _showConversations
+                  ? const Icon(Icons.chat)
+                  : const Icon(Icons.chat_outlined),
               onPressed: _toggleShowConversations,
             ),
           ],
@@ -321,7 +340,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: _crossAxisCount.toInt(),
       ),
-      itemCount: _showFavoritedOnly ? getFavoritedMedia().length : filteredPhotos.length,
+      itemCount: _showFavoritedOnly
+          ? getFavoritedMedia().length
+          : filteredPhotos.length,
       itemBuilder: _buildGridItem,
     );
   }
@@ -364,10 +385,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                if (media is Photo && media.photo != null) _buildPhotoImage(media),
-                if (media is Video && media.thumbnail != null) _buildVideoImage(media),
-                if (media is Audio) _buildConversationIcon(),
-                _buildGridItemTitle(media.title),
+                if (media is Photo && media.photo != null)
+                  _buildGridImage(media.title, media.photo!),
+                if (media is Video && media.thumbnail != null)
+                  _buildGridImage(media.title, media.thumbnail!),
+                if (media is Audio) _buildConversationIcon(media),
+                if (media is Audio) returnTextOverlay(media.title),
               ],
             ),
             _buildFavoriteIcon(media),
@@ -378,40 +401,65 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildPhotoImage(Photo media) {
+  Widget _buildGridImage(String title, Image image) {
     return Expanded(
       child: Center(
-        child: Image(
-          key: const Key('photoItem'),
-          image: media.photo!.image,
+        child: Stack(
+          children: [
+            // Image widget
+            Image(
+              key: const Key('videoItem'),
+              image: image.image,
+              fit: BoxFit.fill,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+            // Text overlay at the bottom
+            Positioned(
+              bottom: 0, // Adjust the bottom position as needed
+              left: 0, // Adjust the left position as needed
+              right: 0, // Adjust the right position as needed
+              child: returnTextOverlay(title),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildVideoImage(Video media) {
-    return Image(
-      key: const Key('videoItem'),
-      image: media.thumbnail!.image,
-      // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-      width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
-      height: 100.0 + (2.0 - _crossAxisCount) * 25.0,
+  Container returnTextOverlay(String title) {
+    if (title.isEmpty) {
+      return Container();
+    }
+    return Container(
+      padding: EdgeInsets.all(10),
+      color: Colors.black.withOpacity(0.5), // Adjust opacity and color
+      child: Center(
+        child: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white, // Text color
+            fontSize: 18, // Text size
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildConversationIcon() {
-    return const Icon(
-      key: Key('conversationItem'),
-      Icons.chat,
-      size: 50,
-    );
-  }
-
-  Widget _buildGridItemTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: _fontSize),
-      textAlign: TextAlign.center,
+  Widget _buildConversationIcon(Media media) {
+    return Expanded(
+      child: Center(
+        child: Stack(
+          children: [
+            // Image widget
+            const Icon(
+              key: Key('conversationItem'),
+              Icons.chat,
+              size: 75,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -533,19 +581,23 @@ class _FullObjectViewState extends State<FullObjectView> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Make the Scaffold's background transparent
+      backgroundColor:
+          Colors.transparent, // Make the Scaffold's background transparent
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Make the AppBar's background transparent
+        backgroundColor:
+            Colors.transparent, // Make the AppBar's background transparent
         elevation: 0.0,
         centerTitle: true,
         leading: const BackButton(color: Colors.black54),
-        title: const Text('Full Screen Image and Details', style: TextStyle(color: Colors.black54)),
+        title: const Text('Full Screen Image and Details',
+            style: TextStyle(color: Colors.black54)),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () async {
-              final updatedMedia = await displayEditPopup(context, widget.activeMedia);
+              final updatedMedia =
+                  await displayEditPopup(context, widget.activeMedia);
               if (updatedMedia != null) {
                 Navigator.pop(context); // Close the current view
                 setState(() {
@@ -557,7 +609,8 @@ class _FullObjectViewState extends State<FullObjectView> {
         ],
       ),
       body: Container(
-        height: screenHeight, // Set the height of the Container to the screen height
+        height:
+            screenHeight, // Set the height of the Container to the screen height
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/background.jpg"),
@@ -567,7 +620,8 @@ class _FullObjectViewState extends State<FullObjectView> {
         child: SingleChildScrollView(
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
@@ -586,44 +640,58 @@ class _FullObjectViewState extends State<FullObjectView> {
                     SizedBox(
                       height: 8,
                     ),
-                    if (!widget.activeMedia.title.isEmpty) returnTextBox("Title", '${widget.activeMedia.title}'),
+                    if (!widget.activeMedia.title.isEmpty)
+                      returnTextBox("Title", '${widget.activeMedia.title}'),
                     SizedBox(
                       height: 8,
                     ),
                     const SizedBox(
                       height: 5,
                     ),
-                    returnTextBox("Timestamp", '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
+                    returnTextBox("Timestamp",
+                        '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
                     addSpacingSizedBox(),
-                    if (widget.activeMedia is Audio) createAudioControlButtons(),
+                    if (widget.activeMedia is Audio)
+                      createAudioControlButtons(),
                     addSpacingSizedBox(),
-                    if (widget.activeMedia is Photo && (widget.activeMedia as Photo).photo != null)
+                    if (widget.activeMedia is Photo &&
+                        (widget.activeMedia as Photo).photo != null)
                       Image(
                         image: (widget.activeMedia as Photo).photo!.image,
                       ),
-                    if (widget.activeMedia is Video && (widget.activeMedia as Video).thumbnail != null) videoDisplay(widget.activeMedia as Video),
+                    if (widget.activeMedia is Video &&
+                        (widget.activeMedia as Video).thumbnail != null)
+                      videoDisplay(widget.activeMedia as Video),
                     addSpacingSizedBox(),
-                    if (widget.activeMedia.description != null && widget.activeMedia.description != "") returnTextBox("Description", '${widget.activeMedia.description}'),
+                    if (widget.activeMedia.description != null &&
+                        widget.activeMedia.description != "")
+                      returnTextBox(
+                          "Description", '${widget.activeMedia.description}'),
 
                     addSpacingSizedBox(),
 
-                    if (widget.activeMedia is Audio) returnTextBox("Summary", '${(widget.activeMedia as Audio).summary}'),
+                    if (widget.activeMedia is Audio)
+                      returnTextBox("Summary",
+                          '${(widget.activeMedia as Audio).summary}'),
 
                     addSpacingSizedBox(),
                     if (widget.activeMedia is Audio)
                       FutureBuilder<String>(
                         future: readFileAsString(widget.activeMedia as Audio),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
-                            return returnTextBox("Transcription", '${snapshot.data}');
+                            return returnTextBox(
+                                "Transcription", '${snapshot.data}');
                           }
                         },
                       ),
-                    returnTextBox("Address", '${widget.activeMedia.physicalAddress}'),
+                    returnTextBox(
+                        "Address", '${widget.activeMedia.physicalAddress}'),
                   ],
                 ),
               ),
@@ -677,7 +745,8 @@ class _FullObjectViewState extends State<FullObjectView> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AssistantScreen(conversation: widget.activeMedia as Audio),
+            builder: (context) =>
+                AssistantScreen(conversation: widget.activeMedia as Audio),
           ),
         );
       },
@@ -760,8 +829,10 @@ class _FullObjectViewState extends State<FullObjectView> {
   }
 
   Future<Media?> displayEditPopup(BuildContext context, Media media) async {
-    TextEditingController titleController = TextEditingController(text: media.title);
-    TextEditingController descriptionController = TextEditingController(text: media.description);
+    TextEditingController titleController =
+        TextEditingController(text: media.title);
+    TextEditingController descriptionController =
+        TextEditingController(text: media.description);
 
     return showDialog<Media>(
       context: context,
@@ -775,7 +846,8 @@ class _FullObjectViewState extends State<FullObjectView> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   buildEditableField(titleController, 'Title', setState),
-                  buildEditableField(descriptionController, 'Description', setState),
+                  buildEditableField(
+                      descriptionController, 'Description', setState),
                 ],
               );
             },
@@ -791,7 +863,10 @@ class _FullObjectViewState extends State<FullObjectView> {
               child: Text('Save'),
               onPressed: () {
                 if (media is Photo) {
-                  DataService.instance.updatePhoto(id: media.id!, title: titleController.text, description: descriptionController.text);
+                  DataService.instance.updatePhoto(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
 
                   // TODO: Find a better way to refresh
                   updatedMedia = Photo(
@@ -802,7 +877,10 @@ class _FullObjectViewState extends State<FullObjectView> {
                       title: titleController.text,
                       description: descriptionController.text);
                 } else if (media is Video) {
-                  DataService.instance.updateVideo(id: media.id!, title: titleController.text, description: descriptionController.text);
+                  DataService.instance.updateVideo(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
 
                   // TODO: Find a better way to refresh
                   updatedMedia = Video(
@@ -815,7 +893,10 @@ class _FullObjectViewState extends State<FullObjectView> {
                       duration: media.duration,
                       thumbnailFileName: media.thumbnailFileName);
                 } else if (media is Audio) {
-                  DataService.instance.updateAudio(id: media.id!, title: titleController.text, description: descriptionController.text);
+                  DataService.instance.updateAudio(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
 
                   // TODO: Find a better way to refresh
                   updatedMedia = Audio(
@@ -827,7 +908,8 @@ class _FullObjectViewState extends State<FullObjectView> {
                       description: descriptionController.text);
                 }
                 setState(() {});
-                Navigator.of(context).pop(updatedMedia); // Return the updated media
+                Navigator.of(context)
+                    .pop(updatedMedia); // Return the updated media
               },
             ),
           ],
@@ -837,7 +919,8 @@ class _FullObjectViewState extends State<FullObjectView> {
   }
 
   Future<String> readFileAsString(Audio audio) async {
-    String path = "${DirectoryManager.instance.transcriptsDirectory.path}/${activeAudio.transcriptFileName}";
+    String path =
+        "${DirectoryManager.instance.transcriptsDirectory.path}/${activeAudio.transcriptFileName}";
     try {
       File file = File(path);
       String fileContent = await file.readAsString();
@@ -859,14 +942,16 @@ class _FullObjectViewState extends State<FullObjectView> {
   }
 
   VideoDisplay videoDisplay(Video video) {
-    String fullFilePath = "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
+    String fullFilePath =
+        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
     print("THE PATH IS: ${fullFilePath}");
     return VideoDisplay(fullFilePath: fullFilePath);
   }
 
   /// Function to handle starting the playback of the recorded audio.
   Future<void> _startPlayback() async {
-    String path = "${DirectoryManager.instance.audiosDirectory.path}/${activeAudio.audioFileName}";
+    String path =
+        "${DirectoryManager.instance.audiosDirectory.path}/${activeAudio.audioFileName}";
     debugPrint(path);
     await _player!.openPlayer();
     await _player!.startPlayer(
