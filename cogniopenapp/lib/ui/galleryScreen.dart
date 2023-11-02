@@ -386,11 +386,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (media is Photo && media.photo != null)
-                  _buildPhotoImage(media),
+                  _buildGridImage(media.title, media.photo!),
                 if (media is Video && media.thumbnail != null)
-                  _buildVideoImage(media),
-                if (media is Audio) _buildConversationIcon(),
-                _buildGridItemTitle(media.title),
+                  _buildGridImage(media.title, media.thumbnail!),
+                if (media is Audio) _buildConversationIcon(media),
+                if (media is Audio) returnTextOverlay(media.title),
               ],
             ),
             _buildFavoriteIcon(media),
@@ -401,40 +401,65 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildPhotoImage(Photo media) {
+  Widget _buildGridImage(String title, Image image) {
     return Expanded(
       child: Center(
-        child: Image(
-          key: const Key('photoItem'),
-          image: media.photo!.image,
+        child: Stack(
+          children: [
+            // Image widget
+            Image(
+              key: const Key('videoItem'),
+              image: image.image,
+              fit: BoxFit.fill,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+            // Text overlay at the bottom
+            Positioned(
+              bottom: 0, // Adjust the bottom position as needed
+              left: 0, // Adjust the left position as needed
+              right: 0, // Adjust the right position as needed
+              child: returnTextOverlay(title),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildVideoImage(Video media) {
-    return Image(
-      key: const Key('videoItem'),
-      image: media.thumbnail!.image,
-      // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-      width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
-      height: 100.0 + (2.0 - _crossAxisCount) * 25.0,
+  Container returnTextOverlay(String title) {
+    if (title.isEmpty) {
+      return Container();
+    }
+    return Container(
+      padding: EdgeInsets.all(10),
+      color: Colors.black.withOpacity(0.5), // Adjust opacity and color
+      child: Center(
+        child: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white, // Text color
+            fontSize: 18, // Text size
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildConversationIcon() {
-    return const Icon(
-      key: Key('conversationItem'),
-      Icons.chat,
-      size: 50,
-    );
-  }
-
-  Widget _buildGridItemTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: _fontSize),
-      textAlign: TextAlign.center,
+  Widget _buildConversationIcon(Media media) {
+    return Expanded(
+      child: Center(
+        child: Stack(
+          children: [
+            // Image widget
+            const Icon(
+              key: Key('conversationItem'),
+              Icons.chat,
+              size: 75,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
