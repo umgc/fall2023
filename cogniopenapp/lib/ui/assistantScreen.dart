@@ -176,7 +176,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
 
       final content = chatCompletion.choices[0].message.content;
 
-      response = 'AI Assistant: $content';
+      response = 'Cora: $content';
     } on RequestFailedException catch (e) {
       _showAlert("API Request Error", e.message);
       response = "";
@@ -397,7 +397,7 @@ class ChatMessage extends StatelessWidget {
             leading: isUserMessage ? null : virtualAssistantIcon,
             minLeadingWidth: 25,
             title: Text(
-              isUserMessage ? "User:" : "Virtual Assistant:",
+              isUserMessage ? "User:" : "CogniOpen Remote Assistant (Cora):",
               style: titleStyle,
             ),
             subtitle: Text(

@@ -21,8 +21,8 @@ class DataService {
   static final DataService _instance = DataService._internal();
   static DataService get instance => _instance;
 
-  late List<Media> mediaList;
-  late List<VideoResponse> responseList;
+  late List<Media> mediaList = [];
+  late List<VideoResponse> responseList = [];
   bool hasBeenInitialized = false;
 
   Future<void> initializeData() async {

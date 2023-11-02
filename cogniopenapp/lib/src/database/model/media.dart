@@ -7,6 +7,7 @@ abstract class MediaFields {
     description,
     tags,
     timestamp,
+    physicalAddress,
     storageSize,
     isFavorited,
   ];
@@ -16,6 +17,7 @@ abstract class MediaFields {
   static const String description = 'description';
   static const String tags = 'tags';
   static const String timestamp = 'timestamp';
+  static const String physicalAddress = 'physicalAddress';
   static const String storageSize = 'storage_size';
   static const String isFavorited = 'is_favorited';
 }
@@ -27,6 +29,7 @@ abstract class Media {
   final String? description;
   final List<String>? tags;
   final DateTime timestamp;
+  final String? physicalAddress;
   final int storageSize;
   bool isFavorited;
 
@@ -37,6 +40,7 @@ abstract class Media {
     this.description,
     this.tags,
     required this.timestamp,
+    this.physicalAddress,
     required this.storageSize,
     required this.isFavorited,
   });
@@ -47,6 +51,7 @@ abstract class Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
+    String? physicalAddress,
     int? storageSize,
     bool? isFavorited,
   });
@@ -57,6 +62,7 @@ abstract class Media {
         MediaFields.description: description,
         MediaFields.tags: tags?.join(','),
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: isFavorited ? 1 : 0,
       };
