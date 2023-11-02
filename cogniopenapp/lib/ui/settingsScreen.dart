@@ -33,10 +33,6 @@ class SettingsScreen extends StatelessWidget {
                     child: Row(
                       //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          'assets/icons/camera.png',
-                          width: 35.0, // You can adjust the width and height
-                        ),
                         const Text("    Significant Objects",
                             textAlign: TextAlign.left,
                             style: TextStyle(
@@ -52,7 +48,7 @@ class SettingsScreen extends StatelessWidget {
                                         SignificantObjectScreen()));
                           },
                           icon: const Icon(
-                            Icons.arrow_forward_outlined,
+                            Icons.key,
                             size: 35,
                             color: Colors.blue,
                           ),

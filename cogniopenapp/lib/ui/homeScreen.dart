@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 class HomeScreen extends StatelessWidget {
   bool hasBeenInitialized = false;
 
+  double iconSize = 65;
+
   @override
   Widget build(BuildContext context) {
     if (!hasBeenInitialized) {
@@ -113,21 +115,23 @@ class HomeScreen extends StatelessWidget {
                     _buildElevatedButton(
                       context: context,
                       icon: Icon(Icons.handshake_outlined,
-                          size: 60, color: Colors.black54),
+                          size: iconSize, color: Colors.black54),
                       text: 'Virtual Assistant',
                       screen: AssistantScreen(),
                       keyName: "VirtualAssistantButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      icon: Icon(Icons.photo, size: 60, color: Colors.black54),
+                      icon: Icon(Icons.photo,
+                          size: iconSize, color: Colors.black54),
                       text: 'Gallery',
                       screen: GalleryScreen(),
                       keyName: "GalleryButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      icon: Icon(Icons.search, size: 60, color: Colors.black54),
+                      icon: Icon(Icons.search,
+                          size: iconSize, color: Colors.black54),
                       text: 'Object Search',
                       screen: ResponseScreen(),
                       keyName: "VideoRecordingButtonKey",
@@ -135,7 +139,7 @@ class HomeScreen extends StatelessWidget {
                     _buildElevatedButton(
                       context: context,
                       icon: Icon(Icons.mic_rounded,
-                          size: 60, color: Colors.black54),
+                          size: iconSize, color: Colors.black54),
                       text: 'Record Audio',
                       screen: AudioScreen(),
                       keyName: "AudioRecordingButtonKey",
@@ -143,14 +147,15 @@ class HomeScreen extends StatelessWidget {
                     _buildElevatedButton(
                       context: context,
                       icon: Icon(Icons.location_history,
-                          size: 60, color: Colors.black54),
+                          size: iconSize, color: Colors.black54),
                       text: 'Location',
                       screen: SignificantObjectScreen(),
                       keyName: "LocationObjectButtonKey",
                     ),
                     _buildElevatedButton(
                       context: context,
-                      icon: Icon(Icons.flag, size: 60, color: Colors.black54),
+                      icon: Icon(Icons.flag,
+                          size: iconSize, color: Colors.black54),
                       text: 'Tour Guide',
                       screen: TourScreen(),
                       keyName: "TourGuideButtonKey",
@@ -196,7 +201,7 @@ class HomeScreen extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           icon,
-          const SizedBox(height: 22.0),
+          const SizedBox(height: 10.0),
           Text(
             text,
             style: const TextStyle(
