@@ -289,8 +289,9 @@ class ResponseBox extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Saved as a significant object (NOT REALLY YET THOUGH)"),
-          content: Text(
+          title: const Text(
+              "Saved as a significant object (NOT REALLY YET THOUGH)"),
+          content: const Text(
             "Would you like to delete all previous spottings of this item to save space?",
           ),
           actions: <Widget>[

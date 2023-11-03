@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import '../src/data_service.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
@@ -28,44 +28,18 @@ class CameraManager {
   int cameraToUse = 1;
 
   late Image recentThumbnail;
-  CameraManager._internal() {}
+  CameraManager._internal();
 
   factory CameraManager() {
     return _instance;
-  }
-
-  Future<bool> permissionGranted() async {
-    // Check and request camera and microphone permissions
-    final cameraPermissionStatus = await Permission.camera.status;
-    final microphonePermissionStatus = await Permission.microphone.status;
-
-    if (cameraPermissionStatus.isDenied ||
-        cameraPermissionStatus.isPermanentlyDenied ||
-        microphonePermissionStatus.isDenied ||
-        microphonePermissionStatus.isPermanentlyDenied) {
-      // Permissions are denied or permanently denied
-      // Request camera and microphone permissions
-      final cameraPermissionResult = await Permission.camera.request();
-      final microphonePermissionResult = await Permission.microphone.request();
-
-      if ((cameraPermissionResult.isDenied ||
-              cameraPermissionResult.isPermanentlyDenied) ||
-          (microphonePermissionResult.isDenied ||
-              microphonePermissionResult.isPermanentlyDenied)) {
-        // User denied camera or microphone permissions, handle the situation (e.g., show an error message)
-        // You can navigate back to the previous screen, show a snackbar, etc.
-        isAutoRecording = false;
-        return false;
-      }
-    }
-    return true;
   }
 
   Future<void> initializeCamera() async {
     parseEnviromentSettings();
 
     // If permission is not granted then don't initialize
-    if (!await permissionGranted()) {
+    if (!await PermissionManager.cameraPermissionGranted()) {
+      isAutoRecording = false;
       return;
     }
 
@@ -116,24 +90,21 @@ class CameraManager {
     if (isAutoRecording) {
       // Delay for camera initialization
       Future.delayed(Duration(milliseconds: 1500), () {
-        if (controller != null) {
-          FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
+        FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
 
-          startRecordingInBackground();
-        }
+        startRecordingInBackground();
       });
     }
   }
 
   Future<void> stopRecording() async {
     try {
-      XFile? file = await controller?.stopVideoRecording();
-      if (file != null) {
-        await saveMediaLocally(file);
-        if (uploadToRekognition) {
-          VideoProcessor vp = VideoProcessor();
-          vp.automaticallySendToRekognition();
-        }
+      XFile? file = await controller.stopVideoRecording();
+
+      await saveMediaLocally(file);
+      if (uploadToRekognition) {
+        VideoProcessor vp = VideoProcessor();
+        vp.automaticallySendToRekognition();
       }
     } catch (Exc) {
       print(Exc);
@@ -151,7 +122,7 @@ class CameraManager {
   }
 
   void startRecordingInBackground() async {
-    if (controller == null || !controller.value.isInitialized) {
+    if (!controller.value.isInitialized) {
       print('Error: Camera is not initialized.');
       print('Auto recording has been canceeled.');
       return;

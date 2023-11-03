@@ -1,4 +1,5 @@
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
+import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:flutter/material.dart';
 import 'homeScreen.dart';
 import 'galleryScreen.dart';
@@ -40,12 +41,15 @@ class SettingsScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.0)),
                         IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        SignificantObjectScreen()));
+                          onPressed: () async {
+                            if (await PermissionManager.filePermissionsGranted(
+                                context)) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SignificantObjectScreen()));
+                            }
                           },
                           icon: const Icon(
                             Icons.key,

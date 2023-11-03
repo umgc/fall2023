@@ -26,7 +26,8 @@ class Audio extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.audio,
-          title: title ?? audioFileName, // TODO: Decide on default photo file name
+          title:
+              title ?? audioFileName, // TODO: Decide on default photo file name
           description: description,
           tags: tags,
           timestamp: timestamp,
@@ -73,7 +74,6 @@ class Audio extends Media {
     };
   }
 
-  @override
   static Audio fromJson(Map<String, Object?> json) {
     try {
       return Audio(

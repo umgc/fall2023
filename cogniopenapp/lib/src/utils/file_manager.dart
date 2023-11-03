@@ -163,8 +163,7 @@ class FileManager {
     String outputPath = isThumbnail
         ? DirectoryManager.instance.videoThumbnailsDirectory.path
         : DirectoryManager.instance.videoStillsDirectory.path;
-    String thumPath =
-        "${outputPath}/${path.basename(vidPath)}-${timesStamp}.png";
+    String thumPath = "$outputPath/${path.basename(vidPath)}-$timesStamp.png";
     return getFileName(thumPath);
   }
 
@@ -222,11 +221,6 @@ class FileManager {
   static Future<List<String>> listFileNamesInDirectory(
       Directory directory) async {
     List<String> fileNames = [];
-
-    if (directory == null) {
-      // Handle the case where external storage is not available.
-      return fileNames;
-    }
 
     // Get a list of files in the directory.
     final dir = Directory(directory.path);
