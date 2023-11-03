@@ -23,7 +23,6 @@ class ResponseParser {
       VideoResponse response) async {
     String sourceFilePath =
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
-    print("SOURCE FILE PATH : $sourceFilePath");
     File sourceFile = File(sourceFilePath);
 
     if (await sourceFile.exists()) {
@@ -31,7 +30,6 @@ class ResponseParser {
           FileManager.getThumbnailFileName(sourceFilePath, response.timestamp);
       String fullPath =
           "${DirectoryManager.instance.videoStillsDirectory.path}/$fileName";
-      print("FILENAME : $fullPath");
       File destinationFile = File(fullPath);
 
       DataService.instance.addSignificantObject(
