@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:cogniopenapp/src/data_service.dart';
@@ -12,8 +14,10 @@ class AppSeedData {
 
   Future<void> loadSeedAudio() async {
     try {
-      File? audioFile = await FileManager.loadAssetFile('assets/seed_data_files/bird.mp3', 'bird.mp3');
-      File? transcriptFile = await FileManager.loadAssetFile('assets/seed_data_files/bird_transcript.txt', 'bird_transcript.txt');
+      File? audioFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/bird.mp3', 'bird.mp3');
+      File? transcriptFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/bird_transcript.txt', 'bird_transcript.txt');
       List<String>? tagsList = ['nature', 'bird'];
       await DataService.instance.addSeedAudio(
           title: 'Bird',
@@ -30,7 +34,8 @@ class AppSeedData {
 
   Future<void> loadSeedPhoto() async {
     try {
-      File? photoFile = await FileManager.loadAssetFile('assets/seed_data_files/cat.png', 'cat.png');
+      File? photoFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/cat.png', 'cat.png');
       List<String>? tagsList = ['pet', 'cat'];
       await DataService.instance.addSeedPhoto(
         title: 'Cat',
@@ -46,8 +51,10 @@ class AppSeedData {
 
   Future<void> loadSeedVideo() async {
     try {
-      File? videoFile = await FileManager.loadAssetFile('assets/seed_data_files/dog.mp4', 'dog.mp4');
-      File? thumbnailFile = await FileManager.loadAssetFile('assets/seed_data_files/dog.png', 'dog.png');
+      File? videoFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/dog.mp4', 'dog.mp4');
+      File? thumbnailFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/dog.png', 'dog.png');
       List<String>? tagsList = ['pet', 'dog'];
       await DataService.instance.addSeedVideo(
         title: 'Dog',

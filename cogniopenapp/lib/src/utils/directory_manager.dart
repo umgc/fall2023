@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:cogniopenapp/src/utils/constants.dart';
@@ -14,6 +16,7 @@ class DirectoryManager {
   late Directory _videoThumbnailsDirectory;
   late Directory _videoStillsDirectory;
   late Directory _videoResponsesDirectory;
+  late Directory _significantObjectsDirectory;
   late Directory _tmpDirectory;
 
   DirectoryManager._internal();
@@ -28,6 +31,7 @@ class DirectoryManager {
   Directory get videoStillsDirectory => _videoStillsDirectory;
   Directory get videoThumbnailsDirectory => _videoThumbnailsDirectory;
   Directory get videoResponsesDirectory => _videoResponsesDirectory;
+  Directory get significantObjectsDirectory => _significantObjectsDirectory;
   Directory get tmpDirectory => _tmpDirectory;
 
   Future<void> initializeDirectories() async {
@@ -47,6 +51,9 @@ class DirectoryManager {
           '${_rootDirectory.path}$videoStillsPath');
       _videoResponsesDirectory = _createDirectoryIfDoesNotExist(
           '${_rootDirectory.path}$videoResponsesPath');
+      _significantObjectsDirectory = _createDirectoryIfDoesNotExist(
+        '${_rootDirectory.path}$significantObjectsPath',
+      );
       _tmpDirectory =
           _createDirectoryIfDoesNotExist('${_rootDirectory.path}/tmp');
     } catch (e) {

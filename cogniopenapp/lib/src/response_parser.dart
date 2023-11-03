@@ -56,14 +56,12 @@ class ResponseParser {
         responses.add(DataService.instance.responseList[i]);
       }
     }
-    print(responses);
     return responses;
   }
 
   static Future<Image> getThumbnail(VideoResponse response) async {
     String fullPath =
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
-    print("${fullPath}");
     return await FileManager.getThumbnail(fullPath, response.timestamp);
   }
 
@@ -71,7 +69,6 @@ class ResponseParser {
     String fullPath =
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
     String time = FileManager.getFileTimestamp(fullPath);
-    print("TIME IS ${time}");
     DateTime parsedDate = DateTime.parse(time);
     return FormatUtils.getDateString(
         parsedDate.add(Duration(milliseconds: response.timestamp)));
@@ -81,7 +78,6 @@ class ResponseParser {
     String fullPath =
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
     String time = FileManager.getFileTimestamp(fullPath);
-    print("TIME IS ${time}");
     DateTime parsedDate = DateTime.parse(time);
     return FormatUtils.getTimeString(
         parsedDate.add(Duration(milliseconds: response.timestamp)));

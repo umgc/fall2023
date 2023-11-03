@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'dart:math';
 
@@ -163,8 +165,7 @@ class FileManager {
     String outputPath = isThumbnail
         ? DirectoryManager.instance.videoThumbnailsDirectory.path
         : DirectoryManager.instance.videoStillsDirectory.path;
-    String thumPath =
-        "${outputPath}/${path.basename(vidPath)}-${timesStamp}.png";
+    String thumPath = "$outputPath/${path.basename(vidPath)}-$timesStamp.png";
     return getFileName(thumPath);
   }
 
@@ -176,13 +177,12 @@ class FileManager {
         ? DirectoryManager.instance.videoThumbnailsDirectory
         : DirectoryManager.instance.videoStillsDirectory;
 
-    String fileName = "${path.basename(vidPath)}-${timesStamp}.png";
-    String newFile = "${directory.path}/${fileName}";
+    String fileName = "${path.basename(vidPath)}-$timesStamp.png";
+    String newFile = "$directory.path/$fileName";
 
     List<String> existingFiles = await listFileNamesInDirectory(directory);
 
     if (existingFiles.contains(fileName)) {
-      print("FILE ALREADY EXISTS ${fileName}");
       return Image.file(File(newFile));
     }
     try {
@@ -223,11 +223,6 @@ class FileManager {
   static Future<List<String>> listFileNamesInDirectory(
       Directory directory) async {
     List<String> fileNames = [];
-
-    if (directory == null) {
-      // Handle the case where external storage is not available.
-      return fileNames;
-    }
 
     // Get a list of files in the directory.
     final dir = Directory(directory.path);

@@ -1,13 +1,17 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
-import 'package:cogniopenapp/src/database/controller/audio_controller.dart';
 import 'package:cogniopenapp/src/aws_video_response.dart';
+import 'package:cogniopenapp/src/database/controller/audio_controller.dart';
 import 'package:cogniopenapp/src/database/controller/photo_controller.dart';
+import 'package:cogniopenapp/src/database/controller/significant_object_controller.dart';
 import 'package:cogniopenapp/src/database/controller/video_controller.dart';
 import 'package:cogniopenapp/src/database/controller/video_response_controller.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
+import 'package:cogniopenapp/src/database/model/significant_object.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
@@ -87,18 +91,18 @@ class DataService {
     try {
       for (AWS_VideoResponse rekResponse in rekogResponses) {
         final response = await VideoResponseController.addVideoResponse(
-            title: rekResponse.name,
-            referenceVideoFilePath: rekResponse.referenceVideoFilePath,
-            confidence: rekResponse.confidence,
-            left: rekResponse.boundingBox.left,
-            top: rekResponse.boundingBox.top,
-            width: rekResponse.boundingBox.width,
-            height: rekResponse.boundingBox.height,
-            timestamp: rekResponse.timestamp);
-        if (response != null) {
-          //print(
-          //"ADDED RESPONSE: title ${response.title} timestamp ${response.timestamp}");
-        }
+          title: rekResponse.name,
+          referenceVideoFilePath: rekResponse.referenceVideoFilePath,
+          confidence: rekResponse.confidence,
+          left: rekResponse.boundingBox.left,
+          top: rekResponse.boundingBox.top,
+          width: rekResponse.boundingBox.width,
+          height: rekResponse.boundingBox.height,
+          timestamp: rekResponse.timestamp,
+          address: rekResponse.address,
+          parents: rekResponse.parents,
+        );
+        if (response != null) {}
       }
 
       await refreshResponses();
@@ -406,6 +410,84 @@ class DataService {
       return video;
     } catch (e) {
       print('Data Service -- Error removing video: $e');
+      return null;
+    }
+  }
+
+  // |-----------------------------------------------------------------------------------------|
+  // |------------------------- SIGNIFICANT OBJECT OPERATIONS -------------------------------|
+  // |-----------------------------------------------------------------------------------------|
+
+  Future<SignificantObject?> addSignificantObject({
+    String? objectLabel,
+    String? customLabel,
+    required int timestamp,
+    required double left,
+    required double top,
+    required double width,
+    required double height,
+    required File imageFile,
+  }) async {
+    try {
+      final significantObject =
+          await SignificantObjectController.addSignificantObject(
+        objectLabel: objectLabel,
+        customLabel: customLabel,
+        timestamp: timestamp,
+        left: left,
+        top: top,
+        width: width,
+        height: height,
+        imageFile: imageFile,
+      );
+
+      if (significantObject != null) {
+        await refreshMedia();
+      }
+
+      return significantObject;
+    } catch (e) {
+      print('Data Service -- Error adding significant object: $e');
+      return null;
+    }
+  }
+
+  Future<SignificantObject?> updateSignificantObjectLabels({
+    required int id,
+    String? objectLabel,
+    String? customLabel,
+  }) async {
+    try {
+      final significantObject =
+          await SignificantObjectController.updateSignificantObjectLabels(
+        id: id,
+        objectLabel: objectLabel,
+        customLabel: customLabel,
+      );
+
+      if (significantObject != null) {
+        await refreshMedia();
+      }
+
+      return significantObject;
+    } catch (e) {
+      print('Data Service -- Error updating significant object labels: $e');
+      return null;
+    }
+  }
+
+  Future<SignificantObject?> removeSignificantObject(int id) async {
+    try {
+      final significantObject =
+          await SignificantObjectController.removeSignificantObject(id);
+
+      if (significantObject != null) {
+        await refreshMedia();
+      }
+
+      return significantObject;
+    } catch (e) {
+      print('Data Service -- Error removing significant object: $e');
       return null;
     }
   }
