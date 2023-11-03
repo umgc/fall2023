@@ -332,8 +332,7 @@ class ResponseBox extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-              "Saved as a significant object (NOT REALLY YET THOUGH)"),
+          title: const Text("Saving as a significant object"),
           content: const Text(
             "Would you like to delete all previous spottings of this item to save space?",
           ),
@@ -363,7 +362,7 @@ class ResponseBox extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => ResponseScreen()),
                     );
                   },
-                  child: Text("Yes, please delete them"),
+                  child: Text("Yes, delete them"),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red,
                   ),

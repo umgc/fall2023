@@ -35,11 +35,15 @@ class ModelScreenState extends State<ModelScreen> {
 
   String userDefinedModelName = '';
 
+  List<String> availableModels = [];
+  String? _selectedModel;
+
   ModelScreenState(this.response);
 
   @override
   Widget build(BuildContext context) {
     vp.startService();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Remember an object'),
@@ -92,6 +96,9 @@ class ModelScreenState extends State<ModelScreen> {
         ElevatedButton(
           onPressed: () async {
             if (userDefinedModelName.isNotEmpty) {
+              //if spaces, replace with '-'
+              userDefinedModelName =
+                  userDefinedModelName.replaceAll(RegExp('\\s+'), '-');
               //TODO:save the passed through response Image data, boundingbox info, and the custom label name as a Significant Object.
               Future<SignificantObject> sigObj = addResponseAsSignificantObject(
                   userDefinedModelName, response);
@@ -100,6 +107,9 @@ class ModelScreenState extends State<ModelScreen> {
                 s3.addFileToS3("$userDefinedModelName.json",
                     value.generateRekognitionManifest());
 
+                // just a little sleep in between manifest upload and rekognition model being started.
+
+                sleep(const Duration(milliseconds: 2500));
                 vp.addNewModel(
                     userDefinedModelName, "$userDefinedModelName.json");
 
@@ -126,8 +136,44 @@ class ModelScreenState extends State<ModelScreen> {
               );
             }
           },
-          child: const Text('Submit'),
-        ), // New subheading section ends here
+          child: const Text('Train Model'),
+        ),
+        /*const SizedBox(height: 20),
+        const Padding(
+          // New subheading section starts here
+          padding: EdgeInsets.fromLTRB(
+              16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
+          child: Text(
+            "Start a trained model?", // This is the subheading text
+            style: TextStyle(
+              fontSize: 16.0, // Adjust font size as needed
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        Center(
+          child: DropdownButton(
+            hint: Text('Select one of the trained models'),
+            value: _selectedModel,
+            onChanged: (newValue) {
+              setState(() {
+                _selectedModel = newValue;
+                availableModels = vp.availableModels;
+              });
+            },
+            items: availableModels.map((model) {
+              return DropdownMenuItem(
+                child: new Text(model),
+                value: model,
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text('Start Model'),
+        ),*/ // New subheading section ends here
       ]),
       floatingActionButton: _getFAB(s3),
     );
@@ -146,10 +192,12 @@ class ModelScreenState extends State<ModelScreen> {
         SpeedDialChild(
             child: const Icon(Icons.search),
             backgroundColor: const Color(0XFFE91E63),
-            onTap: () {
-              //creates a bucket; not needed since we are doing this on app load
-              //s3.createBucket();
-              vp.pollVersionDescription();
+            onTap: () async {
+              await vp.pollVersionDescription();
+              print("on screen: $availableModels");
+              setState() {
+                availableModels = vp.availableModels;
+              }
             },
             label: 'Check service',
             labelStyle: const TextStyle(
@@ -158,18 +206,7 @@ class ModelScreenState extends State<ModelScreen> {
                 fontSize: 16.0),
             labelBackgroundColor: const Color(0XFFE91E63)),
         // FAB 2
-        SpeedDialChild(
-            child: const Icon(Icons.interests),
-            backgroundColor: const Color(0XFFE91E63),
-            onTap: () {
-              vp.addNewModel("green-glasses", "eyeglasses-manifest.json");
-            },
-            label: 'Add model',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63)),
+
         // FAB 3
         SpeedDialChild(
             child: const Icon(Icons.interests),
@@ -186,12 +223,11 @@ class ModelScreenState extends State<ModelScreen> {
             labelBackgroundColor: const Color(0XFFE91E63)),
         // FAB 4
         SpeedDialChild(
-            child: const Icon(Icons.interests),
+            child: const Icon(Icons.search),
             backgroundColor: const Color(0XFFE91E63),
             onTap: () async {
               rek.DetectCustomLabelsResponse? response = await vp
                   .findMatchingModel("green-glasses", "glasses-test.jpg");
-              //await vp.findMatchingModel("my-glasses");
 
               // ignore: use_build_context_synchronously
               Navigator.push(

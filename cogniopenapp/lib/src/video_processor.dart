@@ -20,6 +20,7 @@ class VideoProcessor {
   String jobId = '';
   String projectArn = 'No project found';
   String currentProjectVersionArn = 'Model not started';
+  List<String> availableModels = [];
   List<String> activeModels = [];
   String videoTitle = "";
   String address = "";
@@ -303,23 +304,36 @@ class VideoProcessor {
         versionName: modelName);
   }
 
-  //check for a certain status (depending on input)
-  void pollVersionDescription() {
+  //adds all stopped or trained models to list of available models
+  //deletes models that failed training
+  Future<void> pollVersionDescription() async {
     //String status) {
     Future<DescribeProjectVersionsResponse> projectVersions =
         service!.describeProjectVersions(projectArn: projectArn);
+    availableModels.clear();
     projectVersions.then((value) {
       Iterator<ProjectVersionDescription> iter =
           value.projectVersionDescriptions!.iterator;
       while (iter.moveNext()) {
-        print("${iter.current.projectVersionArn} is ${iter.current.status}");
+        //print("${iter.current.projectVersionArn} is ${iter.current.status}");
         //deletes a model if it failed training
         if (iter.current.status == ProjectVersionStatus.trainingFailed) {
           service!.deleteProjectVersion(
             projectVersionArn: iter.current.projectVersionArn!,
           );
+        } else if ((iter.current.status == ProjectVersionStatus.stopped) ||
+            (iter.current.status == ProjectVersionStatus.trainingCompleted)) {
+          //where 9 is the lenght of "/version/"
+          int substringStartingIndex =
+              iter.current.projectVersionArn!.indexOf('/version/') + 9;
+          String parsedName =
+              iter.current.projectVersionArn!.substring(substringStartingIndex);
+          parsedName = parsedName.split("/")[0];
+          //print(parsedName);
+          availableModels.add(parsedName);
         }
       }
+      //print(availableModels);
     });
   }
 
