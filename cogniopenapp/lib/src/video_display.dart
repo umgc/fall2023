@@ -50,8 +50,8 @@ class _VideoDisplayState extends State<VideoDisplay> {
                 aspectRatio: _controller.value.aspectRatio,
                 child: Chewie(controller: _chewieController),
               ),
-              Padding(
-                padding: const EdgeInsets.all(24.0),
+              const Padding(
+                padding: EdgeInsets.all(24.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                 ),
@@ -59,7 +59,7 @@ class _VideoDisplayState extends State<VideoDisplay> {
             ],
           );
         } else {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }

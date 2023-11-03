@@ -14,7 +14,9 @@ void main() {
     GeolocatorPlatform.instance = MockGeolocatorPlatform();
     GeocodingPlatform.instance = MockGeocodingPlatform();
     var physicalAddress = "";
-    await Address.whereIAm().then((String address) => physicalAddress = address);
-    expect(physicalAddress, "501 Hungerford Dr, Rockville, Maryland, 20850, US");
+    await Address.whereIAm(isTesting: true)
+        .then((String address) => physicalAddress = address);
+    expect(
+        physicalAddress, "501 Hungerford Dr, Rockville, Maryland, 20850, US");
   });
 }

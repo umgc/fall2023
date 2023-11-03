@@ -350,8 +350,8 @@ class ResponseBox extends StatelessWidget {
   }
 
   Positioned getBoundingBox(VideoResponse response) {
-    double imageWidth = 400;
-    double imageHeight = 700;
+    double imageWidth = 375;
+    double imageHeight = 675;
 
     return Positioned(
       left: imageWidth * response.left,

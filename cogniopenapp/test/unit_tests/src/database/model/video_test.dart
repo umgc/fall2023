@@ -21,7 +21,7 @@ Future<void> main() async {
   GeolocatorPlatform.instance = MockGeolocatorPlatform();
   GeocodingPlatform.instance = MockGeocodingPlatform();
   String physicalAddress = '';
-  await Address.whereIAm().then((String address) {
+  await Address.whereIAm(isTesting: true).then((String address) {
     physicalAddress = address;
   });
   const int storageSize = 1000;
@@ -38,7 +38,9 @@ Future<void> main() async {
   group('Video', () {
     // Video constructor tests:
 
-    test('U-9-1: Video constructor (with all parameters provided) should create a Video object and initialize values correctly', () {
+    test(
+        'U-9-1: Video constructor (with all parameters provided) should create a Video object and initialize values correctly',
+        () {
       final Video video = Video(
         id: id,
         title: title,
@@ -67,7 +69,9 @@ Future<void> main() async {
       expect(video.duration, duration);
     });
 
-    test('U-9-2: Video constructor (with only required parameters provided) should create a Video object and initialize values correctly', () {
+    test(
+        'U-9-2: Video constructor (with only required parameters provided) should create a Video object and initialize values correctly',
+        () {
       final Video video = Video(
         id: id,
         title: title,
@@ -95,7 +99,9 @@ Future<void> main() async {
 
     // Video.fromJson() tests:
 
-    test('U-9-3: Video.fromJson should correctly create a Video object from JSON (with all field values)', () {
+    test(
+        'U-9-3: Video.fromJson should correctly create a Video object from JSON (with all field values)',
+        () {
       final Map<String, Object?> json = {
         MediaFields.id: id,
         MediaFields.title: title,
@@ -117,7 +123,11 @@ Future<void> main() async {
       expect(video.title, title);
       expect(video.description, description);
       expect(video.tags, tags);
-      expect(video.timestamp, DateTime.fromMillisecondsSinceEpoch(timestamp.toUtc().millisecondsSinceEpoch, isUtc: true));
+      expect(
+          video.timestamp,
+          DateTime.fromMillisecondsSinceEpoch(
+              timestamp.toUtc().millisecondsSinceEpoch,
+              isUtc: true));
       expect(video.physicalAddress, physicalAddress);
       expect(video.storageSize, storageSize);
       expect(video.isFavorited, isFavorited);
@@ -147,7 +157,11 @@ Future<void> main() async {
         expect(video.title, title);
         expect(video.description, isNull);
         expect(video.tags, isNull);
-        expect(video.timestamp, DateTime.fromMillisecondsSinceEpoch(timestamp.toUtc().millisecondsSinceEpoch, isUtc: true));
+        expect(
+            video.timestamp,
+            DateTime.fromMillisecondsSinceEpoch(
+                timestamp.toUtc().millisecondsSinceEpoch,
+                isUtc: true));
         expect(video.physicalAddress, physicalAddress);
         expect(video.storageSize, storageSize);
         expect(video.isFavorited, isFavorited);
