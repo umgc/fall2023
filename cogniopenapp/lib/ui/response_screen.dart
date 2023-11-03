@@ -1,6 +1,7 @@
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
 import 'package:cogniopenapp/src/data_service.dart';
+import 'package:cogniopenapp/ui/train_model_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -313,6 +314,20 @@ class ResponseBox extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red,
                   ),
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    //pass along the image data
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ModelScreen(response)));
+                  },
+                  child: const Text('Remember this?'),
                 ),
               ],
             ),

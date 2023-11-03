@@ -1,5 +1,6 @@
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:cogniopenapp/src/database/model/video_response.dart';
+import 'package:cogniopenapp/src/response_parser.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/significantObject.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
@@ -10,34 +11,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'dart:io';
 
-class TestScreen extends StatefulWidget {
+class ModelScreen extends StatefulWidget {
   final VideoResponse response;
-  const TestScreen(this.response, {super.key});
+  const ModelScreen(this.response, {super.key});
 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('S3 Buckets'),
+        title: const Text('Learn from User\'s choice'),
       ),
     );
   }
 
   @override
   // ignore: no_logic_in_create_state
-  TestScreenState createState() => TestScreenState(response);
+  ModelScreenState createState() => ModelScreenState(response);
 }
 
-class TestScreenState extends State<TestScreen> {
+class ModelScreenState extends State<ModelScreen> {
   S3Bucket s3 = S3Bucket();
   VideoProcessor vp = VideoProcessor();
   VideoResponse response;
 
   String userDefinedModelName = '';
 
-  TestScreenState(this.response);
+  ModelScreenState(this.response);
 
   @override
   Widget build(BuildContext context) {
+    vp.startService();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Remember an object'),
@@ -80,7 +82,8 @@ class TestScreenState extends State<TestScreen> {
                       });
                     },
                     decoration: const InputDecoration(
-                        labelText: 'Enter search object.'),
+                        labelText:
+                            'Enter significant object custom label name.'),
                   ),
                 ],
               )),
@@ -90,31 +93,35 @@ class TestScreenState extends State<TestScreen> {
           onPressed: () async {
             if (userDefinedModelName.isNotEmpty) {
               //TODO:save the passed through response Image data, boundingbox info, and the custom label name as a Significant Object.
-              SignificantObject sigObj = await addResponseAsSignificantObject(
+              Future<SignificantObject> sigObj = addResponseAsSignificantObject(
                   userDefinedModelName, response);
 
-              s3.addFileToS3("$userDefinedModelName.json",
-                  sigObj.generateRekognitionManifest());
+              sigObj.then((value) async {
+                s3.addFileToS3("$userDefinedModelName.json",
+                    value.generateRekognitionManifest());
 
-              vp.addNewModel(
-                  userDefinedModelName, "$userDefinedModelName.json");
+                vp.addNewModel(
+                    userDefinedModelName, "$userDefinedModelName.json");
 
-              //TODO:create some polling method that checks if trained, then starts if trained; pass it the new model name.
-              rek.ProjectVersionStatus? status;
-              do {
-                status = await vp.pollForTrainedModel(userDefinedModelName);
-                sleep(const Duration(milliseconds: 5000));
-                print(status);
-              } while (status == rek.ProjectVersionStatus.trainingInProgress);
+                //TODO:create some polling method that checks if trained, then starts if trained; pass it the new model name.
+                /*
+                rek.ProjectVersionStatus? status;
+                do {
+                  status = await vp.pollForTrainedModel(userDefinedModelName);
+                  sleep(const Duration(milliseconds: 5000));
+                  print(status);
+                } while (status == rek.ProjectVersionStatus.trainingInProgress);
+                */
 
-              //returns the modelArn of the projectVersion being started, but we really don't need it if we have the model name
-              //(see vp.activeModels)
-              vp.startCustomDetection(userDefinedModelName);
-              //TODO?: add a polling method to see when the model is started?
+                //returns the modelArn of the projectVersion being started, but we really don't need it if we have the model name
+                //(see vp.activeModels)
+                vp.startCustomDetection(userDefinedModelName);
+                //TODO?: add a polling method to see when the model is started?
+              });
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Please enter a valid model name'),
+                  content: Text('Please enter a valid object name'),
                 ),
               );
             }
@@ -218,9 +225,13 @@ class TestScreenState extends State<TestScreen> {
 
   Future<SignificantObject> addResponseAsSignificantObject(
       String userDefinedModelName, VideoResponse response) async {
-    Image stillImage = await FileManager.getThumbnail(
-        "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}",
-        response.timestamp);
+    //following method keeps throwing this error
+    Image stillImage = await ResponseParser.getThumbnail(response);
+    String filepath = FileManager.getThumbnailFileName(
+        response.referenceVideoFilePath, response.timestamp);
+    String path =
+        "${DirectoryManager.instance.videoStillsDirectory.path}/${filepath}";
+
     int i = 0;
     String name = response.title;
     ResponseBoundingBox boundingBox = ResponseBoundingBox(
@@ -228,9 +239,9 @@ class TestScreenState extends State<TestScreen> {
         top: response.top,
         width: response.width,
         height: response.height);
-
     //TODO:upload new image to S3
-    s3.addImageToS3("$name-$i.jpg", stillImage);
+    s3.addImageToS3("$name-$i.jpg", path);
+    s3.addImageToS3("$name-$i-test.jpg", path);
 
     //if user already has a matching significant object, add this to that list.
     //TODO: Get list of significant objects
