@@ -1,9 +1,79 @@
-import 'package:cogniopenapp/src/camera_manager.dart';
+// Author: Benjamin Sutter
 
+import 'package:cogniopenapp/src/camera_manager.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/material.dart';
 
 class PermissionManager {
+  static Future<bool> requestInitialPermissions() async {
+    // Check and request camera, microphone, location, and file permissions
+    final cameraPermissionStatus = await Permission.camera.status;
+    final microphonePermissionStatus = await Permission.microphone.status;
+    final locationPermissionStatus = await Permission.location.status;
+    final storagePermissionStatus = await Permission.storage.status;
+
+    if (cameraPermissionStatus.isDenied ||
+        cameraPermissionStatus.isPermanentlyDenied ||
+        microphonePermissionStatus.isDenied ||
+        microphonePermissionStatus.isPermanentlyDenied ||
+        locationPermissionStatus.isDenied ||
+        locationPermissionStatus.isPermanentlyDenied ||
+        storagePermissionStatus.isDenied ||
+        storagePermissionStatus.isPermanentlyDenied) {
+      // Permissions are denied or permanently denied
+      // Request camera, microphone, location, and storage permissions
+      final cameraPermissionResult = await Permission.camera.request();
+      final microphonePermissionResult = await Permission.microphone.request();
+      final locationPermissionResult = await Permission.location.request();
+      final storagePermissionResult = await Permission.storage.request();
+
+      if ((cameraPermissionResult.isDenied ||
+              cameraPermissionResult.isPermanentlyDenied) ||
+          (microphonePermissionResult.isDenied ||
+              microphonePermissionResult.isPermanentlyDenied) ||
+          (locationPermissionResult.isDenied ||
+              locationPermissionResult.isPermanentlyDenied) ||
+          (storagePermissionResult.isDenied ||
+              storagePermissionResult.isPermanentlyDenied)) {
+        // User denied one or more permissions, handle the situation (e.g., show an error message)
+        // You can navigate back to the previous screen, show a snackbar, etc.
+
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<bool> checkIfLocationServiceIsActive(BuildContext context) {
+    return Geolocator.isLocationServiceEnabled()
+        .then((isLocationServiceEnabled) {
+      if (!isLocationServiceEnabled) {
+        // Show a popup to prompt the user to enable location services
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Location Service Not Enabled"),
+              content: const Text(
+                  "Please enable location services in your device settings to enable location tracking."),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+        return false;
+      }
+      return true;
+    });
+  }
+
   static Future<bool> cameraPermissionGranted() async {
     // Check and request camera and microphone permissions
     final cameraPermissionStatus = await Permission.camera.status;
@@ -13,25 +83,13 @@ class PermissionManager {
         cameraPermissionStatus.isPermanentlyDenied ||
         microphonePermissionStatus.isDenied ||
         microphonePermissionStatus.isPermanentlyDenied) {
-      // Permissions are denied or permanently denied
-      // Request camera and microphone permissions
-      final cameraPermissionResult = await Permission.camera.request();
-      final microphonePermissionResult = await Permission.microphone.request();
-
-      if ((cameraPermissionResult.isDenied ||
-              cameraPermissionResult.isPermanentlyDenied) ||
-          (microphonePermissionResult.isDenied ||
-              microphonePermissionResult.isPermanentlyDenied)) {
-        // User denied camera or microphone permissions, handle the situation (e.g., show an error message)
-        // You can navigate back to the previous screen, show a snackbar, etc.
-
-        return false;
-      }
+      return false;
     }
+
     return true;
   }
 
-  static Future<bool> filePermissionsGranted(BuildContext context) async {
+  Future<bool> filePermissionsGranted(BuildContext context) async {
     // Check if file storage permission is granted
     final filePermissionStatus = await Permission.storage.status;
 

@@ -47,7 +47,12 @@ import 'package:geolocator/geolocator.dart';
 class Address {
   static Future<String> whereIAm() async {
     // Ensure GPS access
-    await Geolocator.requestPermission();
+    LocationPermission locationPermission = await Geolocator.checkPermission();
+
+    if (locationPermission == LocationPermission.denied ||
+        locationPermission == LocationPermission.deniedForever) {
+      return "";
+    }
 
     // Ask GPS to provide its current latitude and longitude coordinates
     Position currentPosition = await Geolocator.getCurrentPosition(
