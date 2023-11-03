@@ -36,12 +36,15 @@ class _ImageSliderScreenState extends State<ImageSliderScreen> {
   int _currentPage = 0;
 
   final List<String> _images = [
-    'assets/images/tour_1.jpg',
-    'assets/images/tour_2.jpg',
-    'assets/images/tour_3.jpg',
-    'assets/images/tour_4.jpg',
-    'assets/images/tour_5.jpg'
-
+    'assets/images/Home1.jpg',
+    'assets/images/HometoVA.jpg',
+    'assets/images/VAExample.jpg',
+    'assets/images/HometoGallery.jpg',
+    'assets/images/GalleryExample.jpg',
+    'assets/images/HometoObjectSearch.jpg',
+    'assets/images/HometoAudio.jpg',
+    'assets/images/AudioExample.jpg',
+    'assets/images/HometoLocation.jpg'
   ];
 
   @override
