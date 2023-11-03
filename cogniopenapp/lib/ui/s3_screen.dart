@@ -120,19 +120,11 @@ class TestScreenState extends State<TestScreen> {
             onTap: () async {
               DetectCustomLabelsResponse? response =
                   await vp.findMatchingModel("green-glasses");
-              //try {
-              //print("started search too soon");
-              //Future<DetectCustomLabelsResponse?> response =
-              //    vp.searchForSignificantObject(vp.currentProjectVersionArn);
-              //response.then((value) {
+
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => CustomResponseScreen(response!)));
-              //});
-              //} catch (e) {
-              //  print(e.toString());
-              //}
             },
             label: 'Detect \'My green glasses\'',
             labelStyle: const TextStyle(

@@ -158,6 +158,5 @@ class _LoginScreenState extends State<LoginScreen> {
     await Address.whereIAm().then((String address) {
       physicalAddress = address;
     });
-    print('The street address is: $physicalAddress');
   }
 }

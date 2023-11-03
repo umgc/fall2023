@@ -44,7 +44,6 @@ class _ResponseScreenState extends State<ResponseScreen>
 
   @override
   Widget build(BuildContext context) {
-    print("BUILDING AGIAN");
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -104,7 +103,7 @@ class _ResponseScreenState extends State<ResponseScreen>
                             );
                           },
                           child: ResponseBox(response,
-                              "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nADDRESS HERE")),
+                              "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nSeen at: ${response.address}")),
                   ],
                 ),
               ),
@@ -180,7 +179,7 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
                     height: 60,
                   ),
                   ResponseBox(videoResponse,
-                      "${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)}) \nADDRESS HERE"),
+                      "${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)}) \nSeen at: ${videoResponse.address}"),
                 ],
               ),
             );
@@ -268,9 +267,7 @@ class ResponseBox extends StatelessWidget {
   Future<void> deletePreviousResponses(String responsesToDelete) async {
     List<VideoResponse> responses =
         ResponseParser.getRequestedResponseList(responsesToDelete);
-    print("RESPONSE LENGTH: ${responses.length}");
     for (VideoResponse response in responses) {
-      print("REMOVED ID: ${response.id!}");
       await DataService.instance.removeVideoResponse(response.id!);
     }
   }

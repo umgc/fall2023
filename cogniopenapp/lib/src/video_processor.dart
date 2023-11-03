@@ -187,13 +187,15 @@ class VideoProcessor {
                 top: inst.boundingBox!.top ?? 0,
                 width: inst.boundingBox!.width ?? 0,
                 height: inst.boundingBox!.height ?? 0),
-            address,
             videoPath,
+            address,
             getParentStringRepresentation(iter.current.label!.parents ?? []));
         responseList.add(newResponse);
       }
     }
+
     FormatUtils.printBigMessage("RESPONSE LIST WAS CREATED");
+    print("PATH WAS: ${videoPath}");
 
     return responseList;
   }

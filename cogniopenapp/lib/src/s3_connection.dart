@@ -68,7 +68,7 @@ class S3Bucket {
   // Adds the file to the S3 bucket
   Future<String> addVideoToS3(String title, String localPath) {
     // TODO Specify folder structure
-    print("ADDINF THIS TO S3 ${title}");
+    print("ADDING THIS TO S3 ${title}");
     Uint8List bytes = File(localPath).readAsBytesSync();
     return _addToS3(title, bytes);
   }

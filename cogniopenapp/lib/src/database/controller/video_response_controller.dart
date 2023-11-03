@@ -2,6 +2,7 @@ import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/address.dart';
 import 'package:path/path.dart' as path;
 
 const String videoResponseType = 'video_response';
@@ -24,6 +25,10 @@ class VideoResponseController {
     try {
       String referenceVideo =
           FileManager.getFileName(path.basename(referenceVideoFilePath));
+      String physicalAddress = '';
+      await Address.whereIAm().then((String address) {
+        physicalAddress = address;
+      });
       VideoResponse newResponse = VideoResponse(
         title: title,
         referenceVideoFilePath: referenceVideo,
@@ -33,7 +38,7 @@ class VideoResponseController {
         top: top,
         width: width,
         height: height,
-        address: address,
+        address: physicalAddress,
         parents: parents,
       );
       VideoResponse createdResponse =
