@@ -240,8 +240,8 @@ class ModelScreenState extends State<ModelScreen> {
         width: response.width,
         height: response.height);
     //TODO:upload new image to S3
-    s3.addImageToS3("$name-$i.jpg", path);
-    s3.addImageToS3("$name-$i-test.jpg", path);
+    s3.addImageToS3("$userDefinedModelName-$i.jpg", path);
+    s3.addImageToS3("$userDefinedModelName-$i-test.jpg", path);
 
     //if user already has a matching significant object, add this to that list.
     //TODO: Get list of significant objects
