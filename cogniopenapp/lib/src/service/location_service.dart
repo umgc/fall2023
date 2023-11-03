@@ -1,9 +1,26 @@
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 class LocationService {
-  Future<LocationDataModel?> getLocation() async {
+  Future<LocationDataModel?> getCurrentLocation() async {
     try {
       final position = await Geolocator.getCurrentPosition();
-      List<String> addressParts = [];
+      return await _locationFromPosition(position);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
 
+  Stream<LocationDataModel?> getLocationUpdates() {
+    return Geolocator.getPositionStream().asyncMap((position) async {
+      return await _locationFromPosition(position);
+    });
+  }
+
+  Future<LocationDataModel?> _locationFromPosition(Position position) async {
+    List<String> addressParts = [];
+    try {
       // Convert the fetched latitude and longitude to an address
       List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
       if (placemarks.isNotEmpty) {

@@ -45,7 +45,6 @@ void initializeData() async {
   if (await Permission.location.request().isGranted) {
     Geolocator.getPositionStream().listen((Position position) {
       print("New position: ${position.latitude}, ${position.longitude}");
-      // You can handle/store this position as per your needs
     });
   }
 
