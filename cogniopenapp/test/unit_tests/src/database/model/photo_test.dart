@@ -21,7 +21,7 @@ Future<void> main() async {
   GeolocatorPlatform.instance = MockGeolocatorPlatform();
   GeocodingPlatform.instance = MockGeocodingPlatform();
   String physicalAddress = '';
-  await Address.whereIAm().then((String address) {
+  await Address.whereIAm(isTesting: true).then((String address) {
     physicalAddress = address;
   });
   const int storageSize = 1000;
@@ -36,7 +36,9 @@ Future<void> main() async {
   group('Photo', () {
     // Photo constructor tests:
 
-    test('U-5-1: Photo constructor (with all parameters provided) should create a Photo object and initialize values correctly', () {
+    test(
+        'U-5-1: Photo constructor (with all parameters provided) should create a Photo object and initialize values correctly',
+        () {
       final Photo photo = Photo(
         id: id,
         title: title,
@@ -62,7 +64,9 @@ Future<void> main() async {
       // TODO: Add check for photo.photo (ensure that the photo is loaded)
     });
 
-    test('U-5-2: Photo constructor (with only required parameters provided) should create a Photo object and initialize values correctly', () {
+    test(
+        'U-5-2: Photo constructor (with only required parameters provided) should create a Photo object and initialize values correctly',
+        () {
       final Photo photo = Photo(
         id: id,
         title: title,
@@ -88,7 +92,9 @@ Future<void> main() async {
 
     // Photo.fromJson() tests:
 
-    test('U-5-3: Photo.fromJson should correctly create a Photo object from JSON (with all field values)', () {
+    test(
+        'U-5-3: Photo.fromJson should correctly create a Photo object from JSON (with all field values)',
+        () {
       final Map<String, Object?> json = {
         MediaFields.id: id,
         MediaFields.title: title,
@@ -108,7 +114,11 @@ Future<void> main() async {
       expect(photo.title, title);
       expect(photo.description, description);
       expect(photo.tags, tags);
-      expect(photo.timestamp, DateTime.fromMillisecondsSinceEpoch(timestamp.toUtc().millisecondsSinceEpoch, isUtc: true));
+      expect(
+          photo.timestamp,
+          DateTime.fromMillisecondsSinceEpoch(
+              timestamp.toUtc().millisecondsSinceEpoch,
+              isUtc: true));
       expect(photo.physicalAddress, physicalAddress);
       expect(photo.storageSize, storageSize);
       expect(photo.isFavorited, isFavorited);
@@ -136,7 +146,11 @@ Future<void> main() async {
         expect(photo.title, title);
         expect(photo.description, isNull);
         expect(photo.tags, isNull);
-        expect(photo.timestamp, DateTime.fromMillisecondsSinceEpoch(timestamp.toUtc().millisecondsSinceEpoch, isUtc: true));
+        expect(
+            photo.timestamp,
+            DateTime.fromMillisecondsSinceEpoch(
+                timestamp.toUtc().millisecondsSinceEpoch,
+                isUtc: true));
         expect(photo.physicalAddress, physicalAddress);
         expect(photo.storageSize, storageSize);
         expect(photo.isFavorited, isFavorited);
