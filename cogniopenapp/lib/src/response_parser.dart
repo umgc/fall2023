@@ -7,6 +7,7 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'dart:core';
+import 'dart:io';
 
 class ResponseParser {
   static VideoResponse? getRequestedResponse(String searchTitle) {
@@ -16,6 +17,31 @@ class ResponseParser {
       }
     }
     return null;
+  }
+
+  static Future<void> convertResponseToLocalSignificantObject(
+      VideoResponse response) async {
+    String sourceFilePath =
+        "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
+    File sourceFile = File(sourceFilePath);
+
+    if (await sourceFile.exists()) {
+      String fileName =
+          FileManager.getThumbnailFileName(sourceFilePath, response.timestamp);
+      String fullPath =
+          "${DirectoryManager.instance.videoStillsDirectory.path}/$fileName";
+      File destinationFile = File(fullPath);
+
+      DataService.instance.addSignificantObject(
+          timestamp: response.timestamp,
+          left: response.left,
+          top: response.top,
+          width: response.width,
+          height: response.height,
+          imageFile: destinationFile);
+    } else {
+      print("Source file does not exist: $sourceFilePath");
+    }
   }
 
   static List<VideoResponse> getRequestedResponseList(String searchTitle,
