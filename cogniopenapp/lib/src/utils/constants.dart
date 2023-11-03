@@ -11,6 +11,7 @@ const String videosDirName = "videos";
 const String videoThumbnailsDirName = "thumbnails";
 const String videoStillsDirName = "stills";
 const String videoResponsesDirName = "responses";
+const String significantObjectsDirName = "significant_objects";
 const String tmpDirName = "tmp";
 
 // Directory Paths (relative to ApplicationDocumentsDirectory):
@@ -22,4 +23,5 @@ const String videosPath = "$filesPath/$videosDirName";
 const String videoThumbnailsPath = "$videosPath/$videoThumbnailsDirName";
 const String videoStillsPath = "$videosPath/$videoStillsDirName";
 const String videoResponsesPath = "$videosPath/$videoResponsesDirName";
+const String significantObjectsPath = "$filesPath/$significantObjectsDirName";
 const String tmpPath = "/$tmpDirName";
