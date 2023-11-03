@@ -244,17 +244,29 @@ class ResponseBox extends StatelessWidget {
                 },
               ),
               getBoundingBox(response),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    showConfirmationDialog(context);
-                  },
-                  child: Text("This is the object I was looking for"),
+              Positioned(
+                bottom: 0, // Position the Row at the top of the Stack
+                left: 0, // You can adjust the left position if needed
+                right: 0, // You can adjust the right position if needed
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          showConfirmationDialog(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color.fromARGB(133, 102, 179, 194),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Adjust the radius as needed
+                          ),
+                        ),
+                        child: Text("This is the object I was looking for"),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -287,8 +299,11 @@ class ResponseBox extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop(); // Pop the third screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ResponseScreen()),
+                    );
                   },
                   child: Text("No, keep them"),
                 ),
@@ -298,8 +313,6 @@ class ResponseBox extends StatelessWidget {
                     Navigator.of(context).pop(); // Close the dialog
 
                     // Navigate back to the ResponseScreen
-                    Navigator.of(context).pop(); // Pop one screen
-                    Navigator.of(context).pop(); // Pop the second screen
                     Navigator.of(context).pop(); // Pop the third screen
                     Navigator.push(
                       context,
