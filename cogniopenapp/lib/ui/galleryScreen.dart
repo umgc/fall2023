@@ -6,6 +6,7 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -64,6 +65,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedSortingCriteria =
+        SortingCriteria.timeStamp; // Selecting the timestamp sorting
+    _isSortAscending = false; // Setting it to descending order
+    _sortMediaItems(); // Sort the media items based on the selected criteria
   }
 
   void _populateMedia() async {
@@ -220,6 +225,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     SortingCriteria.type: 'Sort by Type',
   };
 
+  void takePicture() {
+    CameraManager().capturePhoto(DirectoryManager.instance.photosDirectory);
+  }
+
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| BUILD METHODS |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -274,6 +283,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
               icon: const Icon(Icons.search),
               color: Colors.black54,
               onPressed: _toggleSearchBarVisibility,
+            ),
+            IconButton(
+              key: const Key('cameraIcon'),
+              color: Colors.grey,
+              icon: const Icon(Icons.camera_alt),
+              onPressed: takePicture,
             ),
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
@@ -635,7 +650,7 @@ class _FullObjectViewState extends State<FullObjectView> {
                     ), // Used to provide an invisible barrier for the objects
                     addSpacingSizedBox(),
                     if (widget.activeMedia.title.isNotEmpty)
-                      returnTextBox("Title", '$widget.activeMedia.title'),
+                      returnTextBox("Title", '${widget.activeMedia.title}'),
                     addSpacingSizedBox(),
                     returnTextBox("Timestamp",
                         '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
@@ -681,7 +696,7 @@ class _FullObjectViewState extends State<FullObjectView> {
                       ),
                     if (widget.activeMedia.physicalAddress!.isNotEmpty)
                       returnTextBox(
-                          "Address", '$widget.activeMedia.physicalAddress'),
+                          "Address", '${widget.activeMedia.physicalAddress}'),
                   ],
                 ),
               ),
