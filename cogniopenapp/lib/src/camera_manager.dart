@@ -36,9 +36,7 @@ class CameraManager {
 
   Future<void> initializeCamera() async {
     parseEnviromentSettings();
-    print("GETTING CAMERAS");
     _cameras = await availableCameras();
-    print(_cameras.length);
     // Make sure that there are available cameras if trying to use the front
     // 0 equals rear, 1 = front
     if (_cameras.length == 1) cameraToUse = 0;
@@ -117,8 +115,8 @@ class CameraManager {
 
   void startRecordingInBackground() async {
     if (controller == null || !controller.value.isInitialized) {
-      print('Error: Camera is not initialized.');
-      print('Auto recording has been canceeled.');
+      print(
+          'Error: Camera is not initialized. Auto-recording has been cancelled');
       return;
     }
 
@@ -156,13 +154,6 @@ class CameraManager {
     final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
     final String fileName =
         '$sanitizedTimestamp.$fileExtension'; // Use the determined file extension
-
-    // Obtain the current physical address
-    var physicalAddress = "";
-    await Address.whereIAm().then((String address) {
-      physicalAddress = address;
-    });
-    print('The street address is: $physicalAddress');
 
     // Create a new file by copying the media file to the local directory
     final File localFile =

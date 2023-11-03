@@ -182,7 +182,6 @@ class FileManager {
     List<String> existingFiles = await listFileNamesInDirectory(directory);
 
     if (existingFiles.contains(fileName)) {
-      print("FILE ALREADY EXISTS ${fileName}");
       return Image.file(File(newFile));
     }
     try {

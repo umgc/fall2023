@@ -924,8 +924,6 @@ class _FullObjectViewState extends State<FullObjectView> {
     try {
       File file = File(path);
       String fileContent = await file.readAsString();
-      print("TRANSCRIPT");
-      print(fileContent);
       return fileContent;
     } catch (e) {
       print("Error reading the file: $e");
@@ -944,7 +942,6 @@ class _FullObjectViewState extends State<FullObjectView> {
   VideoDisplay videoDisplay(Video video) {
     String fullFilePath =
         "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
-    print("THE PATH IS: ${fullFilePath}");
     return VideoDisplay(fullFilePath: fullFilePath);
   }
 

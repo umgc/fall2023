@@ -100,10 +100,7 @@ class DataService {
           address: rekResponse.address,
           parents: rekResponse.parents,
         );
-        if (response != null) {
-          //print(
-          //"ADDED RESPONSE: title ${response.title} timestamp ${response.timestamp}");
-        }
+        if (response != null) {}
       }
 
       await refreshResponses();

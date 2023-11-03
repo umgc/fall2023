@@ -135,7 +135,6 @@ class VideoProcessor {
 
   String getParentStringRepresentation(List<Parent> parents) {
     if (parents.isEmpty) {
-      print("No parents to display.");
       return "";
     }
 
@@ -187,12 +186,13 @@ class VideoProcessor {
                 top: inst.boundingBox!.top ?? 0,
                 width: inst.boundingBox!.width ?? 0,
                 height: inst.boundingBox!.height ?? 0),
-            address,
             videoPath,
+            address,
             getParentStringRepresentation(iter.current.label!.parents ?? []));
         responseList.add(newResponse);
       }
     }
+
     FormatUtils.printBigMessage("RESPONSE LIST WAS CREATED");
 
     return responseList;
@@ -264,9 +264,7 @@ class VideoProcessor {
     checkForProject.then((value) {
       Iterator<ProjectDescription> iter = value.projectDescriptions!.iterator;
       while (iter.moveNext()) {
-        //print(iter.current.projectArn);
         if (iter.current.projectArn!.contains(projectName)) {
-          //print("Project found");
           projectDoesNotExists = false;
           projectArn = iter.current.projectArn!;
         }
@@ -277,12 +275,9 @@ class VideoProcessor {
             service!.createProject(projectName: projectName);
         projectResponse.then((value) {
           projectArn = value.projectArn!;
-          //print(projectArn);
         });
       }
     });
-
-    //print(projectArn);
   }
 
   //needs a modelName ("my glasses"), and the title of the input manifest file in S3 bucket
