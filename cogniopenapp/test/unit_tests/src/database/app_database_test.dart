@@ -69,19 +69,19 @@ void main() async {
       await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
       var audioTableQueryResult = await db.query(tableAudios, groupBy: "title", where: "title in ('$unitTestAudioTitle')");
       expect(audioTableQueryResult.length, 0);
-      // await AudioRepository.instance.create(unitTestAudio);
-      // audioTableQueryResult = await db.query(tableAudios, groupBy: "title", where: "title in ('$unitTestAudioTitle')");
-      //  expect(audioTableQueryResult.length, 1);
-      //await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
+      await AudioRepository.instance.create(unitTestAudio);
+      audioTableQueryResult = await db.query(tableAudios, groupBy: "title", where: "title in ('$unitTestAudioTitle')");
+      expect(audioTableQueryResult.length, 1);
+      await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
     });
     test('U-13-2: adding photo to db', () async {
       await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
       var photoTableQueryResult = await db.query(tablePhotos, groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
       expect(photoTableQueryResult.length, 0);
-//      await PhotoRepository.instance.create(unitTestPhoto);
-//      photoTableQueryResult = await db.query(tablePhotos, groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
-      //    expect(photoTableQueryResult.length, 1);
-      //  await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
+      await PhotoRepository.instance.create(unitTestPhoto);
+      photoTableQueryResult = await db.query(tablePhotos, groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
+      expect(photoTableQueryResult.length, 1);
+      await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
     });
 
     test('U-13-3: adding video to db', () async {
