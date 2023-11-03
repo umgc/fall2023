@@ -13,6 +13,8 @@ import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:cogniopenapp/src/video_display.dart';
 
+import 'package:image_picker/image_picker.dart';
+
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
 
@@ -274,6 +276,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
               icon: const Icon(Icons.search),
               color: Colors.black54,
               onPressed: _toggleSearchBarVisibility,
+            ),
+            IconButton(
+              key: const Key('cameraIcon'),
+              color: Colors.grey,
+              icon: const Icon(Icons.camera_alt),
+              onPressed: capturePhoto,
             ),
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
@@ -544,6 +552,36 @@ class _GalleryScreenState extends State<GalleryScreen> {
       );
     }).toList();
   }
+
+  Future<void> capturePhoto() async {
+    final String timestamp = DateTime.now().toString();
+    final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
+    final String fileName =
+        '$sanitizedTimestamp.jpg'; // Use the determined file extension
+
+    final String fullPath =
+        '${DirectoryManager.instance.photosDirectory.path}/$fileName';
+    final ImagePicker picker = ImagePicker();
+    await picker
+        .pickImage(source: ImageSource.camera)
+        .then((XFile? recordedimage) async {
+      if (recordedimage != null) {
+        // Copy the image to the specified location
+        File sourceFile = File(recordedimage.path);
+        File destinationFile = File(fullPath);
+
+        try {
+          await sourceFile.copy(destinationFile.path);
+          // You can now use the 'destinationFile' for further operations if needed.
+          // Print the path of the saved image
+          print('Image saved at: ${destinationFile.path}');
+          await DataService.instance.addPhoto(photoFile: destinationFile);
+        } catch (e) {
+          print('Error while copying the image: $e');
+        }
+      }
+    });
+  }
 }
 
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -635,7 +673,7 @@ class _FullObjectViewState extends State<FullObjectView> {
                     ), // Used to provide an invisible barrier for the objects
                     addSpacingSizedBox(),
                     if (widget.activeMedia.title.isNotEmpty)
-                      returnTextBox("Title", '$widget.activeMedia.title'),
+                      returnTextBox("Title", '${widget.activeMedia.title}'),
                     addSpacingSizedBox(),
                     returnTextBox("Timestamp",
                         '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
@@ -681,7 +719,7 @@ class _FullObjectViewState extends State<FullObjectView> {
                       ),
                     if (widget.activeMedia.physicalAddress!.isNotEmpty)
                       returnTextBox(
-                          "Address", '$widget.activeMedia.physicalAddress'),
+                          "Address", '${widget.activeMedia.physicalAddress}'),
                   ],
                 ),
               ),

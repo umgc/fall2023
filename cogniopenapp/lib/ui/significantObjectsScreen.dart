@@ -32,7 +32,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
         });
       }
     });
-    showSnackBar("Image Uploaded Succesfully", Duration(milliseconds: 700));
+    showSnackBar("Photo captured successfully", Duration(milliseconds: 700));
   }
 
   Future imagePickerMethodfromgallery() async {

@@ -61,6 +61,7 @@ class PhotoController {
   }) async {
     try {
       String photoFileName = FileManager.getFileName(photoFile.path);
+      print("FILE NAME IS");
       int photoFileSize = FileManager.calculateFileSizeInBytes(photoFile);
       DateTime timestamp =
           DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
