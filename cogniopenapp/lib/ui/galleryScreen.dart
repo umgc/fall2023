@@ -6,6 +6,7 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -554,6 +555,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Future<void> capturePhoto() async {
+    CameraManager manager = CameraManager();
+    await manager.manuallyStopRecording();
     final String timestamp = DateTime.now().toString();
     final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
     final String fileName =
@@ -581,6 +584,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
         }
       }
     });
+    manager.initializeCamera();
   }
 }
 

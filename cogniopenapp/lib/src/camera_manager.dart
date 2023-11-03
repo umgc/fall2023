@@ -115,7 +115,7 @@ class CameraManager {
 
   Future<void> manuallyStopRecording() async {
     isAutoRecording = false;
-    stopRecording();
+    await stopRecording();
   }
 
   Future<void> manuallyStartRecording() async {
