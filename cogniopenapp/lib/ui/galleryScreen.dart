@@ -65,6 +65,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedSortingCriteria =
+        SortingCriteria.timeStamp; // Selecting the timestamp sorting
+    _isSortAscending = false; // Setting it to descending order
+    _sortMediaItems(); // Sort the media items based on the selected criteria
   }
 
   void _populateMedia() async {
