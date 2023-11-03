@@ -45,7 +45,7 @@ class PermissionManager {
     return true;
   }
 
-  Future<bool> checkIfLocationServiceIsActive(BuildContext context) {
+  static Future<bool> checkIfLocationServiceIsActive(BuildContext context) {
     return Geolocator.isLocationServiceEnabled()
         .then((isLocationServiceEnabled) {
       if (!isLocationServiceEnabled) {
@@ -89,7 +89,7 @@ class PermissionManager {
     return true;
   }
 
-  Future<bool> filePermissionsGranted(BuildContext context) async {
+  static Future<bool> filePermissionsGranted(BuildContext context) async {
     // Check if file storage permission is granted
     final filePermissionStatus = await Permission.storage.status;
 
