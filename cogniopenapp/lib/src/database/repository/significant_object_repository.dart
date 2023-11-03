@@ -4,11 +4,27 @@ import 'package:cogniopenapp/src/database/model/significant_object.dart';
 const String tableSignificantObjects = 'significant_objects';
 
 class SignificantObjectFields {
-  static final List<String> values = [id, label, imageFileName];
+  static final List<String> values = [
+    id,
+    objectLabel,
+    customLabel,
+    timestamp,
+    imageFileName,
+    left,
+    top,
+    width,
+    height,
+  ];
 
   static const String id = '_id';
-  static const String label = 'label';
+  static const String objectLabel = 'object_label';
+  static const String customLabel = 'custom_label';
+  static const String timestamp = 'timestamp';
   static const String imageFileName = 'image_file_name';
+  static const String left = 'left';
+  static const String top = 'top';
+  static const String width = 'width';
+  static const String height = 'height';
 }
 
 class SignificantObjectRepository {

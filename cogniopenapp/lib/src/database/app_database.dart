@@ -92,8 +92,14 @@ class AppDatabase {
     await db.execute('''
     CREATE TABLE $tableSignificantObjects (
       ${SignificantObjectFields.id} $idType,
-      ${SignificantObjectFields.label} $textType,
-      ${SignificantObjectFields.imageFileName} $textType
+      ${SignificantObjectFields.objectLabel} $textNullableType,
+      ${SignificantObjectFields.customLabel} $textNullableType,
+      ${SignificantObjectFields.timestamp} $integerType,
+      ${SignificantObjectFields.imageFileName} $textType,
+      ${SignificantObjectFields.left} $floatType,
+      ${SignificantObjectFields.top} $floatType,
+      ${SignificantObjectFields.width} $floatType,
+      ${SignificantObjectFields.height} $floatType
     )
   ''');
 
