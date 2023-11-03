@@ -10,7 +10,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
 void main() async {
   await dotenv.load(fileName: ".env");
   await DirectoryManager.instance.initializeDirectories();
@@ -51,5 +50,6 @@ void initializeData() async {
   //initialize backend services
   S3Bucket s3 = S3Bucket();
   CameraManager cm = CameraManager();
+  await await PermissionManager.requestInitialPermissions();
   await cm.initializeCamera();
 }

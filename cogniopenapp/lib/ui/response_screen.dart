@@ -1,20 +1,28 @@
+// ignore_for_file: avoid_print
+
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
+import 'package:cogniopenapp/src/data_service.dart';
 
 import 'package:flutter/material.dart';
 
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| INITIAL SCREEN |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 class ResponseScreen extends StatefulWidget {
-  List<VideoResponse> responses = ResponseParser.getListOfResponses();
-
-  ResponseScreen();
+  const ResponseScreen();
 
   @override
   _ResponseScreenState createState() => _ResponseScreenState();
 }
 
-class _ResponseScreenState extends State<ResponseScreen> {
+class _ResponseScreenState extends State<ResponseScreen>
+    with WidgetsBindingObserver {
   List<VideoResponse> displayedResponses = ResponseParser.getListOfResponses();
   TextEditingController searchController = TextEditingController();
+
+  List<VideoResponse> responses = ResponseParser.getListOfResponses();
 
   @override
   void initState() {
@@ -25,10 +33,15 @@ class _ResponseScreenState extends State<ResponseScreen> {
   void filterResponses() {
     final searchTerm = searchController.text.toLowerCase();
     setState(() {
-      displayedResponses = widget.responses.where((response) {
+      displayedResponses = responses.where((response) {
         return response.title.toLowerCase().contains(searchTerm);
       }).toList();
     });
+  }
+
+  void refreshScreen() {
+    // You can do any necessary refresh logic here
+    setState(() {});
   }
 
   @override
@@ -45,14 +58,14 @@ class _ResponseScreenState extends State<ResponseScreen> {
         leading: const BackButton(color: Colors.black54),
         title: TextField(
           controller: searchController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Search by Title',
           ),
         ),
       ),
       body: Container(
         height: screenHeight,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/background.jpg"),
             fit: BoxFit.cover,
@@ -64,7 +77,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
               padding:
                   const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage("assets/images/background.jpg"),
                     fit: BoxFit.cover,
@@ -74,24 +87,25 @@ class _ResponseScreenState extends State<ResponseScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 80,
                     ),
                     for (var response in displayedResponses)
                       GestureDetector(
-                        onTap: () {
-                          // Navigate to the VideoResponseGridScreen when a returnTextBox is tapped.
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => VideoResponseGridScreen(
-                                  ResponseParser.getRequestedResponseList(
-                                      response.title)),
-                            ),
-                          );
-                        },
-                        child: returnResponseBox(response),
-                      ),
+                          onTap: () {
+                            // Navigate to the VideoResponseGridScreen when a returnTextBox is tapped.
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ImageNavigatorScreen(
+                                    ResponseParser.getRequestedResponseList(
+                                        response.title,
+                                        filterInterval: 3000)),
+                              ),
+                            );
+                          },
+                          child: ResponseBox(response,
+                              "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)}) \nSeen at: ${response.address}")),
                   ],
                 ),
               ),
@@ -102,7 +116,95 @@ class _ResponseScreenState extends State<ResponseScreen> {
     );
   }
 
-  Container returnResponseBox(VideoResponse response) {
+  SizedBox addSpacingSizedBox() {
+    return const SizedBox(
+      height: 8,
+    );
+  }
+}
+
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ENHANCED SEARCH |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+class ImageNavigatorScreen extends StatefulWidget {
+  final List<VideoResponse> videoResponses;
+
+  ImageNavigatorScreen(this.videoResponses);
+
+  @override
+  _ImageNavigatorScreenState createState() => _ImageNavigatorScreenState();
+}
+
+class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
+    with WidgetsBindingObserver {
+  int currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: const Color(0x440000), // Set appbar background color
+        centerTitle: true,
+        title: Text('${widget.videoResponses[0].title}',
+            style: const TextStyle(color: Colors.black54)),
+        elevation: 0,
+        leading: const BackButton(color: Colors.black54),
+      ),
+      body: Container(
+        height: screenHeight,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: PageView.builder(
+          itemCount: widget.videoResponses.length,
+          controller: PageController(initialPage: currentIndex),
+          onPageChanged: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            final videoResponse = widget.videoResponses[index];
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const SizedBox(
+                    height: 60,
+                  ),
+                  ResponseBox(videoResponse,
+                      "${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)}) \nSeen at: ${videoResponse.address}"),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| RESPONSE WIDGET |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+class ResponseBox extends StatelessWidget {
+  final VideoResponse response;
+  final String title;
+
+  ResponseBox(this.response, this.title);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10.0),
       width: double.infinity,
@@ -116,42 +218,167 @@ class _ResponseScreenState extends State<ResponseScreen> {
       child: Column(
         children: [
           Text(
-            "${response.title}: ${ResponseParser.getTimeStampFromResponse(response)} (${ResponseParser.getHoursFromResponse(response)})",
-            style: TextStyle(
+            title,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
-          getFutureThumbnail(response),
-          //getBoundingBox(response),
+          Stack(
+            children: [
+              FutureBuilder<Image>(
+                future: ResponseParser.getThumbnail(response),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Image? image = snapshot.data;
+                    return Container(
+                      child: image,
+                    );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+              getBoundingBox(response),
+              myObjectButton(context),
+              deleteObjectButton(context),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  SizedBox addSpacingSizedBox() {
-    return SizedBox(
-      height: 8,
+  Positioned myObjectButton(BuildContext context) {
+    return Positioned(
+      bottom: 40, // Position the Row at the top of the Stack
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {
+                ResponseParser.convertResponseToLocalSignificantObject(
+                    response);
+                showConfirmationDialog(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(133, 102, 179, 194),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      10.0), // Adjust the radius as needed
+                ),
+              ),
+              child: const Text("This is the object I was looking for"),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Positioned getBoundingBox(
-    VideoResponse response,
-    /* Image stillImage*/
-  ) {
-    double imageWidth = 412;
-    double imageHeight = 892;
+  Positioned deleteObjectButton(BuildContext context) {
+    return Positioned(
+      bottom: 0, // Position the Row at the top of the Stack
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () async {
+                await deletePreviousResponses(response.title);
+                Navigator.of(context).pop(); // Close the dialog
 
-    /*
-    if (stillImage.width != null && stillImage.height != null) {
-      print("Not null");
-      imageWidth = stillImage.width!;
-      imageHeight = stillImage.height!;
+                // Navigate back to the ResponseScreen
+                Navigator.of(context).pop(); // Pop the third screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ResponseScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromARGB(133, 194, 102, 102),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      10.0), // Adjust the radius as needed
+                ),
+              ),
+              child: const Text("Delete this object from my history"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> deletePreviousResponses(String responsesToDelete) async {
+    List<VideoResponse> responses =
+        ResponseParser.getRequestedResponseList(responsesToDelete);
+    for (VideoResponse response in responses) {
+      await DataService.instance.removeVideoResponse(response.id!);
     }
-    */
+  }
+
+  void showConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+              "Saved as a significant object (NOT REALLY YET THOUGH)"),
+          content: const Text(
+            "Would you like to delete all previous spottings of this item to save space?",
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Pop the third screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ResponseScreen()),
+                    );
+                  },
+                  child: const Text("No, keep them"),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    await deletePreviousResponses(response.title);
+                    Navigator.of(context).pop(); // Close the dialog
+
+                    // Navigate back to the ResponseScreen
+                    Navigator.of(context).pop(); // Pop the third screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ResponseScreen()),
+                    );
+                  },
+                  child: Text("Yes, please delete them"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Positioned getBoundingBox(VideoResponse response) {
+    double imageWidth = 375;
+    double imageHeight = 675;
+
     return Positioned(
       left: imageWidth * response.left,
       top: imageHeight * response.top,
@@ -184,67 +411,4 @@ class _ResponseScreenState extends State<ResponseScreen> {
       ),
     );
   }
-}
-
-class VideoResponseGridScreen extends StatelessWidget {
-  final List<VideoResponse> videoResponses;
-
-  VideoResponseGridScreen(this.videoResponses);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Video Responses Grid Screen'),
-      ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Display two columns per row.
-        ),
-        itemBuilder: (context, index) {
-          final videoResponse = videoResponses[index];
-          return GridTile(
-            child: Stack(
-              children: [
-                getFutureThumbnail(videoResponse),
-                Positioned(
-                  bottom: 8,
-                  left: 8,
-                  child: Container(
-                    color: Colors.black.withOpacity(0.7),
-                    padding: const EdgeInsets.all(4),
-                    child: Text(
-                      "Timestamp: ${ResponseParser.getTimeStampFromResponse(videoResponse)} (${ResponseParser.getHoursFromResponse(videoResponse)})",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-        itemCount: videoResponses.length,
-      ),
-    );
-  }
-}
-
-FutureBuilder<Image> getFutureThumbnail(VideoResponse videoResponse) {
-  return FutureBuilder<Image>(
-    future: ResponseParser.getThumbnail(videoResponse),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.done) {
-        return Column(
-          children: [
-            Container(
-              child: snapshot.data, // Wrap Image in a Container
-            ),
-          ],
-        );
-      } else {
-        // While loading the image, you can display a loading indicator or placeholder.
-        return CircularProgressIndicator();
-      }
-    },
-  );
 }

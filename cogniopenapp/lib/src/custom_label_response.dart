@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class CustomLabelResponse {
   String name;

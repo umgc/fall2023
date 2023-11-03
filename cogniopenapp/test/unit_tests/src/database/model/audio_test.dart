@@ -17,7 +17,7 @@ void main() async {
   GeolocatorPlatform.instance = MockGeolocatorPlatform();
   GeocodingPlatform.instance = MockGeocodingPlatform();
   String physicalAddress = '';
-  await Address.whereIAm().then((String address) {
+  await Address.whereIAm(isTesting: true).then((String address) {
     physicalAddress = address;
   });
 
@@ -30,7 +30,9 @@ void main() async {
   group('Audio', () {
     // Audio constructor tests:
 
-    test('U-2-1: Audio constructor (with all parameters provided) should create an Audio object and initialize values correctly', () {
+    test(
+        'U-2-1: Audio constructor (with all parameters provided) should create an Audio object and initialize values correctly',
+        () {
       final Audio audio = Audio(
         id: id,
         title: title,
@@ -59,7 +61,9 @@ void main() async {
       expect(audio.summary, summary);
     });
 
-    test('U-2-2: Audio constructor (with only required parameters provided) should create an Audio object and initialize values correctly', () {
+    test(
+        'U-2-2: Audio constructor (with only required parameters provided) should create an Audio object and initialize values correctly',
+        () {
       final Audio audio = Audio(
         id: id,
         title: title,
@@ -86,7 +90,9 @@ void main() async {
 
     // Audio.fromJson() tests:
 
-    test('U-2-3: Audio.fromJson should correctly create an Audio object from JSON (with all field values)', () {
+    test(
+        'U-2-3: Audio.fromJson should correctly create an Audio object from JSON (with all field values)',
+        () {
       final Map<String, Object?> json = {
         MediaFields.id: id,
         MediaFields.title: title,
@@ -108,7 +114,11 @@ void main() async {
       expect(audio.title, title);
       expect(audio.description, description);
       expect(audio.tags, tags);
-      expect(audio.timestamp, DateTime.fromMillisecondsSinceEpoch(timestamp.toUtc().millisecondsSinceEpoch, isUtc: true));
+      expect(
+          audio.timestamp,
+          DateTime.fromMillisecondsSinceEpoch(
+              timestamp.toUtc().millisecondsSinceEpoch,
+              isUtc: true));
       expect(audio.physicalAddress, physicalAddress);
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
@@ -137,7 +147,11 @@ void main() async {
         expect(audio.title, title);
         expect(audio.description, isNull);
         expect(audio.tags, isNull);
-        expect(audio.timestamp, DateTime.fromMillisecondsSinceEpoch(timestamp.toUtc().millisecondsSinceEpoch, isUtc: true));
+        expect(
+            audio.timestamp,
+            DateTime.fromMillisecondsSinceEpoch(
+                timestamp.toUtc().millisecondsSinceEpoch,
+                isUtc: true));
         expect(audio.physicalAddress, physicalAddress);
         expect(audio.storageSize, storageSize);
         expect(audio.isFavorited, isFavorited);

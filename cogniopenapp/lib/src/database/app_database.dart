@@ -94,15 +94,23 @@ class AppDatabase {
       ${VideoResponseFields.left} $floatType,
       ${VideoResponseFields.top} $floatType,
       ${VideoResponseFields.width} $floatType,
-      ${VideoResponseFields.height} $floatType
+      ${VideoResponseFields.height} $floatType,
+      ${VideoResponseFields.address} $textNullableType,
+      ${VideoResponseFields.parents} $textNullableType
     )
   ''');
 
     await db.execute('''
     CREATE TABLE $tableSignificantObjects (
       ${SignificantObjectFields.id} $idType,
-      ${SignificantObjectFields.label} $textType,
-      ${SignificantObjectFields.imageFileName} $textType
+      ${SignificantObjectFields.objectLabel} $textNullableType,
+      ${SignificantObjectFields.customLabel} $textNullableType,
+      ${SignificantObjectFields.timestamp} $integerType,
+      ${SignificantObjectFields.imageFileName} $textType,
+      ${SignificantObjectFields.left} $floatType,
+      ${SignificantObjectFields.top} $floatType,
+      ${SignificantObjectFields.width} $floatType,
+      ${SignificantObjectFields.height} $floatType
     )
   ''');
 

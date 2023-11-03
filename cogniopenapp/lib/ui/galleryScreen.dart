@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:aws_client/lex_models_v2_2020_08_07.dart';
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
@@ -27,7 +25,6 @@ final double _defaultFontSize = 20.0;
 
 // Define a StatefulWidget for the GalleryScreen
 class GalleryScreen extends StatefulWidget {
-  @override
   Widget build(BuildContext context) {
     // Scaffold widget for the Gallery screen
     return Scaffold(
@@ -259,10 +256,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return AppBar(
       backgroundColor: const Color(0x440000),
       elevation: 0.0,
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: Colors.black54, //change your color here
       ),
-      title: Column(
+      title: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 4),
@@ -274,7 +271,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
               key: const Key('searchIcon'),
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               color: Colors.black54,
               onPressed: _toggleSearchBarVisibility,
             ),
@@ -283,8 +280,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
               key: const Key('favoriteIcon'),
               color: _showFavoritedOnly ? Colors.yellow : Colors.grey,
               icon: _showFavoritedOnly
-                  ? Icon(Icons.star)
-                  : Icon(Icons.star_border),
+                  ? const Icon(Icons.star)
+                  : const Icon(Icons.star_border),
               onPressed: _toggleShowFavorited,
             ),
             IconButton(
@@ -327,7 +324,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   Widget _buildSearchBar() {
     return TextField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: 'Search by Title',
         prefixIcon: Icon(Icons.search),
       ),
@@ -351,7 +348,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     List<Media> displayedMedia = _filterDisplayedMedia();
 
     if (index >= displayedMedia.length) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     Media media = displayedMedia[index];
@@ -437,7 +434,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
       child: Center(
         child: Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white, // Text color
             fontSize: 18, // Text size
           ),
@@ -447,12 +444,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   Widget _buildConversationIcon(Media media) {
-    return Expanded(
+    return const Expanded(
       child: Center(
         child: Stack(
           children: [
             // Image widget
-            const Icon(
+            Icon(
               key: Key('conversationItem'),
               Icons.chat,
               size: 75,
@@ -594,7 +591,7 @@ class _FullObjectViewState extends State<FullObjectView> {
             style: TextStyle(color: Colors.black54)),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             onPressed: () async {
               final updatedMedia =
                   await displayEditPopup(context, widget.activeMedia);
@@ -611,7 +608,7 @@ class _FullObjectViewState extends State<FullObjectView> {
       body: Container(
         height:
             screenHeight, // Set the height of the Container to the screen height
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/background.jpg"),
             fit: BoxFit.cover,
@@ -623,7 +620,7 @@ class _FullObjectViewState extends State<FullObjectView> {
               padding:
                   const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage("assets/images/background.jpg"),
                     fit: BoxFit.cover,
@@ -633,21 +630,13 @@ class _FullObjectViewState extends State<FullObjectView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 80,
                     ), // Used to provide an invisible barrier for the objects
-
-                    SizedBox(
-                      height: 8,
-                    ),
-                    if (!widget.activeMedia.title.isEmpty)
-                      returnTextBox("Title", '${widget.activeMedia.title}'),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia.title.isNotEmpty)
+                      returnTextBox("Title", '$widget.activeMedia.title'),
+                    addSpacingSizedBox(),
                     returnTextBox("Timestamp",
                         '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
                     addSpacingSizedBox(),
@@ -681,7 +670,7 @@ class _FullObjectViewState extends State<FullObjectView> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -690,8 +679,9 @@ class _FullObjectViewState extends State<FullObjectView> {
                           }
                         },
                       ),
-                    returnTextBox(
-                        "Address", '${widget.activeMedia.physicalAddress}'),
+                    if (widget.activeMedia.physicalAddress!.isNotEmpty)
+                      returnTextBox(
+                          "Address", '$widget.activeMedia.physicalAddress'),
                   ],
                 ),
               ),
@@ -716,7 +706,7 @@ class _FullObjectViewState extends State<FullObjectView> {
                 color: Colors.grey.withOpacity(0.5),
                 spreadRadius: 5,
                 blurRadius: 7,
-                offset: Offset(0, 3),
+                offset: const Offset(0, 3),
               )
             ],
           ),
@@ -727,7 +717,7 @@ class _FullObjectViewState extends State<FullObjectView> {
   }
 
   SizedBox addSpacingSizedBox() {
-    return SizedBox(
+    return const SizedBox(
       height: 8,
     );
   }
@@ -773,7 +763,7 @@ class _FullObjectViewState extends State<FullObjectView> {
               child: coraButton(),
             ),
           ),
-          SizedBox(width: 16), // Add space between the children
+          const SizedBox(width: 16), // Add space between the children
           Expanded(
             child: Container(
               decoration: createBoxDecoration(),
@@ -810,7 +800,7 @@ class _FullObjectViewState extends State<FullObjectView> {
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -854,7 +844,7 @@ class _FullObjectViewState extends State<FullObjectView> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -924,8 +914,6 @@ class _FullObjectViewState extends State<FullObjectView> {
     try {
       File file = File(path);
       String fileContent = await file.readAsString();
-      print("TRANSCRIPT");
-      print(fileContent);
       return fileContent;
     } catch (e) {
       print("Error reading the file: $e");
@@ -944,7 +932,6 @@ class _FullObjectViewState extends State<FullObjectView> {
   VideoDisplay videoDisplay(Video video) {
     String fullFilePath =
         "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
-    print("THE PATH IS: ${fullFilePath}");
     return VideoDisplay(fullFilePath: fullFilePath);
   }
 

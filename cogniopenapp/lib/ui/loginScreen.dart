@@ -1,6 +1,7 @@
 /*
 Author: Eyerusalme (Jerry)
 */
+import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'registrationScreen.dart';
@@ -41,8 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    getInitialAddres();
-
+    PermissionManager.checkIfLocationServiceIsActive(
+        context); // Check to ensure location is enabled for tracking and media enhancement
     return Scaffold(
         body: Container(
       decoration: const BoxDecoration(
@@ -78,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Image.asset('assets/icons/app_icon.png',
                           height: 80, width: 80),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Text(
                         "CogniOpen",
                         style: TextStyle(
@@ -150,14 +151,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     ));
-  }
-
-  getInitialAddres() async {
-    // Obtain the current physical address
-    var physicalAddress = "";
-    await Address.whereIAm().then((String address) {
-      physicalAddress = address;
-    });
-    print('The street address is: $physicalAddress');
   }
 }

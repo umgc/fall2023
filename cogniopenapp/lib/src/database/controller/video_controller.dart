@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:cogniopenapp/src/database/model/media_type.dart';
@@ -6,7 +8,6 @@ import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/address.dart';
-import 'package:flutter/material.dart';
 
 class VideoController {
   VideoController._();
@@ -21,8 +22,10 @@ class VideoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String physicalAddress = "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
-      String videoFileExtension = FileManager().getFileExtensionFromFile(videoFile);
+      String physicalAddress =
+          "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
+      String videoFileExtension =
+          FileManager().getFileExtensionFromFile(videoFile);
       String videoFileName = FileManager().generateFileName(
         MediaType.video.name,
         timestamp,
@@ -31,8 +34,10 @@ class VideoController {
       String? thumbnailFileExtension;
       String? thumbnailFileName;
       if (thumbnailFile != null) {
-        thumbnailFileExtension = FileManager().getFileExtensionFromFile(thumbnailFile);
-        thumbnailFileName = '${FileManager().getFileNameWithoutExtension(videoFileName)}.$thumbnailFileExtension';
+        thumbnailFileExtension =
+            FileManager().getFileExtensionFromFile(thumbnailFile);
+        thumbnailFileName =
+            '${FileManager().getFileNameWithoutExtension(videoFileName)}.$thumbnailFileExtension';
       }
       int videoFileSize = FileManager.calculateFileSizeInBytes(videoFile);
       Video newVideo = Video(
@@ -53,13 +58,13 @@ class VideoController {
         DirectoryManager.instance.videosDirectory.path,
         videoFileName,
       );
-      if (videoFile != null) {
-        await FileManager.addFileToFilesystem(
-          thumbnailFile!,
-          DirectoryManager.instance.videoThumbnailsDirectory.path,
-          thumbnailFileName!,
-        );
-      }
+
+      await FileManager.addFileToFilesystem(
+        thumbnailFile!,
+        DirectoryManager.instance.videoThumbnailsDirectory.path,
+        thumbnailFileName!,
+      );
+
       return createdVideo;
     } catch (e) {
       print('Video Controller -- Error adding video: $e');
@@ -78,14 +83,17 @@ class VideoController {
     try {
       String videoFileName = FileManager.getFileName(videoFile.path);
       int videoFileSize = FileManager.calculateFileSizeInBytes(videoFile);
-      DateTime timestamp = DateTime.parse(FileManager.getFileTimestamp(videoFile.path));
+      DateTime timestamp =
+          DateTime.parse(FileManager.getFileTimestamp(videoFile.path));
       String physicalAddress = "";
       await Address.whereIAm().then((String address) {
         physicalAddress = address;
       });
-      String updatedPath = videoFile.path; // The method will update with the path (hopefully), when a video is added
-      Image thumbnail = await FileManager.getThumbnail(updatedPath, 0, isThumbnail: true);
-      String thumbnailFileName = FileManager.getThumbnailFileName(updatedPath, 0, isThumbnail: true);
+      String updatedPath = videoFile
+          .path; // The method will update with the path (hopefully), when a video is added
+      await FileManager.getThumbnail(updatedPath, 0, isThumbnail: true);
+      String thumbnailFileName =
+          FileManager.getThumbnailFileName(updatedPath, 0, isThumbnail: true);
       Video newVideo = Video(
         title: title ?? "",
         description: description ?? "",
@@ -134,11 +142,13 @@ class VideoController {
     try {
       final existingVideo = await VideoRepository.instance.read(id);
       await VideoRepository.instance.delete(id);
-      final videoFilePath = '${DirectoryManager.instance.videosDirectory.path}/${existingVideo.videoFileName}';
+      final videoFilePath =
+          '${DirectoryManager.instance.videosDirectory.path}/${existingVideo.videoFileName}';
       await FileManager.removeFileFromFilesystem(videoFilePath);
       String? thumbnailFileName = existingVideo.thumbnailFileName;
       if (thumbnailFileName != null && thumbnailFileName.isNotEmpty) {
-        final thumbnailFilePath = '${DirectoryManager.instance.videoThumbnailsDirectory.path}/${existingVideo.thumbnailFileName}';
+        final thumbnailFilePath =
+            '${DirectoryManager.instance.videoThumbnailsDirectory.path}/${existingVideo.thumbnailFileName}';
         await FileManager.removeFileFromFilesystem(thumbnailFilePath);
       }
       return existingVideo;

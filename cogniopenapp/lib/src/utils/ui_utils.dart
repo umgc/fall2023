@@ -2,6 +2,7 @@ import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:cogniopenapp/ui/videoScreen.dart';
 import 'package:cogniopenapp/ui/settingsScreen.dart';
+import 'package:cogniopenapp/src/utils/permission_manager.dart';
 
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:flutter/material.dart';
@@ -50,12 +51,17 @@ class UiUtils {
                 context, MaterialPageRoute(builder: (context) => HomeScreen()));
           } else if (index == 1) {
             // Navigate to Search screen
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AssistantScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AssistantScreen()));
           } else if (index == 2) {
-            // Navigate to Search screen
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => VideoScreen()));
+            if (PermissionManager.attemptToShowVideoScreen(context)) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const VideoScreen()),
+              );
+            }
           } else if (index == 3) {
             // Navigate to Gallery screen
             Navigator.push(context,

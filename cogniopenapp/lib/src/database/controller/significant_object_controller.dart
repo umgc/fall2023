@@ -11,7 +11,13 @@ class SignificantObjectController {
   SignificantObjectController._();
 
   static Future<SignificantObject?> addSignificantObject({
-    required String label,
+    String? objectLabel,
+    String? customLabel,
+    required int timestamp,
+    required double left,
+    required double top,
+    required double width,
+    required double height,
     required File imageFile,
   }) async {
     try {
@@ -23,14 +29,20 @@ class SignificantObjectController {
         imageFileExtension,
       );
       SignificantObject newObject = SignificantObject(
-        label: label,
+        objectLabel: objectLabel,
+        customLabel: customLabel,
+        timestamp: timestamp,
         imageFileName: imageFileName,
+        left: left,
+        top: top,
+        width: width,
+        height: height,
       );
       SignificantObject createdObject =
           await SignificantObjectRepository.instance.create(newObject);
       await FileManager.addFileToFilesystem(
         imageFile,
-        DirectoryManager.instance.videoStillsDirectory.path,
+        DirectoryManager.instance.significantObjectsDirectory.path,
         imageFileName,
       );
       return createdObject;
@@ -40,22 +52,22 @@ class SignificantObjectController {
     }
   }
 
-  static Future<SignificantObject?> updateSignificantObject({
+  static Future<SignificantObject?> updateSignificantObjectLabels({
     required int id,
-    String? label,
-    String? imageFileName,
+    String? objectLabel,
+    String? customLabel,
   }) async {
     try {
       final existingObject =
           await SignificantObjectRepository.instance.read(id);
       final updatedObject = existingObject.copy(
-        label: label ?? existingObject.label,
-        imageFileName: imageFileName ?? existingObject.imageFileName,
+        objectLabel: objectLabel ?? existingObject.objectLabel,
+        customLabel: customLabel ?? existingObject.customLabel,
       );
       await SignificantObjectRepository.instance.update(updatedObject);
       return updatedObject;
     } catch (e) {
-      print('SignificantObject Controller -- Error updating object: $e');
+      print('SignificantObject Controller -- Error updating object labels: $e');
       return null;
     }
   }
@@ -66,7 +78,7 @@ class SignificantObjectController {
           await SignificantObjectRepository.instance.read(id);
       await SignificantObjectRepository.instance.delete(id);
       final imageFilePath =
-          '${DirectoryManager.instance.videoStillsDirectory.path}/${existingObject.imageFileName}';
+          '${DirectoryManager.instance.significantObjectsDirectory.path}/${existingObject.imageFileName}';
       await FileManager.removeFileFromFilesystem(imageFilePath);
       return existingObject;
     } catch (e) {

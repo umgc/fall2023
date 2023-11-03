@@ -105,14 +105,14 @@ class _CameraHomeState extends State<VideoScreen>
 
   /// Display the preview from the camera (or a message if the preview is not available).
   Widget _cameraPreviewWidget() {
-    if (cameraController == null || !cameraController.value.isInitialized) {
+    if (!cameraController.value.isInitialized) {
       return Container();
     } else {
       return Listener(
         onPointerDown: (_) => _pointers++,
         onPointerUp: (_) => _pointers--,
         child: CameraPreview(
-          cameraController!,
+          cameraController,
           child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             return GestureDetector(
@@ -132,14 +132,14 @@ class _CameraHomeState extends State<VideoScreen>
 
   Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
     // When there are not exactly two fingers on screen don't scale
-    if (cameraController == null || _pointers != 2) {
+    if (_pointers != 2) {
       return;
     }
 
     _currentScale = (_baseScale * details.scale)
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
-    await cameraController!.setZoomLevel(_currentScale);
+    await cameraController.setZoomLevel(_currentScale);
   }
 
   /// Display the control bar with buttons to take pictures and record videos.
@@ -149,7 +149,7 @@ class _CameraHomeState extends State<VideoScreen>
       children: <Widget>[
         Expanded(
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/images/background.jpg"),
                 fit: BoxFit.cover,
@@ -161,23 +161,21 @@ class _CameraHomeState extends State<VideoScreen>
                   ? const Icon(Icons.pause)
                   : const Icon(Icons.circle),
               color: Colors.redAccent,
-              onPressed: cameraController != null
-                  ? () {
-                      if (!cameraController.value.isRecordingVideo) {
-                        onResumeButtonPressed();
-                        setState(() {
-                          isRecording = true;
-                          const Icon(Icons.pause);
-                        });
-                      } else {
-                        onPauseButtonPressed();
-                        setState(() {
-                          isRecording = false;
-                          const Icon(Icons.circle);
-                        });
-                      }
-                    }
-                  : null,
+              onPressed: () {
+                if (!cameraController.value.isRecordingVideo) {
+                  onResumeButtonPressed();
+                  setState(() {
+                    isRecording = true;
+                    const Icon(Icons.pause);
+                  });
+                } else {
+                  onPauseButtonPressed();
+                  setState(() {
+                    isRecording = false;
+                    const Icon(Icons.circle);
+                  });
+                }
+              },
             ),
           ),
         )

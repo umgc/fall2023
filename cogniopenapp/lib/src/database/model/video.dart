@@ -3,7 +3,6 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:cogniopenapp/src/address.dart';
 import 'package:flutter/widgets.dart';
 
 class Video extends Media {
@@ -28,7 +27,8 @@ class Video extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.video,
-          title: title ?? videoFileName, // TODO: Decide on default video file name
+          title:
+              title ?? videoFileName, // TODO: Decide on default video file name
           description: description,
           tags: tags,
           timestamp: timestamp,
@@ -77,7 +77,6 @@ class Video extends Media {
     };
   }
 
-  @override
   static Video fromJson(Map<String, Object?> json) {
     try {
       return Video(
