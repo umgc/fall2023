@@ -1,7 +1,6 @@
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/ui/loginScreen.dart';
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
 // These are all singleton objects and should be initialized at the beginning
 void initializeData() async {
   //initialize backend services
-  S3Bucket s3 = S3Bucket();
+  S3Bucket();
   CameraManager cm = CameraManager();
   await cm.initializeCamera();
 }

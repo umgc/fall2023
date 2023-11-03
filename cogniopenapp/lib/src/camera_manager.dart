@@ -1,9 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:cogniopenapp/src/address.dart';
+import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import '../src/data_service.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
@@ -28,7 +30,7 @@ class CameraManager {
   int cameraToUse = 1;
 
   late Image recentThumbnail;
-  CameraManager._internal() {}
+  CameraManager._internal();
 
   factory CameraManager() {
     return _instance;
@@ -36,12 +38,23 @@ class CameraManager {
 
   Future<void> initializeCamera() async {
     parseEnviromentSettings();
+
+    // If permission is not granted then don't initialize
+    if (!await PermissionManager.cameraPermissionGranted()) {
+      isAutoRecording = false;
+      return;
+    }
+
+    // Now, proceed with camera initialization
     _cameras = await availableCameras();
+
     // Make sure that there are available cameras if trying to use the front
     // 0 equals rear, 1 = front
     if (_cameras.length == 1) cameraToUse = 0;
     controller = CameraController(_cameras[cameraToUse], ResolutionPreset.high);
+
     await controller.initialize();
+
     if (controller.value.isInitialized) {
       isInitialized = true;
       FormatUtils.printBigMessage("CAMERA HAS BEEN INITIALIZED");
@@ -79,27 +92,24 @@ class CameraManager {
     if (isAutoRecording) {
       // Delay for camera initialization
       Future.delayed(Duration(milliseconds: 1500), () {
-        if (controller != null) {
-          FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
+        FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
 
-          startRecordingInBackground();
-        }
+        startRecordingInBackground();
       });
     }
   }
 
   Future<void> stopRecording() async {
     try {
-      XFile? file = await controller?.stopVideoRecording();
-      if (file != null) {
-        await saveMediaLocally(file);
-        if (uploadToRekognition) {
-          VideoProcessor vp = VideoProcessor();
-          vp.automaticallySendToRekognition();
-        }
+      XFile? file = await controller.stopVideoRecording();
+
+      await saveMediaLocally(file);
+      if (uploadToRekognition) {
+        VideoProcessor vp = VideoProcessor();
+        vp.automaticallySendToRekognition();
       }
-    } catch (Exc) {
-      print(Exc);
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -114,9 +124,9 @@ class CameraManager {
   }
 
   void startRecordingInBackground() async {
-    if (controller == null || !controller.value.isInitialized) {
-      print(
-          'Error: Camera is not initialized. Auto-recording has been cancelled');
+    if (!controller.value.isInitialized) {
+      print('Error: Camera is not initialized.');
+      print('Auto recording has been canceeled.');
       return;
     }
 
@@ -131,15 +141,13 @@ class CameraManager {
     // Record for 5 minutes (300 seconds)
     await Future.delayed(Duration(seconds: autoRecordingInterval));
 
-    //TODO add ability to STOP the video early (manually)
-
     if (!isAutoRecording) {
       return;
     }
 
     await stopRecording();
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     // Start the next loop of the recording
     startRecordingInBackground();
   }
@@ -148,7 +156,7 @@ class CameraManager {
     // Get the local directory
 
     // Define a file name for the saved media, you can use a timestamp or any unique name
-    final String fileExtension = 'mp4';
+    const String fileExtension = 'mp4';
 
     final String timestamp = DateTime.now().toString();
     final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
 import 'package:cogniopenapp/src/data_service.dart';
@@ -9,7 +11,7 @@ import 'package:flutter/material.dart';
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 class ResponseScreen extends StatefulWidget {
-  ResponseScreen();
+  const ResponseScreen();
 
   @override
   _ResponseScreenState createState() => _ResponseScreenState();
@@ -56,14 +58,14 @@ class _ResponseScreenState extends State<ResponseScreen>
         leading: const BackButton(color: Colors.black54),
         title: TextField(
           controller: searchController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: 'Search by Title',
           ),
         ),
       ),
       body: Container(
         height: screenHeight,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/background.jpg"),
             fit: BoxFit.cover,
@@ -75,7 +77,7 @@ class _ResponseScreenState extends State<ResponseScreen>
               padding:
                   const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage("assets/images/background.jpg"),
                     fit: BoxFit.cover,
@@ -85,7 +87,7 @@ class _ResponseScreenState extends State<ResponseScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 80,
                     ),
                     for (var response in displayedResponses)
@@ -115,7 +117,7 @@ class _ResponseScreenState extends State<ResponseScreen>
   }
 
   SizedBox addSpacingSizedBox() {
-    return SizedBox(
+    return const SizedBox(
       height: 8,
     );
   }
@@ -149,13 +151,13 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
         backgroundColor: const Color(0x440000), // Set appbar background color
         centerTitle: true,
         title: Text('${widget.videoResponses[0].title}',
-            style: TextStyle(color: Colors.black54)),
+            style: const TextStyle(color: Colors.black54)),
         elevation: 0,
         leading: const BackButton(color: Colors.black54),
       ),
       body: Container(
         height: screenHeight,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/background.jpg"),
             fit: BoxFit.cover,
@@ -175,7 +177,7 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(
+                  const SizedBox(
                     height: 60,
                   ),
                   ResponseBox(videoResponse,
@@ -217,12 +219,12 @@ class ResponseBox extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Stack(
@@ -232,14 +234,11 @@ class ResponseBox extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     Image? image = snapshot.data;
-                    double imageHeight = image?.height ?? 0.0;
-                    double imageWidth = image?.width ?? 0.0;
-
                     return Container(
                       child: image,
                     );
                   } else {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                 },
               ),
@@ -257,13 +256,15 @@ class ResponseBox extends StatelessWidget {
                           showConfirmationDialog(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Color.fromARGB(133, 102, 179, 194),
+                          backgroundColor:
+                              const Color.fromARGB(133, 102, 179, 194),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
                                 10.0), // Adjust the radius as needed
                           ),
                         ),
-                        child: Text("This is the object I was looking for"),
+                        child:
+                            const Text("This is the object I was looking for"),
                       ),
                     ),
                   ],
@@ -289,8 +290,9 @@ class ResponseBox extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Saved as a significant object (NOT REALLY YET THOUGH)"),
-          content: Text(
+          title: const Text(
+              "Saved as a significant object (NOT REALLY YET THOUGH)"),
+          content: const Text(
             "Would you like to delete all previous spottings of this item to save space?",
           ),
           actions: <Widget>[
@@ -305,7 +307,7 @@ class ResponseBox extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => ResponseScreen()),
                     );
                   },
-                  child: Text("No, keep them"),
+                  child: const Text("No, keep them"),
                 ),
                 ElevatedButton(
                   onPressed: () async {
