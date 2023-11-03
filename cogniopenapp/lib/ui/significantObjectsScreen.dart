@@ -228,28 +228,6 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                 indent: 15,
                 endIndent: 15,
               ),
-              /*  SizedBox(
-              height: 788,
-              child: GridView.builder(
-                  itemCount: imagelist.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 15),
-                  itemBuilder: (
-                    context,
-                    index,
-                  ) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: DecorationImage(
-                            image: AssetImage(imagelist[index]),
-                            fit: BoxFit.cover),
-                      ),
-                    );
-                  }),
-            ) */
               SizedBox(
                 height: 5000,
                 child: GridView.count(

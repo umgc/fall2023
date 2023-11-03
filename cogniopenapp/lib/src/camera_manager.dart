@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:cogniopenapp/src/address.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import '../src/data_service.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
@@ -34,14 +34,51 @@ class CameraManager {
     return _instance;
   }
 
+  Future<bool> permissionGranted() async {
+    // Check and request camera and microphone permissions
+    final cameraPermissionStatus = await Permission.camera.status;
+    final microphonePermissionStatus = await Permission.microphone.status;
+
+    if (cameraPermissionStatus.isDenied ||
+        cameraPermissionStatus.isPermanentlyDenied ||
+        microphonePermissionStatus.isDenied ||
+        microphonePermissionStatus.isPermanentlyDenied) {
+      // Permissions are denied or permanently denied
+      // Request camera and microphone permissions
+      final cameraPermissionResult = await Permission.camera.request();
+      final microphonePermissionResult = await Permission.microphone.request();
+
+      if ((cameraPermissionResult.isDenied ||
+              cameraPermissionResult.isPermanentlyDenied) ||
+          (microphonePermissionResult.isDenied ||
+              microphonePermissionResult.isPermanentlyDenied)) {
+        // User denied camera or microphone permissions, handle the situation (e.g., show an error message)
+        // You can navigate back to the previous screen, show a snackbar, etc.
+        isAutoRecording = false;
+        return false;
+      }
+    }
+    return true;
+  }
+
   Future<void> initializeCamera() async {
     parseEnviromentSettings();
+
+    // If permission is not granted then don't initialize
+    if (!await permissionGranted()) {
+      return;
+    }
+
+    // Now, proceed with camera initialization
     _cameras = await availableCameras();
+
     // Make sure that there are available cameras if trying to use the front
     // 0 equals rear, 1 = front
     if (_cameras.length == 1) cameraToUse = 0;
     controller = CameraController(_cameras[cameraToUse], ResolutionPreset.high);
+
     await controller.initialize();
+
     if (controller.value.isInitialized) {
       isInitialized = true;
       FormatUtils.printBigMessage("CAMERA HAS BEEN INITIALIZED");
@@ -115,8 +152,8 @@ class CameraManager {
 
   void startRecordingInBackground() async {
     if (controller == null || !controller.value.isInitialized) {
-      print(
-          'Error: Camera is not initialized. Auto-recording has been cancelled');
+      print('Error: Camera is not initialized.');
+      print('Auto recording has been canceeled.');
       return;
     }
 
