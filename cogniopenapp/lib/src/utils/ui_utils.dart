@@ -51,13 +51,15 @@ class UiUtils {
                 context, MaterialPageRoute(builder: (context) => HomeScreen()));
           } else if (index == 1) {
             // Navigate to Search screen
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AssistantScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const AssistantScreen()));
           } else if (index == 2) {
             if (PermissionManager.attemptToShowVideoScreen(context)) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => VideoScreen()),
+                MaterialPageRoute(builder: (context) => const VideoScreen()),
               );
             }
           } else if (index == 3) {

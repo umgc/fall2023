@@ -634,8 +634,8 @@ class _FullObjectViewState extends State<FullObjectView> {
                       height: 80,
                     ), // Used to provide an invisible barrier for the objects
                     addSpacingSizedBox(),
-                    if (!widget.activeMedia.title.isEmpty)
-                      returnTextBox("Title", '${widget.activeMedia.title}'),
+                    if (widget.activeMedia.title.isNotEmpty)
+                      returnTextBox("Title", '$widget.activeMedia.title'),
                     addSpacingSizedBox(),
                     returnTextBox("Timestamp",
                         '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
@@ -679,8 +679,9 @@ class _FullObjectViewState extends State<FullObjectView> {
                           }
                         },
                       ),
-                    returnTextBox(
-                        "Address", '${widget.activeMedia.physicalAddress}'),
+                    if (widget.activeMedia.physicalAddress!.isNotEmpty)
+                      returnTextBox(
+                          "Address", '$widget.activeMedia.physicalAddress'),
                   ],
                 ),
               ),

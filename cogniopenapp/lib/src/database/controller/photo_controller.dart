@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:cogniopenapp/src/database/model/media_type.dart';
@@ -18,8 +20,10 @@ class PhotoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String physicalAddress = "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
-      String photoFileExtension = FileManager().getFileExtensionFromFile(photoFile);
+      String physicalAddress =
+          "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
+      String photoFileExtension =
+          FileManager().getFileExtensionFromFile(photoFile);
       String photoFileName = FileManager().generateFileName(
         MediaType.photo.name,
         timestamp,
@@ -58,7 +62,8 @@ class PhotoController {
     try {
       String photoFileName = FileManager.getFileName(photoFile.path);
       int photoFileSize = FileManager.calculateFileSizeInBytes(photoFile);
-      DateTime timestamp = DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
+      DateTime timestamp =
+          DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
       String physicalAddress = '';
       await Address.whereIAm().then((String address) {
         physicalAddress = address;
@@ -108,7 +113,8 @@ class PhotoController {
     try {
       final existingPhoto = await PhotoRepository.instance.read(id);
       await PhotoRepository.instance.delete(id);
-      final photoFilePath = '${DirectoryManager.instance.photosDirectory.path}/${existingPhoto.photoFileName}';
+      final photoFilePath =
+          '${DirectoryManager.instance.photosDirectory.path}/${existingPhoto.photoFileName}';
       await FileManager.removeFileFromFilesystem(photoFilePath);
       return existingPhoto;
     } catch (e) {

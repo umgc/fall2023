@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'dart:math';
 
@@ -175,8 +177,8 @@ class FileManager {
         ? DirectoryManager.instance.videoThumbnailsDirectory
         : DirectoryManager.instance.videoStillsDirectory;
 
-    String fileName = "${path.basename(vidPath)}-${timesStamp}.png";
-    String newFile = "${directory.path}/${fileName}";
+    String fileName = "${path.basename(vidPath)}-$timesStamp.png";
+    String newFile = "$directory.path/$fileName";
 
     List<String> existingFiles = await listFileNamesInDirectory(directory);
 

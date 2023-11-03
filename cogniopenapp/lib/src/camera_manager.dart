@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:io';
 
@@ -106,8 +108,8 @@ class CameraManager {
         VideoProcessor vp = VideoProcessor();
         vp.automaticallySendToRekognition();
       }
-    } catch (Exc) {
-      print(Exc);
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -139,15 +141,13 @@ class CameraManager {
     // Record for 5 minutes (300 seconds)
     await Future.delayed(Duration(seconds: autoRecordingInterval));
 
-    //TODO add ability to STOP the video early (manually)
-
     if (!isAutoRecording) {
       return;
     }
 
     await stopRecording();
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     // Start the next loop of the recording
     startRecordingInBackground();
   }
@@ -156,7 +156,7 @@ class CameraManager {
     // Get the local directory
 
     // Define a file name for the saved media, you can use a timestamp or any unique name
-    final String fileExtension = 'mp4';
+    const String fileExtension = 'mp4';
 
     final String timestamp = DateTime.now().toString();
     final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');

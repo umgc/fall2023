@@ -4,7 +4,6 @@ import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class SignificantObjectScreen extends StatefulWidget {
@@ -15,7 +14,6 @@ class SignificantObjectScreen extends StatefulWidget {
 }
 
 class _GalleryPageState extends State<SignificantObjectScreen> {
-  File? _image;
   final imagePicker = ImagePicker();
 
   final ImagePicker _picker = ImagePicker();
@@ -23,7 +21,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
     await _picker
         .pickImage(source: ImageSource.camera)
         .then((XFile? recordedimage) {
-      if (recordedimage != null && recordedimage.path != null) {
+      if (recordedimage != null) {
         //   setState(() {
         //   firstbuttontext = 'saving in progress...';
         //  });
@@ -41,7 +39,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
     await _picker
         .pickImage(source: ImageSource.gallery)
         .then((XFile? recordedimage) {
-      if (recordedimage != null && recordedimage.path != null) {
+      if (recordedimage != null) {
         // setState(() {
         //    firstbuttontext = 'saving in progress...';
         //});

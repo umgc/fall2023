@@ -51,9 +51,9 @@ class PermissionManager {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('File Permission Required'),
-          content:
-              Text('Please enable file permissions to access this feature.'),
+          title: const Text('File Permission Required'),
+          content: const Text(
+              'Please enable file permissions to access this feature.'),
           actions: <Widget>[
             TextButton(
               child: Text('OK'),
@@ -87,7 +87,7 @@ class PermissionManager {
                 content: const Text('Please wait a few more seconds.'),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('OK'),
+                    child: const Text('OK'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
