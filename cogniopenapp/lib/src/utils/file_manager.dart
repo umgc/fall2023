@@ -178,7 +178,7 @@ class FileManager {
         : DirectoryManager.instance.videoStillsDirectory;
 
     String fileName = "${path.basename(vidPath)}-$timesStamp.png";
-    String newFile = "$directory.path/$fileName";
+    String newFile = "${directory.path}/$fileName";
 
     List<String> existingFiles = await listFileNamesInDirectory(directory);
 
