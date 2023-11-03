@@ -244,34 +244,75 @@ class ResponseBox extends StatelessWidget {
                 },
               ),
               getBoundingBox(response),
-              Positioned(
-                bottom: 0, // Position the Row at the top of the Stack
-                left: 0, // You can adjust the left position if needed
-                right: 0, // You can adjust the right position if needed
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          showConfirmationDialog(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(133, 102, 179, 194),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                10.0), // Adjust the radius as needed
-                          ),
-                        ),
-                        child:
-                            const Text("This is the object I was looking for"),
-                      ),
-                    ),
-                  ],
+              myObjectButton(context),
+              deleteObjectButton(context),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Positioned myObjectButton(BuildContext context) {
+    return Positioned(
+      bottom: 40, // Position the Row at the top of the Stack
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {
+                ResponseParser.convertResponseToLocalSignificantObject(
+                    response);
+                showConfirmationDialog(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(133, 102, 179, 194),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      10.0), // Adjust the radius as needed
                 ),
               ),
-            ],
+              child: const Text("This is the object I was looking for"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Positioned deleteObjectButton(BuildContext context) {
+    return Positioned(
+      bottom: 0, // Position the Row at the top of the Stack
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () async {
+                await deletePreviousResponses(response.title);
+                Navigator.of(context).pop(); // Close the dialog
+
+                // Navigate back to the ResponseScreen
+                Navigator.of(context).pop(); // Pop the third screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ResponseScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromARGB(133, 194, 102, 102),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      10.0), // Adjust the radius as needed
+                ),
+              ),
+              child: const Text("Delete this object from my history"),
+            ),
           ),
         ],
       ),
