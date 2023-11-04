@@ -227,8 +227,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     SortingCriteria.type: 'Sort by Type',
   };
 
-  void takePicture() {
-    CameraManager().capturePhoto(DirectoryManager.instance.photosDirectory);
+  Future<void> takePicture() async {
+    await CameraManager()
+        .capturePhoto(DirectoryManager.instance.photosDirectory);
+    refresh();
   }
 
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -239,6 +241,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget build(BuildContext context) {
     _populateMedia();
     _updateLayoutValues();
+    refresh();
 
     return Scaffold(
         backgroundColor: const Color(0xFFB3E5FC),
@@ -281,11 +284,17 @@ class _GalleryScreenState extends State<GalleryScreen> {
         Row(
           children: [
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-            IconButton(
+            /*IconButton(
               key: const Key('searchIcon'),
               icon: const Icon(Icons.search),
               color: Colors.black54,
               onPressed: _toggleSearchBarVisibility,
+            ),*/
+            IconButton(
+              key: const Key('refreshIcon'),
+              icon: const Icon(Icons.refresh),
+              color: Colors.black54,
+              onPressed: refresh,
             ),
             IconButton(
               key: const Key('cameraIcon'),
@@ -338,6 +347,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
         ),
       ],
     );
+  }
+
+  void refresh() {
+    _toggleShowFavorited();
+    _toggleShowFavorited();
   }
 
   Widget _buildSearchBar() {
@@ -616,16 +630,21 @@ class _FullObjectViewState extends State<FullObjectView> {
               if (updatedMedia != null) {
                 Navigator.pop(context); // Close the current view
                 setState(() {
-                  //displayFullObjectView(context, updatedMedia);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            FullObjectView(widget.activeMedia)),
+                  );
                 });
               }
             },
           ),
           IconButton(
             icon: const Icon(Icons.delete),
-            onPressed: () {
+            onPressed: () async {
               // Call the delete method when the delete button is pressed
-              deleteMedia(widget.activeMedia);
+              await deleteMedia(widget.activeMedia);
               // Navigate back to the ResponseScreen
               Navigator.of(context).pop(); //
               Navigator.of(context).pop(); //
@@ -724,7 +743,7 @@ class _FullObjectViewState extends State<FullObjectView> {
     );
   }
 
-  void deleteMedia(Media media) async {
+  Future<void> deleteMedia(Media media) async {
     if (media is Audio) {
       await DataService.instance.removeAudio(media.id!);
     } else if (media is Photo) {
