@@ -619,26 +619,25 @@ class _FullObjectViewState extends State<FullObjectView> {
             Colors.transparent, // Make the AppBar's background transparent
         elevation: 0.0,
         centerTitle: true,
-        leading: const BackButton(color: Colors.black54),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.black54,
+          onPressed: () async {
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => GalleryScreen()),
+            );
+          },
+        ), // Remove the BackButton
         title: const Text('Full Screen Image and Details',
             style: TextStyle(color: Colors.black54)),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () async {
-              final updatedMedia =
-                  await displayEditPopup(context, widget.activeMedia);
-              if (updatedMedia != null) {
-                Navigator.pop(context); // Close the current view
-                setState(() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            FullObjectView(widget.activeMedia)),
-                  );
-                });
-              }
+              await displayEditPopup(context, widget.activeMedia);
             },
           ),
           IconButton(
@@ -647,8 +646,8 @@ class _FullObjectViewState extends State<FullObjectView> {
               // Call the delete method when the delete button is pressed
               await deleteMedia(widget.activeMedia);
               // Navigate back to the ResponseScreen
-              Navigator.of(context).pop(); //
-              Navigator.of(context).pop(); //
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => GalleryScreen()),
@@ -683,8 +682,8 @@ class _FullObjectViewState extends State<FullObjectView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(
-                      height: 80,
-                    ), // Used to provide an invisible barrier for the objects
+                        height:
+                            80), // Used to provide an invisible barrier for the objects
                     addSpacingSizedBox(),
                     if (widget.activeMedia.title.isNotEmpty)
                       returnTextBox("Title", '${widget.activeMedia.title}'),
@@ -708,13 +707,10 @@ class _FullObjectViewState extends State<FullObjectView> {
                         widget.activeMedia.description != "")
                       returnTextBox(
                           "Description", '${widget.activeMedia.description}'),
-
                     addSpacingSizedBox(),
-
                     if (widget.activeMedia is Audio)
                       returnTextBox("Summary",
                           '${(widget.activeMedia as Audio).summary}'),
-
                     addSpacingSizedBox(),
                     if (widget.activeMedia is Audio)
                       FutureBuilder<String>(
@@ -913,55 +909,30 @@ class _FullObjectViewState extends State<FullObjectView> {
             ),
             TextButton(
               child: Text('Save'),
-              onPressed: () {
+              onPressed: () async {
                 if (media is Photo) {
-                  DataService.instance.updatePhoto(
+                  updatedMedia = await DataService.instance.updatePhoto(
                       id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Photo(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      photoFileName: media.photoFileName,
                       title: titleController.text,
                       description: descriptionController.text);
                 } else if (media is Video) {
-                  DataService.instance.updateVideo(
+                  updatedMedia = await DataService.instance.updateVideo(
                       id: media.id!,
                       title: titleController.text,
                       description: descriptionController.text);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Video(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      videoFileName: media.videoFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      duration: media.duration,
-                      thumbnailFileName: media.thumbnailFileName);
                 } else if (media is Audio) {
-                  DataService.instance.updateAudio(
+                  updatedMedia = await DataService.instance.updateAudio(
                       id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Audio(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      audioFileName: media.audioFileName,
                       title: titleController.text,
                       description: descriptionController.text);
                 }
-                setState(() {});
-                Navigator.of(context)
-                    .pop(updatedMedia); // Return the updated media
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FullObjectView(updatedMedia!)),
+                );
               },
             ),
           ],
