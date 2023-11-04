@@ -148,7 +148,10 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
             itemBuilder: (context, index) {
               return Card(
                 child: ListTile(
-                  leading: Icon(Icons.location_on),
+                  leading: Container(
+                    height: double.infinity,
+                    child: Icon(Icons.location_on),
+                  ),
                   title: Text(sanitizeAddress(locations[index].address)),
                   subtitle: Text(
                       '${formattedTime(locations[index].startTime)} - ${locations[index].endTime != null ? formattedTime(locations[index].endTime!) : 'Now'}'),
