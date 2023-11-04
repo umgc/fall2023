@@ -3,6 +3,7 @@
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
 import 'package:cogniopenapp/src/data_service.dart';
+import 'package:cogniopenapp/ui/train_model_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -331,8 +332,7 @@ class ResponseBox extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-              "Saved as a significant object (NOT REALLY YET THOUGH)"),
+          title: const Text("Saving as a significant object"),
           content: const Text(
             "Would you like to delete all previous spottings of this item to save space?",
           ),
@@ -362,10 +362,24 @@ class ResponseBox extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => ResponseScreen()),
                     );
                   },
-                  child: Text("Yes, please delete them"),
+                  child: Text("Yes, delete them"),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red,
                   ),
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    //pass along the image data
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ModelScreen(response)));
+                  },
+                  child: const Text('Remember this?'),
                 ),
               ],
             ),

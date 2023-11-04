@@ -43,7 +43,7 @@ class GalleryScreen extends StatefulWidget {
 // Define the state for the Gallery screen
 class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
-  List<Media> testMedia = DataService.instance.mediaList;
+  List<Media> masterMediaList = [];
 
   bool _searchBarVisible = false;
   String _searchText = '';
@@ -64,6 +64,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   @override
   void initState() {
+    print("WE INIT");
+    masterMediaList = DataService.instance.mediaList;
     super.initState();
     _selectedSortingCriteria =
         SortingCriteria.timeStamp; // Selecting the timestamp sorting
@@ -72,7 +74,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _populateMedia() async {
-    testMedia = DataService.instance.mediaList;
+    masterMediaList = DataService.instance.mediaList;
   }
 
   // Function to update font and icon size based on grid size
@@ -137,9 +139,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _toggleFavoriteStatus(Media media) async {
-    //TODO: Update persistence
-    //await DataService.instance
-    //    .updateMediaIsFavorited(media, !media.isFavorited);
+    //TODO: Update persistence. It works but moves the grid items around for some reason
+    //await DataService.instance.updateMediaIsFavorited(media, !media.isFavorited);
     setState(() {
       media.isFavorited = !media.isFavorited;
     });
@@ -178,22 +179,22 @@ class _GalleryScreenState extends State<GalleryScreen> {
       case null:
         break;
       case SortingCriteria.storageSize:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.storageSize.compareTo(b.storageSize)
             : b.storageSize.compareTo(a.storageSize));
         break;
       case SortingCriteria.timeStamp:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.timestamp.compareTo(b.timestamp)
             : b.timestamp.compareTo(a.timestamp));
         break;
       case SortingCriteria.title:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.title.compareTo(b.title)
             : b.title.compareTo(a.title));
         break;
       case SortingCriteria.type:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.runtimeType.toString().compareTo(b.runtimeType.toString())
             : b.runtimeType.toString().compareTo(a.runtimeType.toString()));
         break;
@@ -203,9 +204,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
   // Function to filter photos based on the search text
   List<Media> get filteredPhotos {
     if (_searchText.isEmpty) {
-      return testMedia;
+      return masterMediaList;
     } else {
-      return testMedia
+      return masterMediaList
           .where((media) =>
               media.title.toLowerCase().contains(_searchText.toLowerCase()))
           .toList();
@@ -214,7 +215,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   // Function to get favorited photos
   List<Media> getFavoritedMedia() {
-    return testMedia.where((media) => media.isFavorited).toList();
+    return masterMediaList.where((media) => media.isFavorited).toList();
   }
 
   // Display names for sorting criteria
@@ -225,8 +226,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     SortingCriteria.type: 'Sort by Type',
   };
 
-  void takePicture() {
-    CameraManager().capturePhoto(DirectoryManager.instance.photosDirectory);
+  Future<void> takePicture() async {
+    await CameraManager()
+        .capturePhoto(DirectoryManager.instance.photosDirectory);
+    refresh();
   }
 
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -235,11 +238,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   @override
   Widget build(BuildContext context) {
+    _populateMedia();
     _updateLayoutValues();
+    refresh();
 
     return Scaffold(
-        backgroundColor: const Color(0xFFB3E5FC),
-        extendBodyBehindAppBar: true,
+        backgroundColor: Color(int.parse("0xFFC1DFDD")),
+        extendBodyBehindAppBar: false,
         extendBody: true,
         appBar: _buildAppBar(),
         body: Container(
@@ -337,10 +342,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  // Don't ask me how or why this works
+  void refresh() {
+    _toggleShowFavorited();
+    _toggleShowFavorited();
+  }
+
   Widget _buildSearchBar() {
     return TextField(
       decoration: const InputDecoration(
-        labelText: 'Search by Title',
+        labelText: 'Filter by Title',
         prefixIcon: Icon(Icons.search),
       ),
       onChanged: _onSearchTextChanged,
@@ -601,21 +612,39 @@ class _FullObjectViewState extends State<FullObjectView> {
             Colors.transparent, // Make the AppBar's background transparent
         elevation: 0.0,
         centerTitle: true,
-        leading: const BackButton(color: Colors.black54),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.black54,
+          onPressed: () async {
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => GalleryScreen()),
+            );
+          },
+        ), // Remove the BackButton
         title: const Text('Full Screen Image and Details',
             style: TextStyle(color: Colors.black54)),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () async {
-              final updatedMedia =
-                  await displayEditPopup(context, widget.activeMedia);
-              if (updatedMedia != null) {
-                Navigator.pop(context); // Close the current view
-                setState(() {
-                  //displayFullObjectView(context, updatedMedia);
-                });
-              }
+              await displayEditPopup(context, widget.activeMedia);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () async {
+              // Call the delete method when the delete button is pressed
+              await deleteMedia(widget.activeMedia);
+              // Navigate back to the ResponseScreen
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GalleryScreen()),
+              );
             },
           ),
         ],
@@ -646,8 +675,8 @@ class _FullObjectViewState extends State<FullObjectView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(
-                      height: 80,
-                    ), // Used to provide an invisible barrier for the objects
+                        height:
+                            80), // Used to provide an invisible barrier for the objects
                     addSpacingSizedBox(),
                     if (widget.activeMedia.title.isNotEmpty)
                       returnTextBox("Title", '${widget.activeMedia.title}'),
@@ -671,13 +700,10 @@ class _FullObjectViewState extends State<FullObjectView> {
                         widget.activeMedia.description != "")
                       returnTextBox(
                           "Description", '${widget.activeMedia.description}'),
-
                     addSpacingSizedBox(),
-
                     if (widget.activeMedia is Audio)
                       returnTextBox("Summary",
                           '${(widget.activeMedia as Audio).summary}'),
-
                     addSpacingSizedBox(),
                     if (widget.activeMedia is Audio)
                       FutureBuilder<String>(
@@ -705,6 +731,16 @@ class _FullObjectViewState extends State<FullObjectView> {
         ),
       ),
     );
+  }
+
+  Future<void> deleteMedia(Media media) async {
+    if (media is Audio) {
+      await DataService.instance.removeAudio(media.id!);
+    } else if (media is Photo) {
+      await DataService.instance.removePhoto(media.id!);
+    } else {
+      await DataService.instance.removeVideo(media.id!);
+    }
   }
 
   Column createAudioPlayer() {
@@ -866,55 +902,30 @@ class _FullObjectViewState extends State<FullObjectView> {
             ),
             TextButton(
               child: Text('Save'),
-              onPressed: () {
+              onPressed: () async {
                 if (media is Photo) {
-                  DataService.instance.updatePhoto(
+                  updatedMedia = await DataService.instance.updatePhoto(
                       id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Photo(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      photoFileName: media.photoFileName,
                       title: titleController.text,
                       description: descriptionController.text);
                 } else if (media is Video) {
-                  DataService.instance.updateVideo(
+                  updatedMedia = await DataService.instance.updateVideo(
                       id: media.id!,
                       title: titleController.text,
                       description: descriptionController.text);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Video(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      videoFileName: media.videoFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      duration: media.duration,
-                      thumbnailFileName: media.thumbnailFileName);
                 } else if (media is Audio) {
-                  DataService.instance.updateAudio(
+                  updatedMedia = await DataService.instance.updateAudio(
                       id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Audio(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      audioFileName: media.audioFileName,
                       title: titleController.text,
                       description: descriptionController.text);
                 }
-                setState(() {});
-                Navigator.of(context)
-                    .pop(updatedMedia); // Return the updated media
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FullObjectView(updatedMedia!)),
+                );
               },
             ),
           ],

@@ -16,6 +16,7 @@ import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/significant_object_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 
@@ -27,6 +28,7 @@ class DataService {
 
   late List<Media> mediaList = [];
   late List<VideoResponse> responseList = [];
+  late List<SignificantObject> significantObjectList = [];
   bool hasBeenInitialized = false;
 
   Future<void> initializeData() async {
@@ -54,12 +56,17 @@ class DataService {
       responseList = await VideoResponseRepository.instance.readAll();
 
       for (var videoResponse in responseList) {
-        print(videoResponse.toJson());
+        print("Response # ${videoResponse.toJson()}");
+      }
+
+      significantObjectList =
+          await SignificantObjectRepository.instance.readAll();
+
+      for (var object in significantObjectList) {
+        print("Object # ${object.toJson()}");
       }
       hasBeenInitialized = true;
     }
-
-    // ***
   }
 
   Future<void> unloadMedia() async {
