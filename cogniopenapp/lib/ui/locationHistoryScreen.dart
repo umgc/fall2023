@@ -4,6 +4,9 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:moment_dart/moment_dart.dart';
 
 // Create a model for location entries
 class LocationEntry {
@@ -160,7 +163,7 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
                       itemCount: locations.length,
                       itemBuilder: (context, index) {
                         return Card(
-                          color: Color.fromARGB(10, 173, 172, 172),
+                          color: Color.fromRGBO(255, 255, 255, 0.75),
                           child: ListTile(
                             leading: Container(
                               height: double.infinity,
@@ -168,8 +171,9 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
                             ),
                             title:
                                 Text(sanitizeAddress(locations[index].address)),
-                            subtitle: Text(
-                                '${formattedTime(locations[index].startTime)} - ${locations[index].endTime != null ? formattedTime(locations[index].endTime!) : 'Now'}'),
+                            subtitle: Text(getTimeStampString(
+                                locations[index].startTime,
+                                locations[index].endTime)),
                           ),
                         );
                       },
@@ -177,6 +181,19 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
             ),
           ),
         ));
+  }
+
+  String getTimeStampString(DateTime? start, DateTime? end) {
+    if (end != null && FormatUtils.calculateDifferenceInHours(end!) == 0) {
+      return "${timeago.format(end)} (${this.formattedTime(end)})";
+    }
+
+    String formattedDate =
+        Moment(start!).format('MMMM Do, YYYY'); // Format the date
+    String formattedTime =
+        '${this.formattedTime(start!)} - ${end != null ? this.formattedTime(end) : 'Now'}';
+
+    return "${formattedDate} ${formattedTime}";
   }
 
   @override
