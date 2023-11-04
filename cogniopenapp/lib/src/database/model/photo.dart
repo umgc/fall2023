@@ -16,6 +16,7 @@ class Photo extends Media {
     String? description,
     List<String>? tags,
     required DateTime timestamp,
+    String? physicalAddress,
     required int storageSize,
     required bool isFavorited,
     required this.photoFileName,
@@ -27,6 +28,7 @@ class Photo extends Media {
           description: description,
           tags: tags,
           timestamp: timestamp,
+          physicalAddress: physicalAddress,
           storageSize: storageSize,
           isFavorited: isFavorited,
         ) {
@@ -40,6 +42,7 @@ class Photo extends Media {
     String? description,
     List<String>? tags,
     DateTime? timestamp,
+    String? physicalAddress,
     int? storageSize,
     bool? isFavorited,
     String? photoFileName,
@@ -50,6 +53,7 @@ class Photo extends Media {
         description: description ?? this.description,
         tags: tags ?? this.tags,
         timestamp: timestamp ?? this.timestamp,
+        physicalAddress: physicalAddress ?? this.physicalAddress,
         storageSize: storageSize ?? this.storageSize,
         isFavorited: isFavorited ?? this.isFavorited,
         photoFileName: photoFileName ?? this.photoFileName,
@@ -63,7 +67,6 @@ class Photo extends Media {
     };
   }
 
-  @override
   static Photo fromJson(Map<String, Object?> json) {
     try {
       return Photo(
@@ -75,6 +78,7 @@ class Photo extends Media {
           (json[MediaFields.timestamp] as int),
           isUtc: true,
         ),
+        physicalAddress: json[MediaFields.physicalAddress] as String,
         storageSize: json[MediaFields.storageSize] as int,
         isFavorited: json[MediaFields.isFavorited] == 1,
         photoFileName: json[PhotoFields.photoFileName] as String,

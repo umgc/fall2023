@@ -3,6 +3,10 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:cogniopenapp/src/address.dart';
+import '../../../../resources/mocks/address_mock.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
@@ -14,6 +18,12 @@ Future<void> main() async {
   const String description = 'Test Description';
   const List<String> tags = ['Tag1', 'Tag2'];
   final DateTime timestamp = DateTime.now();
+  GeolocatorPlatform.instance = MockGeolocatorPlatform();
+  GeocodingPlatform.instance = MockGeocodingPlatform();
+  String physicalAddress = '';
+  await Address.whereIAm(isTesting: true).then((String address) {
+    physicalAddress = address;
+  });
   const int storageSize = 1000;
   const bool isFavorited = true;
   const String videoFileName = 'test_video.mp4';
@@ -37,6 +47,7 @@ Future<void> main() async {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         videoFileName: videoFileName,
@@ -50,6 +61,7 @@ Future<void> main() async {
       expect(video.description, description);
       expect(video.tags, tags);
       expect(video.timestamp, timestamp);
+      expect(video.physicalAddress, physicalAddress);
       expect(video.storageSize, storageSize);
       expect(video.isFavorited, isFavorited);
       expect(video.videoFileName, videoFileName);
@@ -64,6 +76,7 @@ Future<void> main() async {
         id: id,
         title: title,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         videoFileName: videoFileName,
@@ -76,6 +89,7 @@ Future<void> main() async {
       expect(video.description, isNull);
       expect(video.tags, isNull);
       expect(video.timestamp, timestamp);
+      expect(video.physicalAddress, physicalAddress);
       expect(video.storageSize, storageSize);
       expect(video.isFavorited, isFavorited);
       expect(video.videoFileName, videoFileName);
@@ -94,6 +108,7 @@ Future<void> main() async {
         MediaFields.description: description,
         MediaFields.tags: tags.join(','),
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         VideoFields.videoFileName: videoFileName,
@@ -113,6 +128,7 @@ Future<void> main() async {
           DateTime.fromMillisecondsSinceEpoch(
               timestamp.toUtc().millisecondsSinceEpoch,
               isUtc: true));
+      expect(video.physicalAddress, physicalAddress);
       expect(video.storageSize, storageSize);
       expect(video.isFavorited, isFavorited);
       expect(video.videoFileName, videoFileName);
@@ -127,6 +143,7 @@ Future<void> main() async {
           MediaFields.id: id,
           MediaFields.title: title,
           MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+          MediaFields.physicalAddress: physicalAddress,
           MediaFields.storageSize: storageSize,
           MediaFields.isFavorited: 1,
           VideoFields.videoFileName: videoFileName,
@@ -145,6 +162,7 @@ Future<void> main() async {
             DateTime.fromMillisecondsSinceEpoch(
                 timestamp.toUtc().millisecondsSinceEpoch,
                 isUtc: true));
+        expect(video.physicalAddress, physicalAddress);
         expect(video.storageSize, storageSize);
         expect(video.isFavorited, isFavorited);
         expect(video.videoFileName, videoFileName);
@@ -174,6 +192,7 @@ Future<void> main() async {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         videoFileName: videoFileName,
@@ -189,6 +208,7 @@ Future<void> main() async {
         MediaFields.description: description,
         MediaFields.tags: tags.join(','),
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         VideoFields.videoFileName: videoFileName,
@@ -205,6 +225,7 @@ Future<void> main() async {
         id: id,
         title: title,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         videoFileName: videoFileName,
@@ -219,6 +240,7 @@ Future<void> main() async {
         MediaFields.description: null,
         MediaFields.tags: null,
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         VideoFields.videoFileName: videoFileName,

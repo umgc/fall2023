@@ -1,10 +1,16 @@
 // ignore_for_file: avoid_print
 
-import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:core';
 import 'dart:io';
+
+import 'package:aws_rekognition_api/rekognition-2016-06-27.dart';
+import 'package:cogniopenapp/src/aws_video_response.dart';
+import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class VideoProcessor {
   //confidence setting for AWS Rekognition label detection service
@@ -14,32 +20,81 @@ class VideoProcessor {
   String jobId = '';
   String projectArn = 'No project found';
   String currentProjectVersionArn = 'Model not started';
+  List<String> availableModels = [];
+  List<String> activeModels = [];
+  String videoTitle = "";
+  String address = "";
+  String videoPath = "";
 
-  static final VideoProcessor _instance = VideoProcessor._internal();
+  Stopwatch stopwatch = Stopwatch();
 
-  VideoProcessor._internal() {
-    startService().then((value) {
-      createProject();
-    });
+  List<String> excludedResponses = [
+    "Male",
+    "Adult",
+    "Man",
+    "Female",
+    "Woman",
+    "Person",
+    "Baby",
+    "Bride",
+    "Groom",
+    "Girl",
+    "Boy",
+    "People",
+  ];
+
+  VideoProcessor() {
+    FormatUtils.printBigMessage("Starting to process another video");
   }
 
-  factory VideoProcessor() {
-    return _instance;
+  String getElapsedTimeInSeconds() {
+    final seconds = stopwatch.elapsedMilliseconds / 1000.0;
+    return 'Elapsed time: ${seconds.toStringAsFixed(2)} seconds';
   }
 
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
+
+    String region = (dotenv.get('region', fallback: "none"));
+    String access = (dotenv.get('accessKey', fallback: "none"));
+    String secret = (dotenv.get('secretKey', fallback: "none"));
+
+    if (region == "none" || access == "none" || secret == "none") {
+      print("S3 needs to be initialized");
+      return;
+    }
     service = Rekognition(
-        region: dotenv.get('region'),
-        credentials: AwsClientCredentials(
-            accessKey: dotenv.get('accessKey'),
-            secretKey: dotenv.get('secretKey')));
+        region: region,
+        credentials:
+            AwsClientCredentials(accessKey: access, secretKey: secret));
+
+    createProject();
     //TODO:debug/testing statements
     print("Rekognition is up...");
   }
 
+  Future<void> automaticallySendToRekognition() async {
+    await startService();
+
+    stopwatch.reset();
+    stopwatch.start();
+    await uploadVideoToS3();
+
+    await pollForCompletedRequest();
+
+    GetLabelDetectionResponse labelResponses = await grabResults(jobId);
+
+    List<AWS_VideoResponse> responses =
+        await createResponseList(labelResponses);
+
+    await DataService.instance.addVideoResponses(responses);
+    FormatUtils.printBigMessage("Rekognition results saved locally.");
+    FormatUtils.printBigMessage(" Time elapsed ${getElapsedTimeInSeconds()}");
+  }
+
   Future<StartLabelDetectionResponse> sendRequestToProcessVideo(
       String title) async {
+    print("sending rekognition request for ${title}");
     //grab Video
     Video video = Video(
         s3Object: S3Object(bucket: dotenv.get('videoS3Bucket'), name: title));
@@ -52,19 +107,110 @@ class VideoProcessor {
     //set the jobId, but return the whole job.
     job.then((value) {
       jobId = value.jobId!;
+      print("Job ID IS ${jobId}");
     });
     return job;
   }
 
+  List<AWS_VideoResponse> createTestResponseList() {
+    return [
+      /* 
+    AWS_VideoResponse('Water', 100, 52852, "fake file"),
+    AWS_VideoResponse('Aerial View', 96.13745880126953, 53353, "fake file"),
+    AWS_VideoResponse('Animal', 86.5937728881836, 53353, "fake file"),
+    AWS_VideoResponse('Coast', 99.99983215332031, 53353, "fake file"), */
+      AWS_VideoResponse.overloaded(
+          'Fish',
+          90.63278198242188,
+          53353,
+          ResponseBoundingBox(
+              left: 0.11934830248355865,
+              top: 0.7510809302330017,
+              width: 0.05737469345331192,
+              height: 0.055630747228860855),
+          "2023-10-27_12:19:21.819024.mp4",
+          "3501 University Boulevard East, Adelphi, Maryland, 20783, US",
+          "People, Person"),
+      // Add more test objects for other URLs as needed
+    ];
+  }
+
+  String getParentStringRepresentation(List<Parent> parents) {
+    if (parents.isEmpty) {
+      return "";
+    }
+
+    return parents.map((parent) => parent.name).join(', ');
+  }
+
+  List<String?> getParentNames(List<Parent> parents) {
+    // Use map to extract parent names into a list.
+    return parents.map((parent) => parent.name).toList();
+  }
+
+  bool stringListsHaveCommonElements(List<String> list1, List<String> list2) {
+    // Use the `any` method to check if any element in list1 is also in list2.
+    return list1.any((element) => list2.contains(element));
+  }
+
+  List<AWS_VideoResponse> createResponseList(
+      GetLabelDetectionResponse response) {
+    FormatUtils.printBigMessage("CREATING RESPONSE LIST");
+    List<AWS_VideoResponse> responseList = [];
+
+    Iterator<LabelDetection> iter = response.labels!.iterator;
+    print("ABOUT TO START PARSING RESPONSES");
+    while (iter.moveNext()) {
+      for (Instance inst in iter.current.label!.instances!) {
+        String? name = iter.current.label!.name;
+
+        // If a name is excluded, go to next loop
+        if (excludedResponses.contains(name)) {
+          continue;
+        }
+
+        // Create a list from the parents (if there are any easily exclude them)
+        List<String> parents = getParentNames(iter.current.label!.parents ?? [])
+            .whereNotNull()
+            .toList();
+
+        // If a name was not excluded but it has excluded parents then go to next loop
+        if (stringListsHaveCommonElements(excludedResponses, parents)) {
+          continue;
+        }
+
+        AWS_VideoResponse newResponse = AWS_VideoResponse.overloaded(
+            iter.current.label!.name ?? "default value",
+            iter.current.label!.confidence ?? 80,
+            iter.current.timestamp ?? 0,
+            ResponseBoundingBox(
+                left: inst.boundingBox!.left ?? 0,
+                top: inst.boundingBox!.top ?? 0,
+                width: inst.boundingBox!.width ?? 0,
+                height: inst.boundingBox!.height ?? 0),
+            videoPath,
+            address,
+            getParentStringRepresentation(iter.current.label!.parents ?? []));
+        responseList.add(newResponse);
+      }
+    }
+
+    FormatUtils.printBigMessage("RESPONSE LIST WAS CREATED");
+
+    return responseList;
+  }
+
   Future<String> pollForCompletedRequest() async {
+    FormatUtils.printBigMessage("POLLING FOR COMPLETED REQUEST");
     //keep polling the getLabelDetection until either failed or succeeded.
     bool inProgress = true;
+    //jobId = "43842f1617dfa32ac8fb7b21becabacd8736556c195630711b4b901ca8b9e08f";
     while (inProgress) {
-      //print("start loop");
+      FormatUtils.printBigMessage("STILL POLLING ${getElapsedTimeInSeconds()}");
       GetLabelDetectionResponse labelsResponse =
           await service!.getLabelDetection(jobId: jobId);
       //a little sleep thrown in here to limit the number of requests.
-      sleep(const Duration(milliseconds: 250));
+      sleep(const Duration(milliseconds: 5000));
       if (labelsResponse.jobStatus == VideoJobStatus.succeeded) {
         //stop looping
         inProgress = false;
@@ -75,28 +221,37 @@ class VideoProcessor {
         print(labelsResponse.statusMessage);
       }
     }
+    FormatUtils.printBigMessage("POLLING WAS COMPLETED JOB ID ${jobId}");
     return jobId;
   }
 
-  Future<GetLabelDetectionResponse> grabResults(jobId) {
+  Future<GetLabelDetectionResponse> grabResults(jobId) async {
+    FormatUtils.printBigMessage("GRABBING RESULTS");
+
     //get a specific job in debuggin
     Future<GetLabelDetectionResponse> labelsResponse =
         service!.getLabelDetection(jobId: jobId);
+
+    FormatUtils.printBigMessage("RESULTS GRABBED");
     return labelsResponse;
   }
 
-  void uploadVideoToS3() {
+  Future<void> uploadVideoToS3() async {
+    FormatUtils.printBigMessage("UPLOADING VIDEO TO S3");
     S3Bucket s3 = S3Bucket();
     // Set the name for the file to be added to the bucket based on the file name
-    String title = FileManager.mostRecentVideoName;
-    //TODO:debug/testing statements
-    print("Video to S3: $title");
+    FileManager.getMostRecentVideo();
+    videoTitle = FileManager.mostRecentVideoName;
+    videoPath = FileManager.mostRecentVideoPath;
 
-    Future<String> uploadedVideo =
-        s3.addVideoToS3(title, FileManager.mostRecentVideoPath);
-    uploadedVideo.then((value) async {
-      await sendRequestToProcessVideo(value);
-    });
+    print("Video title to S3: $videoTitle");
+    print("Video file path uploading to S3: ${videoPath}");
+
+    String uploadedVideo = await s3.addVideoToS3(videoTitle, videoPath);
+
+    await sendRequestToProcessVideo(uploadedVideo);
+
+    FormatUtils.printBigMessage("VIDEO WAS UPLOADED");
   }
 
   //create a new Amazon Rekognition Custom Labels project
@@ -111,9 +266,7 @@ class VideoProcessor {
     checkForProject.then((value) {
       Iterator<ProjectDescription> iter = value.projectDescriptions!.iterator;
       while (iter.moveNext()) {
-        //print(iter.current.projectArn);
         if (iter.current.projectArn!.contains(projectName)) {
-          //print("Project found");
           projectDoesNotExists = false;
           projectArn = iter.current.projectArn!;
         }
@@ -124,12 +277,9 @@ class VideoProcessor {
             service!.createProject(projectName: projectName);
         projectResponse.then((value) {
           projectArn = value.projectArn!;
-          //print(projectArn);
         });
       }
     });
-
-    //print(projectArn);
   }
 
   //needs a modelName ("my glasses"), and the title of the input manifest file in S3 bucket
@@ -154,24 +304,55 @@ class VideoProcessor {
         versionName: modelName);
   }
 
-  //check for a certain status (depending on input)
-  void pollVersionDescription() {
+  //adds all stopped or trained models to list of available models
+  //deletes models that failed training
+  Future<void> pollVersionDescription() async {
     //String status) {
+    Future<DescribeProjectVersionsResponse> projectVersions =
+        service!.describeProjectVersions(projectArn: projectArn);
+    availableModels.clear();
+    projectVersions.then((value) {
+      Iterator<ProjectVersionDescription> iter =
+          value.projectVersionDescriptions!.iterator;
+      while (iter.moveNext()) {
+        //print("${iter.current.projectVersionArn} is ${iter.current.status}");
+        //deletes a model if it failed training
+        if (iter.current.status == ProjectVersionStatus.trainingFailed) {
+          service!.deleteProjectVersion(
+            projectVersionArn: iter.current.projectVersionArn!,
+          );
+        } else if ((iter.current.status == ProjectVersionStatus.stopped) ||
+            (iter.current.status == ProjectVersionStatus.trainingCompleted)) {
+          //where 9 is the lenght of "/version/"
+          int substringStartingIndex =
+              iter.current.projectVersionArn!.indexOf('/version/') + 9;
+          String parsedName =
+              iter.current.projectVersionArn!.substring(substringStartingIndex);
+          parsedName = parsedName.split("/")[0];
+          //print(parsedName);
+          availableModels.add(parsedName);
+        }
+      }
+      //print(availableModels);
+    });
+  }
+
+  ProjectVersionStatus? pollForTrainedModel(String labelName) {
     Future<DescribeProjectVersionsResponse> projectVersions =
         service!.describeProjectVersions(projectArn: projectArn);
     projectVersions.then((value) {
       Iterator<ProjectVersionDescription> iter =
           value.projectVersionDescriptions!.iterator;
       while (iter.moveNext()) {
-        print("${iter.current.projectVersionArn} is ${iter.current.status}");
-        //deletes a model if it failed training
-        if (iter.current.status == ProjectVersionStatus.trainingFailed) {
-          service!.deleteProjectVersion(
-            projectVersionArn: iter.current.projectVersionArn!,
-          );
+        if (iter.current.projectVersionArn!.contains(labelName)) {
+          print("${iter.current.projectVersionArn} is ${iter.current.status}");
+          if (iter.current.status == ProjectVersionStatus.trainingCompleted) {
+            return iter.current.status;
+          }
         }
       }
     });
+    return ProjectVersionStatus.trainingInProgress;
   }
 
   //start the inference of custom labels
@@ -199,6 +380,7 @@ class VideoProcessor {
             print(response.status);
             //returns the modelArn of the projectVersion being started
             //still need to poll the that the model has started
+            activeModels.add(labelName);
             return iter.current.projectVersionArn;
           }
         }
@@ -241,7 +423,9 @@ class VideoProcessor {
   // Now only God knows.
   // run Rekognition custom label detection on a specified set of images
   Future<DetectCustomLabelsResponse?> findMatchingModel(
-      String labelName) async {
+      String labelName, String fileName) async {
+    //fileName: "eyeglass-green.jpg";
+    //fileName = "glasses-test.jpg";
     //look for a similar project version (model to match the label from the user)
     DescribeProjectVersionsResponse projectVersions =
         await service!.describeProjectVersions(projectArn: projectArn);
@@ -259,8 +443,7 @@ class VideoProcessor {
         return service!.detectCustomLabels(
             image: Image(
                 s3Object: S3Object(
-                    bucket: dotenv.get('videoS3Bucket'),
-                    name: "eyeglass-green.jpg")),
+                    bucket: dotenv.get('videoS3Bucket'), name: fileName)),
             projectVersionArn: currentProjectVersionArn);
       }
     }

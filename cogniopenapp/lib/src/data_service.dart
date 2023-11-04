@@ -1,15 +1,24 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
+import 'package:cogniopenapp/src/aws_video_response.dart';
 import 'package:cogniopenapp/src/database/controller/audio_controller.dart';
 import 'package:cogniopenapp/src/database/controller/photo_controller.dart';
+import 'package:cogniopenapp/src/database/controller/significant_object_controller.dart';
 import 'package:cogniopenapp/src/database/controller/video_controller.dart';
+import 'package:cogniopenapp/src/database/controller/video_response_controller.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
+import 'package:cogniopenapp/src/database/model/significant_object.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/significant_object_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 
 class DataService {
   DataService._internal();
@@ -17,7 +26,10 @@ class DataService {
   static final DataService _instance = DataService._internal();
   static DataService get instance => _instance;
 
-  late List<Media> mediaList;
+  late List<Media> mediaList = [];
+  late List<VideoResponse> responseList = [];
+  late List<SignificantObject> significantObjectList = [];
+  bool hasBeenInitialized = false;
 
   Future<void> initializeData() async {
     await loadMedia();
@@ -29,6 +41,32 @@ class DataService {
     final videos = await VideoRepository.instance.readAll();
 
     mediaList = [...audios, ...photos, ...videos];
+
+    if (!hasBeenInitialized) {
+      // *** For development debug purposes only. TODO: Remove
+      for (var audio in audios) {
+        print('Audio #${audio.id}: ${audio.toJson()}');
+      }
+      for (var photo in photos) {
+        print('Photo #${photo.id}: ${photo.toJson()}');
+      }
+      for (var video in videos) {
+        print('Video #${video.id}: ${video.toJson()}');
+      }
+      responseList = await VideoResponseRepository.instance.readAll();
+
+      for (var videoResponse in responseList) {
+        print("Response # ${videoResponse.toJson()}");
+      }
+
+      significantObjectList =
+          await SignificantObjectRepository.instance.readAll();
+
+      for (var object in significantObjectList) {
+        print("Object # ${object.toJson()}");
+      }
+      hasBeenInitialized = true;
+    }
   }
 
   Future<void> unloadMedia() async {
@@ -40,8 +78,64 @@ class DataService {
     await loadMedia();
   }
 
+  Future<void> loadResponses() async {
+    responseList = await VideoResponseRepository.instance.readAll();
+  }
+
+  Future<void> unloadResponses() async {
+    responseList.clear();
+  }
+
+  Future<void> refreshResponses() async {
+    await unloadResponses();
+    await loadResponses();
+  }
+
   // |-----------------------------------------------------------------------------------------|
-  // |------------------------------------- AUDIO OPERATIONS -------------------------------------|
+  // |---------------------------- VIDEO RESPONSE OPERATIONS ----------------------------------|
+  // |-----------------------------------------------------------------------------------------|
+  Future<void> addVideoResponses(List<AWS_VideoResponse> rekogResponses) async {
+    try {
+      for (AWS_VideoResponse rekResponse in rekogResponses) {
+        final response = await VideoResponseController.addVideoResponse(
+          title: rekResponse.name,
+          referenceVideoFilePath: rekResponse.referenceVideoFilePath,
+          confidence: rekResponse.confidence,
+          left: rekResponse.boundingBox.left,
+          top: rekResponse.boundingBox.top,
+          width: rekResponse.boundingBox.width,
+          height: rekResponse.boundingBox.height,
+          timestamp: rekResponse.timestamp,
+          address: rekResponse.address,
+          parents: rekResponse.parents,
+        );
+        if (response != null) {}
+      }
+
+      await refreshResponses();
+
+      //return response;
+    } catch (e) {
+      print('Data Service -- Error adding video response: $e');
+      //return null;
+    }
+  }
+
+  Future<VideoResponse?> removeVideoResponse(int id) async {
+    try {
+      final audio = await VideoResponseController.removeVideoResponse(id);
+      if (audio != null) {
+        await refreshResponses();
+      }
+      return audio;
+    } catch (e) {
+      print('Data Service -- Error removing video response: $e');
+      return null;
+    }
+  }
+
+  // |-----------------------------------------------------------------------------------------|
+  // |---------------------------------- AUDIO OPERATIONS -------------------------------------|
   // |-----------------------------------------------------------------------------------------|
 
   // TODO, refactor seed data to just use addAudio();
@@ -50,6 +144,7 @@ class DataService {
     String? description,
     List<String>? tags,
     required File audioFile,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
@@ -58,6 +153,7 @@ class DataService {
         description: description,
         tags: tags,
         audioFile: audioFile,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -75,14 +171,16 @@ class DataService {
     String? description,
     List<String>? tags,
     required File audioFile,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
-      final audio = await AudioController.addSeedAudio(
+      final audio = await AudioController.addAudio(
         title: title,
         description: description,
         tags: tags,
         audioFile: audioFile,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -101,6 +199,7 @@ class DataService {
     String? description,
     List<String>? tags,
     bool? isFavorited,
+    File? transcriptFile,
     String? summary,
   }) async {
     try {
@@ -110,6 +209,7 @@ class DataService {
         description: description,
         isFavorited: isFavorited,
         tags: tags,
+        transcriptFile: transcriptFile,
         summary: summary,
       );
       if (audio != null) {
@@ -136,7 +236,7 @@ class DataService {
   }
 
   // |-----------------------------------------------------------------------------------------|
-  // |-------------------------------------- PHOTO OPERATIONS --------------------------------------|
+  // |--------------------------------- PHOTO OPERATIONS --------------------------------------|
   // |-----------------------------------------------------------------------------------------|
 
 // TODO, refactor seed data to just use addPhoto();
@@ -225,7 +325,7 @@ class DataService {
   }
 
   // |-----------------------------------------------------------------------------------------|
-  // |------------------------------------- VIDEO OPERATIONS -------------------------------------|
+  // |---------------------------------- VIDEO OPERATIONS -------------------------------------|
   // |-----------------------------------------------------------------------------------------|
 
   // TODO, refactor seed data to just use addVideo();
@@ -317,6 +417,84 @@ class DataService {
       return video;
     } catch (e) {
       print('Data Service -- Error removing video: $e');
+      return null;
+    }
+  }
+
+  // |-----------------------------------------------------------------------------------------|
+  // |------------------------- SIGNIFICANT OBJECT OPERATIONS -------------------------------|
+  // |-----------------------------------------------------------------------------------------|
+
+  Future<SignificantObject?> addSignificantObject({
+    String? objectLabel,
+    String? customLabel,
+    required int timestamp,
+    required double left,
+    required double top,
+    required double width,
+    required double height,
+    required File imageFile,
+  }) async {
+    try {
+      final significantObject =
+          await SignificantObjectController.addSignificantObject(
+        objectLabel: objectLabel,
+        customLabel: customLabel,
+        timestamp: timestamp,
+        left: left,
+        top: top,
+        width: width,
+        height: height,
+        imageFile: imageFile,
+      );
+
+      if (significantObject != null) {
+        await refreshMedia();
+      }
+
+      return significantObject;
+    } catch (e) {
+      print('Data Service -- Error adding significant object: $e');
+      return null;
+    }
+  }
+
+  Future<SignificantObject?> updateSignificantObjectLabels({
+    required int id,
+    String? objectLabel,
+    String? customLabel,
+  }) async {
+    try {
+      final significantObject =
+          await SignificantObjectController.updateSignificantObjectLabels(
+        id: id,
+        objectLabel: objectLabel,
+        customLabel: customLabel,
+      );
+
+      if (significantObject != null) {
+        await refreshMedia();
+      }
+
+      return significantObject;
+    } catch (e) {
+      print('Data Service -- Error updating significant object labels: $e');
+      return null;
+    }
+  }
+
+  Future<SignificantObject?> removeSignificantObject(int id) async {
+    try {
+      final significantObject =
+          await SignificantObjectController.removeSignificantObject(id);
+
+      if (significantObject != null) {
+        await refreshMedia();
+      }
+
+      return significantObject;
+    } catch (e) {
+      print('Data Service -- Error removing significant object: $e');
       return null;
     }
   }

@@ -45,18 +45,34 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 class Address {
-  static Future<String> whereIAm() async {
+  // The testing suite does not allow for mocking permissions, so we need to manually skip them if called during a test
+  // isTesting is off by default, and only enabled during testing calls
+  static Future<String> whereIAm({bool isTesting = false}) async {
     // Ensure GPS access
-    LocationPermission permission = await Geolocator.requestPermission();
+
+    if (!isTesting) {
+      LocationPermission locationPermission =
+          await Geolocator.checkPermission();
+
+      if (locationPermission == LocationPermission.denied ||
+          locationPermission == LocationPermission.deniedForever) {
+        return "";
+      }
+    }
+
+    await Geolocator.requestPermission();
 
     // Ask GPS to provide its current latitude and longitude coordinates
-    Position currentPosition = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    Position currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
 
     // Ask Geocoder to match the coordinates to a geophysical address
     try {
-      List<Placemark> currentPlacemarks = await placemarkFromCoordinates(currentPosition.latitude, currentPosition.longitude);
+      List<Placemark> currentPlacemarks = await placemarkFromCoordinates(
+          currentPosition.latitude, currentPosition.longitude);
       Placemark currentPlace = currentPlacemarks[0];
-      var address = "${currentPlace.street}, ${currentPlace.locality}, ${currentPlace.postalCode}, ${currentPlace.country}";
+      var address =
+          "${currentPlace.street}, ${currentPlace.locality}, ${currentPlace.administrativeArea}, ${currentPlace.postalCode}, ${currentPlace.isoCountryCode}";
       return address;
     } catch (e) {
       print(e);

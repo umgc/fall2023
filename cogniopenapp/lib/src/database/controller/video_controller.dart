@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:cogniopenapp/src/database/model/media_type.dart';
@@ -5,7 +7,7 @@ import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:flutter/material.dart';
+import 'package:cogniopenapp/src/address.dart';
 
 class VideoController {
   VideoController._();
@@ -20,6 +22,8 @@ class VideoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
+      String physicalAddress =
+          "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
       String videoFileExtension =
           FileManager().getFileExtensionFromFile(videoFile);
       String videoFileName = FileManager().generateFileName(
@@ -41,6 +45,7 @@ class VideoController {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: videoFileSize,
         isFavorited: false,
         videoFileName: videoFileName,
@@ -53,13 +58,13 @@ class VideoController {
         DirectoryManager.instance.videosDirectory.path,
         videoFileName,
       );
-      if (videoFile != null) {
-        await FileManager.addFileToFilesystem(
-          thumbnailFile!,
-          DirectoryManager.instance.videoThumbnailsDirectory.path,
-          thumbnailFileName!,
-        );
-      }
+
+      await FileManager.addFileToFilesystem(
+        thumbnailFile!,
+        DirectoryManager.instance.videoThumbnailsDirectory.path,
+        thumbnailFileName!,
+      );
+
       return createdVideo;
     } catch (e) {
       print('Video Controller -- Error adding video: $e');
@@ -80,10 +85,13 @@ class VideoController {
       int videoFileSize = FileManager.calculateFileSizeInBytes(videoFile);
       DateTime timestamp =
           DateTime.parse(FileManager.getFileTimestamp(videoFile.path));
+      String physicalAddress = "";
+      await Address.whereIAm().then((String address) {
+        physicalAddress = address;
+      });
       String updatedPath = videoFile
           .path; // The method will update with the path (hopefully), when a video is added
-      Image thumbnail =
-          await FileManager.getThumbnail(updatedPath, 0, isThumbnail: true);
+      await FileManager.getThumbnail(updatedPath, 0, isThumbnail: true);
       String thumbnailFileName =
           FileManager.getThumbnailFileName(updatedPath, 0, isThumbnail: true);
       Video newVideo = Video(
@@ -91,6 +99,7 @@ class VideoController {
         description: description ?? "",
         tags: tags ?? [],
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: videoFileSize,
         isFavorited: false,
         videoFileName: videoFileName,

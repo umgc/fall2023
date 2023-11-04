@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/typingIndicator.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'dart:io';
@@ -7,10 +8,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+// import 'package:path_provider/path_provider.dart';
 
 // This is a AssistantScreen class.
 
 class AssistantScreen extends StatefulWidget {
+  const AssistantScreen({super.key, this.conversation});
+
+  final Audio? conversation;
+
   @override
   _AssistantScreenState createState() => _AssistantScreenState();
 }
@@ -22,6 +28,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
   TextEditingController _messageController = TextEditingController();
   ScrollController _scrollController = new ScrollController();
   List<ChatMessage> _chatMessages = [];
+  String prompt = "You are an assistant for someone with memory loss.";
   late Future<bool> goodAPIKey;
   bool _isTyping = false;
 
@@ -138,22 +145,38 @@ class _AssistantScreenState extends State<AssistantScreen> {
       _isTyping = true;
     });
 
+    var messages = [
+      OpenAIChatCompletionChoiceMessageModel(
+        content: prompt,
+        role: OpenAIChatMessageRole.system,
+      ),
+    ];
+    for (ChatMessage chat in _chatMessages) {
+      messages.add(
+        OpenAIChatCompletionChoiceMessageModel(
+          content: chat.messageText,
+          role: OpenAIChatMessageRole.user,
+        ),
+      );
+    }
+    messages.add(OpenAIChatCompletionChoiceMessageModel(
+      content: userMessage,
+      role: OpenAIChatMessageRole.user,
+    ));
+
+    print(messages);
+
     String response;
     try {
       OpenAIChatCompletionModel chatCompletion =
           await OpenAI.instance.chat.create(
         model: "gpt-3.5-turbo",
-        messages: [
-          OpenAIChatCompletionChoiceMessageModel(
-            content: userMessage,
-            role: OpenAIChatMessageRole.user,
-          ),
-        ],
+        messages: messages,
       );
 
       final content = chatCompletion.choices[0].message.content;
 
-      response = 'AI Assistant: $content';
+      response = 'Cora: $content';
     } on RequestFailedException catch (e) {
       _showAlert("API Request Error", e.message);
       response = "";
@@ -178,9 +201,11 @@ class _AssistantScreenState extends State<AssistantScreen> {
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
-              backgroundColor: const Color(0x440000), // Set appbar background color
+              backgroundColor:
+                  const Color(0x440000), // Set appbar background color
               centerTitle: true,
-              title: const Text('Virtual Assistant', style: TextStyle(color: Colors.black54)),
+              title: const Text('Virtual Assistant',
+                  style: TextStyle(color: Colors.black54)),
               elevation: 0,
               leading: const BackButton(color: Colors.black54),
             ),
@@ -239,6 +264,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
   }
 
   Future<bool> loadAPIKey() async {
+    print("Load");
     // Load function will throw an error if cogniopenapp/.env is missing or empty
     // make sure this file holds your api key in the format "OPEN_AI_API_KEY=<key>"
     // Also, make sure not to share your API key or push it to Git
@@ -260,7 +286,20 @@ class _AssistantScreenState extends State<AssistantScreen> {
       return false;
     } else {
       OpenAI.apiKey = apiKeyEnv;
-      _handleUserMessage("Welcome $_userName and offer to help them.", false);
+      String prompt =
+          "You are an assistant for $_userName, who has memory loss.";
+      if (widget.conversation != null) {
+        print("path");
+        String transcript = await getTranscript();
+        if (transcript.isNotEmpty) {
+          prompt +=
+              "\n$_userName wants to talk about the following conversation: \n{$transcript}";
+        }
+      }
+      setState(() {
+        this.prompt = prompt;
+      });
+      _handleUserMessage("Say hello.", false);
       return true;
     }
   }
@@ -281,6 +320,23 @@ class _AssistantScreenState extends State<AssistantScreen> {
                 ),
               ],
             ));
+  }
+
+  Future<String> getTranscript() async {
+    File? file = await widget.conversation!.loadTranscriptFile();
+    if (file != null) {
+      print(file.path);
+      try {
+        return await file.readAsString();
+      } on Exception catch (e) {
+        _showAlert("Missing Transcript", "Transcript file could not be read.");
+        print(e.toString());
+        return "";
+      }
+    }
+    _showAlert("Missing Transcript", "Transcript file not found.");
+
+    return widget.conversation!.description ?? "";
   }
 }
 
@@ -341,7 +397,7 @@ class ChatMessage extends StatelessWidget {
             leading: isUserMessage ? null : virtualAssistantIcon,
             minLeadingWidth: 25,
             title: Text(
-              isUserMessage ? "User:" : "Virtual Assistant:",
+              isUserMessage ? "User:" : "CogniOpen Remote Assistant (Cora):",
               style: titleStyle,
             ),
             subtitle: Text(

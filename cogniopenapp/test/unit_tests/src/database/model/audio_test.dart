@@ -2,17 +2,29 @@ import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:cogniopenapp/src/address.dart';
+import '../../../../resources/mocks/address_mock.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-void main() {
+void main() async {
   const int id = 1;
   const String title = 'Test Title';
   const String description = 'Test Description';
   const List<String> tags = ['Tag1', 'Tag2'];
   final DateTime timestamp = DateTime.now();
+  GeolocatorPlatform.instance = MockGeolocatorPlatform();
+  GeocodingPlatform.instance = MockGeocodingPlatform();
+  String physicalAddress = '';
+  await Address.whereIAm(isTesting: true).then((String address) {
+    physicalAddress = address;
+  });
+
   const int storageSize = 1000;
   const bool isFavorited = true;
   const String audioFileName = 'test_audio.mp3';
+  const String transcriptFileName = 'test_transcript.txt';
   const String summary = 'Test Summary';
 
   group('Audio', () {
@@ -27,9 +39,11 @@ void main() {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         audioFileName: audioFileName,
+        transcriptFileName: transcriptFileName,
         summary: summary,
       );
 
@@ -39,9 +53,11 @@ void main() {
       expect(audio.description, description);
       expect(audio.tags, tags);
       expect(audio.timestamp, timestamp);
+      expect(audio.physicalAddress, physicalAddress);
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, transcriptFileName);
       expect(audio.summary, summary);
     });
 
@@ -52,6 +68,7 @@ void main() {
         id: id,
         title: title,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         audioFileName: audioFileName,
@@ -63,9 +80,11 @@ void main() {
       expect(audio.description, isNull);
       expect(audio.tags, isNull);
       expect(audio.timestamp, timestamp);
+      expect(audio.physicalAddress, physicalAddress);
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, isNull);
       expect(audio.summary, isNull);
     });
 
@@ -80,9 +99,11 @@ void main() {
         MediaFields.description: description,
         MediaFields.tags: tags.join(','),
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: transcriptFileName,
         AudioFields.summary: summary,
       };
 
@@ -98,9 +119,11 @@ void main() {
           DateTime.fromMillisecondsSinceEpoch(
               timestamp.toUtc().millisecondsSinceEpoch,
               isUtc: true));
+      expect(audio.physicalAddress, physicalAddress);
       expect(audio.storageSize, storageSize);
       expect(audio.isFavorited, isFavorited);
       expect(audio.audioFileName, audioFileName);
+      expect(audio.transcriptFileName, transcriptFileName);
       expect(audio.summary, summary);
     });
 
@@ -111,6 +134,7 @@ void main() {
           MediaFields.id: id,
           MediaFields.title: title,
           MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+          MediaFields.physicalAddress: physicalAddress,
           MediaFields.storageSize: storageSize,
           MediaFields.isFavorited: 1,
           AudioFields.audioFileName: audioFileName,
@@ -128,9 +152,11 @@ void main() {
             DateTime.fromMillisecondsSinceEpoch(
                 timestamp.toUtc().millisecondsSinceEpoch,
                 isUtc: true));
+        expect(audio.physicalAddress, physicalAddress);
         expect(audio.storageSize, storageSize);
         expect(audio.isFavorited, isFavorited);
         expect(audio.audioFileName, audioFileName);
+        expect(audio.transcriptFileName, isNull);
         expect(audio.summary, isNull);
       },
     );
@@ -156,9 +182,11 @@ void main() {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         audioFileName: audioFileName,
+        transcriptFileName: transcriptFileName,
         summary: summary,
       );
 
@@ -170,9 +198,11 @@ void main() {
         MediaFields.description: description,
         MediaFields.tags: tags.join(','),
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: transcriptFileName,
         AudioFields.summary: summary,
       });
     },
@@ -185,6 +215,7 @@ void main() {
         id: id,
         title: title,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         storageSize: storageSize,
         isFavorited: isFavorited,
         audioFileName: audioFileName,
@@ -198,9 +229,11 @@ void main() {
         MediaFields.description: null,
         MediaFields.tags: null,
         MediaFields.timestamp: timestamp.toUtc().millisecondsSinceEpoch,
+        MediaFields.physicalAddress: physicalAddress,
         MediaFields.storageSize: storageSize,
         MediaFields.isFavorited: 1,
         AudioFields.audioFileName: audioFileName,
+        AudioFields.transcriptFileName: null,
         AudioFields.summary: null,
       });
     },

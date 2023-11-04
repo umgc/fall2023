@@ -4,6 +4,7 @@ Author: Eyerusalme (Jerry)
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'onboardingScreen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -138,15 +139,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ElevatedButton(
                       onPressed: _isButtonActive
                           ? () async {
-                              if (_formKey.currentState!.validate()) {
-                                String userData =
-                                    '${_firstNameController.text}, ${_lastNameController.text}, ${_emailController.text}, ${_useFaceID.toString()}';
-                                print("User Data: $userData");
-                                await writeUserData(userData);
-                                Navigator.pushReplacementNamed(
-                                    context, '/homeScreen');
-                              }
-                            }
+                        if (_formKey.currentState!.validate()) {
+                          String userData =
+                              '${_firstNameController.text}, ${_lastNameController.text}, ${_emailController.text}, ${_useFaceID.toString()}';
+                          print("User Data: $userData");
+                          await writeUserData(userData);
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OnboardingScreen()));
+                        }
+
+                      }
                           : null,
                       child: Text("Create Account"),
                     ),

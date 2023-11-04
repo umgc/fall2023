@@ -2,11 +2,14 @@ import 'package:cogniopenapp/src/database/app_seed_data.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/database/repository/significant_object_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
+  static const tableLocations = 'locations';
   static final AppDatabase instance = AppDatabase._init();
 
   static Database? _database;
@@ -33,6 +36,7 @@ class AppDatabase {
     const boolType = 'BOOLEAN NOT NULL';
     const integerType = 'INTEGER NOT NULL';
     const textNullableType = 'TEXT';
+    const floatType = 'FLOAT';
 
     final mediaColumns = [
       '${MediaFields.id} $idType',
@@ -40,6 +44,7 @@ class AppDatabase {
       '${MediaFields.description} $textNullableType',
       '${MediaFields.tags} $textNullableType',
       '${MediaFields.timestamp} $integerType',
+      '${MediaFields.physicalAddress} $textNullableType',
       '${MediaFields.storageSize} $integerType',
       '${MediaFields.isFavorited} $boolType',
     ];
@@ -48,6 +53,7 @@ class AppDatabase {
       CREATE TABLE $tableAudios (
         ${mediaColumns.join(',\n')},
         ${AudioFields.audioFileName} $textType,
+        ${AudioFields.transcriptFileName} $textNullableType,
         ${AudioFields.summary} $textNullableType
       )
     ''');
@@ -60,6 +66,16 @@ class AppDatabase {
     ''');
 
     await db.execute('''
+      CREATE TABLE $tableLocations (
+        id $idType,
+        latitude $floatType,
+        longitude $floatType,
+        address $textNullableType,
+        timestamp $integerType
+      )
+    ''');
+
+    await db.execute('''
       CREATE TABLE $tableVideos (
         ${mediaColumns.join(',\n')},
         ${VideoFields.videoFileName} $textType,
@@ -67,6 +83,36 @@ class AppDatabase {
         ${VideoFields.duration} $textType
       )
     ''');
+
+    await db.execute('''
+    CREATE TABLE $tableVideoResponses (
+      ${VideoResponseFields.id} $idType,
+      ${VideoResponseFields.title} $textType,
+      ${VideoResponseFields.timestamp} $integerType,
+      ${VideoResponseFields.referenceVideoFilePath} $textType,
+      ${VideoResponseFields.confidence} $floatType,
+      ${VideoResponseFields.left} $floatType,
+      ${VideoResponseFields.top} $floatType,
+      ${VideoResponseFields.width} $floatType,
+      ${VideoResponseFields.height} $floatType,
+      ${VideoResponseFields.address} $textNullableType,
+      ${VideoResponseFields.parents} $textNullableType
+    )
+  ''');
+
+    await db.execute('''
+    CREATE TABLE $tableSignificantObjects (
+      ${SignificantObjectFields.id} $idType,
+      ${SignificantObjectFields.objectLabel} $textNullableType,
+      ${SignificantObjectFields.customLabel} $textNullableType,
+      ${SignificantObjectFields.timestamp} $integerType,
+      ${SignificantObjectFields.imageFileName} $textType,
+      ${SignificantObjectFields.left} $floatType,
+      ${SignificantObjectFields.top} $floatType,
+      ${SignificantObjectFields.width} $floatType,
+      ${SignificantObjectFields.height} $floatType
+    )
+  ''');
 
     final appSeedData = AppSeedData();
     appSeedData.loadAppSeedData();

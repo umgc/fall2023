@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:cogniopenapp/src/data_service.dart';
@@ -14,12 +16,15 @@ class AppSeedData {
     try {
       File? audioFile = await FileManager.loadAssetFile(
           'assets/seed_data_files/bird.mp3', 'bird.mp3');
+      File? transcriptFile = await FileManager.loadAssetFile(
+          'assets/seed_data_files/bird_transcript.txt', 'bird_transcript.txt');
       List<String>? tagsList = ['nature', 'bird'];
       await DataService.instance.addSeedAudio(
           title: 'Bird',
           description: 'Audio of birds singing in the forest.',
           tags: tagsList,
           audioFile: audioFile,
+          transcriptFile: transcriptFile,
           summary: 'This is a nature recording of birds singing.');
       FileManager.unloadAssetFile('bird.mp3');
     } catch (e) {

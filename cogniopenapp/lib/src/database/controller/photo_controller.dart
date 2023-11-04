@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:cogniopenapp/src/database/model/media_type.dart';
@@ -5,6 +7,7 @@ import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/address.dart';
 
 class PhotoController {
   PhotoController._();
@@ -17,6 +20,8 @@ class PhotoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
+      String physicalAddress =
+          "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
       String photoFileExtension =
           FileManager().getFileExtensionFromFile(photoFile);
       String photoFileName = FileManager().generateFileName(
@@ -30,6 +35,7 @@ class PhotoController {
         description: description,
         tags: tags,
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         photoFileName: photoFileName,
         storageSize: photoFileSize,
         isFavorited: false,
@@ -55,14 +61,20 @@ class PhotoController {
   }) async {
     try {
       String photoFileName = FileManager.getFileName(photoFile.path);
+      print("FILE NAME IS");
       int photoFileSize = FileManager.calculateFileSizeInBytes(photoFile);
       DateTime timestamp =
           DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
+      String physicalAddress = '';
+      await Address.whereIAm().then((String address) {
+        physicalAddress = address;
+      });
       Photo newPhoto = Photo(
         title: title ?? "",
         description: description ?? "",
         tags: tags ?? [],
         timestamp: timestamp,
+        physicalAddress: physicalAddress,
         photoFileName: photoFileName,
         storageSize: photoFileSize,
         isFavorited: false,

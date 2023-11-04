@@ -47,6 +47,8 @@ class _CameraHomeState extends State<VideoScreen>
   double _currentScale = 1.0;
   double _baseScale = 1.0;
 
+  bool isRecording = false;
+
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
 
@@ -56,51 +58,46 @@ class _CameraHomeState extends State<VideoScreen>
     //WidgetsBinding.instance.addObserver(this);
     cameraManager = CameraManager();
     cameraController = cameraManager.controller;
+    isRecording = cameraManager.isAutoRecording;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Camera'),
+        flexibleSpace: Image(
+          image: AssetImage('assets/images/background.jpg'),
+          fit: BoxFit.cover,
+        ),
+        elevation: 0,
+        centerTitle: true,
+        leading: const BackButton(color: Colors.black54),
+        title: const Text('Camera', style: TextStyle(color: Colors.black54)),
       ),
       body: Column(
         children: <Widget>[
           Expanded(
             child: Container(
               decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/background.jpg"),
+                  fit: BoxFit.cover,
+                ),
                 color: Colors.black,
                 border: Border.all(
-                  color: cameraController.value.isRecordingVideo
-                      ? Colors.redAccent
-                      : Colors.grey,
-                  width: 3.0,
+                  color: isRecording ? Colors.redAccent : Colors.grey,
+                  width: 5.0,
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(1.0),
+                padding: const EdgeInsets.only(bottom: 1.0),
                 child: Center(
                   child: _cameraPreviewWidget(),
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            /*child: Text(
-          'Recorded Time: ${recordedSeconds ~/ 60}:${(recordedSeconds % 60).toString().padLeft(2, '0')}',
-          style: TextStyle(fontSize: 18),
-        ), */
-          ),
           _captureControlRowWidget(),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              children: <Widget>[
-                //_thumbnailWidget(),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -108,14 +105,14 @@ class _CameraHomeState extends State<VideoScreen>
 
   /// Display the preview from the camera (or a message if the preview is not available).
   Widget _cameraPreviewWidget() {
-    if (cameraController == null || !cameraController.value.isInitialized) {
+    if (!cameraController.value.isInitialized) {
       return Container();
     } else {
       return Listener(
         onPointerDown: (_) => _pointers++,
         onPointerUp: (_) => _pointers--,
         child: CameraPreview(
-          cameraController!,
+          cameraController,
           child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             return GestureDetector(
@@ -135,57 +132,53 @@ class _CameraHomeState extends State<VideoScreen>
 
   Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
     // When there are not exactly two fingers on screen don't scale
-    if (cameraController == null || _pointers != 2) {
+    if (_pointers != 2) {
       return;
     }
 
     _currentScale = (_baseScale * details.scale)
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
-    await cameraController!.setZoomLevel(_currentScale);
+    await cameraController.setZoomLevel(_currentScale);
   }
-
-  /*
-  /// Display the thumbnail of the captured image or video.
-  Widget _thumbnailWidget() {
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            if (cameraManager.recentThumbnail == null)
-              Container()
-            else
-              SizedBox(
-                width: 64.0,
-                height: 64.0,
-                child: Image(image: cameraManager.recentThumbnail.image),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-  */
 
   /// Display the control bar with buttons to take pictures and record videos.
   Widget _captureControlRowWidget() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        IconButton(
-          icon: cameraController != null &&
-                  !cameraController.value.isRecordingVideo
-              ? const Icon(Icons.circle)
-              : const Icon(Icons.pause),
-          color: Colors.redAccent,
-          onPressed: cameraController != null
-              ? (!cameraController.value.isRecordingVideo)
-                  ? onResumeButtonPressed
-                  : onPauseButtonPressed
-              : null,
-        ),
+        Expanded(
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/background.jpg"),
+                fit: BoxFit.cover,
+              ),
+              color: Colors.black,
+            ),
+            child: IconButton(
+              icon: isRecording
+                  ? const Icon(Icons.pause)
+                  : const Icon(Icons.circle),
+              color: Colors.redAccent,
+              onPressed: () {
+                if (!cameraController.value.isRecordingVideo) {
+                  onResumeButtonPressed();
+                  setState(() {
+                    isRecording = true;
+                    const Icon(Icons.pause);
+                  });
+                } else {
+                  onPauseButtonPressed();
+                  setState(() {
+                    isRecording = false;
+                    const Icon(Icons.circle);
+                  });
+                }
+              },
+            ),
+          ),
+        )
       ],
     );
   }

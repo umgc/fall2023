@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cogniopenapp/src/utils/file_manager.dart';
 
 class CustomLabelResponse {
   String name;
@@ -20,10 +19,11 @@ class CustomLabelResponse {
         FileManager.mostRecentVideoPath, timestamp);
   }*/
 
+/*
   void setImage(int timeStampNew) async {
     exampleImage = await FileManager.getThumbnail(
         FileManager.mostRecentVideoPath, timeStampNew);
-  }
+  }*/
 }
 
 class ResponseBoundingBox {

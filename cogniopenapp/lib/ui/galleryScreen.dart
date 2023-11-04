@@ -1,19 +1,31 @@
+import 'dart:io';
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:cogniopenapp/src/video_display.dart';
 
 // Define an enumeration for sorting criteria
 enum SortingCriteria { storageSize, timeStamp, title, type }
 
+// Default font size, icon size, and other layout values
+double _crossAxisCount = 2.0; // Default options for grid columns
+double _fontSize = 16.0;
+double _iconSize = 40.0;
+double _sizedBoxSpacing = 8;
+final double _defaultFontSize = 20.0;
+
 // Define a StatefulWidget for the GalleryScreen
 class GalleryScreen extends StatefulWidget {
-  @override
   Widget build(BuildContext context) {
     // Scaffold widget for the Gallery screen
     return Scaffold(
@@ -31,16 +43,10 @@ class GalleryScreen extends StatefulWidget {
 // Define the state for the Gallery screen
 class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
-  List<Media> testMedia = DataService.instance.mediaList;
+  List<Media> masterMediaList = [];
 
-  final double _defaultFontSize = 20.0;
   bool _searchBarVisible = false;
   String _searchText = '';
-
-  // Default font size, icon size, and other layout values
-  double _crossAxisCount = 2.0; // Default options for grid columns
-  double _fontSize = 16.0;
-  double _iconSize = 40.0;
 
   // Variables used to toggle what is being viewed
   bool _showFavoritedOnly = false;
@@ -56,8 +62,19 @@ class _GalleryScreenState extends State<GalleryScreen> {
     _populateMedia();
   }
 
+  @override
+  void initState() {
+    print("WE INIT");
+    masterMediaList = DataService.instance.mediaList;
+    super.initState();
+    _selectedSortingCriteria =
+        SortingCriteria.timeStamp; // Selecting the timestamp sorting
+    _isSortAscending = false; // Setting it to descending order
+    _sortMediaItems(); // Sort the media items based on the selected criteria
+  }
+
   void _populateMedia() async {
-    testMedia = DataService.instance.mediaList;
+    masterMediaList = DataService.instance.mediaList;
   }
 
   // Function to update font and icon size based on grid size
@@ -122,9 +139,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _toggleFavoriteStatus(Media media) async {
-    //TODO: Update persistence
-    //await DataService.instance
-    //    .updateMediaIsFavorited(media, !media.isFavorited);
+    //TODO: Update persistence. It works but moves the grid items around for some reason
+    //await DataService.instance.updateMediaIsFavorited(media, !media.isFavorited);
     setState(() {
       media.isFavorited = !media.isFavorited;
     });
@@ -163,22 +179,22 @@ class _GalleryScreenState extends State<GalleryScreen> {
       case null:
         break;
       case SortingCriteria.storageSize:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.storageSize.compareTo(b.storageSize)
             : b.storageSize.compareTo(a.storageSize));
         break;
       case SortingCriteria.timeStamp:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.timestamp.compareTo(b.timestamp)
             : b.timestamp.compareTo(a.timestamp));
         break;
       case SortingCriteria.title:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.title.compareTo(b.title)
             : b.title.compareTo(a.title));
         break;
       case SortingCriteria.type:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.runtimeType.toString().compareTo(b.runtimeType.toString())
             : b.runtimeType.toString().compareTo(a.runtimeType.toString()));
         break;
@@ -188,9 +204,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
   // Function to filter photos based on the search text
   List<Media> get filteredPhotos {
     if (_searchText.isEmpty) {
-      return testMedia;
+      return masterMediaList;
     } else {
-      return testMedia
+      return masterMediaList
           .where((media) =>
               media.title.toLowerCase().contains(_searchText.toLowerCase()))
           .toList();
@@ -199,7 +215,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   // Function to get favorited photos
   List<Media> getFavoritedMedia() {
-    return testMedia.where((media) => media.isFavorited).toList();
+    return masterMediaList.where((media) => media.isFavorited).toList();
   }
 
   // Display names for sorting criteria
@@ -210,194 +226,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
     SortingCriteria.type: 'Sort by Type',
   };
 
-  void displayFullObjectView(BuildContext context, Media media) async {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Full Screen Image and Details'),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () async {
-                    final updatedMedia = await displayEditPopup(context, media);
-                    if (updatedMedia != null) {
-                      // Call a callback to update the parent view
-                      Navigator.pop(context); // Close the current view
-                      setState(() {
-                        displayFullObjectView(context, updatedMedia);
-                      });
-                    }
-                  },
-                ),
-              ],
-            ),
-            body: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (!media.title.isEmpty)
-                      Text('Title: ${media.title}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
-                    Text(
-                        'Timestamp: ${FormatUtils.getDateString(media.timestamp)}',
-                        style: TextStyle(fontSize: _defaultFontSize)),
-                    if (media is Photo && media.photo != null)
-                      Image(
-                        image: media.photo!.image,
-                      ),
-                    if (media is Video && media.thumbnail != null)
-                      Image(
-                        image: media.thumbnail!.image,
-                      ),
-                    if (media is Audio) Icon(Icons.chat, size: 100),
-                    SizedBox(height: 16),
-                    if (media.description != null && media.description != "")
-                      Text(
-                        'Description: ${media.description}',
-                        style: TextStyle(fontSize: _defaultFontSize),
-                        textAlign: TextAlign.center,
-                      ),
-                    if (media.tags != null && media.tags!.length < 1)
-                      Text('Tags: ${media.tags?.join(", ")}',
-                          style: TextStyle(fontSize: _defaultFontSize)),
-                    Text(
-                      'Storage Size: ${FormatUtils.getStorageSizeString(media.storageSize)}',
-                      style: TextStyle(fontSize: _defaultFontSize),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Future<Media?> displayEditPopup(BuildContext context, Media media) async {
-    TextEditingController titleController =
-        TextEditingController(text: media.title);
-    TextEditingController descriptionController =
-        TextEditingController(text: media.description);
-    TextEditingController tagsController =
-        TextEditingController(text: media.tags?.join(', ') ?? '');
-
-    return showDialog<Media>(
-      context: context,
-      builder: (BuildContext context) {
-        Media? updatedMedia;
-        return AlertDialog(
-          title: Text('Edit Media'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  buildEditableField(titleController, 'Title', setState),
-                  buildEditableField(
-                      descriptionController, 'Description', setState),
-                  buildEditableField(
-                      tagsController, 'Tags (comma-separated)', setState),
-                ],
-              );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Save'),
-              onPressed: () {
-                List<String> tags = tagsController.text
-                    .split(',')
-                    .map((tag) => tag.trim())
-                    .toList();
-                // TODO: FIX (Note we should update the media using persistent storage then refresh the data)
-                if (media is Photo) {
-                  DataService.instance.updatePhoto(
-                      id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Photo(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      photoFileName: media.photoFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-                } else if (media is Video) {
-                  DataService.instance.updateVideo(
-                      id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Video(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      videoFileName: media.videoFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags,
-                      duration: media.duration,
-                      thumbnailFileName: media.thumbnailFileName);
-                } else if (media is Audio) {
-                  DataService.instance.updateAudio(
-                      id: media.id!,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-
-                  // TODO: Find a better way to refresh
-                  updatedMedia = Audio(
-                      timestamp: media.timestamp,
-                      storageSize: media.storageSize,
-                      isFavorited: false,
-                      audioFileName: media.audioFileName,
-                      title: titleController.text,
-                      description: descriptionController.text,
-                      tags: tags);
-                }
-                setState(() {});
-                Navigator.of(context)
-                    .pop(updatedMedia); // Return the updated media
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget buildEditableField(
-    TextEditingController controller,
-    String label,
-    StateSetter setState,
-  ) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(labelText: label),
-      enabled: true,
-      onChanged: (value) {
-        setState(() {
-          // You can add logic here if needed when the text changes.
-        });
-      },
-    );
+  Future<void> takePicture() async {
+    await CameraManager()
+        .capturePhoto(DirectoryManager.instance.photosDirectory);
+    refresh();
   }
 
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -406,10 +238,14 @@ class _GalleryScreenState extends State<GalleryScreen> {
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   @override
   Widget build(BuildContext context) {
+    _populateMedia();
     _updateLayoutValues();
+    refresh();
 
     return Scaffold(
-        backgroundColor: const Color(0xFFB3E5FC),
+        backgroundColor: Color(int.parse("0xFFC1DFDD")),
+        extendBodyBehindAppBar: false,
+        extendBody: true,
         appBar: _buildAppBar(),
         body: Container(
           decoration: const BoxDecoration(
@@ -434,13 +270,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return AppBar(
       backgroundColor: const Color(0x440000),
       elevation: 0.0,
-      title: Column(
+      iconTheme: const IconThemeData(
+        color: Colors.black54, //change your color here
+      ),
+      title: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '', // Gallery view title
-            style: TextStyle(fontSize: 20),
-          ),
           SizedBox(height: 4),
         ],
       ),
@@ -450,16 +285,23 @@ class _GalleryScreenState extends State<GalleryScreen> {
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
               key: const Key('searchIcon'),
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
+              color: Colors.black54,
               onPressed: _toggleSearchBarVisibility,
+            ),
+            IconButton(
+              key: const Key('cameraIcon'),
+              color: Colors.grey,
+              icon: const Icon(Icons.camera_alt),
+              onPressed: takePicture,
             ),
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FAVORITE/TYPE ICONS FOR GRID VIEW |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             IconButton(
               key: const Key('favoriteIcon'),
               color: _showFavoritedOnly ? Colors.yellow : Colors.grey,
               icon: _showFavoritedOnly
-                  ? Icon(Icons.star)
-                  : Icon(Icons.star_border),
+                  ? const Icon(Icons.star)
+                  : const Icon(Icons.star_border),
               onPressed: _toggleShowFavorited,
             ),
             IconButton(
@@ -467,12 +309,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
               icon: _showPhotos
                   ? const Icon(Icons.photo)
                   : const Icon(Icons.photo_outlined),
-              color: _showPhotos ? Colors.white : Colors.grey,
+              color: _showPhotos ? Colors.blueAccent : Colors.grey,
               onPressed: _toggleShowPhotos,
             ),
             IconButton(
               key: const Key('filterVideoIcon'),
-              color: _showVideos ? Colors.white : Colors.grey,
+              color: _showVideos ? Colors.blueAccent : Colors.grey,
               icon: _showVideos
                   ? const Icon(Icons.videocam)
                   : const Icon(Icons.videocam_outlined),
@@ -480,7 +322,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             ),
             IconButton(
               key: const Key('filterConversationIcon'),
-              color: _showConversations ? Colors.white : Colors.grey,
+              color: _showConversations ? Colors.blueAccent : Colors.grey,
               icon: _showConversations
                   ? const Icon(Icons.chat)
                   : const Icon(Icons.chat_outlined),
@@ -500,10 +342,16 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  // Don't ask me how or why this works
+  void refresh() {
+    _toggleShowFavorited();
+    _toggleShowFavorited();
+  }
+
   Widget _buildSearchBar() {
     return TextField(
-      decoration: InputDecoration(
-        labelText: 'Search by Title',
+      decoration: const InputDecoration(
+        labelText: 'Filter by Title',
         prefixIcon: Icon(Icons.search),
       ),
       onChanged: _onSearchTextChanged,
@@ -526,13 +374,18 @@ class _GalleryScreenState extends State<GalleryScreen> {
     List<Media> displayedMedia = _filterDisplayedMedia();
 
     if (index >= displayedMedia.length) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     Media media = displayedMedia[index];
     return GestureDetector(
       onTap: () {
-        displayFullObjectView(context, media);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FullObjectView(media),
+          ),
+        );
       },
       child: _buildGridItemContent(media),
     );
@@ -556,11 +409,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (media is Photo && media.photo != null)
-                  _buildPhotoImage(media),
+                  _buildGridImage(media.title, media.photo!),
                 if (media is Video && media.thumbnail != null)
-                  _buildVideoImage(media),
-                if (media is Audio) _buildConversationIcon(),
-                _buildGridItemTitle(media.title),
+                  _buildGridImage(media.title, media.thumbnail!),
+                if (media is Audio) _buildConversationIcon(media),
+                if (media is Audio) returnTextOverlay(media.title),
               ],
             ),
             _buildFavoriteIcon(media),
@@ -571,40 +424,65 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  Widget _buildPhotoImage(Photo media) {
+  Widget _buildGridImage(String title, Image image) {
     return Expanded(
       child: Center(
-        child: Image(
-          key: const Key('photoItem'),
-          image: media.photo!.image,
+        child: Stack(
+          children: [
+            // Image widget
+            Image(
+              key: const Key('videoItem'),
+              image: image.image,
+              fit: BoxFit.fill,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+            // Text overlay at the bottom
+            Positioned(
+              bottom: 0, // Adjust the bottom position as needed
+              left: 0, // Adjust the left position as needed
+              right: 0, // Adjust the right position as needed
+              child: returnTextOverlay(title),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildVideoImage(Video media) {
-    return Image(
-      key: const Key('videoItem'),
-      image: media.thumbnail!.image,
-      // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| "ALGORITHM" FOR DETERMINING ICON/FONT SIZE IN GRID VIEW|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-      width: 100.0 + (2.0 - _crossAxisCount) * 25.0,
-      height: 100.0 + (2.0 - _crossAxisCount) * 25.0,
+  Container returnTextOverlay(String title) {
+    if (title.isEmpty) {
+      return Container();
+    }
+    return Container(
+      padding: EdgeInsets.all(10),
+      color: Colors.black.withOpacity(0.5), // Adjust opacity and color
+      child: Center(
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white, // Text color
+            fontSize: 18, // Text size
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildConversationIcon() {
-    return const Icon(
-      key: Key('conversationItem'),
-      Icons.chat,
-      size: 50,
-    );
-  }
-
-  Widget _buildGridItemTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: _fontSize),
-      textAlign: TextAlign.center,
+  Widget _buildConversationIcon(Media media) {
+    return const Expanded(
+      child: Center(
+        child: Stack(
+          children: [
+            // Image widget
+            Icon(
+              key: Key('conversationItem'),
+              Icons.chat,
+              size: 75,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -691,5 +569,440 @@ class _GalleryScreenState extends State<GalleryScreen> {
         ),
       );
     }).toList();
+  }
+}
+
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| FULL OBJECT WIDGET |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+//||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+class FullObjectView extends StatefulWidget {
+  Media activeMedia;
+
+  FullObjectView(this.activeMedia);
+
+  @override
+  _FullObjectViewState createState() => _FullObjectViewState();
+}
+
+class _FullObjectViewState extends State<FullObjectView> {
+  FlutterSoundPlayer? _player;
+  bool _isPlaying = false;
+
+  late Audio activeAudio;
+
+  @override
+  void initState() {
+    super.initState();
+    _player = FlutterSoundPlayer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Get the screen height
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      backgroundColor:
+          Colors.transparent, // Make the Scaffold's background transparent
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor:
+            Colors.transparent, // Make the AppBar's background transparent
+        elevation: 0.0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.black54,
+          onPressed: () async {
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => GalleryScreen()),
+            );
+          },
+        ), // Remove the BackButton
+        title: const Text('Full Screen Image and Details',
+            style: TextStyle(color: Colors.black54)),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () async {
+              await displayEditPopup(context, widget.activeMedia);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () async {
+              // Call the delete method when the delete button is pressed
+              await deleteMedia(widget.activeMedia);
+              // Navigate back to the ResponseScreen
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GalleryScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Container(
+        height:
+            screenHeight, // Set the height of the Container to the screen height
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+              child: Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/background.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                        height:
+                            80), // Used to provide an invisible barrier for the objects
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia.title.isNotEmpty)
+                      returnTextBox("Title", '${widget.activeMedia.title}'),
+                    addSpacingSizedBox(),
+                    returnTextBox("Timestamp",
+                        '${FormatUtils.getDateString(widget.activeMedia.timestamp)}'),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia is Audio)
+                      createAudioControlButtons(),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia is Photo &&
+                        (widget.activeMedia as Photo).photo != null)
+                      Image(
+                        image: (widget.activeMedia as Photo).photo!.image,
+                      ),
+                    if (widget.activeMedia is Video &&
+                        (widget.activeMedia as Video).thumbnail != null)
+                      videoDisplay(widget.activeMedia as Video),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia.description != null &&
+                        widget.activeMedia.description != "")
+                      returnTextBox(
+                          "Description", '${widget.activeMedia.description}'),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia is Audio)
+                      returnTextBox("Summary",
+                          '${(widget.activeMedia as Audio).summary}'),
+                    addSpacingSizedBox(),
+                    if (widget.activeMedia is Audio)
+                      FutureBuilder<String>(
+                        future: readFileAsString(widget.activeMedia as Audio),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return returnTextBox(
+                                "Transcription", '${snapshot.data}');
+                          }
+                        },
+                      ),
+                    if (widget.activeMedia.physicalAddress!.isNotEmpty)
+                      returnTextBox(
+                          "Address", '${widget.activeMedia.physicalAddress}'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> deleteMedia(Media media) async {
+    if (media is Audio) {
+      await DataService.instance.removeAudio(media.id!);
+    } else if (media is Photo) {
+      await DataService.instance.removePhoto(media.id!);
+    } else {
+      await DataService.instance.removeVideo(media.id!);
+    }
+  }
+
+  Column createAudioPlayer() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3),
+              )
+            ],
+          ),
+          child: audioPlayer(widget.activeMedia as Audio),
+        ),
+      ],
+    );
+  }
+
+  SizedBox addSpacingSizedBox() {
+    return const SizedBox(
+      height: 8,
+    );
+  }
+
+  ElevatedButton coraButton() {
+    var virtualAssistantIcon = Image.asset(
+      'assets/icons/virtual_assistant.png',
+      width: 25.0,
+      height: 25.0,
+    );
+    return ElevatedButton.icon(
+      icon: virtualAssistantIcon,
+      label: const Text("Ask Cora"),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                AssistantScreen(conversation: widget.activeMedia as Audio),
+          ),
+        );
+      },
+    );
+  }
+
+  Container createAudioControlButtons() {
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+          color: Colors.black,
+          width: 2.0,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: createBoxDecoration(),
+              child: coraButton(),
+            ),
+          ),
+          const SizedBox(width: 16), // Add space between the children
+          Expanded(
+            child: Container(
+              decoration: createBoxDecoration(),
+              child: audioPlayer(widget.activeMedia as Audio),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration createBoxDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(8.0),
+      border: Border.all(
+        color: Colors.black,
+        width: 2.0,
+      ),
+    );
+  }
+
+  Container returnTextBox(String title, String contents) {
+    return Container(
+      padding: const EdgeInsets.all(10.0),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        border: Border.all(
+          color: Colors.black,
+          width: 2.0,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            height: _sizedBoxSpacing,
+          ),
+          Text(
+            contents,
+            style: TextStyle(fontSize: _defaultFontSize),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<Media?> displayEditPopup(BuildContext context, Media media) async {
+    TextEditingController titleController =
+        TextEditingController(text: media.title);
+    TextEditingController descriptionController =
+        TextEditingController(text: media.description);
+
+    return showDialog<Media>(
+      context: context,
+      builder: (BuildContext context) {
+        Media? updatedMedia;
+        return AlertDialog(
+          title: Text('Edit Media'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  buildEditableField(titleController, 'Title', setState),
+                  buildEditableField(
+                      descriptionController, 'Description', setState),
+                ],
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () async {
+                if (media is Photo) {
+                  updatedMedia = await DataService.instance.updatePhoto(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
+                } else if (media is Video) {
+                  updatedMedia = await DataService.instance.updateVideo(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
+                } else if (media is Audio) {
+                  updatedMedia = await DataService.instance.updateAudio(
+                      id: media.id!,
+                      title: titleController.text,
+                      description: descriptionController.text);
+                }
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FullObjectView(updatedMedia!)),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<String> readFileAsString(Audio audio) async {
+    String path =
+        "${DirectoryManager.instance.transcriptsDirectory.path}/${activeAudio.transcriptFileName}";
+    try {
+      File file = File(path);
+      String fileContent = await file.readAsString();
+      return fileContent;
+    } catch (e) {
+      print("Error reading the file: $e");
+      return ""; // Handle the error as needed
+    }
+  }
+
+  ElevatedButton audioPlayer(Audio audio) {
+    activeAudio = audio;
+    return ElevatedButton(
+      onPressed: _isPlaying ? _stopPlayback : _startPlayback,
+      child: Text(_isPlaying ? 'Stop Audio' : 'Play Audio'),
+    );
+  }
+
+  VideoDisplay videoDisplay(Video video) {
+    String fullFilePath =
+        "${DirectoryManager.instance.videosDirectory.path}/${video.videoFileName}";
+    return VideoDisplay(fullFilePath: fullFilePath);
+  }
+
+  /// Function to handle starting the playback of the recorded audio.
+  Future<void> _startPlayback() async {
+    String path =
+        "${DirectoryManager.instance.audiosDirectory.path}/${activeAudio.audioFileName}";
+    debugPrint(path);
+    await _player!.openPlayer();
+    await _player!.startPlayer(
+        fromURI: path,
+        whenFinished: () {
+          setState(() {
+            _isPlaying = false;
+          });
+          _player!.closePlayer();
+        });
+    setState(() {
+      _isPlaying = true;
+    });
+  }
+
+  /// Function to handle stopping the playback of the recorded audio.
+  Future<void> _stopPlayback() async {
+    await _player!.stopPlayer();
+    setState(() {
+      _isPlaying = false;
+    });
+    _player!.closePlayer();
+  }
+
+  Widget buildEditableField(
+    TextEditingController controller,
+    String label,
+    StateSetter setState,
+  ) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(labelText: label),
+      enabled: true,
+      onChanged: (value) {
+        setState(() {
+          // You can add logic here if needed when the text changes.
+        });
+      },
+    );
   }
 }
