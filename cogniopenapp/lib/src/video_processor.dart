@@ -41,6 +41,12 @@ class VideoProcessor {
     "Girl",
     "Boy",
     "People",
+    "Pet",
+    "Animal",
+    "Dog",
+    "Cat",
+    "Building",
+    "Furniture"
   ];
 
   VideoProcessor() {

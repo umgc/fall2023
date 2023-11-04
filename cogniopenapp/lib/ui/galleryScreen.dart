@@ -624,7 +624,7 @@ class _FullObjectViewState extends State<FullObjectView> {
             );
           },
         ), // Remove the BackButton
-        title: const Text('Full Screen Image and Details',
+        title: const Text('Gallery Details',
             style: TextStyle(color: Colors.black54)),
         actions: <Widget>[
           IconButton(

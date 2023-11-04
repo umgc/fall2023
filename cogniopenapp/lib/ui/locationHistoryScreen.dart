@@ -162,20 +162,25 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
                   : ListView.builder(
                       itemCount: locations.length,
                       itemBuilder: (context, index) {
-                        return Card(
-                          color: Color.fromRGBO(255, 255, 255, 0.75),
-                          child: ListTile(
-                            leading: Container(
-                              height: double.infinity,
-                              child: Icon(Icons.location_on),
+                        if (index > 0 && locations[index].endTime == null) {
+                          return Container(); // Return an empty container for these items.
+                        } else {
+                          return Card(
+                            color: Color.fromRGBO(255, 255, 255, 0.75),
+                            child: ListTile(
+                              leading: Container(
+                                height: double.infinity,
+                                child: Icon(Icons.location_on),
+                              ),
+                              title: Text(
+                                  sanitizeAddress(locations[index].address)),
+                              subtitle: Text(getTimeStampString(
+                                  locations[index].startTime,
+                                  locations[index].endTime,
+                                  index)),
                             ),
-                            title:
-                                Text(sanitizeAddress(locations[index].address)),
-                            subtitle: Text(getTimeStampString(
-                                locations[index].startTime,
-                                locations[index].endTime)),
-                          ),
-                        );
+                          );
+                        }
                       },
                     ),
             ),
@@ -183,7 +188,7 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
         ));
   }
 
-  String getTimeStampString(DateTime? start, DateTime? end) {
+  String getTimeStampString(DateTime? start, DateTime? end, int index) {
     if (end != null && FormatUtils.calculateDifferenceInHours(end!) == 0) {
       return "${timeago.format(end)} (${this.formattedTime(end)})";
     }

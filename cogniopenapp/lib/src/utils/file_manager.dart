@@ -29,8 +29,6 @@ class FileManager {
 
       if (fileToDelete.existsSync()) {
         await fileToDelete.delete();
-      } else {
-        print('File not found: $filePath');
       }
     } catch (e) {
       print('Error deleting file: $e');
