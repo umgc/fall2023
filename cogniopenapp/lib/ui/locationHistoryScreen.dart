@@ -163,7 +163,7 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
                       itemCount: locations.length,
                       itemBuilder: (context, index) {
                         return Card(
-                          color: Color.fromARGB(10, 173, 172, 172),
+                          color: Color.fromRGBO(255, 255, 255, 0.75),
                           child: ListTile(
                             leading: Container(
                               height: double.infinity,
