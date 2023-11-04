@@ -1,6 +1,5 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,7 +10,7 @@ class LocationEntry {
   int? id;
   final String address;
   final DateTime startTime;
-  DateTime? endTime; // Updated to allow setting 'endTime'
+  DateTime? endTime;
 
   LocationEntry({this.id, required this.address, required this.startTime, this.endTime});
 
@@ -44,7 +43,6 @@ class LocationDatabase {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-
     _database = await _initDB('location_database.db');
     return _database!;
   }
@@ -52,19 +50,16 @@ class LocationDatabase {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getApplicationDocumentsDirectory();
     final path = join(dbPath.path, filePath);
-
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
-    final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    final textType = 'TEXT NOT NULL';
     await db.execute('''
 CREATE TABLE locations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   address TEXT NOT NULL,
   startTime TEXT NOT NULL,
-  endTime TEXT  -- Explicitly allowing NULL values for endTime
+  endTime TEXT
 )
 ''');
   }
@@ -85,9 +80,9 @@ CREATE TABLE locations (
     final db = await instance.database;
     db.close();
   }
+
   Future<int> update(LocationEntry location) async {
     final db = await instance.database;
-
     return await db.update(
       'locations',
       location.toMap(),
@@ -105,55 +100,25 @@ class LocationHistoryScreen extends StatefulWidget {
 class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
   List<LocationEntry> locations = [];
   final DateFormat formatter = DateFormat('hh:mm a');
+  Timer? _timer;  // Declare a Timer variable
 
   @override
   void initState() {
     super.initState();
     _loadLocations();
-    _listenToLocationChanges();
+    _startAutoRefresh();  // Start the auto refresh timer
   }
 
-  _loadLocations() async {
+  Future<void> _loadLocations() async {
     locations = await LocationDatabase.instance.readAllLocations();
     setState(() {});
   }
 
-  _listenToLocationChanges() {
-    final locationStream = Geolocator.getPositionStream();
-    LocationEntry? currentLocationEntry;
-
-    locationStream.listen((Position position) async {
-      try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-        if (placemarks.isNotEmpty) {
-          final Placemark placemark = placemarks.first;
-          final address = "${placemark.name}, ${placemark.locality}, ${placemark.country}";
-
-          if (currentLocationEntry == null || currentLocationEntry!.address != address) {
-            if (currentLocationEntry != null) {
-              // Check if endTime is not null before updating
-              if (currentLocationEntry!.endTime == null) {
-                currentLocationEntry!.endTime = DateTime.now();
-                await LocationDatabase.instance.update(currentLocationEntry!);
-              }
-            }
-
-            final newEntry = LocationEntry(address: address, startTime: DateTime.now());
-            final id = await LocationDatabase.instance.create(newEntry);
-            newEntry.id = id;
-            currentLocationEntry = newEntry;
-
-            setState(() {
-              locations.insert(0, newEntry);
-            });
-          }
-        }
-      } catch (e) {
-        print(e);
-      }
+  void _startAutoRefresh() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      _loadLocations();  // Refresh data every second
     });
   }
-
 
   String formattedTime(DateTime time) {
     final hour = time.hour > 12 ? time.hour - 12 : time.hour;
@@ -172,24 +137,37 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
         title: Text("Location History"),
         backgroundColor: Colors.blueGrey,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: locations.isEmpty
-            ? Center(child: Text("No locations found"))
-            : ListView.builder(
-          itemCount: locations.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                leading: Icon(Icons.location_on),
-                title: Text(sanitizeAddress(locations[index].address)),
-                subtitle: Text(
-                    '${formattedTime(locations[index].startTime)} - ${locations[index].endTime != null ? formattedTime(locations[index].endTime!) : 'Now'}'),
-              ),
-            );
-          },
+      body: RefreshIndicator(
+        onRefresh: _loadLocations,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: locations.isEmpty
+              ? Center(child: Text("No locations found"))
+              : ListView.builder(
+            itemCount: locations.length,
+            itemBuilder: (context, index) {
+              return Card(
+                child: ListTile(
+                  leading: Icon(Icons.location_on),
+                  title: Text(sanitizeAddress(locations[index].address)),
+                  subtitle: Text(
+                      '${formattedTime(locations[index].startTime)} - ${locations[index].endTime != null ? formattedTime(locations[index].endTime!) : 'Now'}'),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _timer?.cancel();  // Make sure to cancel the Timer when the widget is disposed
+    super.dispose();
+  }
 }
+
+void main() => runApp(MaterialApp(
+  home: LocationHistoryScreen(),
+));

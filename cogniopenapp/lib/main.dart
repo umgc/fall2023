@@ -8,8 +8,7 @@ import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/ui/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:cogniopenapp/src/utils/permission_manager.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -41,13 +40,6 @@ class MyApp extends StatelessWidget {
 
 // These are all singleton objects and should be initialized at the beginning
 void initializeData() async {
-  // Request location permissions
-  if (await Permission.location.request().isGranted) {
-    Geolocator.getPositionStream().listen((Position position) {
-      print("New position: ${position.latitude}, ${position.longitude}");
-    });
-  }
-
   //initialize backend services
   S3Bucket s3 = S3Bucket();
   CameraManager cm = CameraManager();
