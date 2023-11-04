@@ -243,8 +243,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
     refresh();
 
     return Scaffold(
-        backgroundColor: const Color(0xFFB3E5FC),
-        extendBodyBehindAppBar: true,
+        backgroundColor: Color(int.parse("0xFFC1DFDD")),
+        extendBodyBehindAppBar: false,
         extendBody: true,
         appBar: _buildAppBar(),
         body: Container(
@@ -256,7 +256,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
           ),
           child: Column(
             children: [
-              if (_searchBarVisible) SizedBox(height: 60),
               if (_searchBarVisible) _buildSearchBar(),
               Expanded(
                 child: _buildGridView(),
