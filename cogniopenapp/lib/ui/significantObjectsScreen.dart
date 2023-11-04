@@ -94,7 +94,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
           backgroundColor: const Color(0x440000), // Set appbar background color
           elevation: 0.0,
           centerTitle: true, // This centers the title
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
           title: Row(
             mainAxisSize: MainAxisSize
                 .min, // This ensures the Row takes the least amount of space
@@ -110,18 +110,6 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                   style: TextStyle(color: Colors.black54)),
             ],
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_back,
-                color: Colors.black54,
-              ),
-              onPressed: () {
-                // Navigate back to the previous screen
-                Navigator.pop(context);
-              },
-            ),
-          ],
         ),
         body: Container(
           decoration: const BoxDecoration(
