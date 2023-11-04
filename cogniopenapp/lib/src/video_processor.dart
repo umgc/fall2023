@@ -20,6 +20,8 @@ class VideoProcessor {
   String jobId = '';
   String projectArn = 'No project found';
   String currentProjectVersionArn = 'Model not started';
+  List<String> availableModels = [];
+  List<String> activeModels = [];
   String videoTitle = "";
   String address = "";
   String videoPath = "";
@@ -302,24 +304,55 @@ class VideoProcessor {
         versionName: modelName);
   }
 
-  //check for a certain status (depending on input)
-  void pollVersionDescription() {
+  //adds all stopped or trained models to list of available models
+  //deletes models that failed training
+  Future<void> pollVersionDescription() async {
     //String status) {
+    Future<DescribeProjectVersionsResponse> projectVersions =
+        service!.describeProjectVersions(projectArn: projectArn);
+    availableModels.clear();
+    projectVersions.then((value) {
+      Iterator<ProjectVersionDescription> iter =
+          value.projectVersionDescriptions!.iterator;
+      while (iter.moveNext()) {
+        //print("${iter.current.projectVersionArn} is ${iter.current.status}");
+        //deletes a model if it failed training
+        if (iter.current.status == ProjectVersionStatus.trainingFailed) {
+          service!.deleteProjectVersion(
+            projectVersionArn: iter.current.projectVersionArn!,
+          );
+        } else if ((iter.current.status == ProjectVersionStatus.stopped) ||
+            (iter.current.status == ProjectVersionStatus.trainingCompleted)) {
+          //where 9 is the lenght of "/version/"
+          int substringStartingIndex =
+              iter.current.projectVersionArn!.indexOf('/version/') + 9;
+          String parsedName =
+              iter.current.projectVersionArn!.substring(substringStartingIndex);
+          parsedName = parsedName.split("/")[0];
+          //print(parsedName);
+          availableModels.add(parsedName);
+        }
+      }
+      //print(availableModels);
+    });
+  }
+
+  ProjectVersionStatus? pollForTrainedModel(String labelName) {
     Future<DescribeProjectVersionsResponse> projectVersions =
         service!.describeProjectVersions(projectArn: projectArn);
     projectVersions.then((value) {
       Iterator<ProjectVersionDescription> iter =
           value.projectVersionDescriptions!.iterator;
       while (iter.moveNext()) {
-        print("${iter.current.projectVersionArn} is ${iter.current.status}");
-        //deletes a model if it failed training
-        if (iter.current.status == ProjectVersionStatus.trainingFailed) {
-          service!.deleteProjectVersion(
-            projectVersionArn: iter.current.projectVersionArn!,
-          );
+        if (iter.current.projectVersionArn!.contains(labelName)) {
+          print("${iter.current.projectVersionArn} is ${iter.current.status}");
+          if (iter.current.status == ProjectVersionStatus.trainingCompleted) {
+            return iter.current.status;
+          }
         }
       }
     });
+    return ProjectVersionStatus.trainingInProgress;
   }
 
   //start the inference of custom labels
@@ -347,6 +380,7 @@ class VideoProcessor {
             print(response.status);
             //returns the modelArn of the projectVersion being started
             //still need to poll the that the model has started
+            activeModels.add(labelName);
             return iter.current.projectVersionArn;
           }
         }
@@ -389,7 +423,9 @@ class VideoProcessor {
   // Now only God knows.
   // run Rekognition custom label detection on a specified set of images
   Future<DetectCustomLabelsResponse?> findMatchingModel(
-      String labelName) async {
+      String labelName, String fileName) async {
+    //fileName: "eyeglass-green.jpg";
+    //fileName = "glasses-test.jpg";
     //look for a similar project version (model to match the label from the user)
     DescribeProjectVersionsResponse projectVersions =
         await service!.describeProjectVersions(projectArn: projectArn);
@@ -407,8 +443,7 @@ class VideoProcessor {
         return service!.detectCustomLabels(
             image: Image(
                 s3Object: S3Object(
-                    bucket: dotenv.get('videoS3Bucket'),
-                    name: "eyeglass-green.jpg")),
+                    bucket: dotenv.get('videoS3Bucket'), name: fileName)),
             projectVersionArn: currentProjectVersionArn);
       }
     }
