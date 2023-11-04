@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:intl/intl.dart';
 
 enum OnboardingState { GET_NAME, GET_ACTIVITY, GET_MEMORY, SUMMARY, GUIDE, END }
 
@@ -152,7 +153,10 @@ class Onboarding {
   }
 
   String generateSummary() {
-    return "On ${DateTime.now().toLocal().toString()}, you had an introductory conversation with Cora, the Virtual Assistant. You shared that you enjoy $userFavoriteActivity and reminisced about your favorite memory, which was $userFavoriteMemory.";
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(DateTime.now().millisecondsSinceEpoch.toString()));
+    final dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
+    final date = dateFormat.format(dateTime);
+    return "On ${date}, you had an introductory conversation with Cora, the Virtual Assistant. You shared that you enjoy $userFavoriteActivity and reminisced about your favorite memory, which was $userFavoriteMemory.";
   }
 
   String getLastPageMessage() {

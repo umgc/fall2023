@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:cogniopenapp/src/typingIndicator.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
+import 'package:intl/intl.dart';
 
 /// FlutterSound provides functionality for recording and playing audio.
 import 'package:flutter_sound/flutter_sound.dart';
@@ -398,8 +399,11 @@ class _AudioScreenState extends State<AudioScreen> {
     String audioFilePath = '${appDocDirectory.path}/files/audios/$key2.wav';
     String transcriptFilePath =
         '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(key2));
+    final dateFormat = DateFormat('dd/MM/yyyy');
+    final title = dateFormat.format(dateTime);
     audio = await DataService.instance.addAudio(
-        title: key2,
+        title: title,
         description: "",
         audioFile: File(audioFilePath),
         transcriptFile: File(transcriptFilePath),
