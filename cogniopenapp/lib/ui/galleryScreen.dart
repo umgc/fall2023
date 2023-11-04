@@ -139,9 +139,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _toggleFavoriteStatus(Media media) async {
-    //TODO: Update persistence
-    //await DataService.instance
-    //    .updateMediaIsFavorited(media, !media.isFavorited);
+    //TODO: Update persistence. It works but moves the grid items around for some reason
+    //await DataService.instance.updateMediaIsFavorited(media, !media.isFavorited);
     setState(() {
       media.isFavorited = !media.isFavorited;
     });
@@ -257,6 +256,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
           ),
           child: Column(
             children: [
+              if (_searchBarVisible) SizedBox(height: 60),
               if (_searchBarVisible) _buildSearchBar(),
               Expanded(
                 child: _buildGridView(),
@@ -284,17 +284,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
         Row(
           children: [
             // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| SEARCH BAR |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-            /*IconButton(
+            IconButton(
               key: const Key('searchIcon'),
               icon: const Icon(Icons.search),
               color: Colors.black54,
               onPressed: _toggleSearchBarVisibility,
-            ),*/
-            IconButton(
-              key: const Key('refreshIcon'),
-              icon: const Icon(Icons.refresh),
-              color: Colors.black54,
-              onPressed: refresh,
             ),
             IconButton(
               key: const Key('cameraIcon'),
@@ -358,7 +352,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget _buildSearchBar() {
     return TextField(
       decoration: const InputDecoration(
-        labelText: 'Search by Title',
+        labelText: 'Filter by Title',
         prefixIcon: Icon(Icons.search),
       ),
       onChanged: _onSearchTextChanged,
