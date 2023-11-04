@@ -104,7 +104,7 @@ class S3Bucket {
       body: content,
     );
     //TODO:debug/testing statements
-    print("content added to bucket.");
+    print("content added to bucket: ${formattedTitle}");
     return title;
   }
 

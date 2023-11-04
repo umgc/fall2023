@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SignificantObject {
   String identifier;
@@ -36,8 +37,8 @@ class SignificantObject {
       ResponseBoundingBox annotation = boundingBoxes[i];
       //TODO: change from my bucket to .env bucket name
       String foo =
-          '''{"source-ref": "s3://cogniopen-videos-test-david/$identifier-$i.jpg", "bounding-box": {"image_size": [{"width": 400, "height": 700, "depth": 3}], "annotations": [{ "class_id": 0,"top": ${(annotation.top * 700).toInt()}, "left": ${(annotation.left * 400).toInt()}, "width": ${(annotation.width * 400).toInt()}, "height": ${(annotation.height * 700).toInt()}}]},"bounding-box-metadata": {"objects": [{"confidence": 1}], "class-map": {"0": "$identifier"}, "type":"groundtruth/object-detection", "human-annotated": "yes", "creation-date": "2013-11-18T02:53:27"}}
-  {"source-ref": "s3://cogniopen-videos-test-david/$identifier-$i-test.jpg", "bounding-box": {"image_size": [{"width": 400, "height": 700, "depth": 3}], "annotations": [{ "class_id": 0,"top": ${(annotation.top * 700).toInt()}, "left": ${(annotation.left * 400).toInt()}, "width": ${(annotation.width * 400).toInt()}, "height": ${(annotation.height * 700).toInt()}}]},"bounding-box-metadata": {"objects": [{"confidence": 1}], "class-map": {"0": "$identifier"}, "type":"groundtruth/object-detection", "human-annotated": "yes", "creation-date": "2013-11-18T02:53:27"}}''';
+          '''{"source-ref": "s3://${dotenv.get('videoS3Bucket')}/$identifier-$i.jpg", "bounding-box": {"image_size": [{"width": 400, "height": 700, "depth": 3}], "annotations": [{ "class_id": 0,"top": ${(annotation.top * 700).toInt()}, "left": ${(annotation.left * 400).toInt()}, "width": ${(annotation.width * 400).toInt()}, "height": ${(annotation.height * 700).toInt()}}]},"bounding-box-metadata": {"objects": [{"confidence": 1}], "class-map": {"0": "$identifier"}, "type":"groundtruth/object-detection", "human-annotated": "yes", "creation-date": "2013-11-18T02:53:27"}}
+  {"source-ref": "s3://${dotenv.get('videoS3Bucket')}/$identifier-$i-test.jpg", "bounding-box": {"image_size": [{"width": 400, "height": 700, "depth": 3}], "annotations": [{ "class_id": 0,"top": ${(annotation.top * 700).toInt()}, "left": ${(annotation.left * 400).toInt()}, "width": ${(annotation.width * 400).toInt()}, "height": ${(annotation.height * 700).toInt()}}]},"bounding-box-metadata": {"objects": [{"confidence": 1}], "class-map": {"0": "$identifier"}, "type":"groundtruth/object-detection", "human-annotated": "yes", "creation-date": "2013-11-18T02:53:27"}}''';
       bar += foo;
     }
     return bar;

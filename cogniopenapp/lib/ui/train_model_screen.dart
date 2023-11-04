@@ -104,12 +104,12 @@ class ModelScreenState extends State<ModelScreen> {
                   userDefinedModelName, response);
 
               sigObj.then((value) async {
-                s3.addFileToS3("$userDefinedModelName.json",
+                await s3.addFileToS3("$userDefinedModelName.json",
                     value.generateRekognitionManifest());
 
                 // just a little sleep in between manifest upload and rekognition model being started.
 
-                sleep(const Duration(milliseconds: 2500));
+                sleep(const Duration(milliseconds: 4000));
                 vp.addNewModel(
                     userDefinedModelName, "$userDefinedModelName.json");
 
@@ -175,7 +175,7 @@ class ModelScreenState extends State<ModelScreen> {
           child: const Text('Start Model'),
         ),*/ // New subheading section ends here
       ]),
-      floatingActionButton: _getFAB(s3),
+      //floatingActionButton: _getFAB(s3),
     );
   }
 
@@ -275,15 +275,8 @@ class ModelScreenState extends State<ModelScreen> {
         top: response.top,
         width: response.width,
         height: response.height);
-    //TODO:upload new image to S3
-    s3.addImageToS3("$userDefinedModelName-$i.jpg", path);
-    s3.addImageToS3("$userDefinedModelName-$i-test.jpg", path);
-
-    //if user already has a matching significant object, add this to that list.
-    //TODO: Get list of significant objects
-    //TODO: filter down to object that matches our user's model (userDefinedModelName)
-    //TODO: add to user significant object
-    //sigObj.updateSignificantObject(stillImage, name, boundingBox);
+    await s3.addImageToS3("$userDefinedModelName-$i.jpg", path);
+    await s3.addImageToS3("$userDefinedModelName-$i-test.jpg", path);
 
     //if not, make one.
     List<Image> images = [];
