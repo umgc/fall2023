@@ -43,7 +43,7 @@ class GalleryScreen extends StatefulWidget {
 // Define the state for the Gallery screen
 class _GalleryScreenState extends State<GalleryScreen> {
   // List of media items (you can replace with your own data)
-  List<Media> testMedia = DataService.instance.mediaList;
+  List<Media> masterMediaList = [];
 
   bool _searchBarVisible = false;
   String _searchText = '';
@@ -64,6 +64,8 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   @override
   void initState() {
+    print("WE INIT");
+    masterMediaList = DataService.instance.mediaList;
     super.initState();
     _selectedSortingCriteria =
         SortingCriteria.timeStamp; // Selecting the timestamp sorting
@@ -72,7 +74,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   }
 
   void _populateMedia() async {
-    testMedia = DataService.instance.mediaList;
+    masterMediaList = DataService.instance.mediaList;
   }
 
   // Function to update font and icon size based on grid size
@@ -178,22 +180,22 @@ class _GalleryScreenState extends State<GalleryScreen> {
       case null:
         break;
       case SortingCriteria.storageSize:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.storageSize.compareTo(b.storageSize)
             : b.storageSize.compareTo(a.storageSize));
         break;
       case SortingCriteria.timeStamp:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.timestamp.compareTo(b.timestamp)
             : b.timestamp.compareTo(a.timestamp));
         break;
       case SortingCriteria.title:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.title.compareTo(b.title)
             : b.title.compareTo(a.title));
         break;
       case SortingCriteria.type:
-        testMedia.sort((a, b) => _isSortAscending
+        masterMediaList.sort((a, b) => _isSortAscending
             ? a.runtimeType.toString().compareTo(b.runtimeType.toString())
             : b.runtimeType.toString().compareTo(a.runtimeType.toString()));
         break;
@@ -203,9 +205,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
   // Function to filter photos based on the search text
   List<Media> get filteredPhotos {
     if (_searchText.isEmpty) {
-      return testMedia;
+      return masterMediaList;
     } else {
-      return testMedia
+      return masterMediaList
           .where((media) =>
               media.title.toLowerCase().contains(_searchText.toLowerCase()))
           .toList();
@@ -214,7 +216,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   // Function to get favorited photos
   List<Media> getFavoritedMedia() {
-    return testMedia.where((media) => media.isFavorited).toList();
+    return masterMediaList.where((media) => media.isFavorited).toList();
   }
 
   // Display names for sorting criteria
@@ -235,6 +237,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
   @override
   Widget build(BuildContext context) {
+    _populateMedia();
     _updateLayoutValues();
 
     return Scaffold(
@@ -618,6 +621,20 @@ class _FullObjectViewState extends State<FullObjectView> {
               }
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              // Call the delete method when the delete button is pressed
+              deleteMedia(widget.activeMedia);
+              // Navigate back to the ResponseScreen
+              Navigator.of(context).pop(); //
+              Navigator.of(context).pop(); //
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GalleryScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: Container(
@@ -705,6 +722,16 @@ class _FullObjectViewState extends State<FullObjectView> {
         ),
       ),
     );
+  }
+
+  void deleteMedia(Media media) async {
+    if (media is Audio) {
+      await DataService.instance.removeAudio(media.id!);
+    } else if (media is Photo) {
+      await DataService.instance.removePhoto(media.id!);
+    } else {
+      await DataService.instance.removeVideo(media.id!);
+    }
   }
 
   Column createAudioPlayer() {
