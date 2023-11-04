@@ -47,3 +47,4 @@ The following outlines setting up a new key and adding it to the .env created wi
 
 The Amazon Free tier ought to have enough space and video processing requests to complete development and testing. Just be aware of video fidelity and length when recording.
 Requests are pretty cheap afterwards but the dollar amount can pile up if unaware.
+Also beware to stop any "custom labels" created via Signficant Objects. The inferment hours for detecting custom labels from still frames can quickly rack up a bill as well. (services can be stopped from within the application, but also from the AWS Console - https://us-east-1.console.aws.amazon.com/rekognition/custom-labels#/projects)
