@@ -6,16 +6,69 @@ import 'package:cogniopenapp/ui/audioScreen.dart';
 import 'package:cogniopenapp/ui/galleryScreen.dart';
 import 'package:cogniopenapp/ui/profileScreen.dart';
 import 'package:cogniopenapp/ui/tourScreen.dart';
-
+import 'package:cogniopenapp/ui/locationHistoryScreen.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 
 // Main HomeScreen widget which is a stateless widget.
-class HomeScreen extends StatelessWidget {
-  bool hasBeenInitialized = false;
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  bool hasBeenInitialized = false;
   double iconSize = 65;
+
+  // To keep track of the current location
+  LocationEntry? currentLocationEntry;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeCamera();
+    _listenToLocationChanges();
+  }
+
+  _initializeCamera() {
+    if (!hasBeenInitialized) {
+      CameraManager cm = CameraManager();
+      cm.startAutoRecording();
+      hasBeenInitialized = true;
+    }
+  }
+
+  _listenToLocationChanges() {
+    final locationStream = Geolocator.getPositionStream();
+    locationStream.listen((Position position) async {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+        if (placemarks.isNotEmpty) {
+          final Placemark placemark = placemarks.first;
+          final address = "${placemark.name}, ${placemark.locality}, ${placemark.country}";
+
+          if (currentLocationEntry == null || currentLocationEntry!.address != address) {
+            if (currentLocationEntry != null) {
+              if (currentLocationEntry!.endTime == null) {
+                currentLocationEntry!.endTime = DateTime.now();
+                await LocationDatabase.instance.update(currentLocationEntry!);
+              }
+            }
+
+            final newEntry = LocationEntry(address: address, startTime: DateTime.now());
+            final id = await LocationDatabase.instance.create(newEntry);
+            newEntry.id = id;
+            currentLocationEntry = newEntry;
+          }
+        }
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +202,7 @@ class HomeScreen extends StatelessWidget {
                       icon: Icon(Icons.location_history,
                           size: iconSize, color: Colors.black54),
                       text: 'Location',
-                      screen: SignificantObjectScreen(),
+                      screen: LocationHistoryScreen(),
                       keyName: "LocationObjectButtonKey",
                     ),
                     _buildElevatedButton(

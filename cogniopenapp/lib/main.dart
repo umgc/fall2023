@@ -3,6 +3,7 @@ import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:cogniopenapp/src/camera_manager.dart';
+import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/ui/loginScreen.dart';
 import 'package:flutter/material.dart';

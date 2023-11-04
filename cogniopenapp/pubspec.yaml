@@ -37,6 +37,13 @@ dependencies:
   # A Flutter geolocation plugin which provides easy access to platform specific location services.
   geolocator: ^10.1.0
 
+  # A Flutter plugin to integrate maps powered by various map providers (like OpenStreetMap, Mapbox, etc.) in the application.
+  flutter_map: ^4.0.0
+
+  # A package that provides LatLng class to hold a pair of latitude and longitude coordinates.
+  # Mainly to be used with the flutter_map package for defining map points.
+  latlong2: ^0.8.0
+
   # A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
   camera: ^0.10.5+5
   

@@ -9,6 +9,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AppDatabase {
+  static const tableLocations = 'locations';
   static final AppDatabase instance = AppDatabase._init();
 
   static Database? _database;
@@ -61,6 +62,16 @@ class AppDatabase {
       CREATE TABLE $tablePhotos (
         ${mediaColumns.join(',\n')},
         ${PhotoFields.photoFileName} $textType
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE $tableLocations (
+        id $idType,
+        latitude $floatType,
+        longitude $floatType,
+        address $textNullableType,
+        timestamp $integerType
       )
     ''');
 
