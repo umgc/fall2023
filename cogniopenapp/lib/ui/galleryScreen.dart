@@ -349,6 +349,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  // Don't ask me how or why this works
   void refresh() {
     _toggleShowFavorited();
     _toggleShowFavorited();

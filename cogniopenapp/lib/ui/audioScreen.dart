@@ -26,12 +26,6 @@ import 'package:http/http.dart' as http;
 // Record button glow effect
 import 'package:avatar_glow/avatar_glow.dart';
 
-/// Importing other application screens for navigation purposes.
-import 'package:cogniopenapp/ui/homeScreen.dart';
-import 'package:cogniopenapp/ui/assistantScreen.dart';
-import 'package:cogniopenapp/ui/galleryScreen.dart';
-import 'package:cogniopenapp/ui/settingsScreen.dart';
-
 const API_URL = 'https://api.openai.com/v1/completions';
 final API_KEY = dotenv.env['OPEN_AI_API_KEY']; // Replace with your API key
 
@@ -560,7 +554,8 @@ class _AudioScreenState extends State<AudioScreen> {
                                           }
                                           setState(() {
                                             _pathToSaveRecording = null;
-                                            _duration = const Duration(seconds: 0);
+                                            _duration =
+                                                const Duration(seconds: 0);
                                             transcription = '';
                                           });
                                           // Notify user that the recording has been deleted

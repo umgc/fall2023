@@ -1,7 +1,7 @@
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:cogniopenapp/ui/videoScreen.dart';
-import 'package:cogniopenapp/ui/settingsScreen.dart';
+import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/src/utils/permission_manager.dart';
 
 import 'package:cogniopenapp/src/database/model/media_type.dart';
@@ -64,8 +64,10 @@ class UiUtils {
             }
           } else if (index == 3) {
             // Navigate to Gallery screen
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SignificantObjectScreen()));
           }
         });
   }

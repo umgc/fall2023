@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:cogniopenapp/src/camera_manager.dart';
+import 'package:cogniopenapp/src/data_service.dart';
 
 class SignificantObjectScreen extends StatefulWidget {
   SignificantObjectScreen({super.key});
@@ -36,23 +39,35 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
   }
 
   Future imagePickerMethodfromgallery() async {
+    final String timestamp = DateTime.now().toString();
+    final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
+    final String fileName =
+        '$sanitizedTimestamp.jpg'; // Use the determined file extension
+
+    final String fullPath =
+        '${DirectoryManager.instance.significantObjectsDirectory.path}/$fileName';
+
     await _picker
         .pickImage(source: ImageSource.gallery)
-        .then((XFile? recordedimage) {
+        .then((XFile? recordedimage) async {
       if (recordedimage != null) {
-        // setState(() {
-        //    firstbuttontext = 'saving in progress...';
-        //});
-        GallerySaver.saveImage(recordedimage.path).then((path) {
-          setState(() {
-            // firstbuttontext = 'image saved!';
-          });
-        });
+        // Copy the image to the specified location
+        File sourceFile = File(recordedimage.path);
+        File destinationFile = File(fullPath);
+
+        try {
+          await sourceFile.copy(destinationFile.path);
+          // You can now use the 'destinationFile' for further operations if needed.
+          // Print the path of the saved image
+          print('Image saved at: ${destinationFile.path}');
+          await DataService.instance.addPhoto(photoFile: destinationFile);
+        } catch (e) {
+          print('Error while copying the image: $e');
+        }
       }
     });
     showSnackBar("Image Uploaded Succesfully", Duration(milliseconds: 700));
   }
-//Directory? directory = Directory('/selam');
 
   bool isImageSelected = false;
   late File imageFile;
@@ -130,8 +145,8 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
 
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            imagePickerMethodfromcamera();
+                          onPressed: () async {
+                            takePicture();
                           },
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.black,
@@ -192,8 +207,9 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                 future: _futureGetPath,
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
-                    var dir = Directory(snapshot.data);
-                    if (_permissionStatus) _fetchFiles(dir);
+                    Directory directory =
+                        DirectoryManager.instance.significantObjectsDirectory;
+                    if (_permissionStatus) _fetchFiles(directory);
                     return Text("");
                   } else {
                     return Text("Loading");
@@ -226,28 +242,6 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                 indent: 15,
                 endIndent: 15,
               ),
-              /*  SizedBox(
-              height: 788,
-              child: GridView.builder(
-                  itemCount: imagelist.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 15,
-                      crossAxisSpacing: 15),
-                  itemBuilder: (
-                    context,
-                    index,
-                  ) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: DecorationImage(
-                            image: AssetImage(imagelist[index]),
-                            fit: BoxFit.cover),
-                      ),
-                    );
-                  }),
-            ) */
               SizedBox(
                 height: 5000,
                 child: GridView.count(
@@ -255,7 +249,7 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
                   padding: const EdgeInsets.all(20),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  crossAxisCount: 3,
+                  crossAxisCount: 2,
                   children: _getListImg(listImagePath),
                 ),
               ),
@@ -265,6 +259,11 @@ class _GalleryPageState extends State<SignificantObjectScreen> {
             ],
           ),
         ));
+  }
+
+  Future<void> takePicture() async {
+    await CameraManager()
+        .capturePhoto(DirectoryManager.instance.significantObjectsDirectory);
   }
 
   void _listenForPermissionStatus() async {
