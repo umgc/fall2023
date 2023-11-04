@@ -12,7 +12,8 @@ class LocationEntry {
   final DateTime startTime;
   DateTime? endTime;
 
-  LocationEntry({this.id, required this.address, required this.startTime, this.endTime});
+  LocationEntry(
+      {this.id, required this.address, required this.startTime, this.endTime});
 
   Map<String, dynamic> toMap() {
     return {
@@ -100,13 +101,13 @@ class LocationHistoryScreen extends StatefulWidget {
 class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
   List<LocationEntry> locations = [];
   final DateFormat formatter = DateFormat('hh:mm a');
-  Timer? _timer;  // Declare a Timer variable
+  Timer? _timer; // Declare a Timer variable
 
   @override
   void initState() {
     super.initState();
     _loadLocations();
-    _startAutoRefresh();  // Start the auto refresh timer
+    _startAutoRefresh(); // Start the auto refresh timer
   }
 
   Future<void> _loadLocations() async {
@@ -116,7 +117,7 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
 
   void _startAutoRefresh() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      _loadLocations();  // Refresh data every second
+      _loadLocations(); // Refresh data every second
     });
   }
 
@@ -133,44 +134,59 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Location History"),
-        backgroundColor: Colors.blueGrey,
-      ),
-      body: RefreshIndicator(
-        onRefresh: _loadLocations,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: locations.isEmpty
-              ? Center(child: Text("No locations found"))
-              : ListView.builder(
-            itemCount: locations.length,
-            itemBuilder: (context, index) {
-              return Card(
-                child: ListTile(
-                  leading: Container(
-                    height: double.infinity,
-                    child: Icon(Icons.location_on),
-                  ),
-                  title: Text(sanitizeAddress(locations[index].address)),
-                  subtitle: Text(
-                      '${formattedTime(locations[index].startTime)} - ${locations[index].endTime != null ? formattedTime(locations[index].endTime!) : 'Now'}'),
-                ),
-              );
-            },
-          ),
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: const Color(0x440000), // Set appbar background color
+          centerTitle: true,
+          title: const Text('Location History',
+              style: TextStyle(color: Colors.black54)),
+          elevation: 0,
+          leading: const BackButton(color: Colors.black54),
         ),
-      ),
-    );
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: RefreshIndicator(
+            onRefresh: _loadLocations,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: locations.isEmpty
+                  ? Center(child: Text("No locations found"))
+                  : ListView.builder(
+                      itemCount: locations.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          color: Color.fromARGB(10, 173, 172, 172),
+                          child: ListTile(
+                            leading: Container(
+                              height: double.infinity,
+                              child: Icon(Icons.location_on),
+                            ),
+                            title:
+                                Text(sanitizeAddress(locations[index].address)),
+                            subtitle: Text(
+                                '${formattedTime(locations[index].startTime)} - ${locations[index].endTime != null ? formattedTime(locations[index].endTime!) : 'Now'}'),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+        ));
   }
 
   @override
   void dispose() {
-    _timer?.cancel();  // Make sure to cancel the Timer when the widget is disposed
+    _timer
+        ?.cancel(); // Make sure to cancel the Timer when the widget is disposed
     super.dispose();
   }
 }
 
 void main() => runApp(MaterialApp(
-  home: LocationHistoryScreen(),
-));
+      home: LocationHistoryScreen(),
+    ));
