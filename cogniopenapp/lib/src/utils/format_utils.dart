@@ -52,6 +52,17 @@ class FormatUtils {
     return '$formattedDate $formattedTime';
   }
 
+  static String getDateFromTimeStamp(DateTime? timeStamp) {
+    if (timeStamp == null) {
+      return 'N/A';
+    }
+
+    String formattedDate =
+        Moment(timeStamp).format('MMMM Do, YYYY'); // Format the date
+
+    return '$formattedDate';
+  }
+
   static String getTimeString(DateTime? timeStamp) {
     if (timeStamp == null) {
       return 'N/A';
@@ -73,6 +84,12 @@ class FormatUtils {
     return DateTime(date.year, date.month, date.day)
         .difference(DateTime(now.year, now.month, now.day))
         .inDays;
+  }
+
+  /// Returns the difference (in full days) between the provided date and today.
+  static int calculateDifferenceInHours(DateTime date) {
+    DateTime now = DateTime.now();
+    return date.difference(now).inHours;
   }
 
   static void printBigMessage(String message) {
