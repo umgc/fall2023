@@ -42,6 +42,6 @@ void initializeData() async {
   //initialize backend services
   S3Bucket s3 = S3Bucket();
   CameraManager cm = CameraManager();
-  await await PermissionManager.requestInitialPermissions();
+  await PermissionManager.requestInitialPermissions();
   await cm.initializeCamera();
 }
