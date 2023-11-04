@@ -13,6 +13,7 @@ import 'package:cogniopenapp/src/video_processor.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:image_picker/image_picker.dart';
 
 /// Camera manager class to handle camera functionality.
 class CameraManager {
@@ -115,7 +116,7 @@ class CameraManager {
 
   Future<void> manuallyStopRecording() async {
     isAutoRecording = false;
-    stopRecording();
+    await stopRecording();
   }
 
   Future<void> manuallyStartRecording() async {
@@ -182,5 +183,37 @@ class CameraManager {
     } else {
       print('Failed to save media locally.');
     }
+  }
+
+  Future<void> capturePhoto(Directory destinationDirectory) async {
+    CameraManager manager = CameraManager();
+    await manager.manuallyStopRecording();
+    final String timestamp = DateTime.now().toString();
+    final String sanitizedTimestamp = timestamp.replaceAll(' ', '_');
+    final String fileName =
+        '$sanitizedTimestamp.jpg'; // Use the determined file extension
+
+    final String fullPath = '${destinationDirectory.path}/$fileName';
+    final ImagePicker picker = ImagePicker();
+    await picker
+        .pickImage(source: ImageSource.camera)
+        .then((XFile? recordedimage) async {
+      if (recordedimage != null) {
+        // Copy the image to the specified location
+        File sourceFile = File(recordedimage.path);
+        File destinationFile = File(fullPath);
+
+        try {
+          await sourceFile.copy(destinationFile.path);
+          // You can now use the 'destinationFile' for further operations if needed.
+          // Print the path of the saved image
+          print('Image saved at: ${destinationFile.path}');
+          await DataService.instance.addPhoto(photoFile: destinationFile);
+        } catch (e) {
+          print('Error while copying the image: $e');
+        }
+      }
+    });
+    manager.initializeCamera();
   }
 }
