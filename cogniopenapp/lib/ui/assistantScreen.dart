@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-// import 'package:path_provider/path_provider.dart';
 
 // This is a AssistantScreen class.
 
@@ -132,15 +131,6 @@ class _AssistantScreenState extends State<AssistantScreen> {
 
   // Send user Message to ChatGPT 3.5 Turbo and return response
   Future<String> getChatGPTResponse(String userMessage) async {
-    // when testing UI, set to true to avoid API calls
-    bool debugSampleText = false;
-
-    // TODO: remove this before sending to production
-    if (debugSampleText) {
-      await Future.delayed(const Duration(seconds: 3));
-      return "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
-    }
-
     setState(() {
       _isTyping = true;
     });

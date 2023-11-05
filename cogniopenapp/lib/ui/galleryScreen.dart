@@ -578,9 +578,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 class FullObjectView extends StatefulWidget {
-  Media activeMedia;
+  final Media activeMedia;
 
-  FullObjectView(this.activeMedia);
+  const FullObjectView(this.activeMedia, {super.key});
 
   @override
   _FullObjectViewState createState() => _FullObjectViewState();

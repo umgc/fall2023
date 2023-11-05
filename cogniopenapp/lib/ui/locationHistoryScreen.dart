@@ -97,6 +97,8 @@ CREATE TABLE locations (
 }
 
 class LocationHistoryScreen extends StatefulWidget {
+  const LocationHistoryScreen({super.key});
+
   @override
   _LocationHistoryScreenState createState() => _LocationHistoryScreenState();
 }
@@ -119,7 +121,7 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
   }
 
   void _startAutoRefresh() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _loadLocations(); // Refresh data every second
     });
   }
@@ -139,7 +141,8 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: const Color(0x440000), // Set appbar background color
+          backgroundColor:
+              const Color(0x00440000), // Set appbar background color
           centerTitle: true,
           title: const Text('Location History',
               style: TextStyle(color: Colors.black54)),
@@ -158,7 +161,7 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: locations.isEmpty
-                  ? Center(child: Text("No locations found"))
+                  ? const Center(child: Text("No locations found"))
                   : ListView.builder(
                       itemCount: locations.length,
                       itemBuilder: (context, index) {
@@ -166,11 +169,11 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
                           return Container(); // Return an empty container for these items.
                         } else {
                           return Card(
-                            color: Color.fromRGBO(255, 255, 255, 0.75),
+                            color: const Color.fromRGBO(255, 255, 255, 0.75),
                             child: ListTile(
                               leading: Container(
                                 height: double.infinity,
-                                child: Icon(Icons.location_on),
+                                child: const Icon(Icons.location_on),
                               ),
                               title: Text(
                                   sanitizeAddress(locations[index].address)),
@@ -189,16 +192,16 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
   }
 
   String getTimeStampString(DateTime? start, DateTime? end, int index) {
-    if (end != null && FormatUtils.calculateDifferenceInHours(end!) == 0) {
+    if (end != null && FormatUtils.calculateDifferenceInHours(end) == 0) {
       return "${timeago.format(end)} (${this.formattedTime(end)})";
     }
 
     String formattedDate =
         Moment(start!).format('MMMM Do, YYYY'); // Format the date
     String formattedTime =
-        '${this.formattedTime(start!)} - ${end != null ? this.formattedTime(end) : 'Now'}';
+        '${this.formattedTime(start)} - ${end != null ? this.formattedTime(end) : 'Now'}';
 
-    return "${formattedDate} ${formattedTime}";
+    return "$formattedDate $formattedTime";
   }
 
   @override
@@ -209,6 +212,6 @@ class _LocationHistoryScreenState extends State<LocationHistoryScreen> {
   }
 }
 
-void main() => runApp(MaterialApp(
+void main() => runApp(const MaterialApp(
       home: LocationHistoryScreen(),
     ));
