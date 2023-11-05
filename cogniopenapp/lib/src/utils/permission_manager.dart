@@ -1,4 +1,5 @@
-// Author: Benjamin Sutter
+// Author: Ben Sutter
+// Description: This class is used to manage permissions required for the app and requesting permission access.
 
 import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:geolocator/geolocator.dart';

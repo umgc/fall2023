@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| INITIAL SCREEN |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+// This is the inital greeting screen on the object search page that shows all unique responses with the most recent sighting
 class ResponseScreen extends StatefulWidget {
   const ResponseScreen({super.key});
 
@@ -134,7 +135,7 @@ class _ResponseScreenState extends State<ResponseScreen>
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| ENHANCED SEARCH |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
+// This screen is shown if a user clicks on a reponse, they can scroll horizontally to show more responses
 class ImageNavigatorScreen extends StatefulWidget {
   final List<VideoResponse> videoResponses;
 
@@ -203,7 +204,7 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| RESPONSE WIDGET |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
+// This widget shows the responses, and allows users to delete them or save them
 class ResponseBox extends StatelessWidget {
   final VideoResponse response;
   final String title;

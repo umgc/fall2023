@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cogniopenapp/ui/galleryScreen.dart';
+import 'package:cogniopenapp/ui/gallery_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,7 +9,6 @@ import 'package:mocktail/mocktail.dart';
 import '../../resources/mocks/image_mock_http_client.dart';
 
 void main() {
-
   // TODO: Fix Tests
   /*
   testWidgets('W-2: gallery screen loads correctly ',

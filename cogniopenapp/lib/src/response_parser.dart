@@ -1,5 +1,9 @@
 // ignore_for_file: avoid_print
 
+// Author: Ben Sutter
+// Description: This class is used to query video responses for display in the object search menu.
+//              It is also used to convert any responses into a significant object for display in the settings menu
+
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +14,8 @@ import 'dart:core';
 import 'dart:io';
 
 class ResponseParser {
+  // Searches for a single response in the list that matches the title
+  // It returns the most recent response that matches the title (if one is found)
   static VideoResponse? getRequestedResponse(String searchTitle) {
     for (int i = DataService.instance.responseList.length - 1; i >= 0; i--) {
       if (DataService.instance.responseList[i].title == searchTitle) {
@@ -19,6 +25,7 @@ class ResponseParser {
     return null;
   }
 
+  // Given a response, convert it into a significant object for local saving.
   static Future<void> convertResponseToLocalSignificantObject(
       VideoResponse response) async {
     String sourceFilePath =
@@ -44,6 +51,9 @@ class ResponseParser {
     }
   }
 
+  // Given a search title, return the list of all responses that match that title (recent first
+  // The filter interval allows for extra filtering (only show results greater than the interval)
+  // For instance, if interval is 2000, it will show reponses 2 seconds apart (rather than the default 4 from Rekognition)
   static List<VideoResponse> getRequestedResponseList(String searchTitle,
       {int filterInterval = 0}) {
     List<VideoResponse> responses = [];
@@ -72,6 +82,7 @@ class ResponseParser {
     return responses;
   }
 
+  // Gets a unique list of all responses (only showing the most recent, unique occurance)
   static List<VideoResponse> getListOfResponses() {
     List<String> trackedTitles = [];
     List<VideoResponse> responses = [];
@@ -85,12 +96,14 @@ class ResponseParser {
     return responses;
   }
 
+  // Creates a thumbnail for the associated response
   static Future<Image> getThumbnail(VideoResponse response) async {
     String fullPath =
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
     return await FileManager.getThumbnail(fullPath, response.timestamp);
   }
 
+  // Shows the timestamp for the response
   static String getTimeStampFromResponse(VideoResponse response) {
     String fullPath =
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";
@@ -100,6 +113,7 @@ class ResponseParser {
         parsedDate.add(Duration(milliseconds: response.timestamp)));
   }
 
+  // Gets the hour representation of the timestamp
   static String getHoursFromResponse(VideoResponse response) {
     String fullPath =
         "${DirectoryManager.instance.videosDirectory.path}/${response.referenceVideoFilePath}";

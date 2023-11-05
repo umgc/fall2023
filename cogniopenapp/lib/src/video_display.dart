@@ -1,3 +1,7 @@
+// Author: Andrea Pellot
+// Modified by: Ben Sutter
+// Description: This class is used to display local videos within the gallery screen
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
