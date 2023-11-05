@@ -46,6 +46,8 @@ Dart_Packages.xml
 .buildlog/
 .history
 .svn/
+cogniopenapp/testApplicationDocumentsPath/tmp/*
+cogniopenapp/testApplicationDocumentsPath/files/*/*
 
 # IntelliJ related
 *.iml
