@@ -1,4 +1,5 @@
-// Author: Ben Sutter
+// Author: Richard Tsang
+// Modified by: Ben Sutter
 // Date: 2023-10-05
 // Description: Displays a camera preview and recording control options to the user
 // Last modified by: Ben Sutter

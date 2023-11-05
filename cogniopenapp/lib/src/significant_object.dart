@@ -49,6 +49,7 @@ class SignificantObject {
   }
 }
 
+// The response bounding box is the overlay for the image to highlight it
 class ResponseBoundingBox {
   double left;
   double top;

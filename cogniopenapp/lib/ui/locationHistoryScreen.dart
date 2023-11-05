@@ -1,3 +1,7 @@
+// Author: Vincent Galeano
+// Edited by: Ben Sutter
+// Description: This class allows the user to see a visualization of previous location history
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';

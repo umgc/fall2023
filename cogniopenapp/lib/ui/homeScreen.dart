@@ -2,7 +2,7 @@
 import 'package:cogniopenapp/ui/response_screen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:cogniopenapp/ui/audioScreen.dart';
-import 'package:cogniopenapp/ui/galleryScreen.dart';
+import 'package:cogniopenapp/ui/gallery_screen.dart';
 import 'package:cogniopenapp/ui/profileScreen.dart';
 import 'package:cogniopenapp/ui/tourScreen.dart';
 import 'package:cogniopenapp/ui/locationHistoryScreen.dart';
@@ -75,12 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!hasBeenInitialized) {
-      CameraManager cm = CameraManager();
-      cm.startAutoRecording();
-      hasBeenInitialized = true;
-    }
-
     return Scaffold(
         // Set the background color for the entire screen
         extendBodyBehindAppBar: true,

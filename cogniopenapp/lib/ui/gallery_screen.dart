@@ -1,3 +1,10 @@
+// Author: Ben Sutter
+// UI Design: Juan Torres-Chardon
+// Edited by: Zac Cappella
+// Description: This class provides the interface into all gallery objects for showing in the grid view
+//              It also provides a way to visualize a media object in isolation by clicking the grid item
+//              Users may also sort items by criteria in the top menu bar
+
 import 'dart:io';
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
