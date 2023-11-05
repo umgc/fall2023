@@ -1,6 +1,6 @@
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
-import 'package:cogniopenapp/ui/videoScreen.dart';
+import 'package:cogniopenapp/ui/video_screen.dart';
 import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/src/utils/permission_manager.dart';
 

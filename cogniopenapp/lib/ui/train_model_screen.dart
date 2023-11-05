@@ -1,4 +1,10 @@
-import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
+// Author: David Bright
+// Date: 2023-10-13
+// Description: Screen to allow user to save a response result as a significant object
+//              and to allow saved response to train an AWS custom label model inside the Rekognition project
+// Last modified by: Ben Sutter
+// Last modified on: 2023-11-04
+
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
@@ -6,10 +12,7 @@ import 'package:cogniopenapp/src/significant_object.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
-import 'package:cogniopenapp/ui/customResponseScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'dart:io';
 
 class ModelScreen extends StatefulWidget {
   final VideoResponse response;
@@ -34,9 +37,6 @@ class ModelScreenState extends State<ModelScreen> {
   VideoResponse response;
 
   String userDefinedModelName = '';
-
-  List<String> availableModels = [];
-  String? _selectedModel;
 
   ModelScreenState(this.response);
 
@@ -99,35 +99,17 @@ class ModelScreenState extends State<ModelScreen> {
               //if spaces, replace with '-'
               userDefinedModelName =
                   userDefinedModelName.replaceAll(RegExp('\\s+'), '-');
-              //TODO:save the passed through response Image data, boundingbox info, and the custom label name as a Significant Object.
-              Future<SignificantObject> sigObj = addResponseAsSignificantObject(
+              //save the passed through response Image data, boundingbox info, and the custom label name as a Significant Object.
+              SignificantObject sigObj = await addResponseAsSignificantObject(
                   userDefinedModelName, response);
 
-              sigObj.then((value) async {
-                await s3.addFileToS3("$userDefinedModelName.json",
-                    value.generateRekognitionManifest());
+              //once sigObj is made, request manifest be generated and uploaded to S3
+              await s3.addFileToS3("$userDefinedModelName.json",
+                  sigObj.generateRekognitionManifest());
 
-                // just a little sleep in between manifest upload and rekognition model being started.
-
-                sleep(const Duration(milliseconds: 4000));
-                vp.addNewModel(
-                    userDefinedModelName, "$userDefinedModelName.json");
-
-                //TODO:create some polling method that checks if trained, then starts if trained; pass it the new model name.
-                /*
-                rek.ProjectVersionStatus? status;
-                do {
-                  status = await vp.pollForTrainedModel(userDefinedModelName);
-                  sleep(const Duration(milliseconds: 5000));
-                  print(status);
-                } while (status == rek.ProjectVersionStatus.trainingInProgress);
-                */
-
-                //returns the modelArn of the projectVersion being started, but we really don't need it if we have the model name
-                //(see vp.activeModels)
-                vp.startCustomDetection(userDefinedModelName);
-                //TODO?: add a polling method to see when the model is started?
-              });
+              //once manifest loaded, start model training
+              vp.addNewModel(
+                  userDefinedModelName, "$userDefinedModelName.json");
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -138,135 +120,19 @@ class ModelScreenState extends State<ModelScreen> {
           },
           child: const Text('Train Model'),
         ),
-        /*const SizedBox(height: 20),
-        const Padding(
-          // New subheading section starts here
-          padding: EdgeInsets.fromLTRB(
-              16.0, 4.0, 16.0, 4.0), // Adjust padding as needed
-          child: Text(
-            "Start a trained model?", // This is the subheading text
-            style: TextStyle(
-              fontSize: 16.0, // Adjust font size as needed
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Center(
-          child: DropdownButton(
-            hint: Text('Select one of the trained models'),
-            value: _selectedModel,
-            onChanged: (newValue) {
-              setState(() {
-                _selectedModel = newValue;
-                availableModels = vp.availableModels;
-              });
-            },
-            items: availableModels.map((model) {
-              return DropdownMenuItem(
-                child: new Text(model),
-                value: model,
-              );
-            }).toList(),
-          ),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {},
-          child: const Text('Start Model'),
-        ),*/ // New subheading section ends here
       ]),
-      //floatingActionButton: _getFAB(s3),
     );
   }
 
-  Widget _getFAB(S3Bucket s3) {
-    //s3.startService();
-    return SpeedDial(
-      animatedIcon: AnimatedIcons.menu_close,
-      animatedIconTheme: const IconThemeData(size: 22),
-      backgroundColor: const Color(0XFFE91E63),
-      visible: true,
-      curve: Curves.bounceIn,
-      children: [
-        // FAB 1
-        SpeedDialChild(
-            child: const Icon(Icons.search),
-            backgroundColor: const Color(0XFFE91E63),
-            onTap: () async {
-              await vp.pollVersionDescription();
-              print("on screen: $availableModels");
-              setState() {
-                availableModels = vp.availableModels;
-              }
-            },
-            label: 'Check service',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63)),
-        // FAB 2
-
-        // FAB 3
-        SpeedDialChild(
-            child: const Icon(Icons.interests),
-            backgroundColor: const Color(0XFFE91E63),
-            onTap: () {
-              vp.startCustomDetection("green-glasses");
-              //vp.startCustomDetection("my-glasses");
-            },
-            label: 'Start model',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63)),
-        // FAB 4
-        SpeedDialChild(
-            child: const Icon(Icons.search),
-            backgroundColor: const Color(0XFFE91E63),
-            onTap: () async {
-              rek.DetectCustomLabelsResponse? response = await vp
-                  .findMatchingModel("green-glasses", "glasses-test.jpg");
-
-              // ignore: use_build_context_synchronously
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CustomResponseScreen(response!)));
-            },
-            label: 'Detect \'My green glasses\'',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63)),
-        // FAB 5
-        SpeedDialChild(
-            child: const Icon(Icons.interests),
-            backgroundColor: const Color(0XFFE91E63),
-            onTap: () {
-              vp.stopCustomDetection("green-glasses");
-              //vp.stopCustomDetection("my-glasses");
-            },
-            label: 'Stop model',
-            labelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                fontSize: 16.0),
-            labelBackgroundColor: const Color(0XFFE91E63)),
-      ],
-    );
-  }
-
+  //converts the user selected VideoResponse into a SignificantObject, but also prepares SignificantObject for model training
   Future<SignificantObject> addResponseAsSignificantObject(
       String userDefinedModelName, VideoResponse response) async {
-    //following method keeps throwing this error
+    // 1) pull information from resposne
     Image stillImage = await ResponseParser.getThumbnail(response);
     String filepath = FileManager.getThumbnailFileName(
         response.referenceVideoFilePath, response.timestamp);
     String path =
-        "${DirectoryManager.instance.videoStillsDirectory.path}/${filepath}";
+        "${DirectoryManager.instance.videoStillsDirectory.path}/$filepath";
 
     int i = 0;
     String name = response.title;
@@ -275,16 +141,17 @@ class ModelScreenState extends State<ModelScreen> {
         top: response.top,
         width: response.width,
         height: response.height);
+    // 2) upload training/testing images to S3
     await s3.addImageToS3("$userDefinedModelName-$i.jpg", path);
     await s3.addImageToS3("$userDefinedModelName-$i-test.jpg", path);
 
-    //if not, make one.
     List<Image> images = [];
     images.add(stillImage);
     List<String> alternateNames = [];
     alternateNames.add(name);
     List<ResponseBoundingBox> boundingBoxes = [];
     boundingBoxes.add(boundingBox);
+    // 3) transform to Significant Object
     SignificantObject sigObj = SignificantObject.overloaded(
         userDefinedModelName, images, alternateNames, boundingBoxes);
 

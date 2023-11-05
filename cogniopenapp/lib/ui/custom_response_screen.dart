@@ -1,52 +1,21 @@
+// Author: David Bright
+// Date: 2023-10-25
+// Description: Display query results of custom label responses from AWS Rekognition
+// Last modified by: David Bright
+// Last modified on: 2023-11-05
 import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:cogniopenapp/src/custom_label_response.dart';
 import 'package:flutter/material.dart';
 
-/*List<VideoResponse> createTestResponseList() {
-  return [
-    VideoResponse(
-      'Water',
-      100,
-      52852,
-    ),
-    VideoResponse(
-      'Aerial View',
-      96.13745880126953,
-      53353,
-    ),
-    VideoResponse(
-      'Animal',
-      86.5937728881836,
-      53353,
-    ),
-    VideoResponse(
-      'Coast',
-      99.99983215332031,
-      53353,
-    ),
-    VideoResponse.overloaded(
-      'Fish',
-      90.63278198242188,
-      53353,
-      ResponseBoundingBox(
-          left: 0.11934830248355865,
-          top: 0.7510809302330017,
-          width: 0.05737469345331192,
-          height: 0.055630747228860855),
-    ),
-    // Add more test objects for other URLs as needed
-  ];
-}
-*/
-
+//create a list of CustomLabelResponse objects from the DetectCustomLabelsResponse response
 List<CustomLabelResponse> createResponseList(
     rek.DetectCustomLabelsResponse response) {
   List<CustomLabelResponse> responseList = [];
   List<String?> recognizedItems = [];
 
+  //user Iterator to traverse response list
   Iterator<rek.CustomLabel> iter = response.customLabels!.iterator;
   while (iter.moveNext()) {
-    //for (rek.Instance inst in iter.current.customLabels!.instances!) {
     String? name = iter.current.name;
     if (recognizedItems.contains(name)) {
       continue;
@@ -56,7 +25,6 @@ List<CustomLabelResponse> createResponseList(
     CustomLabelResponse newResponse = CustomLabelResponse.overloaded(
       iter.current.name ?? "default value",
       iter.current.confidence ?? 80,
-      //iter.current.timestamp ?? 0,
       ResponseBoundingBox(
           left: iter.current.geometry!.boundingBox!.left ?? 0,
           top: iter.current.geometry!.boundingBox!.top ?? 0,
@@ -64,13 +32,13 @@ List<CustomLabelResponse> createResponseList(
           height: iter.current.geometry!.boundingBox!.height ?? 0),
     );
     responseList.add(newResponse);
-    //}
   }
   return responseList;
 }
 
 class CustomResponseScreen extends StatefulWidget {
   final rek.DetectCustomLabelsResponse awsResponses;
+  //pass through the awsResponses from the query processing screen
   const CustomResponseScreen(this.awsResponses, {super.key});
 
   Widget build(BuildContext context) {
@@ -94,10 +62,12 @@ class CustomResponseScreenState extends State<CustomResponseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //List<VideoResponse> realResponse = createTestResponseList();
     List<CustomLabelResponse> realResponse = createResponseList(awsResponses);
+
+    //hardcoded values from the test image; to be replaced with the response image information
     double imageWidth = 225;
     double imageHeight = 225;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Query Responses',
@@ -108,11 +78,10 @@ class CustomResponseScreenState extends State<CustomResponseScreen> {
           padding: EdgeInsets.fromLTRB(
               16.0, 16.0, 16.0, 4.0), // Adjust padding as needed
           child: Text(
-            'Recent query responses', // This is the header text
+            'Recent query responses',
             style: TextStyle(
               fontSize: 24.0, // Adjust font size as needed
               fontWeight: FontWeight.bold,
-              //color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
@@ -125,12 +94,9 @@ class CustomResponseScreenState extends State<CustomResponseScreen> {
             itemCount: realResponse.length,
             itemBuilder: (BuildContext context, int index) {
               CustomLabelResponse response = realResponse[index];
-              //response.setImage(response.timestamp);
               return GestureDetector(
                 onTap: () async {
-                  //response.setImage(response.timestamp);
-                  // imageWidth = realResponse[0].exampleImage.width!;
-                  //imageHeight = realResponse[0].exampleImage.height!;
+                  //open new screen for full details of response result
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) {
@@ -147,9 +113,7 @@ class CustomResponseScreenState extends State<CustomResponseScreen> {
                                 Stack(
                                   children: [
                                     Image(image: response.exampleImage.image),
-                                    //if (_isRectangleVisible)
                                     Positioned(
-                                      //TODO: hardcoded video frame width and height; these need replaced with whatever actually comes in as the image
                                       left: imageWidth *
                                           response.boundingBox!.left,
                                       top: imageHeight *
@@ -188,12 +152,8 @@ class CustomResponseScreenState extends State<CustomResponseScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 16),
-                                //Text('Timestamp: ${response.timestamp}',
-                                //style: const TextStyle(fontSize: 18)),
                                 Text('Name: ${response.name}',
                                     style: const TextStyle(fontSize: 18)),
-                                //Text('Confidence: ${response.confidence}'),
-                                //Text('Timestamp: ${response.timestamp}'),
                                 Text(
                                     'BoundingBox: ${response.boundingBox?.toString() ?? "N/A"}'),
                               ],
@@ -217,7 +177,6 @@ class CustomResponseScreenState extends State<CustomResponseScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        //Image(image: response.exampleImage.image),
                         const SizedBox(height: 8),
                         Text(
                           response.name,
@@ -230,8 +189,6 @@ class CustomResponseScreenState extends State<CustomResponseScreen> {
               );
             },
           ),
-          // Implement the Video Recording screen UI here
-          //add button to grab results
         )
       ]),
     );
