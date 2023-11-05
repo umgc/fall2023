@@ -94,9 +94,9 @@ class DataService {
   // |-----------------------------------------------------------------------------------------|
   // |---------------------------- VIDEO RESPONSE OPERATIONS ----------------------------------|
   // |-----------------------------------------------------------------------------------------|
-  Future<void> addVideoResponses(List<AWS_VideoResponse> rekogResponses) async {
+  Future<void> addVideoResponses(List<AWSVideoResponse> rekogResponses) async {
     try {
-      for (AWS_VideoResponse rekResponse in rekogResponses) {
+      for (AWSVideoResponse rekResponse in rekogResponses) {
         final response = await VideoResponseController.addVideoResponse(
           title: rekResponse.name,
           referenceVideoFilePath: rekResponse.referenceVideoFilePath,

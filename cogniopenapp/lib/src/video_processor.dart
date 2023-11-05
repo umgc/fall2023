@@ -1,3 +1,9 @@
+// Author: David Bright
+// Date: 2023-10-06
+// Description: Class for working with the AWS Rekognition API
+// Last modified by: Ben Sutter
+// Last modified on: 2023-11-04
+
 // ignore_for_file: avoid_print
 
 import 'dart:core';
@@ -17,10 +23,15 @@ class VideoProcessor {
   //(default is 50; the higher the more confident - and thus better and fewer results)
   double confidence = 85;
   Rekognition? service;
+  //current video job being processed
   String jobId = '';
+  //projectARN for the custom label project
   String projectArn = 'No project found';
+  //"versionARN" or the model for a custom label
   String currentProjectVersionArn = 'Model not started';
+  //custom label models that have successfully been trained
   List<String> availableModels = [];
+  //custom label models that are currently running
   List<String> activeModels = [];
   String videoTitle = "";
   String address = "";
@@ -28,6 +39,7 @@ class VideoProcessor {
 
   Stopwatch stopwatch = Stopwatch();
 
+  //exclusionary list to filter the responses shown to user.
   List<String> excludedResponses = [
     "Male",
     "Adult",
@@ -35,12 +47,18 @@ class VideoProcessor {
     "Female",
     "Woman",
     "Person",
-    "Baby",
+    "Baby", //VERY IMPORTANT!!! DO NOT DELETE!!!
     "Bride",
     "Groom",
     "Girl",
     "Boy",
     "People",
+    "Pet",
+    "Animal",
+    "Dog",
+    "Cat",
+    "Building",
+    "Furniture"
   ];
 
   VideoProcessor() {
@@ -52,24 +70,28 @@ class VideoProcessor {
     return 'Elapsed time: ${seconds.toStringAsFixed(2)} seconds';
   }
 
+  //connect to the Rekognition service
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
 
+    //pull values from the local .env file
     String region = (dotenv.get('region', fallback: "none"));
     String access = (dotenv.get('accessKey', fallback: "none"));
     String secret = (dotenv.get('secretKey', fallback: "none"));
 
     if (region == "none" || access == "none" || secret == "none") {
-      print("S3 needs to be initialized");
+      print("AWS client access needs to be initialized");
       return;
     }
+
+    //establish AWS Rekognition connection
     service = Rekognition(
         region: region,
         credentials:
             AwsClientCredentials(accessKey: access, secretKey: secret));
 
+    //connect to Custom Label detection
     createProject();
-    //TODO:debug/testing statements
     print("Rekognition is up...");
   }
 
@@ -84,8 +106,7 @@ class VideoProcessor {
 
     GetLabelDetectionResponse labelResponses = await grabResults(jobId);
 
-    List<AWS_VideoResponse> responses =
-        await createResponseList(labelResponses);
+    List<AWSVideoResponse> responses = await createResponseList(labelResponses);
 
     await DataService.instance.addVideoResponses(responses);
     FormatUtils.printBigMessage("Rekognition results saved locally.");
@@ -94,7 +115,7 @@ class VideoProcessor {
 
   Future<StartLabelDetectionResponse> sendRequestToProcessVideo(
       String title) async {
-    print("sending rekognition request for ${title}");
+    print("sending rekognition request for $title");
     //grab Video
     Video video = Video(
         s3Object: S3Object(bucket: dotenv.get('videoS3Bucket'), name: title));
@@ -107,19 +128,14 @@ class VideoProcessor {
     //set the jobId, but return the whole job.
     job.then((value) {
       jobId = value.jobId!;
-      print("Job ID IS ${jobId}");
+      print("Job ID IS $jobId");
     });
     return job;
   }
 
-  List<AWS_VideoResponse> createTestResponseList() {
+  List<AWSVideoResponse> createTestResponseList() {
     return [
-      /* 
-    AWS_VideoResponse('Water', 100, 52852, "fake file"),
-    AWS_VideoResponse('Aerial View', 96.13745880126953, 53353, "fake file"),
-    AWS_VideoResponse('Animal', 86.5937728881836, 53353, "fake file"),
-    AWS_VideoResponse('Coast', 99.99983215332031, 53353, "fake file"), */
-      AWS_VideoResponse.overloaded(
+      AWSVideoResponse.overloaded(
           'Fish',
           90.63278198242188,
           53353,
@@ -132,6 +148,10 @@ class VideoProcessor {
           "3501 University Boulevard East, Adelphi, Maryland, 20783, US",
           "People, Person"),
       // Add more test objects for other URLs as needed
+      /* AWS_VideoResponse('Water', 100, 52852, "fake file"),
+         AWS_VideoResponse('Aerial View', 96.13745880126953, 53353, "fake file"),
+         AWS_VideoResponse('Animal', 86.5937728881836, 53353, "fake file"),
+         AWS_VideoResponse('Coast', 99.99983215332031, 53353, "fake file"), */
     ];
   }
 
@@ -153,10 +173,10 @@ class VideoProcessor {
     return list1.any((element) => list2.contains(element));
   }
 
-  List<AWS_VideoResponse> createResponseList(
+  List<AWSVideoResponse> createResponseList(
       GetLabelDetectionResponse response) {
     FormatUtils.printBigMessage("CREATING RESPONSE LIST");
-    List<AWS_VideoResponse> responseList = [];
+    List<AWSVideoResponse> responseList = [];
 
     Iterator<LabelDetection> iter = response.labels!.iterator;
     print("ABOUT TO START PARSING RESPONSES");
@@ -179,7 +199,7 @@ class VideoProcessor {
           continue;
         }
 
-        AWS_VideoResponse newResponse = AWS_VideoResponse.overloaded(
+        AWSVideoResponse newResponse = AWSVideoResponse.overloaded(
             iter.current.label!.name ?? "default value",
             iter.current.label!.confidence ?? 80,
             iter.current.timestamp ?? 0,
@@ -200,11 +220,13 @@ class VideoProcessor {
     return responseList;
   }
 
+  //Rekognition jobs take a little while to process (sometimes 17s for a 60s clip)
+  //this method checks for the most recent jobId, and when it completes, returns that the responses are ready to pull
+  //(the jobId is returned, but that returned value signals that the responses are ready to pull)
   Future<String> pollForCompletedRequest() async {
     FormatUtils.printBigMessage("POLLING FOR COMPLETED REQUEST");
     //keep polling the getLabelDetection until either failed or succeeded.
     bool inProgress = true;
-    //jobId = "43842f1617dfa32ac8fb7b21becabacd8736556c195630711b4b901ca8b9e08f";
     while (inProgress) {
       FormatUtils.printBigMessage("STILL POLLING ${getElapsedTimeInSeconds()}");
       GetLabelDetectionResponse labelsResponse =
@@ -217,11 +239,10 @@ class VideoProcessor {
       } else if (labelsResponse.jobStatus == VideoJobStatus.failed) {
         //stop looping, but print error message.
         inProgress = false;
-        //TODO:debug/testing statements
         print(labelsResponse.statusMessage);
       }
     }
-    FormatUtils.printBigMessage("POLLING WAS COMPLETED JOB ID ${jobId}");
+    FormatUtils.printBigMessage("POLLING WAS COMPLETED JOB ID $jobId");
     return jobId;
   }
 
@@ -245,7 +266,7 @@ class VideoProcessor {
     videoPath = FileManager.mostRecentVideoPath;
 
     print("Video title to S3: $videoTitle");
-    print("Video file path uploading to S3: ${videoPath}");
+    print("Video file path uploading to S3: $videoPath");
 
     String uploadedVideo = await s3.addVideoToS3(videoTitle, videoPath);
 
@@ -282,10 +303,9 @@ class VideoProcessor {
     });
   }
 
-  //needs a modelName ("my glasses"), and the title of the input manifest file in S3 bucket
+  //needs a modelName ("my-glasses"), and the title of the input manifest file in S3 bucket
   void addNewModel(String modelName, String title) {
     List<Asset> assets = [];
-    //TODO: create some sort of loop given the significant object to create the manifest for training data
     //Asset is a manifest file (that has the s3 images and bounding box information)
     Asset sigObj = Asset(
         groundTruthManifest: GroundTruthManifest(
@@ -307,7 +327,6 @@ class VideoProcessor {
   //adds all stopped or trained models to list of available models
   //deletes models that failed training
   Future<void> pollVersionDescription() async {
-    //String status) {
     Future<DescribeProjectVersionsResponse> projectVersions =
         service!.describeProjectVersions(projectArn: projectArn);
     availableModels.clear();
@@ -315,7 +334,6 @@ class VideoProcessor {
       Iterator<ProjectVersionDescription> iter =
           value.projectVersionDescriptions!.iterator;
       while (iter.moveNext()) {
-        //print("${iter.current.projectVersionArn} is ${iter.current.status}");
         //deletes a model if it failed training
         if (iter.current.status == ProjectVersionStatus.trainingFailed) {
           service!.deleteProjectVersion(
@@ -329,14 +347,13 @@ class VideoProcessor {
           String parsedName =
               iter.current.projectVersionArn!.substring(substringStartingIndex);
           parsedName = parsedName.split("/")[0];
-          //print(parsedName);
           availableModels.add(parsedName);
         }
       }
-      //print(availableModels);
     });
   }
 
+  //check if the requested model (filter to find those of like name) has completed training.
   ProjectVersionStatus? pollForTrainedModel(String labelName) {
     Future<DescribeProjectVersionsResponse> projectVersions =
         service!.describeProjectVersions(projectArn: projectArn);
@@ -346,13 +363,11 @@ class VideoProcessor {
       while (iter.moveNext()) {
         if (iter.current.projectVersionArn!.contains(labelName)) {
           print("${iter.current.projectVersionArn} is ${iter.current.status}");
-          if (iter.current.status == ProjectVersionStatus.trainingCompleted) {
-            return iter.current.status;
-          }
+          return iter.current.status;
         }
       }
     });
-    return ProjectVersionStatus.trainingInProgress;
+    return ProjectVersionStatus.failed;
   }
 
   //start the inference of custom labels
@@ -422,16 +437,14 @@ class VideoProcessor {
   // When I wrote this, only God and I understood what I was doing
   // Now only God knows.
   // run Rekognition custom label detection on a specified set of images
+  // ignore: body_might_complete_normally_nullable
   Future<DetectCustomLabelsResponse?> findMatchingModel(
       String labelName, String fileName) async {
-    //fileName: "eyeglass-green.jpg";
-    //fileName = "glasses-test.jpg";
     //look for a similar project version (model to match the label from the user)
     DescribeProjectVersionsResponse projectVersions =
         await service!.describeProjectVersions(projectArn: projectArn);
     bool search = true;
     //get together list of images to check against
-    //projectVersions.then((value) {
     Iterator<ProjectVersionDescription> iter =
         projectVersions.projectVersionDescriptions!.iterator;
     while (iter.moveNext() & search) {
@@ -450,5 +463,7 @@ class VideoProcessor {
     if (search) {
       return null;
     }
+    //Don't do this or it will throw null exception from the called reference
+    //return null;
   }
 }

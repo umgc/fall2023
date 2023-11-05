@@ -1,3 +1,8 @@
+// Author: Selam Biru
+// Edited by: Ben Sutter
+// Description: This screen lets the user see local files marked as signficant objects
+//              The user can also take a new photo or upload from local external storage
+
 import 'dart:io';
 
 import 'package:cogniopenapp/src/utils/directory_manager.dart';

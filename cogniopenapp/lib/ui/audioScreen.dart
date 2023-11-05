@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:cogniopenapp/src/typingIndicator.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
+import 'package:intl/intl.dart';
 
 /// FlutterSound provides functionality for recording and playing audio.
 import 'package:flutter_sound/flutter_sound.dart';
@@ -90,11 +91,37 @@ class _AudioScreenState extends State<AudioScreen> {
     _startRecording();
   }
 
+  FutureOr _showPermissionDialogue() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("Permission Required"),
+              content: const Text(
+                  "The CogniOpen Audio recording features require access to your device's microphone. Please allow Microphone access in your device settings."),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  child: const Text('Settings'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    openAppSettings();
+                  },
+                ),
+              ],
+            ));
+  }
+
   /// This function initializes the recorder by checking necessary permissions.
   Future<void> _initializeRecorder() async {
     bool permissionsGranted = await _requestPermissions();
 
     if (!permissionsGranted) {
+      _showPermissionDialogue();
       return;
     }
     await _recorder!.openRecorder();
@@ -123,6 +150,7 @@ class _AudioScreenState extends State<AudioScreen> {
   Future<void> _startRecording() async {
     bool permissionsGranted = await _requestPermissions();
     if (!permissionsGranted) {
+      _showPermissionDialogue();
       return;
     }
     Directory appDocDirectory = await getApplicationDocumentsDirectory();
@@ -398,8 +426,11 @@ class _AudioScreenState extends State<AudioScreen> {
     String audioFilePath = '${appDocDirectory.path}/files/audios/$key2.wav';
     String transcriptFilePath =
         '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(key2));
+    final dateFormat = DateFormat('dd/MM/yyyy');
+    final title = dateFormat.format(dateTime);
     audio = await DataService.instance.addAudio(
-        title: key2,
+        title: title,
         description: "",
         audioFile: File(audioFilePath),
         transcriptFile: File(transcriptFilePath),
