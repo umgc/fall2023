@@ -1,4 +1,10 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously, library_private_types_in_public_api
+
+// Author: Ben Sutter
+// Date: 2023-11-01
+// Description: New Response Screen to show responses to user.
+// Last modified by: David Bright
+// Last modified on: 2023-11-03
 
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
@@ -12,7 +18,7 @@ import 'package:flutter/material.dart';
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||(widget and item creation)||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 class ResponseScreen extends StatefulWidget {
-  const ResponseScreen();
+  const ResponseScreen({super.key});
 
   @override
   _ResponseScreenState createState() => _ResponseScreenState();
@@ -132,7 +138,7 @@ class _ResponseScreenState extends State<ResponseScreen>
 class ImageNavigatorScreen extends StatefulWidget {
   final List<VideoResponse> videoResponses;
 
-  ImageNavigatorScreen(this.videoResponses);
+  const ImageNavigatorScreen(this.videoResponses, {super.key});
 
   @override
   _ImageNavigatorScreenState createState() => _ImageNavigatorScreenState();
@@ -149,9 +155,9 @@ class _ImageNavigatorScreenState extends State<ImageNavigatorScreen>
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: const Color(0x440000), // Set appbar background color
+        backgroundColor: const Color(0x00440000), // Set appbar background color
         centerTitle: true,
-        title: Text('${widget.videoResponses[0].title}',
+        title: Text(widget.videoResponses[0].title,
             style: const TextStyle(color: Colors.black54)),
         elevation: 0,
         leading: const BackButton(color: Colors.black54),
@@ -202,7 +208,7 @@ class ResponseBox extends StatelessWidget {
   final VideoResponse response;
   final String title;
 
-  ResponseBox(this.response, this.title);
+  const ResponseBox(this.response, this.title, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -301,11 +307,12 @@ class ResponseBox extends StatelessWidget {
                 Navigator.of(context).pop(); // Pop the third screen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ResponseScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const ResponseScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(133, 194, 102, 102),
+                backgroundColor: const Color.fromARGB(133, 194, 102, 102),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
                       10.0), // Adjust the radius as needed
@@ -345,7 +352,8 @@ class ResponseBox extends StatelessWidget {
                     Navigator.of(context).pop(); // Pop the third screen
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ResponseScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const ResponseScreen()),
                     );
                   },
                   child: const Text("No, keep them"),
@@ -359,13 +367,14 @@ class ResponseBox extends StatelessWidget {
                     Navigator.of(context).pop(); // Pop the third screen
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ResponseScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const ResponseScreen()),
                     );
                   },
-                  child: Text("Yes, delete them"),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
+                    backgroundColor: Colors.red,
                   ),
+                  child: const Text("Yes, delete them"),
                 ),
               ],
             ),

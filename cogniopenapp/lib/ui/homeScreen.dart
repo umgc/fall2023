@@ -1,5 +1,4 @@
 // Imported libraries and packages
-import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/ui/response_screen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:cogniopenapp/ui/audioScreen.dart';
@@ -45,12 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final locationStream = Geolocator.getPositionStream();
     locationStream.listen((Position position) async {
       try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude, position.longitude);
         if (placemarks.isNotEmpty) {
           final Placemark placemark = placemarks.first;
-          final address = "${placemark.name}, ${placemark.locality}, ${placemark.country}";
+          final address =
+              "${placemark.name}, ${placemark.locality}, ${placemark.country}";
 
-          if (currentLocationEntry == null || currentLocationEntry!.address != address) {
+          if (currentLocationEntry == null ||
+              currentLocationEntry!.address != address) {
             if (currentLocationEntry != null) {
               if (currentLocationEntry!.endTime == null) {
                 currentLocationEntry!.endTime = DateTime.now();
@@ -58,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }
 
-            final newEntry = LocationEntry(address: address, startTime: DateTime.now());
+            final newEntry =
+                LocationEntry(address: address, startTime: DateTime.now());
             final id = await LocationDatabase.instance.create(newEntry);
             newEntry.id = id;
             currentLocationEntry = newEntry;

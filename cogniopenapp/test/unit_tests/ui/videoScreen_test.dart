@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cogniopenapp/ui/videoScreen.dart';
+import 'package:cogniopenapp/ui/video_screen.dart';
 
 void main() {
   testWidgets('W-3: video screen loads correctly ',

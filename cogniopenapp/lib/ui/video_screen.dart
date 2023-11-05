@@ -1,3 +1,9 @@
+// Author: Ben Sutter
+// Date: 2023-10-05
+// Description: Displays a camera preview and recording control options to the user
+// Last modified by: Ben Sutter
+// Last modified on: 2023-11-03
+
 import 'dart:async';
 
 import 'package:camera/camera.dart';
@@ -65,7 +71,7 @@ class _CameraHomeState extends State<VideoScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Image(
+        flexibleSpace: const Image(
           image: AssetImage('assets/images/background.jpg'),
           fit: BoxFit.cover,
         ),
@@ -79,7 +85,7 @@ class _CameraHomeState extends State<VideoScreen>
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
+                image: const DecorationImage(
                   image: AssetImage("assets/images/background.jpg"),
                   fit: BoxFit.cover,
                 ),
@@ -185,13 +191,13 @@ class _CameraHomeState extends State<VideoScreen>
 
   void onResumeButtonPressed() {
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Recording resumed")));
+        .showSnackBar(const SnackBar(content: Text("Recording resumed")));
     cameraManager.manuallyStartRecording();
   }
 
   void onPauseButtonPressed() {
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Recording stopped")));
+        .showSnackBar(const SnackBar(content: Text("Recording stopped")));
     cameraManager.manuallyStopRecording();
   }
 }

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'registrationScreen.dart';
 import 'homeScreen.dart';
-import 'package:cogniopenapp/src/address.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
