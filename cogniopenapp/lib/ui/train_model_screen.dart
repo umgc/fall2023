@@ -2,7 +2,7 @@ import 'package:aws_rekognition_api/rekognition-2016-06-27.dart' as rek;
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/response_parser.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
-import 'package:cogniopenapp/src/significantObject.dart';
+import 'package:cogniopenapp/src/significant_object.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/video_processor.dart';

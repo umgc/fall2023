@@ -1,10 +1,16 @@
+// Author: David Bright
+// Date: 2023-10-13
+// Description: This class houses the methods to establish a connection to S3 and perform S3 operations
+//              (namely add items to the S3 buckets)
+// Last modified by: Ben Sutter
+// Last modified on: 2023-11-04
+
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
@@ -14,21 +20,27 @@ import 'package:cogniopenapp/src/utils/file_manager.dart';
 class S3Bucket {
   S3? connection;
 
+  //attribute for singleton implementation
   static final S3Bucket _instance = S3Bucket._internal();
 
+  //method for singleton implementation
   S3Bucket._internal() {
+    //initialize the service on object load
     startService().then((value) {
       createBucket();
     });
   }
 
+  //constructor for singlton implementation
   factory S3Bucket() {
     return _instance;
   }
 
+  //establish connection based on .env values
   Future<void> startService() async {
     await dotenv.load(fileName: ".env"); //load .env file variables
 
+    //Known deficiency - no option to select sub-regions (ex: us-east-2), so configure for lead (ex: us-east-1) for consistency in AWS services
     String region = (dotenv.get('region', fallback: "none"));
     String access = (dotenv.get('accessKey', fallback: "none"));
     String secret = (dotenv.get('secretKey', fallback: "none"));
@@ -43,7 +55,6 @@ class S3Bucket {
         region: region,
         credentials:
             AwsClientCredentials(accessKey: access, secretKey: secret));
-    //TODO:debug/testing statements
     print("S3 is connected...");
   }
 
@@ -57,7 +68,6 @@ class S3Bucket {
     //impotent method that creates bucket if it is not already present.
     Future<CreateBucketOutput> creating =
         connection!.createBucket(bucket: dotenv.get('videoS3Bucket'));
-    //TODO:debug/testing statements
     creating.then((value) {
       print("Bucket is created");
     });
@@ -83,10 +93,9 @@ class S3Bucket {
     return _addToS3(title, bytes);
   }
 
-  // Adds the file to the S3 bucket
   Future<String> addVideoToS3(String title, String localPath) {
     // TODO Specify folder structure
-    print("ADDING THIS TO S3 ${title}");
+    print("ADDING THIS TO S3 $title");
     Uint8List bytes = File(localPath).readAsBytesSync();
     return _addToS3(title, bytes);
   }
@@ -96,15 +105,19 @@ class S3Bucket {
   //method returns the name of the file being uploaded (used in queueing the object detection)
   Future<String> _addToS3(String title, Uint8List content) async {
     // TODO: Add logic to detect file type and create a folder
-    // .mp3 files go to bucket/audio, .mp4 files go to bucket/audio
+    // .mp3 files go to bucket/audio, .mp4 files go to bucket/video
+
+    //^^ logic for this todo would be to include a "String prefix" parameter (for 'videos', 'images', etc.).
+    // The "formattedTitle" method clears any folder path information, so one would need to append it back on
+    // prior to content upload to S3
+
     String formattedTitle = FileManager.getFileNameForAWS(title);
     await connection!.putObject(
       bucket: dotenv.get('videoS3Bucket'),
       key: formattedTitle,
       body: content,
     );
-    //TODO:debug/testing statements
-    print("content added to bucket: ${formattedTitle}");
+    print("content added to bucket: $formattedTitle");
     return title;
   }
 
