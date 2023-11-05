@@ -1,21 +1,19 @@
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:cogniopenapp/src/video_processor.dart';
 import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:cogniopenapp/ui/homeScreen.dart';
 import 'package:cogniopenapp/ui/loginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:cogniopenapp/src/utils/permission_manager.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
   await DirectoryManager.instance.initializeDirectories();
   await DataService.instance.initializeData();
   initializeData();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -41,6 +39,7 @@ class MyApp extends StatelessWidget {
 // These are all singleton objects and should be initialized at the beginning
 void initializeData() async {
   //initialize backend services
+  // ignore: unused_local_variable
   S3Bucket s3 = S3Bucket();
   CameraManager cm = CameraManager();
   await PermissionManager.requestInitialPermissions();

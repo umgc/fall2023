@@ -91,11 +91,37 @@ class _AudioScreenState extends State<AudioScreen> {
     _startRecording();
   }
 
+  FutureOr _showPermissionDialogue() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("Permission Required"),
+              content: const Text(
+                  "The CogniOpen Audio recording features require access to your device's microphone. Please allow Microphone access in your device settings."),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  child: const Text('Settings'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    openAppSettings();
+                  },
+                ),
+              ],
+            ));
+  }
+
   /// This function initializes the recorder by checking necessary permissions.
   Future<void> _initializeRecorder() async {
     bool permissionsGranted = await _requestPermissions();
 
     if (!permissionsGranted) {
+      _showPermissionDialogue();
       return;
     }
     await _recorder!.openRecorder();
@@ -124,6 +150,7 @@ class _AudioScreenState extends State<AudioScreen> {
   Future<void> _startRecording() async {
     bool permissionsGranted = await _requestPermissions();
     if (!permissionsGranted) {
+      _showPermissionDialogue();
       return;
     }
     Directory appDocDirectory = await getApplicationDocumentsDirectory();

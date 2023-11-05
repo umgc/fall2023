@@ -1,5 +1,9 @@
 // ignore_for_file: avoid_print
 
+// Author: Ben Sutter
+// Description: This class is used to control the video camera and associated auto record functionality.
+//              This class also enables for photo captures when prompted in the gallery screen.
+
 import 'dart:async';
 import 'dart:io';
 
@@ -37,6 +41,7 @@ class CameraManager {
     return _instance;
   }
 
+  // Initalize the camera so it is ready for auto recording
   Future<void> initializeCamera() async {
     parseEnviromentSettings();
 
@@ -51,7 +56,14 @@ class CameraManager {
 
     // Make sure that there are available cameras if trying to use the front
     // 0 equals rear, 1 = front
-    if (_cameras.length == 1) cameraToUse = 0;
+    print("LENGTH IS: ${_cameras.length}");
+    if (_cameras.length == 1) {
+      cameraToUse = 0;
+      print("USING 0");
+    } else if (_cameras.isEmpty) {
+      FormatUtils.printBigMessage("ERROR: NO CAMERAS DETECTED");
+      return;
+    }
     controller = CameraController(_cameras[cameraToUse], ResolutionPreset.high);
 
     await controller.initialize();
@@ -62,6 +74,7 @@ class CameraManager {
     }
   }
 
+  // Parse environmental variables to determine enabld features
   void parseEnviromentSettings() async {
     await dotenv.load(fileName: ".env");
     cameraToUse = int.parse(dotenv.get('cameraToUse', fallback: "1"));
@@ -89,6 +102,7 @@ class CameraManager {
     print("The camera that is being automatically used is the ${cameraUsed}");
   }
 
+  // Starts the auto recording process
   void startAutoRecording() async {
     if (isAutoRecording) {
       // Delay for camera initialization
@@ -100,6 +114,7 @@ class CameraManager {
     }
   }
 
+  // Stops any ongoing video recording
   Future<void> stopRecording() async {
     try {
       XFile? file = await controller.stopVideoRecording();
@@ -124,6 +139,7 @@ class CameraManager {
     startRecordingInBackground();
   }
 
+  // Automatically starts looping in teh background until the user stops the video
   void startRecordingInBackground() async {
     if (!controller.value.isInitialized) {
       print('Error: Camera is not initialized.');
@@ -153,6 +169,7 @@ class CameraManager {
     startRecordingInBackground();
   }
 
+  // Saves the media locally to app storage for use with other application aspects
   Future<void> saveMediaLocally(XFile mediaFile) async {
     // Get the local directory
 
@@ -185,6 +202,7 @@ class CameraManager {
     }
   }
 
+  // Takes a photo and saves it to the directory specified
   Future<void> capturePhoto(Directory destinationDirectory) async {
     CameraManager manager = CameraManager();
     await manager.manuallyStopRecording();

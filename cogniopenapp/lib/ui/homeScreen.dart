@@ -1,9 +1,8 @@
 // Imported libraries and packages
-import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
 import 'package:cogniopenapp/ui/response_screen.dart';
 import 'package:cogniopenapp/ui/assistantScreen.dart';
 import 'package:cogniopenapp/ui/audioScreen.dart';
-import 'package:cogniopenapp/ui/galleryScreen.dart';
+import 'package:cogniopenapp/ui/gallery_screen.dart';
 import 'package:cogniopenapp/ui/profileScreen.dart';
 import 'package:cogniopenapp/ui/tourScreen.dart';
 import 'package:cogniopenapp/ui/locationHistoryScreen.dart';
@@ -45,12 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final locationStream = Geolocator.getPositionStream();
     locationStream.listen((Position position) async {
       try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude, position.longitude);
         if (placemarks.isNotEmpty) {
           final Placemark placemark = placemarks.first;
-          final address = "${placemark.name}, ${placemark.locality}, ${placemark.country}";
+          final address =
+              "${placemark.street}, ${placemark.locality}, ${placemark.administrativeArea}, ${placemark.postalCode}, ${placemark.isoCountryCode}";
 
-          if (currentLocationEntry == null || currentLocationEntry!.address != address) {
+          if (currentLocationEntry == null ||
+              currentLocationEntry!.address != address) {
             if (currentLocationEntry != null) {
               if (currentLocationEntry!.endTime == null) {
                 currentLocationEntry!.endTime = DateTime.now();
@@ -58,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }
 
-            final newEntry = LocationEntry(address: address, startTime: DateTime.now());
+            final newEntry =
+                LocationEntry(address: address, startTime: DateTime.now());
             final id = await LocationDatabase.instance.create(newEntry);
             newEntry.id = id;
             currentLocationEntry = newEntry;
@@ -72,12 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!hasBeenInitialized) {
-      CameraManager cm = CameraManager();
-      cm.startAutoRecording();
-      hasBeenInitialized = true;
-    }
-
     return Scaffold(
         // Set the background color for the entire screen
         extendBodyBehindAppBar: true,
