@@ -271,20 +271,28 @@ class _AssistantScreenState extends State<AssistantScreen> {
     await dotenv.load(fileName: ".env");
     String apiKeyEnv = dotenv.get('OPEN_AI_API_KEY', fallback: "");
 
-    // Find the user's name to welcome them personally
-    final directory = await getApplicationDocumentsDirectory();
-    String path = directory.path;
-    final file = File('$path/user_data.txt');
-    String contents = await file.readAsString();
-    List<String> details = contents.split(', ');
-    String _userName = details[0];
-
     // If there's no API key, throw internal error
     if (apiKeyEnv.isEmpty) {
       _showAlert("API Key Error",
           "OpenAI API Key must be set to use the Virtual Assistant.");
       return false;
     } else {
+      // Find the user's name to welcome them personally
+      String _userName;
+      try {
+        final directory = await getApplicationDocumentsDirectory();
+        String path = directory.path;
+        final file = File('$path/user_data.txt');
+        String contents = await file.readAsString();
+        List<String> details = contents.split(', ');
+        _userName = details[0];
+      } on Exception catch (e) {
+        // default if user file is not found (should not be possible outside of testing)
+        _userName = "Unidentified User";
+
+        print(e.toString());
+      }
+
       OpenAI.apiKey = apiKeyEnv;
       String prompt =
           "You are an assistant for $_userName, who has memory loss.";
