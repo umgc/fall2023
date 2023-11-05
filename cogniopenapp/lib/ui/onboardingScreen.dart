@@ -131,7 +131,7 @@ class _OnboardingUIState extends State<OnboardingUI> {
                 ),
                 Text(
                   index == 0
-                      ? "Hello and welcome to CogniOpen! My name is Cora your Virtual Assistance. As a new user, I'll guide you through the onboarding process to get you started. Firstly, may I know your name please?"
+                      ? "Hello and welcome to CogniOpen! My name is Cora your Virtual Assistant. As a new user, I'll guide you through the onboarding process to get you started. Firstly, may I know your name please?"
                       : "",
                   style: TextStyle(fontSize: 18),
                 ),
