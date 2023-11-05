@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (placemarks.isNotEmpty) {
           final Placemark placemark = placemarks.first;
           final address =
-              "${placemark.name}, ${placemark.locality}, ${placemark.country}";
+              "${placemark.street}, ${placemark.locality}, ${placemark.administrativeArea}, ${placemark.postalCode}, ${placemark.isoCountryCode}";
 
           if (currentLocationEntry == null ||
               currentLocationEntry!.address != address) {
