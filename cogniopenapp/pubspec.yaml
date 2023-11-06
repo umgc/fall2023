@@ -94,6 +94,7 @@ dependencies:
   timeago: ^3.5.0
   path_provider_foundation: ^2.3.1
   collection: ^1.17.2
+  camera_platform_interface: ^2.6.0
 
 
 dev_dependencies:
