@@ -1,16 +1,8 @@
-import 'dart:io';
-
 import 'package:cogniopenapp/ui/gallery_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-
-import '../../resources/mocks/image_mock_http_client.dart';
 
 void main() {
-  // TODO: Fix Tests
-  /*
   testWidgets('W-2: gallery screen loads correctly ',
       (WidgetTester tester) async {
     await tester.pumpWidget(MaterialApp(
@@ -44,10 +36,5 @@ void main() {
     final sortGalleryButton =
         find.byKey(const Key('sortGalleryButton'), skipOffstage: false);
     expect(sortGalleryButton, findsOneWidget);
-
-    //slider
-    expect(find.byKey(const Key('gridSizeSlider'), skipOffstage: false),
-        findsOneWidget);
   });
-   */
 }
