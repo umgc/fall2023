@@ -3,6 +3,7 @@
 // Description: This class represents a user's significant object
 // Last modified by: Ben Sutter
 // Last modified on: 2023-11-04
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
