@@ -11,6 +11,7 @@ import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/model/significant_object.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
@@ -34,6 +35,7 @@ class DataService {
     await loadMedia();
   }
 
+  // Used to show local database and objects
   Future<void> loadMedia() async {
     final audios = await AudioRepository.instance.readAll();
     final photos = await PhotoRepository.instance.readAll();
@@ -42,9 +44,54 @@ class DataService {
     mediaList = [...audios, ...photos, ...videos];
 
     if (!hasBeenInitialized) {
+      FormatUtils.logBigMessage("LOCAL DATABASE OBJECTS START");
+
+      if (audios.isNotEmpty) {
+        FormatUtils.logBigMessage("AUDIO OBJECTS START");
+        for (var audio in audios) {
+          print('Audio #${audio.id}: ${audio.toJson()}');
+        }
+        FormatUtils.logBigMessage("AUDIO OBJECTS END");
+      }
+
+      if (photos.isNotEmpty) {
+        FormatUtils.logBigMessage("PHOTO OBJECTS START");
+        for (var photo in photos) {
+          print('Photo #${photo.id}: ${photo.toJson()}');
+        }
+        FormatUtils.logBigMessage("PHOTO OBJECTS END");
+      }
+
+      if (videos.isNotEmpty) {
+        FormatUtils.logBigMessage("VIDEO OBJECTS START");
+        for (var video in videos) {
+          print('Video #${video.id}: ${video.toJson()}');
+        }
+        FormatUtils.logBigMessage("VIDEO OBJECTS END");
+      }
+
       responseList = await VideoResponseRepository.instance.readAll();
+
+      if (responseList.isNotEmpty) {
+        FormatUtils.logBigMessage("VIDEO RESPONSES START");
+        for (var videoResponse in responseList) {
+          print("Response # ${videoResponse.toJson()}");
+        }
+        FormatUtils.logBigMessage("VIDEO RESPONSES END");
+      }
+
       significantObjectList =
           await SignificantObjectRepository.instance.readAll();
+
+      if (significantObjectList.isNotEmpty) {
+        FormatUtils.logBigMessage("SIGNIFICANT OBJECT START");
+        for (var object in significantObjectList) {
+          print("Object # ${object.toJson()}");
+        }
+        FormatUtils.logBigMessage("SIGNIFICANT OBJECT END");
+      }
+
+      FormatUtils.logBigMessage("LOCAL DATABASE OBJECTS END");
       hasBeenInitialized = true;
     }
   }
