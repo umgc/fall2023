@@ -8,16 +8,17 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
-import '../src/data_service.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:cogniopenapp/src/video_processor.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'package:cogniopenapp/src/data_service.dart';
 
 /// Camera manager class to handle camera functionality.
 class CameraManager {
@@ -61,7 +62,7 @@ class CameraManager {
       cameraToUse = 0;
       print("USING 0");
     } else if (_cameras.isEmpty) {
-      FormatUtils.printBigMessage("ERROR: NO CAMERAS DETECTED");
+      FormatUtils.logBigMessage("ERROR: NO CAMERAS DETECTED");
       return;
     }
     controller = CameraController(_cameras[cameraToUse], ResolutionPreset.high);
@@ -70,7 +71,7 @@ class CameraManager {
 
     if (controller.value.isInitialized) {
       isInitialized = true;
-      FormatUtils.printBigMessage("CAMERA HAS BEEN INITIALIZED");
+      FormatUtils.logBigMessage("CAMERA HAS BEEN INITIALIZED");
     }
   }
 
@@ -88,15 +89,15 @@ class CameraManager {
     String cameraUsed = (_cameras.length > 1) ? "front" : "rear";
 
     if (isAutoRecording) {
-      FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS ENABLED");
+      FormatUtils.logBigMessage("AUTO VIDEO RECORDING IS ENABLED");
     } else {
-      FormatUtils.printBigMessage("AUTO VIDEO RECORDING IS DISABLED");
+      FormatUtils.logBigMessage("AUTO VIDEO RECORDING IS DISABLED");
     }
 
     if (uploadToRekognition) {
-      FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS ENABLED");
+      FormatUtils.logBigMessage("AUTO REKOGNITION UPLOAD IS ENABLED");
     } else {
-      FormatUtils.printBigMessage("AUTO REKOGNITION UPLOAD IS DISABLED");
+      FormatUtils.logBigMessage("AUTO REKOGNITION UPLOAD IS DISABLED");
     }
 
     print("The camera that is being automatically used is the ${cameraUsed}");
@@ -107,7 +108,7 @@ class CameraManager {
     if (isAutoRecording) {
       // Delay for camera initialization
       Future.delayed(Duration(milliseconds: 1500), () {
-        FormatUtils.printBigMessage("AUTO VIDEO RECORDING HAS STARTED");
+        FormatUtils.logBigMessage("AUTO VIDEO RECORDING HAS STARTED");
 
         startRecordingInBackground();
       });
@@ -143,7 +144,7 @@ class CameraManager {
   void startRecordingInBackground() async {
     if (!controller.value.isInitialized) {
       print('Error: Camera is not initialized.');
-      print('Auto recording has been canceeled.');
+      print('Auto recording has been canceled.');
       return;
     }
 
