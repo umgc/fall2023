@@ -4,6 +4,7 @@ import 'package:cogniopenapp/src/address.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
+import 'package:cogniopenapp/src/utils/constants.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/utils/logger.dart';
@@ -21,8 +22,7 @@ class VideoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String physicalAddress =
-          "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
+      String physicalAddress = defaultAddress;
       String videoFileExtension =
           FileManager().getFileExtensionFromFile(videoFile);
       String videoFileName = FileManager().generateFileName(

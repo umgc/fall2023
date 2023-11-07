@@ -4,6 +4,7 @@ import 'package:cogniopenapp/src/address.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
+import 'package:cogniopenapp/src/utils/constants.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/utils/logger.dart';
@@ -21,8 +22,7 @@ class AudioController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String physicalAddress =
-          "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
+      String physicalAddress = defaultAddress;
       String audioFileExtension =
           FileManager().getFileExtensionFromFile(audioFile);
       String audioFileName = FileManager().generateFileName(
