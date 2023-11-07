@@ -1,5 +1,4 @@
-// ignore_for_file: avoid_print
-
+import 'package:cogniopenapp/src/utils/logger.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -92,12 +91,12 @@ class FormatUtils {
     return date.difference(now).inHours;
   }
 
-  static void printBigMessage(String message) {
-    print(
+  static void logBigMessage(String message) {
+    appLogger.info(
         "|-----------------------------------------------------------------------------------------|");
-    print(
+    appLogger.info(
         "|------------------------------------- $message -------------------------------------|");
-    print(
+    appLogger.info(
         "|-----------------------------------------------------------------------------------------|");
   }
 }

@@ -4,8 +4,6 @@
 // Last modified by: Ben Sutter
 // Last modified on: 2023-11-04
 
-// ignore_for_file: avoid_print
-
 import 'dart:core';
 import 'dart:io';
 
@@ -15,6 +13,7 @@ import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -62,7 +61,7 @@ class VideoProcessor {
   ];
 
   VideoProcessor() {
-    FormatUtils.printBigMessage("Starting to process another video");
+    FormatUtils.logBigMessage("Starting to process another video");
   }
 
   String getElapsedTimeInSeconds() {
@@ -80,7 +79,7 @@ class VideoProcessor {
     String secret = (dotenv.get('secretKey', fallback: "none"));
 
     if (region == "none" || access == "none" || secret == "none") {
-      print("AWS client access needs to be initialized");
+      appLogger.severe("AWS client access needs to be initialized");
       return;
     }
 
@@ -92,7 +91,7 @@ class VideoProcessor {
 
     //connect to Custom Label detection
     createProject();
-    print("Rekognition is up...");
+    appLogger.info("Rekognition is up...");
   }
 
   Future<void> automaticallySendToRekognition() async {
@@ -109,13 +108,13 @@ class VideoProcessor {
     List<AWSVideoResponse> responses = await createResponseList(labelResponses);
 
     await DataService.instance.addVideoResponses(responses);
-    FormatUtils.printBigMessage("Rekognition results saved locally.");
-    FormatUtils.printBigMessage(" Time elapsed ${getElapsedTimeInSeconds()}");
+    FormatUtils.logBigMessage("Rekognition results saved locally.");
+    FormatUtils.logBigMessage(" Time elapsed ${getElapsedTimeInSeconds()}");
   }
 
   Future<StartLabelDetectionResponse> sendRequestToProcessVideo(
       String title) async {
-    print("sending rekognition request for $title");
+    appLogger.info("sending rekognition request for $title");
     //grab Video
     Video video = Video(
         s3Object: S3Object(bucket: dotenv.get('videoS3Bucket'), name: title));
@@ -128,7 +127,7 @@ class VideoProcessor {
     //set the jobId, but return the whole job.
     job.then((value) {
       jobId = value.jobId!;
-      print("Job ID IS $jobId");
+      appLogger.info("Job ID IS $jobId");
     });
     return job;
   }
@@ -175,11 +174,11 @@ class VideoProcessor {
 
   List<AWSVideoResponse> createResponseList(
       GetLabelDetectionResponse response) {
-    FormatUtils.printBigMessage("CREATING RESPONSE LIST");
+    FormatUtils.logBigMessage("CREATING RESPONSE LIST");
     List<AWSVideoResponse> responseList = [];
 
     Iterator<LabelDetection> iter = response.labels!.iterator;
-    print("ABOUT TO START PARSING RESPONSES");
+    appLogger.info("ABOUT TO START PARSING RESPONSES");
     while (iter.moveNext()) {
       for (Instance inst in iter.current.label!.instances!) {
         String? name = iter.current.label!.name;
@@ -215,7 +214,7 @@ class VideoProcessor {
       }
     }
 
-    FormatUtils.printBigMessage("RESPONSE LIST WAS CREATED");
+    FormatUtils.logBigMessage("RESPONSE LIST WAS CREATED");
 
     return responseList;
   }
@@ -224,11 +223,11 @@ class VideoProcessor {
   //this method checks for the most recent jobId, and when it completes, returns that the responses are ready to pull
   //(the jobId is returned, but that returned value signals that the responses are ready to pull)
   Future<String> pollForCompletedRequest() async {
-    FormatUtils.printBigMessage("POLLING FOR COMPLETED REQUEST");
+    FormatUtils.logBigMessage("POLLING FOR COMPLETED REQUEST");
     //keep polling the getLabelDetection until either failed or succeeded.
     bool inProgress = true;
     while (inProgress) {
-      FormatUtils.printBigMessage("STILL POLLING ${getElapsedTimeInSeconds()}");
+      FormatUtils.logBigMessage("STILL POLLING ${getElapsedTimeInSeconds()}");
       GetLabelDetectionResponse labelsResponse =
           await service!.getLabelDetection(jobId: jobId);
       //a little sleep thrown in here to limit the number of requests.
@@ -237,42 +236,42 @@ class VideoProcessor {
         //stop looping
         inProgress = false;
       } else if (labelsResponse.jobStatus == VideoJobStatus.failed) {
-        //stop looping, but print error message.
+        //stop looping, but log error message.
         inProgress = false;
-        print(labelsResponse.statusMessage);
+        appLogger.info(labelsResponse.statusMessage);
       }
     }
-    FormatUtils.printBigMessage("POLLING WAS COMPLETED JOB ID $jobId");
+    FormatUtils.logBigMessage("POLLING WAS COMPLETED JOB ID $jobId");
     return jobId;
   }
 
   Future<GetLabelDetectionResponse> grabResults(jobId) async {
-    FormatUtils.printBigMessage("GRABBING RESULTS");
+    FormatUtils.logBigMessage("GRABBING RESULTS");
 
     //get a specific job in debuggin
     Future<GetLabelDetectionResponse> labelsResponse =
         service!.getLabelDetection(jobId: jobId);
 
-    FormatUtils.printBigMessage("RESULTS GRABBED");
+    FormatUtils.logBigMessage("RESULTS GRABBED");
     return labelsResponse;
   }
 
   Future<void> uploadVideoToS3() async {
-    FormatUtils.printBigMessage("UPLOADING VIDEO TO S3");
+    FormatUtils.logBigMessage("UPLOADING VIDEO TO S3");
     S3Bucket s3 = S3Bucket();
     // Set the name for the file to be added to the bucket based on the file name
     FileManager.getMostRecentVideo();
     videoTitle = FileManager.mostRecentVideoName;
     videoPath = FileManager.mostRecentVideoPath;
 
-    print("Video title to S3: $videoTitle");
-    print("Video file path uploading to S3: $videoPath");
+    appLogger.info("Video title to S3: $videoTitle");
+    appLogger.info("Video file path uploading to S3: $videoPath");
 
     String uploadedVideo = await s3.addVideoToS3(videoTitle, videoPath);
 
     await sendRequestToProcessVideo(uploadedVideo);
 
-    FormatUtils.printBigMessage("VIDEO WAS UPLOADED");
+    FormatUtils.logBigMessage("VIDEO WAS UPLOADED");
   }
 
   //create a new Amazon Rekognition Custom Labels project
@@ -362,7 +361,8 @@ class VideoProcessor {
           value.projectVersionDescriptions!.iterator;
       while (iter.moveNext()) {
         if (iter.current.projectVersionArn!.contains(labelName)) {
-          print("${iter.current.projectVersionArn} is ${iter.current.status}");
+          appLogger.info(
+              "${iter.current.projectVersionArn} is ${iter.current.status}");
           return iter.current.status;
         }
       }
@@ -392,7 +392,7 @@ class VideoProcessor {
                 .startProjectVersion(
                     minInferenceUnits: 1,
                     projectVersionArn: iter.current.projectVersionArn!);
-            print(response.status);
+            appLogger.info(response.status);
             //returns the modelArn of the projectVersion being started
             //still need to poll the that the model has started
             activeModels.add(labelName);
@@ -423,7 +423,7 @@ class VideoProcessor {
             StopProjectVersionResponse response = await service!
                 .stopProjectVersion(
                     projectVersionArn: iter.current.projectVersionArn!);
-            print(response.status);
+            appLogger.info(response.status);
             //returns the modelArn of the projectVersion being stopped
             //still need to poll the that the model has finished stopping
             return iter.current.projectVersionArn;

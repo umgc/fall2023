@@ -1,11 +1,13 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 /*
 Author: Eyerusalme (Jerry)
 */
 import 'package:cogniopenapp/src/utils/permission_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'registrationScreen.dart';
-import 'homeScreen.dart';
+import 'registration_screen.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

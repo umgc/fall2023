@@ -1,8 +1,9 @@
+import 'package:cogniopenapp/src/address.dart';
 import 'package:cogniopenapp/src/database/model/video_response.dart';
 import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:cogniopenapp/src/address.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 import 'package:path/path.dart' as path;
 
 const String videoResponseType = 'video_response';
@@ -46,7 +47,8 @@ class VideoResponseController {
 
       return createdResponse;
     } catch (e) {
-      print('VideoResponse Controller -- Error adding response: $e');
+      appLogger
+          .severe('Video Response Controller -- Error adding response: $e');
       return null;
     }
   }
@@ -77,7 +79,8 @@ class VideoResponseController {
       await VideoResponseRepository.instance.update(updatedResponse);
       return updatedResponse;
     } catch (e) {
-      print('VideoResponse Controller -- Error updating response: $e');
+      appLogger
+          .severe('Video Response Controller -- Error updating response: $e');
       return null;
     }
   }
@@ -91,7 +94,8 @@ class VideoResponseController {
       await FileManager.removeFileFromFilesystem(imageFilePath);
       return existingResponse;
     } catch (e) {
-      print('VideoResponse Controller -- Error removing response: $e');
+      appLogger
+          .severe('Video Response Controller -- Error removing response: $e');
       return null;
     }
   }

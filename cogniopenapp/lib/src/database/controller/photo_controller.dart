@@ -1,13 +1,13 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
+import 'package:cogniopenapp/src/address.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/photo.dart';
 import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
+import 'package:cogniopenapp/src/utils/constants.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:cogniopenapp/src/address.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 
 class PhotoController {
   PhotoController._();
@@ -20,8 +20,7 @@ class PhotoController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String physicalAddress =
-          "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
+      String physicalAddress = defaultAddress;
       String photoFileExtension =
           FileManager().getFileExtensionFromFile(photoFile);
       String photoFileName = FileManager().generateFileName(
@@ -48,7 +47,7 @@ class PhotoController {
       );
       return createdPhoto;
     } catch (e) {
-      print('Photo Controller -- Error adding photo: $e');
+      appLogger.severe('Photo Controller -- Error adding photo: $e');
       return null;
     }
   }
@@ -61,7 +60,6 @@ class PhotoController {
   }) async {
     try {
       String photoFileName = FileManager.getFileName(photoFile.path);
-      print("FILE NAME IS");
       int photoFileSize = FileManager.calculateFileSizeInBytes(photoFile);
       DateTime timestamp =
           DateTime.parse(FileManager.getFileTimestamp(photoFile.path));
@@ -82,7 +80,7 @@ class PhotoController {
       Photo createdPhoto = await PhotoRepository.instance.create(newPhoto);
       return createdPhoto;
     } catch (e) {
-      print('Photo Controller -- Error adding photo: $e');
+      appLogger.severe('Photo Controller -- Error adding photo: $e');
       return null;
     }
   }
@@ -105,7 +103,7 @@ class PhotoController {
       await PhotoRepository.instance.update(updatedPhoto);
       return updatedPhoto;
     } catch (e) {
-      print('Photo Controller -- Error updating photo: $e');
+      appLogger.severe('Photo Controller -- Error updating photo: $e');
       return null;
     }
   }
@@ -119,7 +117,7 @@ class PhotoController {
       await FileManager.removeFileFromFilesystem(photoFilePath);
       return existingPhoto;
     } catch (e) {
-      print('Photo Controller -- Error removing photo: $e');
+      appLogger.severe('Photo Controller -- Error removing photo: $e');
       return null;
     }
   }

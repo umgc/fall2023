@@ -27,8 +27,7 @@ class Video extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.video,
-          title:
-              title ?? videoFileName, // TODO: Decide on default video file name
+          title: title ?? videoFileName,
           description: description,
           tags: tags,
           timestamp: timestamp,
