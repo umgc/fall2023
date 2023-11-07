@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
 /// Importing required packages and screens.
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';

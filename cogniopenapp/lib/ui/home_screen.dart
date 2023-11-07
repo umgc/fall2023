@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
 // Imported libraries and packages
 import 'package:cogniopenapp/ui/response_screen.dart';
 import 'package:cogniopenapp/ui/assistant_screen.dart';

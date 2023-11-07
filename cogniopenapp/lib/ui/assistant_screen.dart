@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 import 'dart:async';
 
 import 'package:cogniopenapp/src/database/model/audio.dart';

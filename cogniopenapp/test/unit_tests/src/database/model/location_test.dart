@@ -1,4 +1,3 @@
-import 'package:aws_client/game_lift_2015_10_01.dart';
 import 'package:cogniopenapp/src/database/model/location.dart';
 import 'package:flutter_test/flutter_test.dart';
 

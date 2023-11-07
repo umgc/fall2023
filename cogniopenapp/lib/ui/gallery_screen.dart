@@ -71,7 +71,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   @override
   void initState() {
-    print("WE INIT");
     masterMediaList = DataService.instance.mediaList;
     super.initState();
     _selectedSortingCriteria =
