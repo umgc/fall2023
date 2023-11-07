@@ -4,6 +4,7 @@ import 'package:cogniopenapp/src/database/model/significant_object.dart';
 import 'package:cogniopenapp/src/database/repository/significant_object_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 
 const String significantObjectType = 'significant_object';
 
@@ -47,7 +48,8 @@ class SignificantObjectController {
       );
       return createdObject;
     } catch (e) {
-      print('SignificantObject Controller -- Error adding object: $e');
+      appLogger
+          .severe('SignificantObject Controller -- Error adding object: $e');
       return null;
     }
   }
@@ -67,7 +69,8 @@ class SignificantObjectController {
       await SignificantObjectRepository.instance.update(updatedObject);
       return updatedObject;
     } catch (e) {
-      print('SignificantObject Controller -- Error updating object labels: $e');
+      appLogger.severe(
+          'SignificantObject Controller -- Error updating object labels: $e');
       return null;
     }
   }
@@ -82,7 +85,8 @@ class SignificantObjectController {
       await FileManager.removeFileFromFilesystem(imageFilePath);
       return existingObject;
     } catch (e) {
-      print('SignificantObject Controller -- Error removing object: $e');
+      appLogger
+          .severe('SignificantObject Controller -- Error removing object: $e');
       return null;
     }
   }
