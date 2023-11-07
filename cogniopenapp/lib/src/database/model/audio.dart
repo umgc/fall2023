@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
 import 'package:cogniopenapp/src/database/model/media.dart';
@@ -7,6 +5,7 @@ import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 
 class Audio extends Media {
   final String audioFileName;
@@ -28,8 +27,7 @@ class Audio extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.audio,
-          title:
-              title ?? audioFileName, // TODO: Decide on default photo file name
+          title: title ?? audioFileName,
           description: description,
           tags: tags,
           timestamp: timestamp,
@@ -102,7 +100,7 @@ class Audio extends Media {
   Future<File?> loadTranscriptFile() async {
     try {
       if (transcriptFileName == null) {
-        print('transcriptFileName is null');
+        appLogger.severe('transcriptFileName is null');
         return null;
       }
       return FileManager.loadFile(
@@ -110,7 +108,7 @@ class Audio extends Media {
         transcriptFileName!,
       );
     } catch (e) {
-      print('Error loading transcript file: $e');
+      appLogger.severe('Error loading transcript file: $e');
       return null;
     }
   }
