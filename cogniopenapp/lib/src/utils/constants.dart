@@ -1,6 +1,8 @@
 // Colors:
 
 // Strings:
+const String defaultAddress =
+    "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
 
 // Directory Names:
 const String filesDirName = "files";
@@ -25,7 +27,3 @@ const String videoStillsPath = "$videosPath/$videoStillsDirName";
 const String videoResponsesPath = "$videosPath/$videoResponsesDirName";
 const String significantObjectsPath = "$filesPath/$significantObjectsDirName";
 const String tmpPath = "/$tmpDirName";
-
-// Misc
-const String defaultAddress =
-    "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
