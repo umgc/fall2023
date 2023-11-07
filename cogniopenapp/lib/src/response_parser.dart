@@ -1,17 +1,17 @@
-// ignore_for_file: avoid_print
-
 // Author: Ben Sutter
 // Description: This class is used to query video responses for display in the object search menu.
 //              It is also used to convert any responses into a significant object for display in the settings menu
 
-import 'package:cogniopenapp/src/database/model/video_response.dart';
-import 'package:cogniopenapp/src/data_service.dart';
-import 'package:flutter/material.dart';
-import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:cogniopenapp/src/utils/directory_manager.dart';
-import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'dart:core';
 import 'dart:io';
+
+import 'package:cogniopenapp/src/data_service.dart';
+import 'package:cogniopenapp/src/database/model/video_response.dart';
+import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
+import 'package:flutter/material.dart';
 
 class ResponseParser {
   // Searches for a single response in the list that matches the title
@@ -47,7 +47,7 @@ class ResponseParser {
           height: response.height,
           imageFile: destinationFile);
     } else {
-      print("Source file does not exist: $sourceFilePath");
+      appLogger.severe("Source file does not exist: $sourceFilePath");
     }
   }
 

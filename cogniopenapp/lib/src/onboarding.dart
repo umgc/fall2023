@@ -1,11 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+
+import 'package:cogniopenapp/src/utils/logger.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 enum OnboardingState { GET_NAME, GET_ACTIVITY, GET_MEMORY, SUMMARY, GUIDE, END }
 
@@ -205,9 +207,9 @@ class Onboarding {
 
       await file.writeAsString(buffer.toString());
 
-      print('User information saved to ${file.path}');
+      appLogger.info('User information saved to ${file.path}');
     } catch (e) {
-      print('Error saving user information: $e');
+      appLogger.info('Error saving user information: $e');
     }
   }
 }
@@ -224,4 +226,3 @@ class ConversationBubble {
 
   ConversationBubble(this.text, {this.isUser = false});
 }
-

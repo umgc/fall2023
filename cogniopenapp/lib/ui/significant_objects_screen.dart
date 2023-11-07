@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 // Author: Selam Biru
 // Edited by: Ben Sutter
 // Description: This screen lets the user see local files marked as signficant objects

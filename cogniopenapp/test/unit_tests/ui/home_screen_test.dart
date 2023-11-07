@@ -1,6 +1,6 @@
 // Tests CogniOpen home screen
 
-import 'package:cogniopenapp/ui/homeScreen.dart';
+import 'package:cogniopenapp/ui/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

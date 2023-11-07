@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:cogniopenapp/src/address.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/repository/audio_repository.dart';
+import 'package:cogniopenapp/src/utils/constants.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:cogniopenapp/src/address.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 
 class AudioController {
   AudioController._();
@@ -20,8 +22,9 @@ class AudioController {
   }) async {
     try {
       DateTime timestamp = DateTime.now();
-      String physicalAddress = "3501 University Boulevard East, Adelphi, Maryland, 20783, US";
-      String audioFileExtension = FileManager().getFileExtensionFromFile(audioFile);
+      String physicalAddress = defaultAddress;
+      String audioFileExtension =
+          FileManager().getFileExtensionFromFile(audioFile);
       String audioFileName = FileManager().generateFileName(
         MediaType.audio.name,
         timestamp,
@@ -30,7 +33,8 @@ class AudioController {
       int audioFileSize = FileManager.calculateFileSizeInBytes(audioFile);
       String? transcriptFileName;
       if (transcriptFile != null) {
-        String transcriptFileExtension = FileManager().getFileExtensionFromFile(transcriptFile);
+        String transcriptFileExtension =
+            FileManager().getFileExtensionFromFile(transcriptFile);
         transcriptFileName = FileManager().generateFileName(
           transcriptType,
           timestamp,
@@ -64,7 +68,7 @@ class AudioController {
       );
       return createdAudio;
     } catch (e) {
-      print('Audio Controller -- Error adding audio: $e');
+      appLogger.severe('Audio Controller -- Error adding audio: $e');
       return null;
     }
   }
@@ -105,7 +109,7 @@ class AudioController {
       Audio createdAudio = await AudioRepository.instance.create(newAudio);
       return createdAudio;
     } catch (e) {
-      print('Audio Controller -- Error adding audio: $e');
+      appLogger.severe('Audio Controller -- Error adding audio: $e');
       return null;
     }
   }
@@ -123,7 +127,8 @@ class AudioController {
       final existingAudio = await AudioRepository.instance.read(id);
       String? updatedTranscriptFileName;
       if (transcriptFile != null) {
-        updatedTranscriptFileName = FileManager.getFileName(transcriptFile.path);
+        updatedTranscriptFileName =
+            FileManager.getFileName(transcriptFile.path);
       }
 
       final updatedAudio = existingAudio.copy(
@@ -138,7 +143,7 @@ class AudioController {
       await AudioRepository.instance.update(updatedAudio);
       return updatedAudio;
     } catch (e) {
-      print('Audio Controller -- Error updating audio: $e');
+      appLogger.severe('Audio Controller -- Error updating audio: $e');
       return null;
     }
   }
@@ -147,15 +152,17 @@ class AudioController {
     try {
       final existingAudio = await AudioRepository.instance.read(id);
       await AudioRepository.instance.delete(id);
-      final audioFilePath = '${DirectoryManager.instance.audiosDirectory.path}/${existingAudio.audioFileName}';
+      final audioFilePath =
+          '${DirectoryManager.instance.audiosDirectory.path}/${existingAudio.audioFileName}';
       await FileManager.removeFileFromFilesystem(audioFilePath);
       if (existingAudio.transcriptFileName != null) {
-        final transcriptFilePath = '${DirectoryManager.instance.transcriptsDirectory.path}/${existingAudio.transcriptFileName}';
+        final transcriptFilePath =
+            '${DirectoryManager.instance.transcriptsDirectory.path}/${existingAudio.transcriptFileName}';
         await FileManager.removeFileFromFilesystem(transcriptFilePath);
       }
       return existingAudio;
     } catch (e) {
-      print('Audio Controller -- Error removing audio: $e');
+      appLogger.severe('Audio Controller -- Error removing audio: $e');
       return null;
     }
   }

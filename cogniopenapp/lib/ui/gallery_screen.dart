@@ -17,7 +17,7 @@ import 'package:cogniopenapp/src/camera_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
 import 'package:cogniopenapp/src/utils/ui_utils.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:cogniopenapp/ui/assistantScreen.dart';
+import 'package:cogniopenapp/ui/assistant_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cogniopenapp/src/video_display.dart';
 
@@ -71,7 +71,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
 
   @override
   void initState() {
-    print("WE INIT");
     masterMediaList = DataService.instance.mediaList;
     super.initState();
     _selectedSortingCriteria =

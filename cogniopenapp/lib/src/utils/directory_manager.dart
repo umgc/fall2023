@@ -1,8 +1,7 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
 import 'package:cogniopenapp/src/utils/constants.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DirectoryManager {
@@ -55,9 +54,9 @@ class DirectoryManager {
         '${_rootDirectory.path}$significantObjectsPath',
       );
       _tmpDirectory =
-          _createDirectoryIfDoesNotExist('${_rootDirectory.path}/tmp');
+          _createDirectoryIfDoesNotExist('${_rootDirectory.path}$tmpPath');
     } catch (e) {
-      print('Error initializing directories: $e');
+      appLogger.severe('Error initializing directories: $e');
     }
   }
 
@@ -68,7 +67,7 @@ class DirectoryManager {
         directory.createSync(recursive: true);
       }
     } catch (e) {
-      print('Error creating directory: $e');
+      appLogger.severe('Error creating directory: $e');
     }
     return directory;
   }

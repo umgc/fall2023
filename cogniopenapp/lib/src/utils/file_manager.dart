@@ -1,9 +1,8 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 import 'dart:math';
 
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as path;
@@ -19,7 +18,7 @@ class FileManager {
       final targetPath = '$targetDirectoryPath/$targetFilename';
       await sourceFile.copy(targetPath);
     } catch (e) {
-      print('Error adding file: $e');
+      appLogger.severe('Error adding file: $e');
     }
   }
 
@@ -31,7 +30,7 @@ class FileManager {
         await fileToDelete.delete();
       }
     } catch (e) {
-      print('Error deleting file: $e');
+      appLogger.severe('Error deleting file: $e');
     }
   }
 
@@ -43,7 +42,7 @@ class FileManager {
       await addFileToFilesystem(
           sourceFile, targetDirectoryPath, targetFilename);
     } catch (e) {
-      print('Error updating file: $e');
+      appLogger.severe('Error updating file: $e');
     }
   }
 
@@ -56,7 +55,7 @@ class FileManager {
       File savedFile = await file.writeAsBytes(data.buffer.asUint8List());
       return savedFile;
     } catch (e) {
-      print('Error loading asset: $e');
+      appLogger.severe('Error loading asset: $e');
       throw Exception('Failed to load asset file: $assetPath');
     }
   }
@@ -70,7 +69,7 @@ class FileManager {
         await file.delete();
       }
     } catch (e) {
-      print('Error unloading asset file: $e');
+      appLogger.severe('Error unloading asset file: $e');
     }
   }
 
@@ -82,7 +81,7 @@ class FileManager {
         return 0;
       }
     } catch (e) {
-      print('Error calculating file size: $e');
+      appLogger.severe('Error calculating file size: $e');
       return 0;
     }
   }
@@ -118,7 +117,7 @@ class FileManager {
       }
       return Image.file(imageFile);
     } catch (e) {
-      print('Error loading image: $e');
+      appLogger.severe('Error loading image: $e');
       return null;
     }
   }
@@ -131,7 +130,7 @@ class FileManager {
       }
       return file;
     } catch (e) {
-      print('Error loading file: $e');
+      appLogger.severe('Error loading file: $e');
       return null;
     }
   }
@@ -169,8 +168,6 @@ class FileManager {
 
   static Future<Image> getThumbnail(String vidPath, int timesStamp,
       {bool isThumbnail = false}) async {
-    //print("Video path for frame is ${vidPath}");
-    //print("timesStamp for frame is ${timesStamp}");
     Directory directory = isThumbnail
         ? DirectoryManager.instance.videoThumbnailsDirectory
         : DirectoryManager.instance.videoStillsDirectory;
@@ -201,9 +198,9 @@ class FileManager {
         return Image.file(renamed);
       }
     } catch (e) {
-      print("Error generating thumbnail: $e");
+      appLogger.severe('Error generating thumbnail: $e');
     }
-    // REturn this to signfiy an erro
+    // Return this to signfiy an error
     return Image.network(
         "https://media.istockphoto.com/id/1349592578/de/vektor/leeres-warnschild-und-vorfahrtsschild-an-einem-mast-vektorillustration.webp?s=2048x2048&w=is&k=20&c=zmhLi9Ot96KXUe1OLd3dGNYJk0KMZZBQl39iQf6lcMk=");
   }
@@ -212,7 +209,6 @@ class FileManager {
     if (DirectoryManager.instance.videosDirectory.existsSync()) {
       List<FileSystemEntity> files =
           DirectoryManager.instance.videosDirectory.listSync();
-      print("Most recently recorded video: ${files.last.path}");
       mostRecentVideoName = getFileNameForAWS(files.last.path);
       mostRecentVideoPath = files.last.path;
     }
