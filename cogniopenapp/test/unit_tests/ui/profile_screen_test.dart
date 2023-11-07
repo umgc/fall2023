@@ -1,6 +1,6 @@
 // Tests CogniOpen Profile Screen
 
-import 'package:cogniopenapp/ui/profileScreen.dart';
+import 'package:cogniopenapp/ui/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

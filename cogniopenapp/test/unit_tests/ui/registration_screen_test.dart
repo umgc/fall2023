@@ -1,6 +1,6 @@
 // Tests CogniOpen Registration Screen
 
-import 'package:cogniopenapp/ui/registrationScreen.dart';
+import 'package:cogniopenapp/ui/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,11 +1,11 @@
 // Imported libraries and packages
 import 'package:cogniopenapp/ui/response_screen.dart';
-import 'package:cogniopenapp/ui/assistantScreen.dart';
-import 'package:cogniopenapp/ui/audioScreen.dart';
+import 'package:cogniopenapp/ui/assistant_screen.dart';
+import 'package:cogniopenapp/ui/audio_screen.dart';
 import 'package:cogniopenapp/ui/gallery_screen.dart';
-import 'package:cogniopenapp/ui/profileScreen.dart';
-import 'package:cogniopenapp/ui/tourScreen.dart';
-import 'package:cogniopenapp/ui/locationHistoryScreen.dart';
+import 'package:cogniopenapp/ui/profile_screen.dart';
+import 'package:cogniopenapp/ui/tour_screen.dart';
+import 'package:cogniopenapp/ui/location_history_screen.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cogniopenapp/src/camera_manager.dart';

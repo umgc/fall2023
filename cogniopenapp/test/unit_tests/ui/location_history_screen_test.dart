@@ -1,6 +1,6 @@
 // Tests CogniOpen significant object screen
 
-import 'package:cogniopenapp/ui/locationHistoryScreen.dart';
+import 'package:cogniopenapp/ui/location_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

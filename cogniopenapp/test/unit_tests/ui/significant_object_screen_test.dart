@@ -1,6 +1,6 @@
 // Tests CogniOpen significant object screen
 
-import 'package:cogniopenapp/ui/significantObjectsScreen.dart';
+import 'package:cogniopenapp/ui/significant_objects_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

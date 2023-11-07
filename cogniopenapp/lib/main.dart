@@ -4,8 +4,8 @@ import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/logger.dart';
 import 'package:cogniopenapp/src/utils/permission_manager.dart';
-import 'package:cogniopenapp/ui/homeScreen.dart';
-import 'package:cogniopenapp/ui/loginScreen.dart';
+import 'package:cogniopenapp/ui/home_screen.dart';
+import 'package:cogniopenapp/ui/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
