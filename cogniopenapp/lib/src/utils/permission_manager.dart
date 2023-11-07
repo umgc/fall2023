@@ -2,9 +2,9 @@
 // Description: This class is used to manage permissions required for the app and requesting permission access.
 
 import 'package:cogniopenapp/src/camera_manager.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/material.dart';
 
 class PermissionManager {
   static Future<bool> requestInitialPermissions() async {

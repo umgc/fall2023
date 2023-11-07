@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';

@@ -1,6 +1,6 @@
 import 'package:cogniopenapp/src/database/app_database.dart';
-import 'package:cogniopenapp/src/database/model/media.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
+import 'package:cogniopenapp/src/database/model/media.dart';
 
 const String tableAudios = 'audios';
 const String transcriptType = 'transcript';

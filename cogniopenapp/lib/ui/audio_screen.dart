@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
 /// Importing required packages and screens.
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/database/model/audio.dart';
@@ -427,7 +428,7 @@ class _AudioScreenState extends State<AudioScreen> {
     String transcriptFilePath =
         '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
     final dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(key2));
-    final dateFormat = DateFormat('dd/MM/yyyy');
+    final dateFormat = DateFormat('MM/dd/yyyy');
     final title = dateFormat.format(dateTime);
     audio = await DataService.instance.addAudio(
         title: title,

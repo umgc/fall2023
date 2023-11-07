@@ -43,6 +43,7 @@
 
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 
 class Address {
   // The testing suite does not allow for mocking permissions, so we need to manually skip them if called during a test
@@ -75,7 +76,7 @@ class Address {
           "${currentPlace.street}, ${currentPlace.locality}, ${currentPlace.administrativeArea}, ${currentPlace.postalCode}, ${currentPlace.isoCountryCode}";
       return address;
     } catch (e) {
-      print(e);
+      appLogger.severe(e);
       return "";
     }
   }

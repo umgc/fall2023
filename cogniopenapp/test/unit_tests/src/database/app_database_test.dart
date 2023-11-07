@@ -10,7 +10,6 @@ import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import '../../../resources/fake_path_provider_platform.dart';
-import '../utils/directory_manager_test.dart';
 
 const unitTestAudioTitle = "Unit Test Audio";
 const unitTestPhotoTitle = "Unit Test Photo";
@@ -66,27 +65,37 @@ void main() async {
 
   group('adding to database (db)', () {
     test('U-13-1: adding audio to db', () async {
-      await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
-      var audioTableQueryResult = await db.query(tableAudios, groupBy: "title", where: "title in ('$unitTestAudioTitle')");
+      await db.execute(
+          "DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
+      var audioTableQueryResult = await db.query(tableAudios,
+          groupBy: "title", where: "title in ('$unitTestAudioTitle')");
       expect(audioTableQueryResult.length, 0);
       await AudioRepository.instance.create(unitTestAudio);
-      audioTableQueryResult = await db.query(tableAudios, groupBy: "title", where: "title in ('$unitTestAudioTitle')");
+      audioTableQueryResult = await db.query(tableAudios,
+          groupBy: "title", where: "title in ('$unitTestAudioTitle')");
       expect(audioTableQueryResult.length, 1);
-      await db.execute("DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
+      await db.execute(
+          "DELETE FROM $tableAudios WHERE title='$unitTestAudioTitle'");
     });
     test('U-13-2: adding photo to db', () async {
-      await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
-      var photoTableQueryResult = await db.query(tablePhotos, groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
+      await db.execute(
+          "DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
+      var photoTableQueryResult = await db.query(tablePhotos,
+          groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
       expect(photoTableQueryResult.length, 0);
       await PhotoRepository.instance.create(unitTestPhoto);
-      photoTableQueryResult = await db.query(tablePhotos, groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
+      photoTableQueryResult = await db.query(tablePhotos,
+          groupBy: "title", where: "title in ('$unitTestPhotoTitle')");
       expect(photoTableQueryResult.length, 1);
-      await db.execute("DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
+      await db.execute(
+          "DELETE FROM $tablePhotos WHERE title='$unitTestPhotoTitle'");
     });
 
     test('U-13-3: adding video to db', () async {
-      await db.execute("DELETE FROM $tableVideos WHERE title='$unitTestVideoTitle'");
-      var videoTableQueryResult = await db.query(tableVideos, groupBy: "title", where: "title in ('$unitTestVideoTitle')");
+      await db.execute(
+          "DELETE FROM $tableVideos WHERE title='$unitTestVideoTitle'");
+      var videoTableQueryResult = await db.query(tableVideos,
+          groupBy: "title", where: "title in ('$unitTestVideoTitle')");
       expect(videoTableQueryResult.length, 0);
       //    await VideoRepository.instance.create(unitTestVideo);
       //    videoTableQueryResult = await db.query(tableVideos, groupBy: "title", where: "title in ('$unitTestVideoTitle')");

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';

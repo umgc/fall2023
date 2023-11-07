@@ -5,17 +5,15 @@
 // Last modified by: Ben Sutter
 // Last modified on: 2023-11-04
 
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
-import 'dart:typed_data';
-import 'package:aws_s3_api/s3-2006-03-01.dart';
-import 'package:flutter/services.dart';
-
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:aws_s3_api/s3-2006-03-01.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class S3Bucket {
   S3? connection;
@@ -46,7 +44,7 @@ class S3Bucket {
     String secret = (dotenv.get('secretKey', fallback: "none"));
 
     if (region == "none" || access == "none" || secret == "none") {
-      print("S3 needs to be initialized");
+      appLogger.severe("S3 needs to be initialized");
       return;
     }
 
@@ -55,21 +53,21 @@ class S3Bucket {
         region: region,
         credentials:
             AwsClientCredentials(accessKey: access, secretKey: secret));
-    print("S3 is connected...");
+    appLogger.info("S3 is connected...");
   }
 
   void createBucket() {
     String bucket = (dotenv.get('videoS3Bucket', fallback: "none"));
 
     if (bucket == "none") {
-      print("S3 needs to be initialized");
+      appLogger.severe("S3 needs to be initialized");
       return;
     }
     //impotent method that creates bucket if it is not already present.
     Future<CreateBucketOutput> creating =
         connection!.createBucket(bucket: dotenv.get('videoS3Bucket'));
     creating.then((value) {
-      print("Bucket is created");
+      appLogger.info("Bucket is created");
     });
   }
 
@@ -95,7 +93,7 @@ class S3Bucket {
 
   Future<String> addVideoToS3(String title, String localPath) {
     // TODO Specify folder structure
-    print("ADDING THIS TO S3 $title");
+    appLogger.info("ADDING THIS TO S3 $title");
     Uint8List bytes = File(localPath).readAsBytesSync();
     return _addToS3(title, bytes);
   }
@@ -117,7 +115,7 @@ class S3Bucket {
       key: formattedTitle,
       body: content,
     );
-    print("content added to bucket: $formattedTitle");
+    appLogger.info("content added to bucket: $formattedTitle");
     return title;
   }
 
@@ -128,7 +126,7 @@ class S3Bucket {
           .deleteObject(bucket: dotenv.get('videoS3Bucket'), key: key);
       return true;
     } catch (e) {
-      print('Failed to delete the file from S3: $e');
+      appLogger.severe('Failed to delete the file from S3: $e');
       return false;
     }
   }

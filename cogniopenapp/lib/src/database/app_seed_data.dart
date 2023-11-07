@@ -1,9 +1,8 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
 import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 
 class AppSeedData {
   void loadAppSeedData() async {
@@ -28,7 +27,7 @@ class AppSeedData {
           summary: 'This is a nature recording of birds singing.');
       FileManager.unloadAssetFile('bird.mp3');
     } catch (e) {
-      print('Error loading seed data photo: $e');
+      appLogger.severe('Error loading seed data photo: $e');
     }
   }
 
@@ -45,7 +44,7 @@ class AppSeedData {
       );
       FileManager.unloadAssetFile('cat.png');
     } catch (e) {
-      print('Error loading seed data photo: $e');
+      appLogger.severe('Error loading seed data photo: $e');
     }
   }
 
@@ -67,7 +66,7 @@ class AppSeedData {
       FileManager.unloadAssetFile('dog.mp4');
       FileManager.unloadAssetFile('dog.png');
     } catch (e) {
-      print('Error loading seed data video: $e');
+      appLogger.severe('Error loading seed data video: $e');
     }
   }
 }

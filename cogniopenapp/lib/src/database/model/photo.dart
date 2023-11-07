@@ -23,8 +23,7 @@ class Photo extends Media {
   }) : super(
           id: id,
           mediaType: MediaType.photo,
-          title:
-              title ?? photoFileName, // TODO: Decide on default photo file name
+          title: title ?? photoFileName,
           description: description,
           tags: tags,
           timestamp: timestamp,

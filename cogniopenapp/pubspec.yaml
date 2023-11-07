@@ -95,6 +95,7 @@ dependencies:
   path_provider_foundation: ^2.3.1
   collection: ^1.17.2
   camera_platform_interface: ^2.6.0
+  logging: ^1.2.0
 
 
 dev_dependencies:
@@ -110,7 +111,6 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  mockito: ^5.4.2
   build_runner: ^2.4.6
   sqflite_common_ffi: ^2.3.0
 

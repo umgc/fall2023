@@ -1,9 +1,9 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import '../src/onboarding.dart';
-import 'homeScreen.dart';
+import 'home_screen.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-
-
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -31,15 +31,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         elevation: 0.0,
         centerTitle: true,
         leading: const BackButton(color: Colors.black54),
-        title: const Text('Onboarding', style: TextStyle(color: Colors.black54)),
+        title:
+            const Text('Onboarding', style: TextStyle(color: Colors.black54)),
       ),
       body: Center(
-
         child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
           child: Container(
-           padding: const EdgeInsets.only(top: 40.0),
-          decoration: BoxDecoration(
+            padding: const EdgeInsets.only(top: 40.0),
+            decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/images/background.jpg"),
                 fit: BoxFit.cover,
@@ -95,6 +95,7 @@ class _OnboardingUIState extends State<OnboardingUI> {
       widget.flutterTts.setVolume(1.0); // Unmute TTS
     }
   }
+
   Future<void> _speakMessage(String message) async {
     await widget.flutterTts.setVolume(1.0); // Set volume (0.0 to 1.0)
     await widget.flutterTts.setSpeechRate(0.5); // Set speech rate (0.0 to 1.0)
@@ -102,15 +103,18 @@ class _OnboardingUIState extends State<OnboardingUI> {
 
     await widget.flutterTts.speak(message);
   }
+
   @override
   Widget build(BuildContext context) {
-    final currentPage = widget.functionality.pages[widget.functionality.currentPageIndex];
+    final currentPage =
+        widget.functionality.pages[widget.functionality.currentPageIndex];
 
     // Determine whether to show the text input and microphone icon
-    final showTextInputAndMic =
-        widget.functionality.currentPageIndex < widget.functionality.pages.length - 3;
+    final showTextInputAndMic = widget.functionality.currentPageIndex <
+        widget.functionality.pages.length - 3;
     if (widget.functionality.currentPageIndex == 0) {
-      _speakMessage("Welcome to our App! Hello and welcome to CogniOpen! My name is Cora your Virtual Assistance. As a new user, I'll guide you through the onboarding process to get you started. Firstly, may I know your name please?");
+      _speakMessage(
+          "Welcome to our App! Hello and welcome to CogniOpen! My name is Cora your Virtual Assistance. As a new user, I'll guide you through the onboarding process to get you started. Firstly, may I know your name please?");
     }
 
     return PageView.builder(
@@ -135,7 +139,6 @@ class _OnboardingUIState extends State<OnboardingUI> {
                       : "",
                   style: TextStyle(fontSize: 18),
                 ),
-
                 SizedBox(height: 14),
                 Container(
                   height: 200,
@@ -145,7 +148,6 @@ class _OnboardingUIState extends State<OnboardingUI> {
                     flutterTts: flutterTts,
                   ),
                 ),
-
                 SizedBox(height: 7),
                 if (showTextInputAndMic) // Conditionally show text input and microphone
                   TextFormField(
@@ -175,7 +177,6 @@ class _OnboardingUIState extends State<OnboardingUI> {
                     },
                     child: Text("Next"),
                   ),
-
                 if (showTextInputAndMic) // Conditionally show text input and microphone
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -224,8 +225,6 @@ class _OnboardingUIState extends State<OnboardingUI> {
   }
 }
 
-
-
 class ConversationView extends StatefulWidget {
   final List<ConversationBubble> conversation;
   final ScrollController scrollController;
@@ -263,7 +262,9 @@ class _ConversationViewState extends State<ConversationView> {
               color: bubble.isUser ? Colors.blue : Colors.black,
             ),
           ),
-          trailing: isVA ? Icon(Icons.volume_up) : null, // Show speaker icon for VA responses
+          trailing: isVA
+              ? Icon(Icons.volume_up)
+              : null, // Show speaker icon for VA responses
         );
       },
     );
@@ -277,7 +278,6 @@ class _ConversationViewState extends State<ConversationView> {
     await widget.flutterTts.speak(message);
   }
 }
-
 
 class NextOnboardingScreen extends StatelessWidget {
   @override
