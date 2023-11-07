@@ -1,13 +1,12 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
+import 'package:cogniopenapp/src/address.dart';
 import 'package:cogniopenapp/src/database/model/media_type.dart';
 import 'package:cogniopenapp/src/database/model/video.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/utils/directory_manager.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
-import 'package:cogniopenapp/src/address.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 
 class VideoController {
   VideoController._();
@@ -67,7 +66,7 @@ class VideoController {
 
       return createdVideo;
     } catch (e) {
-      print('Video Controller -- Error adding video: $e');
+      appLogger.severe('Video Controller -- Error adding video: $e');
       return null;
     }
   }
@@ -110,7 +109,7 @@ class VideoController {
       Video createdVideo = await VideoRepository.instance.create(newVideo);
       return createdVideo;
     } catch (e) {
-      print('Video Controller -- Error adding video: $e');
+      appLogger.severe('Video Controller -- Error adding video: $e');
       return null;
     }
   }
@@ -133,7 +132,7 @@ class VideoController {
       await VideoRepository.instance.update(updatedVideo);
       return updatedVideo;
     } catch (e) {
-      print('Video Controller -- Error updating video: $e');
+      appLogger.severe('Video Controller -- Error updating video: $e');
       return null;
     }
   }
@@ -153,7 +152,7 @@ class VideoController {
       }
       return existingVideo;
     } catch (e) {
-      print('Video Controller -- Error removing video: $e');
+      appLogger.severe('Video Controller -- Error removing video: $e');
       return null;
     }
   }
