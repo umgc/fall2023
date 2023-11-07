@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
 import 'package:cogniopenapp/src/aws_video_response.dart';
@@ -19,6 +17,7 @@ import 'package:cogniopenapp/src/database/repository/photo_repository.dart';
 import 'package:cogniopenapp/src/database/repository/significant_object_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_repository.dart';
 import 'package:cogniopenapp/src/database/repository/video_response_repository.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 
 class DataService {
   DataService._internal();
@@ -43,28 +42,9 @@ class DataService {
     mediaList = [...audios, ...photos, ...videos];
 
     if (!hasBeenInitialized) {
-      // *** For development debug purposes only. TODO: Remove
-      for (var audio in audios) {
-        print('Audio #${audio.id}: ${audio.toJson()}');
-      }
-      for (var photo in photos) {
-        print('Photo #${photo.id}: ${photo.toJson()}');
-      }
-      for (var video in videos) {
-        print('Video #${video.id}: ${video.toJson()}');
-      }
       responseList = await VideoResponseRepository.instance.readAll();
-
-      for (var videoResponse in responseList) {
-        print("Response # ${videoResponse.toJson()}");
-      }
-
       significantObjectList =
           await SignificantObjectRepository.instance.readAll();
-
-      for (var object in significantObjectList) {
-        print("Object # ${object.toJson()}");
-      }
       hasBeenInitialized = true;
     }
   }
@@ -91,9 +71,10 @@ class DataService {
     await loadResponses();
   }
 
-  // |-----------------------------------------------------------------------------------------|
-  // |---------------------------- VIDEO RESPONSE OPERATIONS ----------------------------------|
-  // |-----------------------------------------------------------------------------------------|
+  // |-------------------------------------------------------------------------|
+  // |---------------------- VIDEO RESPONSE OPERATIONS ------------------------|
+  // |-------------------------------------------------------------------------|
+
   Future<void> addVideoResponses(List<AWSVideoResponse> rekogResponses) async {
     try {
       for (AWSVideoResponse rekResponse in rekogResponses) {
@@ -116,7 +97,7 @@ class DataService {
 
       //return response;
     } catch (e) {
-      print('Data Service -- Error adding video response: $e');
+      appLogger.severe('Data Service -- Error removing video response');
       //return null;
     }
   }
@@ -129,14 +110,14 @@ class DataService {
       }
       return audio;
     } catch (e) {
-      print('Data Service -- Error removing video response: $e');
+      appLogger.severe('Data Service -- Error removing video response', e);
       return null;
     }
   }
 
-  // |-----------------------------------------------------------------------------------------|
-  // |---------------------------------- AUDIO OPERATIONS -------------------------------------|
-  // |-----------------------------------------------------------------------------------------|
+  // |-------------------------------------------------------------------------|
+  // |--------------------------- AUDIO OPERATIONS ----------------------------|
+  // |-------------------------------------------------------------------------|
 
   // TODO, refactor seed data to just use addAudio();
   Future<Audio?> addSeedAudio({
@@ -161,7 +142,7 @@ class DataService {
       }
       return audio;
     } catch (e) {
-      print('Data Service -- Error adding audio: $e');
+      appLogger.severe('Data Service -- Error adding audio: $e');
       return null;
     }
   }
@@ -188,7 +169,7 @@ class DataService {
       }
       return audio;
     } catch (e) {
-      print('Data Service -- Error adding audio: $e');
+      appLogger.severe('Data Service -- Error adding audio: $e');
       return null;
     }
   }
@@ -217,7 +198,7 @@ class DataService {
       }
       return audio;
     } catch (e) {
-      print('Data Service -- Error updating audio: $e');
+      appLogger.severe('Data Service -- Error updating audio: $e');
       return null;
     }
   }
@@ -230,14 +211,14 @@ class DataService {
       }
       return audio;
     } catch (e) {
-      print('Data Service -- Error removing audio: $e');
+      appLogger.severe('Data Service -- Error removing audio: $e');
       return null;
     }
   }
 
-  // |-----------------------------------------------------------------------------------------|
-  // |--------------------------------- PHOTO OPERATIONS --------------------------------------|
-  // |-----------------------------------------------------------------------------------------|
+  // |-------------------------------------------------------------------------|
+  // |--------------------------- PHOTO OPERATIONS ----------------------------|
+  // |-------------------------------------------------------------------------|
 
 // TODO, refactor seed data to just use addPhoto();
   Future<Photo?> addSeedPhoto({
@@ -258,7 +239,7 @@ class DataService {
       }
       return photo;
     } catch (e) {
-      print('Data Service -- Error adding photo: $e');
+      appLogger.severe('Data Service -- Error adding photo: $e');
       return null;
     }
   }
@@ -281,7 +262,7 @@ class DataService {
       }
       return photo;
     } catch (e) {
-      print('Data Service -- Error adding photo: $e');
+      appLogger.severe('Data Service -- Error adding photo: $e');
       return null;
     }
   }
@@ -306,7 +287,7 @@ class DataService {
       }
       return photo;
     } catch (e) {
-      print('Data Service -- Error updating photo: $e');
+      appLogger.severe('Data Service -- Error updating photo: $e');
       return null;
     }
   }
@@ -319,14 +300,14 @@ class DataService {
       }
       return photo;
     } catch (e) {
-      print('Data Service -- Error removing photo: $e');
+      appLogger.severe('Data Service -- Error removing photo: $e');
       return null;
     }
   }
 
-  // |-----------------------------------------------------------------------------------------|
-  // |---------------------------------- VIDEO OPERATIONS -------------------------------------|
-  // |-----------------------------------------------------------------------------------------|
+  // |-------------------------------------------------------------------------|
+  // |--------------------------- VIDEO OPERATIONS ----------------------------|
+  // |-------------------------------------------------------------------------|
 
   // TODO, refactor seed data to just use addVideo();
   Future<Video?> addSeedVideo({
@@ -351,7 +332,7 @@ class DataService {
       }
       return video;
     } catch (e) {
-      print('Data Service -- Error adding video: $e');
+      appLogger.severe('Data Service -- Error adding video: $e');
       return null;
     }
   }
@@ -378,7 +359,7 @@ class DataService {
       }
       return video;
     } catch (e) {
-      print('Data Service -- Error adding video: $e');
+      appLogger.severe('Data Service -- Error adding video: $e');
       return null;
     }
   }
@@ -403,7 +384,7 @@ class DataService {
       }
       return video;
     } catch (e) {
-      print('Data Service -- Error updating video: $e');
+      appLogger.severe('Data Service -- Error updating video: $e');
       return null;
     }
   }
@@ -416,14 +397,14 @@ class DataService {
       }
       return video;
     } catch (e) {
-      print('Data Service -- Error removing video: $e');
+      appLogger.severe('Data Service -- Error removing video: $e');
       return null;
     }
   }
 
-  // |-----------------------------------------------------------------------------------------|
-  // |------------------------- SIGNIFICANT OBJECT OPERATIONS -------------------------------|
-  // |-----------------------------------------------------------------------------------------|
+  // |-------------------------------------------------------------------------|
+  // |-------------------- SIGNIFICANT OBJECT OPERATIONS ----------------------|
+  // |-------------------------------------------------------------------------|
 
   Future<SignificantObject?> addSignificantObject({
     String? objectLabel,
@@ -454,7 +435,7 @@ class DataService {
 
       return significantObject;
     } catch (e) {
-      print('Data Service -- Error adding significant object: $e');
+      appLogger.severe('Data Service -- Error adding significant object: $e');
       return null;
     }
   }
@@ -478,7 +459,8 @@ class DataService {
 
       return significantObject;
     } catch (e) {
-      print('Data Service -- Error updating significant object labels: $e');
+      appLogger.severe(
+          'Data Service -- Error updating significant object labels: $e');
       return null;
     }
   }
@@ -494,14 +476,14 @@ class DataService {
 
       return significantObject;
     } catch (e) {
-      print('Data Service -- Error removing significant object: $e');
+      appLogger.severe('Data Service -- Error removing significant object: $e');
       return null;
     }
   }
 
-// |--------------------------------------------------------------------------|
-// |---------------------------- OTHER OPERATIONS ----------------------------|
-// |--------------------------------------------------------------------------|
+  // |-------------------------------------------------------------------------|
+  // |--------------------------- OTHER OPERATIONS ----------------------------|
+  // |-------------------------------------------------------------------------|
 
   Future<Media?> updateMediaIsFavorited(Media media, bool isFavorited) async {
     try {
@@ -524,7 +506,7 @@ class DataService {
       }
       return updatedMedia;
     } catch (e) {
-      print('Data Service -- Error updating media isFavorited: $e');
+      appLogger.severe('Data Service -- Error updating media isFavorited: $e');
       return null;
     }
   }
@@ -550,7 +532,7 @@ class DataService {
       }
       return updatedMedia;
     } catch (e) {
-      print('Data Service -- Error updating media tags: $e');
+      appLogger.severe('Data Service -- Error updating media tags: $e');
       return null;
     }
   }
