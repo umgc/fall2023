@@ -427,7 +427,7 @@ class _AudioScreenState extends State<AudioScreen> {
     String transcriptFilePath =
         '${appDocDirectory.path}/files/audios/transcripts/${key2}transcript.txt';
     final dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(key2));
-    final dateFormat = DateFormat('dd/MM/yyyy');
+    final dateFormat = DateFormat('MM/dd/yyyy');
     final title = dateFormat.format(dateTime);
     audio = await DataService.instance.addAudio(
         title: title,
