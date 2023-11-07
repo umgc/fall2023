@@ -13,6 +13,7 @@ import 'package:cogniopenapp/src/data_service.dart';
 import 'package:cogniopenapp/src/s3_connection.dart';
 import 'package:cogniopenapp/src/utils/file_manager.dart';
 import 'package:cogniopenapp/src/utils/format_utils.dart';
+import 'package:cogniopenapp/src/utils/logger.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -78,7 +79,7 @@ class VideoProcessor {
     String secret = (dotenv.get('secretKey', fallback: "none"));
 
     if (region == "none" || access == "none" || secret == "none") {
-      print("AWS client access needs to be initialized");
+      appLogger.severe("AWS client access needs to be initialized");
       return;
     }
 
@@ -90,7 +91,7 @@ class VideoProcessor {
 
     //connect to Custom Label detection
     createProject();
-    print("Rekognition is up...");
+    appLogger.info("Rekognition is up...");
   }
 
   Future<void> automaticallySendToRekognition() async {
@@ -113,7 +114,7 @@ class VideoProcessor {
 
   Future<StartLabelDetectionResponse> sendRequestToProcessVideo(
       String title) async {
-    print("sending rekognition request for $title");
+    appLogger.info("sending rekognition request for $title");
     //grab Video
     Video video = Video(
         s3Object: S3Object(bucket: dotenv.get('videoS3Bucket'), name: title));
@@ -126,7 +127,7 @@ class VideoProcessor {
     //set the jobId, but return the whole job.
     job.then((value) {
       jobId = value.jobId!;
-      print("Job ID IS $jobId");
+      appLogger.info("Job ID IS $jobId");
     });
     return job;
   }
@@ -177,7 +178,7 @@ class VideoProcessor {
     List<AWSVideoResponse> responseList = [];
 
     Iterator<LabelDetection> iter = response.labels!.iterator;
-    print("ABOUT TO START PARSING RESPONSES");
+    appLogger.info("ABOUT TO START PARSING RESPONSES");
     while (iter.moveNext()) {
       for (Instance inst in iter.current.label!.instances!) {
         String? name = iter.current.label!.name;
@@ -235,9 +236,9 @@ class VideoProcessor {
         //stop looping
         inProgress = false;
       } else if (labelsResponse.jobStatus == VideoJobStatus.failed) {
-        //stop looping, but print error message.
+        //stop looping, but log error message.
         inProgress = false;
-        print(labelsResponse.statusMessage);
+        appLogger.info(labelsResponse.statusMessage);
       }
     }
     FormatUtils.logBigMessage("POLLING WAS COMPLETED JOB ID $jobId");
@@ -263,8 +264,8 @@ class VideoProcessor {
     videoTitle = FileManager.mostRecentVideoName;
     videoPath = FileManager.mostRecentVideoPath;
 
-    print("Video title to S3: $videoTitle");
-    print("Video file path uploading to S3: $videoPath");
+    appLogger.info("Video title to S3: $videoTitle");
+    appLogger.info("Video file path uploading to S3: $videoPath");
 
     String uploadedVideo = await s3.addVideoToS3(videoTitle, videoPath);
 
@@ -360,7 +361,8 @@ class VideoProcessor {
           value.projectVersionDescriptions!.iterator;
       while (iter.moveNext()) {
         if (iter.current.projectVersionArn!.contains(labelName)) {
-          print("${iter.current.projectVersionArn} is ${iter.current.status}");
+          appLogger.info(
+              "${iter.current.projectVersionArn} is ${iter.current.status}");
           return iter.current.status;
         }
       }
@@ -390,7 +392,7 @@ class VideoProcessor {
                 .startProjectVersion(
                     minInferenceUnits: 1,
                     projectVersionArn: iter.current.projectVersionArn!);
-            print(response.status);
+            appLogger.info(response.status);
             //returns the modelArn of the projectVersion being started
             //still need to poll the that the model has started
             activeModels.add(labelName);
@@ -421,7 +423,7 @@ class VideoProcessor {
             StopProjectVersionResponse response = await service!
                 .stopProjectVersion(
                     projectVersionArn: iter.current.projectVersionArn!);
-            print(response.status);
+            appLogger.info(response.status);
             //returns the modelArn of the projectVersion being stopped
             //still need to poll the that the model has finished stopping
             return iter.current.projectVersionArn;
